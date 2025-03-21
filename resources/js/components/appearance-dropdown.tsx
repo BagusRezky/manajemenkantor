@@ -37,7 +37,7 @@ export default function AppearanceToggleDropdown({ className = '', ...props }: H
                     <DropdownMenuItem onClick={() => updateAppearance('dark')}>
                         <span className="flex items-center gap-2">
                             <Moon className="h-5 w-5" />
-                            Dark
+                            Purple Night
                         </span>
                     </DropdownMenuItem>
                     <DropdownMenuItem onClick={() => updateAppearance('system')}>

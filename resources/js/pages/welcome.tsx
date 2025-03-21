@@ -111,7 +111,7 @@ export default function Welcome() {
                                     </span>
                                 </li>
                             </ul>
-                            <ul className="flex gap-3 text-sm leading-normal">
+                            {/* <ul className="flex gap-3 text-sm leading-normal">
                                 <li>
                                     <a
                                         href="https://cloud.laravel.com"
@@ -121,7 +121,7 @@ export default function Welcome() {
                                         Deploy now
                                     </a>
                                 </li>
-                            </ul>
+                            </ul> */}
                         </div>
                         <div className="relative -mb-px aspect-[335/376] w-full shrink-0 overflow-hidden rounded-t-lg bg-[#fff2f2] lg:mb-0 lg:-ml-px lg:aspect-auto lg:w-[438px] lg:rounded-t-none lg:rounded-r-lg dark:bg-[#1D0002]">
                             <svg

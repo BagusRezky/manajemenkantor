@@ -1,11 +1,12 @@
-import { NavFooter } from '@/components/nav-footer';
+// import { NavFooter } from '@/components/nav-footer';
 import { NavMain } from '@/components/nav-main';
 import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-react';
+import { BaggageClaim, ClipboardList, ContainerIcon, LayoutGrid, StretchHorizontalIcon, Users } from 'lucide-react';
 import AppLogo from './app-logo';
+import { NavDropdown, NavItemWithChildren } from './nav-dropdown';
 
 const mainNavItems: NavItem[] = [
     {
@@ -15,18 +16,127 @@ const mainNavItems: NavItem[] = [
     },
 ];
 
-const footerNavItems: NavItem[] = [
+export const dropdownNavItems: NavItemWithChildren[] = [
     {
-        title: 'Repository',
-        href: 'https://github.com/laravel/react-starter-kit',
-        icon: Folder,
+        title: 'MARKETING',
+        icon: BaggageClaim,
+        children: [
+            {
+                title: 'Members',
+                icon: Users,
+                href: '/team/members',
+            },
+        ],
     },
     {
-        title: 'Documentation',
-        href: 'https://laravel.com/docs/starter-kits',
-        icon: BookOpen,
+        title: 'PURCHASE',
+        icon: ClipboardList,
+        children: [
+            {
+                title: 'Purchase Order',
+                icon: ClipboardList,
+                href: '/team/members',
+            },
+            {
+                title: 'Master Item',
+                icon: StretchHorizontalIcon,
+                href: '/team/members',
+            },
+            {
+                title: 'Master Suplier',
+                icon: ContainerIcon,
+                href: '/suppliers',
+            },
+            {
+                title: 'Master Unit/Satuan',
+                icon: ContainerIcon,
+                href: '/team/members',
+            },
+            {
+                title: 'Master Type',
+                icon: ContainerIcon,
+                href: '/team/members',
+            },
+            {
+                title: 'Satuan Conversion',
+                icon: ContainerIcon,
+                href: '/team/members',
+            },
+            {
+                title: 'External Return',
+                icon: ContainerIcon,
+                href: '/team/members',
+            },
+        ],
+    },
+    {
+        title: 'PPIC',
+        icon: Users,
+        children: [
+            {
+                title: 'Members',
+                icon: Users,
+                href: '/team/members',
+            },
+        ],
+    },
+    {
+        title: 'MAINSTORE',
+        icon: Users,
+        children: [
+            {
+                title: 'Members',
+                icon: Users,
+                href: '/team/members',
+            },
+        ],
+    },
+    {
+        title: 'DISPATCH',
+        icon: Users,
+        children: [
+            {
+                title: 'Members',
+                icon: Users,
+                href: '/team/members',
+            },
+        ],
+    },
+    {
+        title: 'FINANCE',
+        icon: Users,
+        children: [
+            {
+                title: 'Members',
+                icon: Users,
+                href: '/team/members',
+            },
+        ],
+    },
+    {
+        title: 'HRD',
+        icon: Users,
+        children: [
+            {
+                title: 'Members',
+                icon: Users,
+                href: '/team/members',
+            },
+        ],
+    },
+    {
+        title: 'REPORT',
+        icon: Users,
+        children: [
+            {
+                title: 'Members',
+                icon: Users,
+                href: '/team/members',
+            },
+        ],
     },
 ];
+
 
 export function AppSidebar() {
     return (
@@ -45,10 +155,11 @@ export function AppSidebar() {
 
             <SidebarContent>
                 <NavMain items={mainNavItems} />
+                <NavDropdown items={dropdownNavItems} />
             </SidebarContent>
 
             <SidebarFooter>
-                <NavFooter items={footerNavItems} className="mt-auto" />
+                {/* <NavFooter items={footerNavItems} className="mt-auto" /> */}
                 <NavUser />
             </SidebarFooter>
         </Sidebar>
