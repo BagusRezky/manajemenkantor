@@ -2,10 +2,10 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 
-import React, { useEffect } from 'react';
-import { Supplier } from './table/columns';
-import { toast } from 'sonner';
 import { useForm } from '@inertiajs/react';
+import React, { useEffect } from 'react';
+import { toast } from 'sonner';
+import { Supplier } from '../table/columns';
 
 interface EditSupplierModalProps {
     isOpen: boolean;
@@ -14,7 +14,7 @@ interface EditSupplierModalProps {
 }
 
 const EditSupplierModal: React.FC<EditSupplierModalProps> = ({ isOpen, onClose, supplier }) => {
-    const { data, setData, put, processing, errors, } = useForm<Supplier>({
+    const { data, setData, put, processing, errors } = useForm<Supplier>({
         id: '',
         kode_suplier: '',
         nama_suplier: '',
@@ -32,7 +32,7 @@ const EditSupplierModal: React.FC<EditSupplierModalProps> = ({ isOpen, onClose, 
                 keterangan: supplier.keterangan,
             });
         }
-    }, [supplier]);
+    }, [supplier, setData]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         setData({

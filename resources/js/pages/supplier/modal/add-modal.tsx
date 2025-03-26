@@ -1,10 +1,10 @@
-import { router } from "@inertiajs/react";
-import { useState } from "react";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "../../components/ui/dialog";
-import { Button } from "../../components/ui/button";
-import { Label } from "../../components/ui/label";
-import { Input } from "../../components/ui/input";
-import { Textarea } from "@headlessui/react";
+import { Textarea } from '@headlessui/react';
+import { router } from '@inertiajs/react';
+import { useState } from 'react';
+import { Button } from '../../../components/ui/button';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
+import { Input } from '../../../components/ui/input';
+import { Label } from '../../../components/ui/label';
 
 export type Supplier = {
     id: string;
@@ -111,7 +111,7 @@ export function SupplierFormModal() {
                                 name="keterangan"
                                 value={formData.keterangan}
                                 onChange={handleChange}
-                                className="col-span-3"
+                                className="col-span-3 rounded-md border border-gray-400 p-2"
                                 rows={3}
                             />
                         </div>

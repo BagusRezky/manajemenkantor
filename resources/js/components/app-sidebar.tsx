@@ -10,7 +10,7 @@ import { NavDropdown, NavItemWithChildren } from './nav-dropdown';
 
 const mainNavItems: NavItem[] = [
     {
-        title: 'Dashboard',
+        title: 'DASHBOARD',
         href: '/dashboard',
         icon: LayoutGrid,
     },
@@ -33,6 +33,11 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         icon: ClipboardList,
         children: [
             {
+                title: 'Purchase Request',
+                icon: ClipboardList,
+                href: '/team/members',
+            },
+            {
                 title: 'Purchase Order',
                 icon: ClipboardList,
                 href: '/team/members',
@@ -48,7 +53,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
                 href: '/suppliers',
             },
             {
-                title: 'Master Unit/Satuan',
+                title: 'Master Unit',
                 icon: ContainerIcon,
                 href: '/team/members',
             },
@@ -81,7 +86,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         ],
     },
     {
-        title: 'MAINSTORE',
+        title: 'WAREHOUSE',
         icon: Users,
         children: [
             {
@@ -92,7 +97,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         ],
     },
     {
-        title: 'DISPATCH',
+        title: 'DELIVERY ORDER',
         icon: Users,
         children: [
             {

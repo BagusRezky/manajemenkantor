@@ -1,15 +1,22 @@
 import { DataTablePagination } from '@/components/custom-pagination';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
+import {
+    ColumnDef,
+    ColumnFiltersState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    useReactTable,
+} from '@tanstack/react-table';
 import React from 'react';
-import { Supplier, SupplierFormModal } from '../add-modal';
+import { Supplier, SupplierFormModal } from '../modal/add-modal';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     suppliers: Supplier[];
-    
 }
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
@@ -40,8 +47,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                 />
                 <SupplierFormModal />
             </div>
-            <div className=" rounded-md border ">
-                <Table >
+            <div className="rounded-md bg-violet-600">
+                <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
