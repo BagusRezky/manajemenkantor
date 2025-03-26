@@ -6,29 +6,28 @@ import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
 import { router } from '@inertiajs/react';
-export type Supplier = {
+
+export type Unit = {
     id: string;
-    kode_suplier: string;
-    nama_suplier: string;
-    jenis_suplier: string;
-    keterangan: string;
+    kode_satuan: string;
+    nama_satuan: string;
 };
 
-const handleDelete = ($supplier: string) => {
+const handleDelete = ($unit: string) => {
     // Delete supplier with ID `id`
-    router.delete(`/suppliers/${$supplier}`, {
+    router.delete(`/units/${$unit}`, {
         onSuccess: () => {
-            toast.success('Supplier deleted successfully');
+            toast.success('Unit deleted successfully');
         },
         onError: () => {
-            toast.error('Failed to delete supplier');
+            toast.error('Failed to delete unit');
         },
     });
 };
 
 export const columns = (setIsModalOpen:(open:boolean)=>void,
 setEditModalOpen:(open:boolean)=>void,
-setSelectedSupplier:(supplier: Supplier | null) =>void): ColumnDef<Supplier>[]=> [
+setSelectedUnit:(unit: Unit | null) =>void): ColumnDef<Unit>[]=> [
     {
         id: 'select',
         header: ({ table }) => (
@@ -45,26 +44,18 @@ setSelectedSupplier:(supplier: Supplier | null) =>void): ColumnDef<Supplier>[]=>
         enableHiding: false,
     },
     {
-        accessorKey: 'kode_suplier',
-        header: 'Kode Suplier',
+        accessorKey: 'kode_satuan',
+        header: 'Kode Satuan',
     },
     {
-        accessorKey: 'nama_suplier',
-        header: 'Nama Suplier',
-    },
-    {
-        accessorKey: 'jenis_suplier',
-        header: 'Jenis Suplier',
-    },
-    {
-        accessorKey: 'keterangan',
-        header: 'Keterangan',
+        accessorKey: 'nama_satuan',
+        header: 'Nama Satuan',
     },
     {
         id: 'actions',
         header: 'Actions',
         cell: ({ row }) => {
-            const supplier = row.original;
+            const unit = row.original;
 
             return (
                 <DropdownMenu>
@@ -75,9 +66,9 @@ setSelectedSupplier:(supplier: Supplier | null) =>void): ColumnDef<Supplier>[]=>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleDelete(supplier.id)}>Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDelete(unit.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => {  setSelectedSupplier(supplier); setEditModalOpen(true);
+                        <DropdownMenuItem onClick={() => {  setSelectedUnit(unit); setEditModalOpen(true);
 
                         }}>
                             Updated

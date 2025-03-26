@@ -66,15 +66,15 @@ class SupplierController extends Controller
     {
         $supplier = Supplier::findOrFail($id);
         $validated = $request->validate([
-        'kode_suplier' => 'required',
-        'nama_suplier' => 'required',
-        'jenis_suplier' => 'required',
-        'keterangan' => 'required',
-    ]);
+            'kode_suplier' => 'required',
+            'nama_suplier' => 'required',
+            'jenis_suplier' => 'required',
+            'keterangan' => 'required',
+        ]);
 
-    $supplier->update($validated);
+        $supplier->update($validated);
 
-    return redirect()->back()->with('success', 'Supplier updated successfully!');
+        return redirect()->back()->with('success', 'Supplier updated successfully!');
     }
 
     /**

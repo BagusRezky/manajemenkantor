@@ -55,7 +55,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             {
                 title: 'Master Unit',
                 icon: ContainerIcon,
-                href: '/team/members',
+                href: '/units',
             },
             {
                 title: 'Master Type',
