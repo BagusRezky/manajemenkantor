@@ -3,10 +3,13 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from '@tanstack/react-table';
 import React from 'react';
+import { Supplier, SupplierFormModal } from '../add-modal';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
+    suppliers: Supplier[];
+    
 }
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
@@ -28,17 +31,18 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
     return (
         <div>
-            <div className="flex items-center py-4">
+            <div className="flex space-x-190 py-4">
                 <Input
                     placeholder="Cari Kode Suplier..."
                     value={(table.getColumn('kode_suplier')?.getFilterValue() as string) ?? ''}
                     onChange={(event) => table.getColumn('kode_suplier')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
+                <SupplierFormModal />
             </div>
-            <div className="rounded-md border">
-                <Table>
-                    <TableHeader className="sticky top-0 z-10 bg-neutral-100 dark:bg-neutral-800">
+            <div className=" rounded-md border ">
+                <Table >
+                    <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
                             <TableRow key={headerGroup.id}>
                                 {headerGroup.headers.map((header) => {

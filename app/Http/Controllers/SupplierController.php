@@ -14,7 +14,7 @@ class SupplierController extends Controller
     public function index()
     {
         $suppliers = Supplier::all();
-        return inertia::render('suppliers', [
+        return inertia::render('supplier/suppliers', [
             'suppliers' => $suppliers,
         ]);
     }
@@ -32,15 +32,15 @@ class SupplierController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'kode_suplier' => 'required',
             'nama_suplier' => 'required',
             'jenis_suplier' => 'required',
             'keterangan' => 'required',
         ]);
 
-        Supplier::create($request->all());
-        return redirect()->route('supplier.index');
+        Supplier::create($validated);
+        return redirect()->back()->with('success', 'Supplier added successfully!');
     }
 
     /**
@@ -64,16 +64,17 @@ class SupplierController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $request->validate([
-            'kode_suplier' => 'required',
-            'nama_suplier' => 'required',
-            'jenis_suplier' => 'required',
-            'keterangan' => 'required',
-        ]);
-
         $supplier = Supplier::findOrFail($id);
-        $supplier->update($request->all());
-        return redirect()->route('supplier.index');
+        $validated = $request->validate([
+        'kode_suplier' => 'required',
+        'nama_suplier' => 'required',
+        'jenis_suplier' => 'required',
+        'keterangan' => 'required',
+    ]);
+
+    $supplier->update($validated);
+
+    return redirect()->back()->with('success', 'Supplier updated successfully!');
     }
 
     /**
@@ -83,6 +84,6 @@ class SupplierController extends Controller
     {
         $supplier = Supplier::findOrFail($id);
         $supplier->delete();
-        return redirect()->route('supplier.index');
+        return redirect()->back()->with('success', 'Supplier deleted successfully!');
     }
 }

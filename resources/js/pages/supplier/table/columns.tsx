@@ -1,10 +1,11 @@
-'use client';
 
 import { Checkbox } from '@/components/ui/checkbox';
 import { ColumnDef } from '@tanstack/react-table';
-
-// This type is used to define the shape of our data.
-// You can use a Zod schema here if you want.
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
+import { MoreHorizontal } from 'lucide-react';
+import { toast } from 'sonner';
+import { router } from '@inertiajs/react';
 export type Supplier = {
     id: string;
     kode_suplier: string;
@@ -13,7 +14,21 @@ export type Supplier = {
     keterangan: string;
 };
 
-export const columns: ColumnDef<Supplier>[] = [
+const handleDelete = ($supplier: string) => {
+    // Delete supplier with ID `id`
+    router.delete(`/suppliers/${$supplier}`, {
+        onSuccess: () => {
+            toast.success('Supplier deleted successfully');
+        },
+        onError: () => {
+            toast.error('Failed to delete supplier');
+        },
+    });
+};
+
+export const columns = (setIsModalOpen:(open:boolean)=>void,
+setEditModalOpen:(open:boolean)=>void,
+setSelectedSupplier:(supplier: Supplier | null) =>void): ColumnDef<Supplier>[]=> [
     {
         id: 'select',
         header: ({ table }) => (
@@ -44,5 +59,31 @@ export const columns: ColumnDef<Supplier>[] = [
     {
         accessorKey: 'keterangan',
         header: 'Keterangan',
+    },
+    {
+        id: 'actions',
+        cell: ({ row }) => {
+            const supplier = row.original;
+
+            return (
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" className="h-8 w-8 p-0">
+                            <span className="sr-only">Open menu</span>
+                            <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                        <DropdownMenuItem onClick={() => handleDelete(supplier.id)}>Delete</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => {  setSelectedSupplier(supplier); setEditModalOpen(true);
+
+                        }}>
+                            Updated
+                        </DropdownMenuItem>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            );
+        },
     },
 ];
