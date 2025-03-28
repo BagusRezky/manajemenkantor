@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\TypeItemController;
 use App\Http\Controllers\UnitController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -23,6 +24,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/units', [UnitController::class, 'store']);
     Route::put('/units/{id}', [UnitController::class, 'update']);
     Route::delete('/units/{id}', [UnitController::class, 'destroy']);
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+   Route::get('/typeItems', [TypeItemController::class, 'index']);
+    Route::post('/typeItems', [TypeItemController::class, 'store']);
+    Route::put('/typeItems/{id}', [TypeItemController::class, 'update']);
+    Route::delete('/typeItems/{id}', [TypeItemController::class, 'destroy']);
 });
 
 
