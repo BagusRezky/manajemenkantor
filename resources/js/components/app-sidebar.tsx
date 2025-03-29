@@ -63,7 +63,12 @@ export const dropdownNavItems: NavItemWithChildren[] = [
                 href: '/typeItems',
             },
             {
-                title: 'Satuan Conversion',
+                title: 'Master Conversion',
+                icon: ContainerIcon,
+                href: '/team/members',
+            },
+            {
+                title: 'Master Item Category',
                 icon: ContainerIcon,
                 href: '/team/members',
             },
