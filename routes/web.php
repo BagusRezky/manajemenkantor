@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CustomerAddressController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TypeItemController;
 use App\Http\Controllers\UnitController;
@@ -31,6 +32,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/typeItems', [TypeItemController::class, 'store']);
     Route::put('/typeItems/{id}', [TypeItemController::class, 'update']);
     Route::delete('/typeItems/{id}', [TypeItemController::class, 'destroy']);
+});
+
+Route::middleware(['auth', 'verified'])->group(function () {
+   Route::get('/customerAddresses', [CustomerAddressController::class, 'index']);
+    Route::post('/customerAddresses', [CustomerAddressController::class, 'store']);
+    Route::put('/customerAddresses/{id}', [CustomerAddressController::class, 'update']);
+    Route::delete('/customerAddresses/{id}', [CustomerAddressController::class, 'destroy']);
 });
 
 

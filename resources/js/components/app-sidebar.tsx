@@ -22,9 +22,9 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         icon: BaggageClaim,
         children: [
             {
-                title: 'Members',
-                icon: Users,
-                href: '/team/members',
+                title: 'Customer Address',
+                icon: BaggageClaim,
+                href: '/customerAddresses',
             },
         ],
     },
