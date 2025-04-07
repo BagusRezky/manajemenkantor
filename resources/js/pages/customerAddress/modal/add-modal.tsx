@@ -4,15 +4,8 @@ import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
+import { CustomerAddress } from '@/types/customerAddress';
 
-export type CustomerAddress = {
-    id: string;
-    kode_customer: string;
-    nama_customer: string;
-    alamat_lengkap: string;
-    alamat_kedua: string;
-    alamat_ketiga: string;
-};
 
 type CustomerAddressFormData = Omit<CustomerAddress, 'id'>;
 

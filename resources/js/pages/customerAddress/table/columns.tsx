@@ -6,7 +6,8 @@ import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
 import { router } from '@inertiajs/react';
-import { CustomerAddress } from '../modal/add-modal';
+import { CustomerAddress } from '@/types/customerAddress';
+
 
 
 const handleDelete = ($customerAddress: string) => {

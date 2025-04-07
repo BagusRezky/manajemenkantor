@@ -1,11 +1,12 @@
 import { BreadcrumbItem } from "@/types";
-import { CustomerAddress } from "./modal/add-modal";
+
 import { useEffect, useState } from "react";
 import AppLayout from "@/layouts/app-layout";
 import { Head } from "@inertiajs/react";
 import { DataTable } from "./table/data-table";
 import { columns } from "./table/columns";
 import EditCustomerAddressModal from "./modal/edit-modal";
+import { CustomerAddress } from "@/types/customerAddress";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

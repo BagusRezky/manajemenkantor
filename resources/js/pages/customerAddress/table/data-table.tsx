@@ -11,7 +11,8 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import React from 'react';
-import { CustomerAddress, CustomerAddressFormModal } from '../modal/add-modal';
+import {  CustomerAddressFormModal } from '../modal/add-modal';
+import { CustomerAddress } from '@/types/customerAddress';
 
 
 
