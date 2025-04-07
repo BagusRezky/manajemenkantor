@@ -13,4 +13,10 @@ class TypeItem extends Model
         'kode_type_item',
         'nama_type_item',
     ];
+
+    public function masterKonversi()
+    {
+        return $this->hasMany(MasterKonversi::class, 'id_type_item');
+    }
+
 }

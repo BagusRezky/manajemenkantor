@@ -1,9 +1,11 @@
 <?php
 
 use App\Http\Controllers\CustomerAddressController;
+use App\Http\Controllers\MasterKonversiController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TypeItemController;
 use App\Http\Controllers\UnitController;
+
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -39,6 +41,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/customerAddresses', [CustomerAddressController::class, 'store']);
     Route::put('/customerAddresses/{id}', [CustomerAddressController::class, 'update']);
     Route::delete('/customerAddresses/{id}', [CustomerAddressController::class, 'destroy']);
+
+    Route::get('/masterKonversis', [MasterKonversiController::class, 'index']);
+    Route::post('/masterKonversis', [MasterKonversiController::class, 'store']);
+    Route::put('/masterKonversis/{id}', [MasterKonversiController::class, 'update']);
+    Route::delete('/masterKonversis/{id}', [MasterKonversiController::class, 'destroy']);
 });
 
 

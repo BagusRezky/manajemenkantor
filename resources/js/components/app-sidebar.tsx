@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BaggageClaim, ClipboardList, ContainerIcon, LayoutGrid, StretchHorizontalIcon, Users } from 'lucide-react';
+import { BaggageClaim, ClipboardList, ContainerIcon, LayoutGrid, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavDropdown, NavItemWithChildren } from './nav-dropdown';
 
@@ -42,9 +42,14 @@ export const dropdownNavItems: NavItemWithChildren[] = [
                 icon: ClipboardList,
                 href: '/team/members',
             },
+            // {
+            //     title: 'Master Item',
+            //     icon: StretchHorizontalIcon,
+            //     href: '/team/members',
+            // },
             {
-                title: 'Master Item',
-                icon: StretchHorizontalIcon,
+                title: 'Master Item Category',
+                icon: ContainerIcon,
                 href: '/team/members',
             },
             {
@@ -53,22 +58,22 @@ export const dropdownNavItems: NavItemWithChildren[] = [
                 href: '/suppliers',
             },
             {
-                title: 'Master Unit',
+                title: 'Master Satuan',
                 icon: ContainerIcon,
                 href: '/units',
             },
             {
-                title: 'Master Type',
+                title: 'Master Type Item',
                 icon: ContainerIcon,
                 href: '/typeItems',
             },
             {
-                title: 'Master Conversion',
+                title: 'Master Conversi Unit',
                 icon: ContainerIcon,
-                href: '/team/members',
+                href: '/masterKonversis',
             },
             {
-                title: 'Master Item Category',
+                title: 'Master Type Office',
                 icon: ContainerIcon,
                 href: '/team/members',
             },

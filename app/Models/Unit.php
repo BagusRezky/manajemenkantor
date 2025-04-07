@@ -13,4 +13,14 @@ class Unit extends Model
         'kode_satuan',
         'nama_satuan',
     ];
+
+    public function satuanSatu()
+    {
+        return $this->hasMany(MasterKonversi::class, 'satuan_satu_id');
+    }
+
+    public function satuanDua()
+    {
+        return $this->hasMany(MasterKonversi::class, 'satuan_dua_id');
+    }
 }
