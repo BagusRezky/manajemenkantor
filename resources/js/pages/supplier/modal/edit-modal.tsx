@@ -1,11 +1,12 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Supplier } from '@/types/supplier';
 
 import { useForm } from '@inertiajs/react';
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
-import { Supplier } from '../table/columns';
+
 
 interface EditSupplierModalProps {
     isOpen: boolean;

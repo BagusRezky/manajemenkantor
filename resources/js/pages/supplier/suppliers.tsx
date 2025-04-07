@@ -3,8 +3,9 @@ import { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import EditSupplierModal from './modal/edit-modal';
-import { columns, Supplier } from './table/columns';
+import { columns } from './table/columns';
 import { DataTable } from './table/data-table';
+import { Supplier } from '@/types/supplier';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

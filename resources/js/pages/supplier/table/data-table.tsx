@@ -11,7 +11,8 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import React from 'react';
-import { Supplier, SupplierFormModal } from '../modal/add-modal';
+import {  SupplierFormModal } from '../modal/add-modal';
+import { Supplier } from '@/types/supplier';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
