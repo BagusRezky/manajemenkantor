@@ -6,12 +6,8 @@ import { Button } from '@/components/ui/button';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
 import { router } from '@inertiajs/react';
+import { TypeItem } from '@/types/typeItem';
 
-export type TypeItem = {
-    id: string;
-    kode_type_item: string;
-    nama_type_item: string;
-};
 
 const handleDelete = ($typeItem: string) => {
     // Delete supplier with ID `id`

@@ -11,7 +11,8 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import React from 'react';
-import { TypeItem, TypeItemFormModal } from '../modal/add-modal';
+import { TypeItemFormModal } from '../modal/add-modal';
+import { TypeItem } from '@/types/typeItem';
 
 
 

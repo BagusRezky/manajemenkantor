@@ -1,11 +1,11 @@
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { TypeItem } from '@/types/typeItem';
 
 import { useForm } from '@inertiajs/react';
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
-import { TypeItem } from '../table/columns';
 
 interface EditTypeItemModalProps {
     isOpen: boolean;
