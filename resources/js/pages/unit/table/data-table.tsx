@@ -11,7 +11,8 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import React from 'react';
-import { Unit, UnitFormModal } from '../modal/add-modal';
+import { UnitFormModal } from '../modal/add-modal';
+import { Unit } from '@/types/unit';
 
 
 interface DataTableProps<TData, TValue> {
