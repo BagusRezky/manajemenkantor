@@ -75,7 +75,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             {
                 title: 'Master Type Office',
                 icon: ContainerIcon,
-                href: '/team/members',
+                href: '/typeOffices',
             },
             {
                 title: 'External Return',

@@ -4,6 +4,7 @@ use App\Http\Controllers\CustomerAddressController;
 use App\Http\Controllers\MasterKonversiController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TypeItemController;
+use App\Http\Controllers\TypeOfficeController;
 use App\Http\Controllers\UnitController;
 
 use Illuminate\Support\Facades\Route;
@@ -46,6 +47,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/masterKonversis', [MasterKonversiController::class, 'store']);
     Route::put('/masterKonversis/{id}', [MasterKonversiController::class, 'update']);
     Route::delete('/masterKonversis/{id}', [MasterKonversiController::class, 'destroy']);
+
+    Route::get('/typeOffices', [TypeOfficeController::class, 'index']);
+    Route::post('/typeOffices', [TypeOfficeController::class, 'store']);
+    Route::put('/typeOffices/{id}', [TypeOfficeController::class, 'update']);
+    Route::delete('/typeOffices/{id}', [TypeOfficeController::class, 'destroy']);
 });
 
 
