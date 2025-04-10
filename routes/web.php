@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\CategoryItemController;
 use App\Http\Controllers\CustomerAddressController;
 use App\Http\Controllers\MasterKonversiController;
 use App\Http\Controllers\SupplierController;
@@ -46,6 +47,11 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/masterKonversis', [MasterKonversiController::class, 'store']);
     Route::put('/masterKonversis/{id}', [MasterKonversiController::class, 'update']);
     Route::delete('/masterKonversis/{id}', [MasterKonversiController::class, 'destroy']);
+
+    Route::get('/categoryItems', [CategoryItemController::class, 'index']);
+    Route::post('/categoryItems', [CategoryItemController::class, 'store']);
+    Route::put('/categoryItems/{id}', [CategoryItemController::class, 'update']);
+    Route::delete('/categoryItems/{id}', [CategoryItemController::class, 'destroy']);
 
 });
 

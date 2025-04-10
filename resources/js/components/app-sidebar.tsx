@@ -50,7 +50,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             {
                 title: 'Master Item Category',
                 icon: ContainerIcon,
-                href: '/team/members',
+                href: '/categoryItems',
             },
             {
                 title: 'Master Suplier',
