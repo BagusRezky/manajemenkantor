@@ -2,11 +2,11 @@ import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Supplier } from '@/types/supplier';
+import { Textarea } from '@headlessui/react';
 
 import { useForm } from '@inertiajs/react';
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
-
 
 interface EditSupplierModalProps {
     isOpen: boolean;
@@ -21,6 +21,7 @@ const EditSupplierModal: React.FC<EditSupplierModalProps> = ({ isOpen, onClose, 
         nama_suplier: '',
         jenis_suplier: '',
         keterangan: '',
+        alamat_lengkap: '',
     });
 
     useEffect(() => {
@@ -31,11 +32,12 @@ const EditSupplierModal: React.FC<EditSupplierModalProps> = ({ isOpen, onClose, 
                 nama_suplier: supplier.nama_suplier,
                 jenis_suplier: supplier.jenis_suplier,
                 keterangan: supplier.keterangan,
+                alamat_lengkap: supplier.alamat_lengkap,
             });
         }
     }, [supplier, setData]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
         setData({
             ...data,
             [e.target.name]: e.target.value,
@@ -77,6 +79,17 @@ const EditSupplierModal: React.FC<EditSupplierModalProps> = ({ isOpen, onClose, 
                         value={data.jenis_suplier}
                         onChange={handleChange}
                         placeholder="Jenis Supplier"
+                        required
+                    />
+
+                    {errors.alamat_lengkap && <div className="text-sm text-red-500">{errors.alamat_lengkap}</div>}
+                    <Textarea
+                        id="alamat_lengkap"
+                        name="alamat_lengkap"
+                        value={data.alamat_lengkap}
+                        onChange={handleChange}
+                        className="col-span-3 rounded-md border border-gray-400 w-full p-2"
+                        rows={3}
                         required
                     />
 

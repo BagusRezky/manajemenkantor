@@ -7,8 +7,6 @@ import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Supplier } from '@/types/supplier';
 
-
-
 type SupplierFormData = Omit<Supplier, 'id'>;
 
 export function SupplierFormModal() {
@@ -18,13 +16,18 @@ export function SupplierFormModal() {
         nama_suplier: '',
         jenis_suplier: '',
         keterangan: '',
+        alamat_lengkap: '',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+
+        const upperCaseFields = ['kode_suplier', 'nama_suplier'];
+
+        const newValue = upperCaseFields.includes(name) ? value.toUpperCase() : value;
         setFormData((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: newValue,
         }));
     };
 
@@ -41,6 +44,7 @@ export function SupplierFormModal() {
                     nama_suplier: '',
                     jenis_suplier: '',
                     keterangan: '',
+                    alamat_lengkap: '',
                 });
             },
         });
@@ -98,6 +102,20 @@ export function SupplierFormModal() {
                             />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="alamat_lengkap" className="text-right">
+                                Alamat
+                            </Label>
+                            <Textarea
+                                id="alamat_lengkap"
+                                name="alamat_lengkap"
+                                value={formData.alamat_lengkap}
+                                onChange={handleChange}
+                                className="col-span-3 rounded-md border border-gray-400 p-2"
+                                rows={3}
+                                required
+                            />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="keterangan" className="text-right">
                                 Keterangan
                             </Label>
@@ -108,6 +126,7 @@ export function SupplierFormModal() {
                                 onChange={handleChange}
                                 className="col-span-3 rounded-md border border-gray-400 p-2"
                                 rows={3}
+                                required
                             />
                         </div>
                     </div>

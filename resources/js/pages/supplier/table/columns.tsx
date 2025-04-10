@@ -20,9 +20,11 @@ const handleDelete = ($supplier: string) => {
     });
 };
 
-export const columns = (setIsModalOpen:(open:boolean)=>void,
-setEditModalOpen:(open:boolean)=>void,
-setSelectedSupplier:(supplier: Supplier | null) =>void): ColumnDef<Supplier>[]=> [
+export const columns = (
+    setIsModalOpen: (open: boolean) => void,
+    setEditModalOpen: (open: boolean) => void,
+    setSelectedSupplier: (supplier: Supplier | null) => void,
+): ColumnDef<Supplier>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -45,6 +47,10 @@ setSelectedSupplier:(supplier: Supplier | null) =>void): ColumnDef<Supplier>[]=>
     {
         accessorKey: 'nama_suplier',
         header: 'Nama Suplier',
+    },
+    {
+        accessorKey: 'alamat_lengkap',
+        header: 'Alamat Lengkap',
     },
     {
         accessorKey: 'jenis_suplier',
@@ -71,9 +77,12 @@ setSelectedSupplier:(supplier: Supplier | null) =>void): ColumnDef<Supplier>[]=>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(supplier.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => {  setSelectedSupplier(supplier); setEditModalOpen(true);
-
-                        }}>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setSelectedSupplier(supplier);
+                                setEditModalOpen(true);
+                            }}
+                        >
                             Updated
                         </DropdownMenuItem>
                     </DropdownMenuContent>

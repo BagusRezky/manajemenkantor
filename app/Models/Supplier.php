@@ -16,5 +16,6 @@ class Supplier extends Model
         'nama_suplier',
         'jenis_suplier',
         'keterangan',
+        'alamat_lengkap',
     ];
 }

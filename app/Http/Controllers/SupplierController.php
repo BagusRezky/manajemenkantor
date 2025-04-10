@@ -14,7 +14,7 @@ class SupplierController extends Controller
     public function index()
     {
         $suppliers = Supplier::all();
-        return inertia::render('supplier/suppliers', [
+        return Inertia::render('supplier/suppliers', [
             'suppliers' => $suppliers,
         ]);
     }
@@ -37,7 +37,12 @@ class SupplierController extends Controller
             'nama_suplier' => 'required',
             'jenis_suplier' => 'required',
             'keterangan' => 'required',
+            'alamat_lengkap' => 'required',
         ]);
+
+
+        $validated['kode_suplier'] = strtoupper($validated['kode_suplier']);
+        $validated['nama_suplier'] = strtoupper($validated['nama_suplier']);
 
         Supplier::create($validated);
         return redirect()->back()->with('success', 'Supplier added successfully!');
@@ -70,7 +75,11 @@ class SupplierController extends Controller
             'nama_suplier' => 'required',
             'jenis_suplier' => 'required',
             'keterangan' => 'required',
+            'alamat_lengkap' => 'required',
         ]);
+
+        $validated['kode_suplier'] = strtoupper($validated['kode_suplier']);
+        $validated['nama_suplier'] = strtoupper($validated['nama_suplier']);
 
         $supplier->update($validated);
 

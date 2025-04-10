@@ -4,4 +4,5 @@ export type Supplier = {
     nama_suplier: string;
     jenis_suplier: string;
     keterangan: string;
+    alamat_lengkap: string;
 };

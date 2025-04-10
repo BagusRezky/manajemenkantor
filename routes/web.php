@@ -4,7 +4,6 @@ use App\Http\Controllers\CustomerAddressController;
 use App\Http\Controllers\MasterKonversiController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TypeItemController;
-use App\Http\Controllers\TypeOfficeController;
 use App\Http\Controllers\UnitController;
 
 use Illuminate\Support\Facades\Route;

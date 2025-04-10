@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('nama_suplier');
             $table->string('jenis_suplier');
             $table->string('keterangan');
+            $table->string('alamat_lengkap');
         });
     }
 
