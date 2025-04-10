@@ -37,6 +37,9 @@ class UnitController extends Controller
             'nama_satuan' => 'required',
         ]);
 
+        $validated['kode_satuan'] = strtoupper($validated['kode_satuan']);
+        $validated['nama_satuan'] = strtoupper($validated['nama_satuan']);
+
         Unit::create($validated);
         return redirect()->back()->with('success', 'Unit added successfully!');
     }
@@ -67,6 +70,9 @@ class UnitController extends Controller
             'kode_satuan' => 'required',
             'nama_satuan' => 'required',
         ]);
+
+        $validated['kode_satuan'] = strtoupper($validated['kode_satuan']);
+        $validated['nama_satuan'] = strtoupper($validated['nama_satuan']);
 
         $unit->update($validated);
 

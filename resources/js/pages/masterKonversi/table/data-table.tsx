@@ -19,7 +19,7 @@ import { Unit } from '@/types/unit';
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
-   typeItems: TypeItem[];
+    typeItems: TypeItem[];
     units: Unit[];
 }
 
@@ -45,7 +45,6 @@ export function DataTable<TData, TValue>({ columns, data, typeItems, units }: Da
             <div className="flex space-x-190 py-4">
                 <Input
                     placeholder="Cari Tipe Barang..."
-
                     onChange={(event) => table.getColumn('type_item.nama_type_item')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />

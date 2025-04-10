@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('kode_type_item');
             $table->string('nama_type_item');
             $table->timestamps();
+            $table->foreignId('id_category_item')->constrained('category_items')->onDelete('cascade');
         });
     }
 

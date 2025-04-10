@@ -48,6 +48,10 @@ setSelectedTypeItem:(typeItem: TypeItem | null) =>void): ColumnDef<TypeItem>[]=>
         header: 'Nama Type Item',
     },
     {
+        accessorKey: 'category_item.nama_category_item',
+        header: 'Kategori',
+    },
+    {
         id: 'actions',
         header: 'Actions',
         cell: ({ row }) => {

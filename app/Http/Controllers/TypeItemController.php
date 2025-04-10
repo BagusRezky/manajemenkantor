@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\CategoryItem;
 use App\Models\TypeItem;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,9 +14,11 @@ class TypeItemController extends Controller
      */
     public function index()
     {
-        $typeItems = TypeItem::all();
+        $typeItems = TypeItem::with('categoryItem')->get();
+        $categoryItems = CategoryItem::all();
         return inertia::render('typeItem/typeItems', [
             'typeItems' => $typeItems,
+            'categoryItems' => $categoryItems,
         ]);
     }
 
@@ -33,9 +36,13 @@ class TypeItemController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
+            'id_category_item' => 'required|exists:category_items,id',
             'kode_type_item' => 'required',
             'nama_type_item' => 'required',
         ]);
+
+        $validated['kode_type_item'] = strtoupper($validated['kode_type_item']);
+        $validated['nama_type_item'] = strtoupper($validated['nama_type_item']);
 
         TypeItem::create($validated);
         return redirect()->back()->with('success', 'Type Item added successfully!');
@@ -46,7 +53,7 @@ class TypeItemController extends Controller
      */
     public function show($id)
     {
-        return TypeItem::findOrFail($id);
+        return TypeItem::with('categoryItem')->findOrFail($id);
     }
 
     /**
@@ -64,9 +71,14 @@ class TypeItemController extends Controller
     {
         $typeItem = TypeItem::findOrFail($id);
         $validated = $request->validate([
+            'id_category_item' => 'required|exists:category_items,id',
             'kode_type_item' => 'required',
             'nama_type_item' => 'required',
         ]);
+
+        $validated['kode_type_item'] = strtoupper($validated['kode_type_item']);
+        $validated['nama_type_item'] = strtoupper($validated['nama_type_item']);
+
         $typeItem->update($validated);
         return redirect()->back()->with('success', 'Type Item updated successfully!');
     }

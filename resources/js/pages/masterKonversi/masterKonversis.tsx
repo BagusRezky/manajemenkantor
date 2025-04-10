@@ -9,6 +9,7 @@ import { useEffect, useState } from "react";
 import EditMasterKonversiModal from "./modal/edit-modal";
 import { columns } from "./table/columns";
 import { DataTable } from "./table/data-table";
+import { Toaster } from "sonner";
 
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -47,6 +48,7 @@ export default function MasterKonversis({ konversiList, typeItems, units }: Mast
                 typeItems={typeItems}
                 units={units}
             />
+            <Toaster/>
         </AppLayout>
     );
 }

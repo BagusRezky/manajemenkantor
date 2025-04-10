@@ -13,5 +13,10 @@ class CategoryItem extends Model
         'kode_category_item',
         'nama_category_item',
     ];
-    
+
+    public function typeItem()
+    {
+        return $this->hasMany(TypeItem::class, 'id_category_item');
+    }
+
 }

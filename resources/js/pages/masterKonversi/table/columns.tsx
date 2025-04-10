@@ -21,6 +21,7 @@ const handleDelete = ($masterKonversi: string) => {
 };
 
 export const columns = (
+    setIsModalOpen:(open:boolean)=>void,
     setEditModalOpen: (open: boolean) => void,
     setSelectedMasterKonversi: (masterKonversi: MasterKonversi | null) => void,
 ): ColumnDef<MasterKonversi>[] => [

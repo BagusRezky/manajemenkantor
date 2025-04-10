@@ -1,12 +1,11 @@
+import { Unit } from '@/types/unit';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
-import { Unit } from '@/types/unit';
-
-
 
 type UnitFormData = Omit<Unit, 'id'>;
 
@@ -19,9 +18,11 @@ export function UnitFormModal() {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+        const upperCaseFields = ['kode_satuan', 'nama_satuan'];
+        const newValue = upperCaseFields.includes(name) ? value.toUpperCase() : value;
         setFormData((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: newValue,
         }));
     };
 
@@ -32,11 +33,15 @@ export function UnitFormModal() {
         router.post('/units', formData, {
             onSuccess: () => {
                 // Close the modal and reset form after successful submission
+                toast.success('Unit added successfully');
                 setOpen(false);
                 setFormData({
                     kode_satuan: '',
                     nama_satuan: '',
                 });
+            },
+            onError: () => {
+                toast.error('Failed to add Unit');
             },
         });
     };
@@ -44,18 +49,18 @@ export function UnitFormModal() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild>
-                <Button variant="default">Add New Unit</Button>
+                <Button variant="default">Add New Satuan</Button>
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <form onSubmit={handleSubmit}>
                     <DialogHeader>
-                        <DialogTitle>Add New Unit</DialogTitle>
-                        <DialogDescription>Fill in the Unit details and click save when you're done.</DialogDescription>
+                        <DialogTitle>Add New Satuan</DialogTitle>
+                        <DialogDescription>Fill in the Satuan details and click save when you're done.</DialogDescription>
                     </DialogHeader>
                     <div className="grid gap-4 py-4">
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="kode_satuan" className="text-right">
-                                Kode Unit
+                                Kode Satuan
                             </Label>
                             <Input
                                 id="kode_satuan"
@@ -68,7 +73,7 @@ export function UnitFormModal() {
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="nama_satuan" className="text-right">
-                                Nama Unit
+                                Nama Satuan
                             </Label>
                             <Input
                                 id="nama_satuan"

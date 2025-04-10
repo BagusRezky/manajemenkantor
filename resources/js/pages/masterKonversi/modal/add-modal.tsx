@@ -8,6 +8,7 @@ import { MasterKonversi } from '@/types/masterKonversi';
 import { Unit } from '@/types/unit';
 import { TypeItem } from '@/types/typeItem';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { toast } from 'sonner';
 
 
 type MasterKonversiFormData = Omit<MasterKonversi, 'id'>;
@@ -48,6 +49,7 @@ export function MasterKonversiFormModal({ typeItems, units }: MasterKonversiForm
         router.post('/masterKonversis', formData, {
             onSuccess: () => {
                 // Close the modal and reset form after successful submission
+                toast.success('Konversi added successfully');
                 setOpen(false);
                 setFormData({
                     id_type_item: '',
@@ -55,6 +57,9 @@ export function MasterKonversiFormModal({ typeItems, units }: MasterKonversiForm
                     satuan_dua_id: '',
                     jumlah_satuan_konversi: '',
                 });
+            },
+            onError: () => {
+                toast.error('Failed to add Konversi');
             },
         });
     };

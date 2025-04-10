@@ -6,6 +6,7 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { Supplier } from '@/types/supplier';
+import { toast } from 'sonner';
 
 type SupplierFormData = Omit<Supplier, 'id'>;
 
@@ -38,6 +39,8 @@ export function SupplierFormModal() {
         router.post('/suppliers', formData, {
             onSuccess: () => {
                 // Close the modal and reset form after successful submission
+                toast.success('Supplier added successfully');
+
                 setOpen(false);
                 setFormData({
                     kode_suplier: '',
@@ -45,7 +48,12 @@ export function SupplierFormModal() {
                     jenis_suplier: '',
                     keterangan: '',
                     alamat_lengkap: '',
+
                 });
+
+            },
+            onError: () => {
+                toast.error('Failed to add Supplier');
             },
         });
     };

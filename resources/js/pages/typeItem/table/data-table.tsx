@@ -12,17 +12,17 @@ import {
 } from '@tanstack/react-table';
 import React from 'react';
 import { TypeItemFormModal } from '../modal/add-modal';
-import { TypeItem } from '@/types/typeItem';
+import { CategoryItem } from '@/types/categoryItem';
 
 
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
-    typeItems: TypeItem[];
+    categoryItems: CategoryItem[];
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, categoryItems }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [rowSelection, setRowSelection] = React.useState({});
     const table = useReactTable({
@@ -48,7 +48,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                     onChange={(event) => table.getColumn('kode_type_item')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
-                <TypeItemFormModal />
+                <TypeItemFormModal categoryItems={categoryItems}/>
             </div>
             <div className="rounded-md bg-violet-600">
                 <Table>

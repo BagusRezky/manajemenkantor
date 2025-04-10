@@ -5,20 +5,37 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { TypeItem } from '@/types/typeItem';
-
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { CategoryItem } from '@/types/categoryItem';
+import { toast } from 'sonner';
 
 
 type TypeItemFormData = Omit<TypeItem, 'id'>;
 
-export function TypeItemFormModal() {
+type TypeItemFormModalProps = {
+    categoryItems: CategoryItem[];
+};
+
+export function TypeItemFormModal({ categoryItems }: TypeItemFormModalProps) {
     const [open, setOpen] = useState(false);
     const [formData, setFormData] = useState<TypeItemFormData>({
+        id_category_item: '',
         kode_type_item: '',
         nama_type_item: '',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+        const upperCaseFields = ['kode_type_item', 'nama_type_item'];
+
+        const newValue = upperCaseFields.includes(name) ? value.toUpperCase() : value;
+        setFormData((prev) => ({
+            ...prev,
+            [name]: newValue,
+        }));
+    };
+
+    const handleSelectChange = (name: string, value: string) => {
         setFormData((prev) => ({
             ...prev,
             [name]: value,
@@ -32,11 +49,16 @@ export function TypeItemFormModal() {
         router.post('/typeItems', formData, {
             onSuccess: () => {
                 // Close the modal and reset form after successful submission
+                toast.success('Type Item added successfully');
                 setOpen(false);
                 setFormData({
+                    id_category_item: '',
                     kode_type_item: '',
                     nama_type_item: '',
                 });
+            },
+            onError: () => {
+                toast.error('Failed to add Type Item');
             },
         });
     };
@@ -78,6 +100,25 @@ export function TypeItemFormModal() {
                                 className="col-span-3"
                                 required
                             />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="id_category_item" className="text-right">
+                                Kategori Item
+                            </Label>
+                            <div className="col-span-3">
+                                <Select value={formData.id_category_item} onValueChange={(value) => handleSelectChange('id_category_item', value)} required>
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Pilih Category" />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                        {categoryItems.map((categoryitem) => (
+                                            <SelectItem key={categoryitem.id} value={String(categoryitem.id) } >
+                                                {categoryitem.nama_category_item}
+                                            </SelectItem>
+                                        ))}
+                                    </SelectContent>
+                                </Select>
+                            </div>
                         </div>
                     </div>
                     <DialogFooter>

@@ -6,6 +6,8 @@ import { columns} from "./table/columns";
 import { DataTable } from "./table/data-table";
 import EditUnitModal from "./modal/edit-modal";
 import { Unit } from "@/types/unit";
+import { Toaster } from "sonner";
+
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -31,6 +33,7 @@ export default function Units({ units }: { units: Unit[] }) {
             </div>
 
             <EditUnitModal isOpen={editModelOpen} onClose={() => setEditModalOpen(false)} unit={selectedUnit} />
+        <Toaster/>
         </AppLayout>
     );
 }

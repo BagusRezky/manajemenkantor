@@ -6,6 +6,7 @@ import EditSupplierModal from './modal/edit-modal';
 import { columns } from './table/columns';
 import { DataTable } from './table/data-table';
 import { Supplier } from '@/types/supplier';
+import { Toaster } from '@/components/ui/sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -31,6 +32,7 @@ export default function Suppliers({ suppliers }: { suppliers: Supplier[] }) {
             </div>
 
             <EditSupplierModal isOpen={editModelOpen} onClose={() => setEditModalOpen(false)} supplier={selectedSupplier} />
+            <Toaster/>
         </AppLayout>
     );
 }
