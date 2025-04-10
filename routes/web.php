@@ -48,10 +48,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/masterKonversis/{id}', [MasterKonversiController::class, 'update']);
     Route::delete('/masterKonversis/{id}', [MasterKonversiController::class, 'destroy']);
 
-    Route::get('/typeOffices', [TypeOfficeController::class, 'index']);
-    Route::post('/typeOffices', [TypeOfficeController::class, 'store']);
-    Route::put('/typeOffices/{id}', [TypeOfficeController::class, 'update']);
-    Route::delete('/typeOffices/{id}', [TypeOfficeController::class, 'destroy']);
 });
 
 
