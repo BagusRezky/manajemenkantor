@@ -6,6 +6,7 @@ use App\Http\Controllers\MasterKonversiController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TypeItemController;
 use App\Http\Controllers\UnitController;
+use App\Http\Controllers\MasterItemController;
 
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -52,6 +53,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/categoryItems', [CategoryItemController::class, 'store']);
     Route::put('/categoryItems/{id}', [CategoryItemController::class, 'update']);
     Route::delete('/categoryItems/{id}', [CategoryItemController::class, 'destroy']);
+
+    Route::get('/masterItems', [MasterItemController::class, 'index'])->name('master-items.index');
+    Route::get('/masterItems/create', [MasterItemController::class, 'create'])->name('master-items.create');
+    Route::post('/masterItems', [MasterItemController::class, 'store'])->name('master-items.store');
+    Route::get('/masterItems/{id}/edit', [MasterItemController::class, 'edit'])->name('master-items.edit');
+    Route::put('/masterItems/{id}', [MasterItemController::class, 'update'])->name('master-items.update');
+    Route::delete('/masterItems/{id}', [MasterItemController::class, 'destroy']);
+
+    // API untuk mendapatkan type items berdasarkan category
+    Route::get('/api/type-items', [MasterItemController::class, 'getTypeItems'])->name('api.type-items');
 
 });
 
