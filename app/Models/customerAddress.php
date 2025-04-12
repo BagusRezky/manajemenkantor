@@ -33,4 +33,9 @@ class customerAddress extends Model
     {
         $this->attributes['alamat_ketiga'] = $value ?: null;
     }
+
+    public function finishGoodItem()
+    {
+        return $this->hasMany(FinishGoodItem::class, 'id_customer_address');
+    }
 }

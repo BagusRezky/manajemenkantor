@@ -23,4 +23,14 @@ class Unit extends Model
     {
         return $this->hasMany(MasterKonversi::class, 'satuan_dua_id');
     }
+
+    public function masterItem()
+    {
+        return $this->hasMany(MasterItem::class, 'satuan_satu_id');
+    }
+
+    public function finishGoodItem()
+    {
+        return $this->hasMany(FinishGoodItem::class, 'satuan_satu_id');
+    }
 }

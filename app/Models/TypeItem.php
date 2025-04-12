@@ -25,4 +25,9 @@ class TypeItem extends Model
         return $this->belongsTo(CategoryItem::class, 'id_category_item');
     }
 
+    public function finishGoodItem()
+    {
+        return $this->hasMany(FinishGoodItem::class, 'id_type_item');
+    }
+
 }
