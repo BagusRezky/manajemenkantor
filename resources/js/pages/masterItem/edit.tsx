@@ -8,10 +8,8 @@ import { BreadcrumbItem } from '@/types';
 import { CategoryItem } from '@/types/categoryItem';
 import { MasterItem } from '@/types/masterItem';
 import { TypeItem } from '@/types/typeItem';
-
 import { Unit } from '@/types/unit';
 import { Head, Link, useForm } from '@inertiajs/react';
-
 import React, { useEffect, useState } from 'react';
 import { Toaster, toast } from 'sonner';
 

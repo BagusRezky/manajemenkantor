@@ -40,6 +40,9 @@ class CustomerAddressController extends Controller
             'alamat_ketiga' => 'nullable|string',
         ]);
 
+        $validated['kode_customer'] = strtoupper($validated['kode_customer']);
+        $validated['nama_customer'] = strtoupper($validated['nama_customer']);
+
         customerAddress::create($validated);
         return redirect()->back()->with('success', 'Customer Address added successfully!');
     }
@@ -73,6 +76,9 @@ class CustomerAddressController extends Controller
             'alamat_kedua' => 'nullable|string',
             'alamat_ketiga' => 'nullable|string',
         ]);
+
+        $validated['kode_customer'] = strtoupper($validated['kode_customer']);
+        $validated['nama_customer'] = strtoupper($validated['nama_customer']);
 
         $customerAddress->update($validated);
         return redirect()->back()->with('success', 'Customer Address updated successfully!');

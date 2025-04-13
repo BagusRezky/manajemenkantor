@@ -48,11 +48,6 @@ export const columns = (setSelectedItem: (item: FinishGoodItem | null) => void, 
         accessorKey: 'nama_barang',
         header: 'Nama Barang',
     },
-    // {
-    //     accessorKey: 'category_item.nama_category_item',
-    //     header: 'Kategori',
-    //     cell: ({ row }) => row.original.category_item?.nama_category_item || '-',
-    // },
 
     {
         id: 'actions',

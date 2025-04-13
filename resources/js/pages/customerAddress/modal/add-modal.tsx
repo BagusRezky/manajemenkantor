@@ -21,9 +21,13 @@ export function CustomerAddressFormModal() {
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+
+        const upperCaseFields = ['kode_customer', 'nama_customer'];
+        const newValue = upperCaseFields.includes(name) ? value.toUpperCase() : value;
+
         setFormData((prev) => ({
             ...prev,
-            [name]: value,
+            [name]: newValue,
         }));
     };
 
