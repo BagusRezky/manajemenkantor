@@ -10,6 +10,7 @@ use App\Http\Controllers\UnitController;
 use App\Http\Controllers\MasterItemController;
 use App\Http\Controllers\FinishGoodItemController;
 use App\Http\Controllers\SalesOrderController;
+use App\Http\Controllers\KartuInstruksiKerjaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -78,6 +79,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/salesOrders/{id}/edit', [SalesOrderController::class, 'edit'])->name('salesOrders.edit');
     Route::put('/salesOrders/{id}', [SalesOrderController::class, 'update'])->name('salesOrders.update');
     Route::delete('/salesOrders/{id}', [SalesOrderController::class, 'destroy'])->name('salesOrders.destroy');
+
+     // Routes untuk Kartu Instruksi Kerja
+    Route::get('/kartuInstruksiKerja', [KartuInstruksiKerjaController::class, 'index'])->name('kartuInstruksiKerja.index');
+    Route::get('/kartuInstruksiKerja/create', [KartuInstruksiKerjaController::class, 'create'])->name('kartuInstruksiKerja.create');
+    Route::post('/kartuInstruksiKerja', [KartuInstruksiKerjaController::class, 'store'])->name('kartuInstruksiKerja.store');
+    Route::get('/kartuInstruksiKerja/{id}/edit', [KartuInstruksiKerjaController::class, 'edit'])->name('kartuInstruksiKerja.edit');
+    Route::put('/kartuInstruksiKerja/{id}', [KartuInstruksiKerjaController::class, 'update'])->name('kartuInstruksiKerja.update');
+    Route::delete('/kartuInstruksiKerja/{id}', [KartuInstruksiKerjaController::class, 'destroy'])->name('kartuInstruksiKerja.destroy');
+    Route::get('/kartuInstruksiKerja/{id}', [KartuInstruksiKerjaController::class, 'show'])->name('kartuInstruksiKerja.show');
+    Route::get('/salesOrderData/{id}', [KartuInstruksiKerjaController::class, 'getSalesOrderData'])->name('salesOrderData.show');
 });
 
 

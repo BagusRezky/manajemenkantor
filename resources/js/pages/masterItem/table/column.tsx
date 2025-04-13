@@ -51,7 +51,7 @@ export const columns = (setSelectedItem: (item: MasterItem | null) => void, open
     },
     {
         accessorKey: 'type_item.nama_type_item',
-        header: 'Tipe',
+        header: 'Item',
         cell: ({ row }) => row.original.type_item?.nama_type_item || '-',
     },
     {

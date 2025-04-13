@@ -136,7 +136,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label htmlFor="id_type_item">Tipe Item</Label>
+                                            <Label htmlFor="id_type_item">Item</Label>
                                             <Select
                                                 value={data.id_type_item}
                                                 onValueChange={(value) => setData('id_type_item', value)}

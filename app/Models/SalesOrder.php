@@ -57,4 +57,9 @@ class SalesOrder extends Model
     {
         return $this->belongsTo(CustomerAddress::class, 'id_customer_address');
     }
+
+    public function kartuInstruksiKerja()
+    {
+        return $this->hasOne(KartuInstruksiKerja::class, 'id_sales_order');
+    }
 }

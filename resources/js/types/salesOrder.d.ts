@@ -19,6 +19,7 @@ export interface SalesOrder {
     toleransi_pengiriman: string;
     catatan_colour_range: string;
     catatan: string;
-    customer_address?:CustomerAddress;
-    finish_good_item?:FinishGoodItem;
+    customer_address?: CustomerAddress;
+    finish_good_item?: FinishGoodItem;
+    kartu_instruksi_kerja?: KartuInstruksiKerja;
 }
