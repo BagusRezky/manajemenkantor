@@ -64,7 +64,7 @@ export const columns = (setSelectedItem: (item: FinishGoodItem | null) => void, 
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleDelete(item.id)}>Archive</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDelete(item.id)}>Cut Off</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.get(`/finishGoodItems/${item.id}/edit`)}>Edit</DropdownMenuItem>
                         <DropdownMenuSeparator />
