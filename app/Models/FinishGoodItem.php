@@ -46,4 +46,8 @@ class FinishGoodItem extends Model
     {
         return $this->belongsTo(Unit::class, 'satuan_satu_id');
     }
+    public function salesOrder()
+    {
+        return $this->hasMany(SalesOrder::class, 'id_finish_good_item');
+    }
 }

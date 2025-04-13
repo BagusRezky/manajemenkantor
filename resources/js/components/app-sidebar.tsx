@@ -31,6 +31,11 @@ export const dropdownNavItems: NavItemWithChildren[] = [
                 icon: BaggageClaim,
                 href: '/customerAddresses',
             },
+            {
+                title: 'Sales Order',
+                icon: BaggageClaim,
+                href: '/salesOrders',
+            },
         ],
     },
     {

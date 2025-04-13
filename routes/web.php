@@ -9,6 +9,7 @@ use App\Http\Controllers\TypeItemController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\MasterItemController;
 use App\Http\Controllers\FinishGoodItemController;
+use App\Http\Controllers\SalesOrderController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -70,6 +71,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/finishGoodItems/cut-off', [FinishGoodItemController::class, 'cutOff'])->name('finishGoodItems.cutOff');
     Route::post('/finishGoodItems/{id}/restore', [FinishGoodItemController::class, 'restore'])->name('finishGoodItems.restore');
     Route::delete('/finishGoodItems/{id}/force-delete', [FinishGoodItemController::class, 'forceDelete'])->name('finishGoodItems.forceDelete');
+
+    Route::get('/salesOrders', [SalesOrderController::class, 'index'])->name('salesOrders.index');
+    Route::get('/salesOrders/create', [SalesOrderController::class, 'create'])->name('salesOrders.create');
+    Route::post('/salesOrders', [SalesOrderController::class, 'store'])->name('salesOrders.store');
+    Route::get('/salesOrders/{id}/edit', [SalesOrderController::class, 'edit'])->name('salesOrders.edit');
+    Route::put('/salesOrders/{id}', [SalesOrderController::class, 'update'])->name('salesOrders.update');
+    Route::delete('/salesOrders/{id}', [SalesOrderController::class, 'destroy'])->name('salesOrders.destroy');
 });
 
 

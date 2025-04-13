@@ -38,4 +38,9 @@ class customerAddress extends Model
     {
         return $this->hasMany(FinishGoodItem::class, 'id_customer_address');
     }
+
+    public function salesOrder()
+    {
+        return $this->hasMany(SalesOrder::class, 'id_customer_address');
+    }
 }
