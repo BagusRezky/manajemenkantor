@@ -4,10 +4,11 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\SoftDeletes;
 
 class FinishGoodItem extends Model
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'id_customer_address',
@@ -30,6 +31,8 @@ class FinishGoodItem extends Model
         'berat_kotor',
         'berat_bersih'
     ];
+
+    protected $dates = ['deleted_at'];
 
     public function typeItem()
     {

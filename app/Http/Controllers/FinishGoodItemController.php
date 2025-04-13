@@ -140,4 +140,29 @@ class FinishGoodItemController extends Controller
 
         return redirect()->route('finishGoodItems.index')->with('success', 'Finish Good Item deleted successfully.');
     }
+
+    public function cutOff()
+    {
+        $cutOff = FinishGoodItem::onlyTrashed()->with(['unit', 'customerAddress', 'typeItem'])->get();
+
+        return Inertia::render('finishGoodItem/cut-off', [
+            'cutOff' => $cutOff,
+        ]);
+    }
+
+    public function restore($id)
+    {
+        $finishGoodItem = FinishGoodItem::withTrashed()->findOrFail($id);
+        $finishGoodItem->restore();
+
+        return redirect()->route('finishGoodItems.cutOff')->with('success', 'Finish Good Item restored successfully.');
+    }
+
+    public function forceDelete($id)
+    {
+        $finishGoodItem = FinishGoodItem::withTrashed()->findOrFail($id);
+        $finishGoodItem->forceDelete();
+
+        return redirect()->route('finishGoodItems.cutOff')->with('success', 'Finish Good Item permanently deleted.');
+    }
 }

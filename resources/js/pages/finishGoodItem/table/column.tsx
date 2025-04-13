@@ -11,10 +11,10 @@ import { toast } from "sonner";
 const handleDelete = (item: string) => {
     router.delete(`/finishGoodItems/${item}`, {
         onSuccess: () => {
-            toast.success('Finish Good Item deleted successfully');
+            toast.success('Finish Good Item archived successfully');
         },
         onError: () => {
-            toast.error('Failed to delete Finish Good Item');
+            toast.error('Failed to archive Finish Good Item');
         },
     });
 };
@@ -64,7 +64,7 @@ export const columns = (setSelectedItem: (item: FinishGoodItem | null) => void, 
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDelete(item.id)}>Archive</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.get(`/finishGoodItems/${item.id}/edit`)}>Edit</DropdownMenuItem>
                         <DropdownMenuSeparator />

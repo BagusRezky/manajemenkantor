@@ -9,7 +9,6 @@ use App\Http\Controllers\TypeItemController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\MasterItemController;
 use App\Http\Controllers\FinishGoodItemController;
-
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -68,6 +67,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/finishGoodItems/{id}/edit', [FinishGoodItemController::class, 'edit'])->name('finishGoodItems.edit');
     Route::put('/finishGoodItems/{id}', [FinishGoodItemController::class, 'update'])->name('finishGoodItems.update');
     Route::delete('/finishGoodItems/{id}', [FinishGoodItemController::class, 'destroy'])->name('finishGoodItems.destroy');
+    Route::get('/finishGoodItems/cut-off', [FinishGoodItemController::class, 'cutOff'])->name('finishGoodItems.cutOff');
+    Route::post('/finishGoodItems/{id}/restore', [FinishGoodItemController::class, 'restore'])->name('finishGoodItems.restore');
+    Route::delete('/finishGoodItems/{id}/force-delete', [FinishGoodItemController::class, 'forceDelete'])->name('finishGoodItems.forceDelete');
 });
 
 

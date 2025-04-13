@@ -23,6 +23,7 @@ export interface FinishGoodItem {
     tinggi: string;
     berat_kotor: string;
     berat_bersih: string;
+    deleted_at: string;
     unit?: Unit;
     customer_address?: CustomerAddress;
     type_item?: TypeItem;

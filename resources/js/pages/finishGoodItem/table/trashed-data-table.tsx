@@ -1,10 +1,18 @@
-import { DataTablePagination } from "@/components/custom-pagination";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Link } from "@inertiajs/react";
-import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
-import React from "react";
+import { DataTablePagination } from '@/components/custom-pagination';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Link } from '@inertiajs/react';
+import {
+    ColumnDef,
+    ColumnFiltersState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    useReactTable,
+} from '@tanstack/react-table';
+import React from 'react';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -33,16 +41,13 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <div>
             <div className="flex items-center justify-between py-4">
                 <Input
-                    placeholder="Cari Kode Item..."
-                    value={(table.getColumn('kode_master_item')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) => table.getColumn('kode_master_item')?.setFilterValue(event.target.value)}
+                    placeholder="Cari Kode Barcode..."
+                    value={(table.getColumn('kode_barcode')?.getFilterValue() as string) ?? ''}
+                    onChange={(event) => table.getColumn('kode_barcode')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
-                <Link href={route('finishGoodItems.cutOff')}>
-                    <Button variant="outline">View Cut Off</Button>
-                </Link>
-                <Link href={route('finishGoodItems.create')}>
-                    <Button>Add New Finish Good Item</Button>
+                <Link href={route('finishGoodItems.index')}>
+                    <Button>Back to Finish Good Items</Button>
                 </Link>
             </div>
             <div className="rounded-md bg-violet-600">
@@ -70,7 +75,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                                    No results.
+                                    No archived items found.
                                 </TableCell>
                             </TableRow>
                         )}
