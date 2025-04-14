@@ -72,8 +72,8 @@ export const columns = (setSelectedItem: (item: SalesOrder | null) => void, open
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => router.get(`/salesOrders/${item.id}/edit`)}>Edit</DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        {/* <DropdownMenuItem onClick={() => router.get(`/salesOrders/${item.id}/edit`)}>Edit</DropdownMenuItem>
+                        <DropdownMenuSeparator /> */}
                         <DropdownMenuItem onClick={() => openDetailModal(item)}>Detail</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

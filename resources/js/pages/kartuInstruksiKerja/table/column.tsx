@@ -84,8 +84,8 @@ export const columns = (
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => router.get(`/kartuInstruksiKerja/${item.id}/edit`)}>Edit</DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        {/* <DropdownMenuItem onClick={() => router.get(`/kartuInstruksiKerja/${item.id}/edit`)}>Edit</DropdownMenuItem>
+                        <DropdownMenuSeparator /> */}
                         <DropdownMenuItem onClick={() => openDetailModal(item)}>Detail</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
