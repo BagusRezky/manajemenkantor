@@ -1,8 +1,8 @@
+import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { CategoryItem } from '@/types/categoryItem';
@@ -103,24 +103,22 @@ export default function Create({ units, categoryItems }: CreateProps) {
 
                                         <div className="space-y-2">
                                             <Label htmlFor="satuan_satu_id">Satuan</Label>
-                                            <Select value={data.satuan_satu_id} onValueChange={(value) => setData('satuan_satu_id', value)}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Pilih Satuan" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {units.map((unit) => (
-                                                        <SelectItem key={unit.id} value={unit.id.toString()}>
-                                                            {unit.nama_satuan}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                            <SearchableSelect
+                                                items={units.map((item) => ({
+                                                    key: String(item.id),
+                                                    value: String(item.id),
+                                                    label: item.nama_satuan,
+                                                }))}
+                                                value={data.satuan_satu_id || ''} // Add fallback to empty string
+                                                placeholder="Pilih Satuan Dua"
+                                                onChange={(value) => setData('satuan_satu_id', value)}
+                                            />
                                             {errors.satuan_satu_id && <p className="text-sm text-red-500">{errors.satuan_satu_id}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="id_category_item">Kategori Item</Label>
-                                            <Select value={data.id_category_item} onValueChange={handleCategoryChange}>
+                                            {/* <Select value={data.id_category_item} onValueChange={handleCategoryChange}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Pilih Kategori" />
                                                 </SelectTrigger>
@@ -131,13 +129,23 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
-                                            </Select>
+                                            </Select> */}
+                                            <SearchableSelect
+                                                items={categoryItems.map((item) => ({
+                                                    key: String(item.id),
+                                                    value: String(item.id),
+                                                    label: item.nama_category_item,
+                                                }))}
+                                                value={data.id_category_item || ''} // Add fallback to empty string
+                                                placeholder="Pilih Kategori"
+                                                onChange={handleCategoryChange}
+                                            />
                                             {errors.id_category_item && <p className="text-sm text-red-500">{errors.id_category_item}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="id_type_item">Item</Label>
-                                            <Select
+                                            {/* <Select
                                                 value={data.id_type_item}
                                                 onValueChange={(value) => setData('id_type_item', value)}
                                                 disabled={!data.id_category_item}
@@ -152,7 +160,18 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
-                                            </Select>
+                                            </Select> */}
+                                            <SearchableSelect
+                                                items={typeItems.map((item) => ({
+                                                    key: String(item.id),
+                                                    value: String(item.id),
+                                                    label: item.nama_type_item,
+                                                }))}
+                                                value={data.id_type_item || ''} // Add fallback to empty string
+                                                placeholder="Pilih Tipe"
+                                                onChange={(value) => setData('id_type_item', value)}
+                                                disabled={!data.id_category_item}
+                                            />
                                             {errors.id_type_item && <p className="text-sm text-red-500">{errors.id_type_item}</p>}
                                         </div>
                                     </div>

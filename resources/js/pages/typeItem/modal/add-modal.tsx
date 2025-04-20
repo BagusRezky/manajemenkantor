@@ -5,9 +5,9 @@ import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, D
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { TypeItem } from '@/types/typeItem';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { CategoryItem } from '@/types/categoryItem';
 import { toast } from 'sonner';
+import { SearchableSelect } from '@/components/search-select';
 
 
 type TypeItemFormData = Omit<TypeItem, 'id'>;
@@ -106,18 +106,16 @@ export function TypeItemFormModal({ categoryItems }: TypeItemFormModalProps) {
                                 Kategori Item
                             </Label>
                             <div className="col-span-3">
-                                <Select value={formData.id_category_item} onValueChange={(value) => handleSelectChange('id_category_item', value)} required>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Category" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {categoryItems.map((categoryitem) => (
-                                            <SelectItem key={categoryitem.id} value={String(categoryitem.id) } >
-                                                {categoryitem.nama_category_item}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <SearchableSelect
+                                    items={categoryItems.map((item) => ({
+                                        key: String(item.id),
+                                        value: String(item.id),
+                                        label: item.nama_category_item,
+                                    }))}
+                                    value={formData.id_category_item || ''} // Add fallback to empty string
+                                    placeholder="Pilih Kategori"
+                                    onChange={(value) => handleSelectChange('id_category_item', value)}
+                                />
                             </div>
                         </div>
                     </div>

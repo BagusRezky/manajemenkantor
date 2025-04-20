@@ -1,15 +1,14 @@
+import { MasterKonversi } from '@/types/masterKonversi';
+import { TypeItem } from '@/types/typeItem';
+import { Unit } from '@/types/unit';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
-import { MasterKonversi } from '@/types/masterKonversi';
-import { Unit } from '@/types/unit';
-import { TypeItem } from '@/types/typeItem';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { toast } from 'sonner';
-
+import { SearchableSelect } from '@/components/search-select';
 
 type MasterKonversiFormData = Omit<MasterKonversi, 'id'>;
 
@@ -81,18 +80,16 @@ export function MasterKonversiFormModal({ typeItems, units }: MasterKonversiForm
                                 Tipe Barang
                             </Label>
                             <div className="col-span-3">
-                                <Select value={formData.id_type_item} onValueChange={(value) => handleSelectChange('id_type_item', value)}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Tipe Barang" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {typeItems.map((item) => (
-                                            <SelectItem key={item.id} value={String(item.id)}>
-                                                {item.nama_type_item}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <SearchableSelect
+                                    items={typeItems.map((item) => ({
+                                        key: String(item.id),
+                                        value: String(item.id),
+                                        label: item.nama_type_item
+                                    }))}
+                                    value={formData.id_type_item || ''} // Add fallback to empty string
+                                    placeholder="Pilih Tipe Barang"
+                                    onChange={(value) => handleSelectChange('id_type_item', value)}
+                                />
                             </div>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -100,18 +97,16 @@ export function MasterKonversiFormModal({ typeItems, units }: MasterKonversiForm
                                 Satuan Satu
                             </Label>
                             <div className="col-span-3">
-                                <Select value={formData.satuan_satu_id} onValueChange={(value) => handleSelectChange('satuan_satu_id', value)}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Satuan Asal" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {units.map((unit) => (
-                                            <SelectItem key={unit.id} value={String(unit.id)}>
-                                                {unit.nama_satuan}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <SearchableSelect
+                                    items={units.map((item) => ({
+                                        key: String(item.id),
+                                        value: String(item.id),
+                                        label: item.nama_satuan
+                                    }))}
+                                    value={formData.satuan_satu_id || ''} // Add fallback to empty string
+                                    placeholder="Pilih Satuan Satu"
+                                    onChange={(value) => handleSelectChange('satuan_satu_id', value)}
+                                />
                             </div>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
@@ -119,18 +114,16 @@ export function MasterKonversiFormModal({ typeItems, units }: MasterKonversiForm
                                 Satuan Dua
                             </Label>
                             <div className="col-span-3">
-                                <Select value={formData.satuan_dua_id} onValueChange={(value) => handleSelectChange('satuan_dua_id', value)}>
-                                    <SelectTrigger className="w-full">
-                                        <SelectValue placeholder="Pilih Satuan Asal" />
-                                    </SelectTrigger>
-                                    <SelectContent>
-                                        {units.map((unit) => (
-                                            <SelectItem key={unit.id} value={String(unit.id)}>
-                                                {unit.nama_satuan}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectContent>
-                                </Select>
+                                <SearchableSelect
+                                    items={units.map((item) => ({
+                                        key: String(item.id),
+                                        value: String(item.id),
+                                        label: item.nama_satuan
+                                    }))}
+                                    value={formData.satuan_dua_id || ''} // Add fallback to empty string
+                                    placeholder="Pilih Satuan Dua"
+                                    onChange={(value) => handleSelectChange('satuan_dua_id', value)}
+                                />
                             </div>
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">

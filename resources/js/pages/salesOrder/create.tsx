@@ -25,13 +25,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface CreateProps {
     finishGoodItems: FinishGoodItem[];
     customerAddresses: CustomerAddress[];
+    lastSequentialNumber?: number;
 }
 
-export default function Create({ finishGoodItems, customerAddresses }: CreateProps) {
+export default function Create({ finishGoodItems, customerAddresses, lastSequentialNumber = 0 }: CreateProps) {
     const { data, setData, post, processing, errors } = useForm({
         id_finish_good_item: '',
         id_customer_address: '',
-        no_bon_pesanan: '',
+        custom_part: 'XX-XXX',
         no_po_customer: '',
         jumlah_pesanan: '',
         harga_pcs_bp: '',
@@ -50,7 +51,7 @@ export default function Create({ finishGoodItems, customerAddresses }: CreatePro
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
 
-        const upperCaseFields = ['no_bon_pesanan'];
+        const upperCaseFields = ['custom_part'];
 
         const newValue = upperCaseFields.includes(name) ? value.toUpperCase() : value;
         setData((prev) => ({
@@ -58,6 +59,10 @@ export default function Create({ finishGoodItems, customerAddresses }: CreatePro
             [name]: newValue,
         }));
     };
+
+    const currentDate = new Date();
+    const monthYear = `${(currentDate.getMonth() + 1).toString().padStart(2, '0')}${currentDate.getFullYear().toString().slice(-2)}`;
+    const nextSequentialNumber = String(lastSequentialNumber + 1).padStart(3, '0');
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -120,9 +125,26 @@ export default function Create({ finishGoodItems, customerAddresses }: CreatePro
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label htmlFor="no_bon_pesanan">No. Bon Pesanan</Label>
-                                            <Input id="no_bon_pesanan" name="no_bon_pesanan" value={data.no_bon_pesanan} onChange={handleChange} />
-                                            {errors.no_bon_pesanan && <p className="text-sm text-red-500">{errors.no_bon_pesanan}</p>}
+                                            <Label htmlFor="custom_part">No. Sales Order</Label>
+                                            <div className="flex flex-col space-y-2">
+                                                <div className="bg-popover flex items-center rounded-md border p-1 shadow-lg">
+                                                    <span className="text-gray-500">{nextSequentialNumber}</span>
+                                                    <span className="text-gray-500">/</span>
+                                                    <span className="text-gray-500">00</span>
+                                                    <span className="text-gray-500">/</span>
+                                                    <Input
+                                                        id="custom_part"
+                                                        name="custom_part"
+                                                        value={data.custom_part}
+                                                        onChange={handleChange}
+                                                        className="mx-1 w-24 border-none bg-transparent focus:ring-0"
+                                                    />
+                                                    <span className="text-gray-500">/</span>
+                                                    <span className="text-gray-500">{monthYear}</span>
+                                                </div>
+
+                                            </div>
+                                            {errors.custom_part && <p className="text-sm text-red-500">{errors.custom_part}</p>}
                                         </div>
 
                                         <div className="space-y-2">
@@ -182,7 +204,6 @@ export default function Create({ finishGoodItems, customerAddresses }: CreatePro
                                             <Input
                                                 id="eta_marketing"
                                                 type="date"
-                                                
                                                 value={data.eta_marketing}
                                                 onChange={(e) => setData('eta_marketing', e.target.value)}
                                             />
