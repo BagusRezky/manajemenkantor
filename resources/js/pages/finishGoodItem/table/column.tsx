@@ -37,7 +37,7 @@ export const columns = (setSelectedItem: (item: FinishGoodItem | null) => void, 
     },
     {
         accessorKey: 'kode_barcode',
-        header: 'Kode Barang',
+        header: 'Kode Barcode',
     },
     {
         accessorKey: 'kode_material_produk',

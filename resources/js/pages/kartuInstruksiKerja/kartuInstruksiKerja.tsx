@@ -11,7 +11,7 @@ import { DetailModal } from './modal/detail-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Kartu Instruksi Kerja',
+        title: 'Surat Perintah Kerja',
         href: '/kartuInstruksiKerja',
     },
 ];
@@ -36,7 +36,7 @@ export default function Index({ kartuInstruksiKerja }: IndexProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Kartu Instruksi Kerja" />
+            <Head title="Surat Perintah Kerja" />
             <div className="mx-5 py-5">
                 <DataTable columns={columns(setSelectedItem, openDetailModal)} data={data} />
             </div>

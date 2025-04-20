@@ -94,7 +94,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         icon: Users,
         children: [
             {
-                title: 'Kartu Instruksi Kerja',
+                title: 'Surat Perintah Kerja',
                 icon: Users,
                 href: '/kartuInstruksiKerja',
             },

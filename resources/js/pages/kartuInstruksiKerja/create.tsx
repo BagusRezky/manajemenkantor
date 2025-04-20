@@ -1,19 +1,19 @@
+import { DatePicker } from '@/components/date-picker';
+import { SearchableSelect } from '@/components/search-select';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { SalesOrder } from '@/types/salesOrder';
 import { Head, useForm } from '@inertiajs/react';
-import {  useState } from 'react';
+import { useState } from 'react';
 import { toast, Toaster } from 'sonner';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
-import { Input } from '@/components/ui/input';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Kartu Instruksi Kerja',
+        title: 'Surat Perintah Kerja',
         href: '/kartuInstruksiKerja',
     },
     {
@@ -123,52 +123,40 @@ export default function Create({ salesOrders }: CreateProps) {
 
                                         {/* Sales Order */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="id_sales_order">No. Bon Pesanan</Label>
-                                            <Select value={data.id_sales_order} onValueChange={handleSalesOrderChange}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Pilih No. Bon Pesanan" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {salesOrders.map((salesOrder) => (
-                                                        <SelectItem key={salesOrder.id} value={salesOrder.id.toString()}>
-                                                            {salesOrder.no_bon_pesanan}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                            {errors.id_sales_order && (
-                                                <p className="text-sm text-red-500">{errors.id_sales_order}</p>
-                                            )}
+                                            <Label htmlFor="id_sales_order">No. Sales Order</Label>
+
+                                            <SearchableSelect
+                                                items={salesOrders.map((item) => ({
+                                                    key: String(item.id),
+                                                    value: String(item.id),
+                                                    label: item.no_bon_pesanan,
+                                                }))}
+                                                value={data.id_sales_order || ''} // Add fallback to empty string
+                                                placeholder="Pilih No. Sales Order"
+                                                onChange={(value) => handleSalesOrderChange(value)}
+                                            />
+                                            {errors.id_sales_order && <p className="text-sm text-red-500">{errors.id_sales_order}</p>}
                                         </div>
 
                                         {/* Production Plan */}
                                         <div className="space-y-2">
                                             <Label htmlFor="production_plan">Production Plan</Label>
-                                            <Input
-                                                id="production_plan"
-                                                name="production_plan"
-                                                value={data.production_plan}
-                                                onChange={handleChange}
-                                            />
-                                            {errors.production_plan && (
-                                                <p className="text-sm text-red-500">{errors.production_plan}</p>
-                                            )}
+                                            <Input id="production_plan" name="production_plan" value={data.production_plan} onChange={handleChange} />
+                                            {errors.production_plan && <p className="text-sm text-red-500">{errors.production_plan}</p>}
                                         </div>
 
                                         {/* Tanggal Estimasi Selesai */}
                                         <div className="space-y-2">
                                             <Label htmlFor="tgl_estimasi_selesai">Tanggal Estimasi Selesai</Label>
-                                            <Input
-                                                id="tgl_estimasi_selesai"
-                                                name="tgl_estimasi_selesai"
-                                                type="date"
-                                                value={data.tgl_estimasi_selesai}
-                                                onChange={handleChange}
 
+                                            <DatePicker
+                                                id="tgl_estimasi_selesai"
+                                                value={data.tgl_estimasi_selesai}
+                                                onChange={(date) => {
+                                                    setData('tgl_estimasi_selesai', date.target.value || '');
+                                                }}
                                             />
-                                            {errors.tgl_estimasi_selesai && (
-                                                <p className="text-sm text-red-500">{errors.tgl_estimasi_selesai}</p>
-                                            )}
+                                            {errors.tgl_estimasi_selesai && <p className="text-sm text-red-500">{errors.tgl_estimasi_selesai}</p>}
                                         </div>
 
                                         {/* Spesifikasi Kertas */}
@@ -180,82 +168,42 @@ export default function Create({ salesOrders }: CreateProps) {
                                                 value={data.spesifikasi_kertas}
                                                 onChange={handleChange}
                                             />
-                                            {errors.spesifikasi_kertas && (
-                                                <p className="text-sm text-red-500">{errors.spesifikasi_kertas}</p>
-                                            )}
+                                            {errors.spesifikasi_kertas && <p className="text-sm text-red-500">{errors.spesifikasi_kertas}</p>}
                                         </div>
 
                                         {/* Up Satu */}
                                         <div className="space-y-2">
                                             <Label htmlFor="up_satu">Up Satu</Label>
-                                            <Input
-                                                id="up_satu"
-                                                name="up_satu"
-                                                type="number"
-                                                value={data.up_satu}
-                                                onChange={handleChange}
-                                            />
-                                            {errors.up_satu && (
-                                                <p className="text-sm text-red-500">{errors.up_satu}</p>
-                                            )}
+                                            <Input id="up_satu" name="up_satu" type="number" value={data.up_satu} onChange={handleChange} />
+                                            {errors.up_satu && <p className="text-sm text-red-500">{errors.up_satu}</p>}
                                         </div>
 
                                         {/* Up Dua */}
                                         <div className="space-y-2">
                                             <Label htmlFor="up_dua">Up Dua</Label>
-                                            <Input
-                                                id="up_dua"
-                                                name="up_dua"
-                                                type="number"
-                                                value={data.up_dua}
-                                                onChange={handleChange}
-                                            />
-                                            {errors.up_dua && (
-                                                <p className="text-sm text-red-500">{errors.up_dua}</p>
-                                            )}
+                                            <Input id="up_dua" name="up_dua" type="number" value={data.up_dua} onChange={handleChange} />
+                                            {errors.up_dua && <p className="text-sm text-red-500">{errors.up_dua}</p>}
                                         </div>
 
                                         {/* Up Tiga */}
                                         <div className="space-y-2">
                                             <Label htmlFor="up_tiga">Up Tiga</Label>
-                                            <Input
-                                                id="up_tiga"
-                                                name="up_tiga"
-                                                type="number"
-                                                value={data.up_tiga}
-                                                onChange={handleChange}
-                                            />
-                                            {errors.up_tiga && (
-                                                <p className="text-sm text-red-500">{errors.up_tiga}</p>
-                                            )}
+                                            <Input id="up_tiga" name="up_tiga" type="number" value={data.up_tiga} onChange={handleChange} />
+                                            {errors.up_tiga && <p className="text-sm text-red-500">{errors.up_tiga}</p>}
                                         </div>
 
                                         {/* Ukuran Potong */}
                                         <div className="space-y-2">
                                             <Label htmlFor="ukuran_potong">Ukuran Potong</Label>
-                                            <Input
-                                                id="ukuran_potong"
-                                                name="ukuran_potong"
-                                                value={data.ukuran_potong}
-                                                onChange={handleChange}
-                                            />
-                                            {errors.ukuran_potong && (
-                                                <p className="text-sm text-red-500">{errors.ukuran_potong}</p>
-                                            )}
+                                            <Input id="ukuran_potong" name="ukuran_potong" value={data.ukuran_potong} onChange={handleChange} />
+                                            {errors.ukuran_potong && <p className="text-sm text-red-500">{errors.ukuran_potong}</p>}
                                         </div>
 
                                         {/* Ukuran Cetak */}
                                         <div className="space-y-2">
                                             <Label htmlFor="ukuran_cetak">Ukuran Cetak</Label>
-                                            <Input
-                                                id="ukuran_cetak"
-                                                name="ukuran_cetak"
-                                                value={data.ukuran_cetak}
-                                                onChange={handleChange}
-                                            />
-                                            {errors.ukuran_cetak && (
-                                                <p className="text-sm text-red-500">{errors.ukuran_cetak}</p>
-                                            )}
+                                            <Input id="ukuran_cetak" name="ukuran_cetak" value={data.ukuran_cetak} onChange={handleChange} />
+                                            {errors.ukuran_cetak && <p className="text-sm text-red-500">{errors.ukuran_cetak}</p>}
                                         </div>
                                     </div>
 

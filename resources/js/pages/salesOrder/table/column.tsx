@@ -38,7 +38,7 @@ export const columns = (setSelectedItem: (item: SalesOrder | null) => void, open
     },
     {
         accessorKey: 'no_bon_pesanan',
-        header: 'No. Bon Pesanan',
+        header: 'No. Sales Order',
     },
     {
         accessorKey: 'customer_address.nama_customer',

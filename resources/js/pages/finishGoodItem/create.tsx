@@ -1,8 +1,8 @@
+import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { CustomerAddress } from '@/types/customerAddress';
@@ -92,35 +92,31 @@ export default function Create({ units, customerAddresses, typeItems }: CreatePr
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                         <div className="space-y-2">
                                             <Label htmlFor="id_customer_address">Customer</Label>
-                                            <Select value={data.id_customer_address} onValueChange={(value) => setData('id_customer_address', value)}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Pilih Customer" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {customerAddresses.map((customerAddress) => (
-                                                        <SelectItem key={customerAddress.id} value={customerAddress.id.toString()}>
-                                                            {customerAddress.nama_customer}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                            <SearchableSelect
+                                                items={customerAddresses.map((item) => ({
+                                                    key: String(item.id),
+                                                    value: String(item.id),
+                                                    label: item.nama_customer,
+                                                }))}
+                                                value={data.id_customer_address || ''} // Add fallback to empty string
+                                                placeholder="Pilih Customer"
+                                                onChange={(value) => setData('id_customer_address', value)}
+                                            />
                                             {errors.id_customer_address && <p className="text-sm text-red-500">{errors.id_customer_address}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="id_type_item">Type Item</Label>
-                                            <Select value={data.id_type_item} onValueChange={(value) => setData('id_type_item', value)}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Pilih Type Item" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {typeItems.map((typeItem) => (
-                                                        <SelectItem key={typeItem.id} value={typeItem.id.toString()}>
-                                                            {typeItem.nama_type_item}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                            <SearchableSelect
+                                                items={typeItems.map((item) => ({
+                                                    key: String(item.id),
+                                                    value: String(item.id),
+                                                    label: item.nama_type_item,
+                                                }))}
+                                                value={data.id_type_item || ''} // Add fallback to empty string
+                                                placeholder="Pilih Type Item"
+                                                onChange={(value) => setData('id_type_item', value)}
+                                            />
                                             {errors.id_type_item && <p className="text-sm text-red-500">{errors.id_type_item}</p>}
                                         </div>
 
@@ -273,18 +269,16 @@ export default function Create({ units, customerAddresses, typeItems }: CreatePr
 
                                         <div className="space-y-2">
                                             <Label htmlFor="id_type_item">Satuan</Label>
-                                            <Select value={data.satuan_satu_id} onValueChange={(value) => setData('satuan_satu_id', value)}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Pilih Satuan" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {units.map((unit) => (
-                                                        <SelectItem key={unit.id} value={unit.id.toString()}>
-                                                            {unit.nama_satuan}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                            <SearchableSelect
+                                                items={units.map((item) => ({
+                                                    key: String(item.id),
+                                                    value: String(item.id),
+                                                    label: item.nama_satuan,
+                                                }))}
+                                                value={data.satuan_satu_id || ''} // Add fallback to empty string
+                                                placeholder="Pilih Satuan"
+                                                onChange={(value) => setData('satuan_satu_id', value)}
+                                            />
                                             {errors.satuan_satu_id && <p className="text-sm text-red-500">{errors.satuan_satu_id}</p>}
                                         </div>
                                     </div>

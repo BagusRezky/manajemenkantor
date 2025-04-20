@@ -1,8 +1,10 @@
+import { DatePicker } from '@/components/date-picker';
+import { SearchableSelect } from '@/components/search-select';
+import { SelectInput } from '@/components/select-input';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { CustomerAddress } from '@/types/customerAddress';
@@ -76,6 +78,16 @@ export default function Create({ finishGoodItems, customerAddresses, lastSequent
         });
     };
 
+    const pesanViaOptions = [
+        { value: 'WA', label: 'WhatsApp' },
+        { value: 'EMAIL', label: 'Email' },
+        { value: 'SOSMED', label: 'Sosmed' },
+    ];
+
+    const claimPaperOptions = [
+        { value: 'CLAIM', label: 'Claim' },
+        { value: 'NOT CLAIM', label: 'Not Claim' },
+    ];
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Create Sales Order" />
@@ -91,7 +103,7 @@ export default function Create({ finishGoodItems, customerAddresses, lastSequent
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                         <div className="space-y-2">
                                             <Label htmlFor="id_finish_good_item">Master Barang</Label>
-                                            <Select value={data.id_finish_good_item} onValueChange={(value) => setData('id_finish_good_item', value)}>
+                                            {/* <Select value={data.id_finish_good_item} onValueChange={(value) => setData('id_finish_good_item', value)}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Pilih Master Barang" />
                                                 </SelectTrigger>
@@ -103,24 +115,32 @@ export default function Create({ finishGoodItems, customerAddresses, lastSequent
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
-                                            </Select>
+                                            </Select> */}
+                                            <SearchableSelect
+                                                items={finishGoodItems.map((item) => ({
+                                                    key: String(item.id),
+                                                    value: String(item.id),
+                                                    label: item.nama_barang,
+                                                }))}
+                                                value={data.id_finish_good_item || ''} // Add fallback to empty string
+                                                placeholder="Pilih Master Barang"
+                                                onChange={(value) => setData('id_finish_good_item', value)}
+                                            />
                                             {errors.id_finish_good_item && <p className="text-sm text-red-500">{errors.id_finish_good_item}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="id_customer_address">Customer</Label>
-                                            <Select value={data.id_customer_address} onValueChange={(value) => setData('id_customer_address', value)}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Pilih Customer" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {customerAddresses.map((customerAddress) => (
-                                                        <SelectItem key={customerAddress.id} value={customerAddress.id.toString()}>
-                                                            {customerAddress.nama_customer}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                            <SearchableSelect
+                                                items={customerAddresses.map((item) => ({
+                                                    key: String(item.id),
+                                                    value: String(item.id),
+                                                    label: item.nama_customer,
+                                                }))}
+                                                value={data.id_customer_address || ''} // Add fallback to empty string
+                                                placeholder="Pilih Customer"
+                                                onChange={(value) => setData('id_customer_address', value)}
+                                            />
                                             {errors.id_customer_address && <p className="text-sm text-red-500">{errors.id_customer_address}</p>}
                                         </div>
 
@@ -142,7 +162,6 @@ export default function Create({ finishGoodItems, customerAddresses, lastSequent
                                                     <span className="text-gray-500">/</span>
                                                     <span className="text-gray-500">{monthYear}</span>
                                                 </div>
-
                                             </div>
                                             {errors.custom_part && <p className="text-sm text-red-500">{errors.custom_part}</p>}
                                         </div>
@@ -201,31 +220,34 @@ export default function Create({ finishGoodItems, customerAddresses, lastSequent
 
                                         <div className="space-y-2">
                                             <Label htmlFor="eta_marketing">ETA Marketing</Label>
-                                            <Input
+                                            <DatePicker
                                                 id="eta_marketing"
-                                                type="date"
                                                 value={data.eta_marketing}
-                                                onChange={(e) => setData('eta_marketing', e.target.value)}
+                                                onChange={(e) => setData('eta_marketing', e.target.value ? e.target.value : '')}
                                             />
                                             {errors.eta_marketing && <p className="text-sm text-red-500">{errors.eta_marketing}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="klaim_kertas">Klaim Kertas</Label>
-                                            <Input
+                                            <SelectInput
                                                 id="klaim_kertas"
                                                 value={data.klaim_kertas}
-                                                onChange={(e) => setData('klaim_kertas', e.target.value)}
+                                                onChange={(value) => setData('klaim_kertas', value)}
+                                                options={claimPaperOptions}
+                                                placeholder="Pilih klaim kertas"
                                             />
                                             {errors.klaim_kertas && <p className="text-sm text-red-500">{errors.klaim_kertas}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="dipesan_via">Dipesan Via</Label>
-                                            <Input
+                                            <SelectInput
                                                 id="dipesan_via"
                                                 value={data.dipesan_via}
-                                                onChange={(e) => setData('dipesan_via', e.target.value)}
+                                                onChange={(value) => setData('dipesan_via', value)}
+                                                options={pesanViaOptions}
+                                                placeholder="Pilih media pemesanan"
                                             />
                                             {errors.dipesan_via && <p className="text-sm text-red-500">{errors.dipesan_via}</p>}
                                         </div>

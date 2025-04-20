@@ -46,11 +46,11 @@ export const columns = (
     },
     {
         accessorKey: 'no_kartu_instruksi_kerja',
-        header: 'No. Kartu Instruksi',
+        header: 'No. Surat Perintah Kerja',
     },
     {
         accessorKey: 'sales_order.no_bon_pesanan',
-        header: 'No. Bon Pesanan',
+        header: 'No. Sales Order',
         cell: ({ row }) => row.original.sales_order?.no_bon_pesanan || '-',
     },
     {
@@ -60,7 +60,18 @@ export const columns = (
     {
         accessorKey: 'tgl_estimasi_selesai',
         header: 'Tanggal Estimasi Selesai',
-        cell: ({ row }) => (row.original.tgl_estimasi_selesai),
+        cell: ({ row }) => {
+            const date = row.original.tgl_estimasi_selesai;
+            if (!date) return '-';
+
+            // Assuming date is in a compatible format
+            try {
+                const formattedDate = new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD format
+                return formattedDate;
+            } catch {
+                return date; // Return original if formatting fails
+            }
+        },
     },
     {
         accessorKey: 'sales_order.finish_good_item.nama_barang',

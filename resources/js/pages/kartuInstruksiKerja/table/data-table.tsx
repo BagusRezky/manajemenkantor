@@ -41,13 +41,13 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <div>
             <div className="flex items-center justify-between py-4">
                 <Input
-                    placeholder="Cari No Kartu Instruksi..."
+                    placeholder="Cari No Surat Perintah Kerja..."
                     value={(table.getColumn('no_kartu_instruksi_kerja')?.getFilterValue() as string) ?? ''}
                     onChange={(event) => table.getColumn('no_kartu_instruksi_kerja')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
                 <Link href={route('kartuInstruksiKerja.create')}>
-                    <Button>Tambah Kartu Instruksi Kerja</Button>
+                    <Button>Tambah Perintah Kerja</Button>
                 </Link>
             </div>
             <div className="rounded-md bg-violet-600">
