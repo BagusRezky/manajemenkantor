@@ -73,7 +73,7 @@ class MasterItemController extends Controller
         $categoryName = strtolower($category->nama_category_item);
 
         // If the category is not production or finish good item, set the dimension fields to null
-        if (!in_array($categoryName, ['material production', 'finish good'])) {
+        if (!in_array($categoryName, ['material production'])) {
             $request->merge([
                 'qty' => null,
                 'panjang' => null,
@@ -145,7 +145,7 @@ class MasterItemController extends Controller
         $categoryName = strtolower($category->nama_category_item);
 
         // If the category is not production or finish good item, set the dimension fields to null
-        if (!in_array($categoryName, ['material production', 'finish good'])) {
+        if (!in_array($categoryName, ['material production'])) {
             $request->merge([
                 'qty' => null,
                 'panjang' => null,

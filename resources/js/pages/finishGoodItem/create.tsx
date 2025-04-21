@@ -108,11 +108,13 @@ export default function Create({ units, customerAddresses, typeItems }: CreatePr
                                         <div className="space-y-2">
                                             <Label htmlFor="id_type_item">Type Item</Label>
                                             <SearchableSelect
-                                                items={typeItems.map((item) => ({
-                                                    key: String(item.id),
-                                                    value: String(item.id),
-                                                    label: item.nama_type_item,
-                                                }))}
+                                                items={typeItems
+                                                    .filter((item) => item.nama_type_item === 'BARANG JADI')
+                                                    .map((item) => ({
+                                                        key: String(item.id),
+                                                        value: String(item.id),
+                                                        label: item.nama_type_item || 'Barang Jadi',
+                                                    }))}
                                                 value={data.id_type_item || ''} // Add fallback to empty string
                                                 placeholder="Pilih Type Item"
                                                 onChange={(value) => setData('id_type_item', value)}

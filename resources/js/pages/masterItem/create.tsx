@@ -60,10 +60,10 @@ export default function Create({ units, categoryItems }: CreateProps) {
             toast.error('Failed to fetch type items');
         }
 
-        // Cek apakah category yang dipilih adalah production atau finish good item
+        // Cek apakah category yang dipilih adalah production 
         const selectedCategory = categoryItems.find((cat) => cat.id.toString() === value);
         const categoryName = selectedCategory?.nama_category_item.toLowerCase();
-        setShowDimensions(['material production', 'finish good'].includes(categoryName || ''));
+        setShowDimensions(['material production'].includes(categoryName || ''));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
@@ -118,18 +118,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
 
                                         <div className="space-y-2">
                                             <Label htmlFor="id_category_item">Kategori Item</Label>
-                                            {/* <Select value={data.id_category_item} onValueChange={handleCategoryChange}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Pilih Kategori" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {categoryItems.map((category) => (
-                                                        <SelectItem key={category.id} value={category.id.toString()}>
-                                                            {category.nama_category_item}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select> */}
+
                                             <SearchableSelect
                                                 items={categoryItems.map((item) => ({
                                                     key: String(item.id),
@@ -145,22 +134,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
 
                                         <div className="space-y-2">
                                             <Label htmlFor="id_type_item">Item</Label>
-                                            {/* <Select
-                                                value={data.id_type_item}
-                                                onValueChange={(value) => setData('id_type_item', value)}
-                                                disabled={!data.id_category_item}
-                                            >
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Pilih Tipe" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {typeItems.map((type) => (
-                                                        <SelectItem key={type.id} value={type.id.toString()}>
-                                                            {type.nama_type_item}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select> */}
+
                                             <SearchableSelect
                                                 items={typeItems.map((item) => ({
                                                     key: String(item.id),
