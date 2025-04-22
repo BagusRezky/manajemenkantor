@@ -45,7 +45,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             {
                 title: 'Purchase Request',
                 icon: ClipboardList,
-                href: '/team/members',
+                href: '/purchaseRequest',
             },
             {
                 title: 'Purchase Order',

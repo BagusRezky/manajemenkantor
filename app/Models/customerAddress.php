@@ -43,4 +43,9 @@ class customerAddress extends Model
     {
         return $this->hasMany(SalesOrder::class, 'id_customer_address');
     }
+
+    public function itemReferences()
+    {
+        return $this->hasMany(ItemReference::class, 'id_customer_address');
+    }
 }

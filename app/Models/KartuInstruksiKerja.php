@@ -32,4 +32,9 @@ class KartuInstruksiKerja extends Model
     {
         return $this->belongsTo(SalesOrder::class, 'id_sales_order');
     }
+
+    public function itemReferences()
+    {
+        return $this->hasMany(ItemReference::class, 'id_kartu_instruksi_kerja');
+    }
 }
