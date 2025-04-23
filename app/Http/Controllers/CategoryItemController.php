@@ -33,7 +33,7 @@ class CategoryItemController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kode_category_item' => 'required',
+            'kode_category_item' => 'required|unique:category_items',
             'nama_category_item' => 'required',
         ]);
 
@@ -67,7 +67,7 @@ class CategoryItemController extends Controller
     {
         $categoryItem = CategoryItem::findOrFail($id);
         $validated = $request->validate([
-            'kode_category_item' => 'required',
+            'kode_category_item' => 'required|unique:category_items,kode_category_item,' . $id,
             'nama_category_item' => 'required',
         ]);
 

@@ -33,7 +33,7 @@ class UnitController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kode_satuan' => 'required',
+            'kode_satuan' => 'required|unique:units,kode_satuan',
             'nama_satuan' => 'required',
         ]);
 
@@ -67,7 +67,7 @@ class UnitController extends Controller
     {
         $unit = Unit::findOrFail($id);
         $validated = $request->validate([
-            'kode_satuan' => 'required',
+            'kode_satuan' => 'required|unique:units,kode_satuan,' . $id,
             'nama_satuan' => 'required',
         ]);
 

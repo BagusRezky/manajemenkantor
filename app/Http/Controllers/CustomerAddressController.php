@@ -33,7 +33,7 @@ class CustomerAddressController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kode_customer' => 'required',
+            'kode_customer' => 'required|unique:customer_addresses',
             'nama_customer' => 'required',
             'alamat_lengkap' => 'required',
             'alamat_kedua' => 'nullable|string',
@@ -70,7 +70,7 @@ class CustomerAddressController extends Controller
     {
         $customerAddress = customerAddress::findOrFail($id);
         $validated = $request->validate([
-            'kode_customer' => 'required',
+            'kode_customer' => 'required|unique:customer_addresses,kode_customer,' . $id,
             'nama_customer' => 'required',
             'alamat_lengkap' => 'required',
             'alamat_kedua' => 'nullable|string',

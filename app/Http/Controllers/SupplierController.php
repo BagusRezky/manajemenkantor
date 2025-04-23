@@ -33,7 +33,7 @@ class SupplierController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'kode_suplier' => 'required',
+            'kode_suplier' => 'required|unique:suppliers',
             'nama_suplier' => 'required',
             'jenis_suplier' => 'required',
             'keterangan' => 'required',
@@ -71,7 +71,7 @@ class SupplierController extends Controller
     {
         $supplier = Supplier::findOrFail($id);
         $validated = $request->validate([
-            'kode_suplier' => 'required',
+            'kode_suplier' => 'required|unique:suppliers,kode_siplier,' . $id,
             'nama_suplier' => 'required',
             'jenis_suplier' => 'required',
             'keterangan' => 'required',

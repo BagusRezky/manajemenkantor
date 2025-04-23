@@ -37,7 +37,7 @@ class TypeItemController extends Controller
     {
         $validated = $request->validate([
             'id_category_item' => 'required|exists:category_items,id',
-            'kode_type_item' => 'required',
+            'kode_type_item' => 'required|unique:type_items',
             'nama_type_item' => 'required',
         ]);
 
@@ -72,7 +72,7 @@ class TypeItemController extends Controller
         $typeItem = TypeItem::findOrFail($id);
         $validated = $request->validate([
             'id_category_item' => 'required|exists:category_items,id',
-            'kode_type_item' => 'required',
+            'kode_type_item' => 'required|unique:type_items,kode_type_item,' . $id,
             'nama_type_item' => 'required',
         ]);
 
