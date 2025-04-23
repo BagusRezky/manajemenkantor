@@ -39,6 +39,9 @@ export default function Create({ units, categoryItems }: CreateProps) {
         lebar: '',
         tinggi: '',
         berat: '',
+        nama_master_item: '',
+        min_stock: '',
+        min_order: '',
     });
 
     const [typeItems, setTypeItems] = useState<TypeItem[]>([]);
@@ -60,7 +63,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
             toast.error('Failed to fetch type items');
         }
 
-        // Cek apakah category yang dipilih adalah production 
+        // Cek apakah category yang dipilih adalah production
         const selectedCategory = categoryItems.find((cat) => cat.id.toString() === value);
         const categoryName = selectedCategory?.nama_category_item.toLowerCase();
         setShowDimensions(['material production'].includes(categoryName || ''));
@@ -102,6 +105,38 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                         </div>
 
                                         <div className="space-y-2">
+                                            <Label htmlFor="nama_master_item">Nama Master Item</Label>
+                                            <Input
+                                                id="nama_master_item"
+                                                value={data.nama_master_item}
+                                                onChange={(e) => setData('nama_master_item', e.target.value)}
+                                            />
+                                            {errors.nama_master_item && <p className="text-sm text-red-500">{errors.nama_master_item}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="min_stock">Min Stock</Label>
+                                            <Input
+                                                id="min_stock"
+                                                type="number"
+                                                value={data.min_stock}
+                                                onChange={(e) => setData('min_stock', e.target.value)}
+                                            />
+                                            {errors.min_stock && <p className="text-sm text-red-500">{errors.min_stock}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="min_order">Min Order</Label>
+                                            <Input
+                                                id="min_order"
+                                                type="number"
+                                                value={data.min_order}
+                                                onChange={(e) => setData('min_order', e.target.value)}
+                                            />
+                                            {errors.min_order && <p className="text-sm text-red-500">{errors.min_order}</p>}
+                                        </div>
+                                        
+                                        <div className="space-y-2">
                                             <Label htmlFor="satuan_satu_id">Satuan</Label>
                                             <SearchableSelect
                                                 items={units.map((item) => ({
@@ -110,7 +145,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                                     label: item.nama_satuan,
                                                 }))}
                                                 value={data.satuan_satu_id || ''} // Add fallback to empty string
-                                                placeholder="Pilih Satuan Dua"
+                                                placeholder="Pilih Satuan"
                                                 onChange={(value) => setData('satuan_satu_id', value)}
                                             />
                                             {errors.satuan_satu_id && <p className="text-sm text-red-500">{errors.satuan_satu_id}</p>}
@@ -133,7 +168,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label htmlFor="id_type_item">Item</Label>
+                                            <Label htmlFor="id_type_item">Type Item</Label>
 
                                             <SearchableSelect
                                                 items={typeItems.map((item) => ({
@@ -163,6 +198,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                                         value={data.qty}
                                                         onChange={(e) => setData('qty', e.target.value)}
                                                     />
+                                                    <p className="text-xs text-white">Contoh Format Penulisan: 0.0</p>
                                                     {errors.qty && <p className="text-sm text-red-500">{errors.qty}</p>}
                                                 </div>
 
@@ -175,6 +211,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                                         value={data.panjang}
                                                         onChange={(e) => setData('panjang', e.target.value)}
                                                     />
+                                                    <p className="text-xs text-white">Contoh Format Penulisan: 0.0</p>
                                                     {errors.panjang && <p className="text-sm text-red-500">{errors.panjang}</p>}
                                                 </div>
 
@@ -187,6 +224,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                                         value={data.lebar}
                                                         onChange={(e) => setData('lebar', e.target.value)}
                                                     />
+                                                    <p className="text-xs text-white">Contoh Format Penulisan: 0.0</p>
                                                     {errors.lebar && <p className="text-sm text-red-500">{errors.lebar}</p>}
                                                 </div>
 
@@ -199,6 +237,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                                         value={data.tinggi}
                                                         onChange={(e) => setData('tinggi', e.target.value)}
                                                     />
+                                                    <p className="text-xs text-white">Contoh Format Penulisan: 0.0</p>
                                                     {errors.tinggi && <p className="text-sm text-red-500">{errors.tinggi}</p>}
                                                 </div>
 
@@ -211,6 +250,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                                         value={data.berat}
                                                         onChange={(e) => setData('berat', e.target.value)}
                                                     />
+                                                    <p className="text-xs text-white">Contoh Format Penulisan: 0.0</p>
                                                     {errors.berat && <p className="text-sm text-red-500">{errors.berat}</p>}
                                                 </div>
                                             </div>

@@ -39,6 +39,11 @@ export const columns = (setSelectedItem: (item: MasterItem | null) => void, open
         accessorKey: 'kode_master_item',
         header: 'Kode Item',
     },
+
+    {
+        accessorKey: 'nama_master_item',
+        header: 'Nama Master Item'
+    },
     {
         accessorKey: 'unit.nama_satuan',
         header: 'Satuan',
@@ -51,7 +56,7 @@ export const columns = (setSelectedItem: (item: MasterItem | null) => void, open
     },
     {
         accessorKey: 'type_item.nama_type_item',
-        header: 'Item',
+        header: 'Type Item',
         cell: ({ row }) => row.original.type_item?.nama_type_item || '-',
     },
     {

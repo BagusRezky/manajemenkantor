@@ -22,6 +22,21 @@ export const DetailModal = ({ isOpen, onClose, item }: DetailModalProps) => {
                         <span>{item.kode_master_item}</span>
                     </div>
                     <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-500">Nama Item</span>
+                        <span>{item.nama_master_item || '-'}</span>
+                    </div>
+
+                    <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-500">Minimal Order</span>
+                        <span>{item.min_order || '-'}</span>
+                    </div>
+
+                    <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-500">Minimal Stock</span>
+                        <span>{item.min_stock || '-'}</span>
+                    </div>
+
+                    <div className="flex flex-col">
                         <span className="text-sm font-medium text-gray-500">Satuan</span>
                         <span>{item.unit?.nama_satuan || '-'}</span>
                     </div>

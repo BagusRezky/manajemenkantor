@@ -14,6 +14,9 @@ export interface MasterItem {
     lebar: string | null;
     tinggi: string | null;
     berat: string | null;
+    nama_master_item: string;
+    min_stock: string;
+    min_order: string;
     unit?: Unit;
     category_item?: CategoryItem;
     type_item?: TypeItem;

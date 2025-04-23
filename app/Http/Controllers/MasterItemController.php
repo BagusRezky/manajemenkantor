@@ -62,6 +62,9 @@ class MasterItemController extends Controller
             'lebar' => 'nullable|numeric',
             'tinggi' => 'nullable|numeric',
             'berat' => 'nullable|numeric',
+            'nama_master_item' => 'required|string',
+            'min_stock' => 'required',
+            'min_order' => 'required',
         ]);
 
         if ($validator->fails()) {
@@ -134,6 +137,9 @@ class MasterItemController extends Controller
             'lebar' => 'nullable|numeric',
             'tinggi' => 'nullable|numeric',
             'berat' => 'nullable|numeric',
+            'nama_master_item' => 'required|string',
+            'min_stock' => 'required',
+            'min_order' => 'required',
         ]);
 
         if ($validator->fails()) {

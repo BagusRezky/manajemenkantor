@@ -42,6 +42,9 @@ export default function Edit({ masterItem, units, categoryItems, typeItems: init
         lebar: masterItem.lebar || '',
         tinggi: masterItem.tinggi || '',
         berat: masterItem.berat || '',
+        nama_master_item: masterItem.nama_master_item || '',
+        min_stock: masterItem.min_stock || '',
+        min_order: masterItem.min_order || '',
     });
 
     const [typeItems, setTypeItems] = useState<TypeItem[]>(initialTypeItems || []);
@@ -111,6 +114,38 @@ export default function Edit({ masterItem, units, categoryItems, typeItems: init
                                                 onChange={(e) => setData('kode_master_item', e.target.value)}
                                             />
                                             {errors.kode_master_item && <p className="text-sm text-red-500">{errors.kode_master_item}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="nama_master_item">Nama Master Item</Label>
+                                            <Input
+                                                id="nama_master_item"
+                                                value={data.nama_master_item}
+                                                onChange={(e) => setData('nama_master_item', e.target.value)}
+                                            />
+                                            {errors.nama_master_item && <p className="text-sm text-red-500">{errors.nama_master_item}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="min_stock">Min Stock</Label>
+                                            <Input
+                                                id="min_stock"
+                                                type="number"
+                                                value={data.min_stock}
+                                                onChange={(e) => setData('min_stock', e.target.value)}
+                                            />
+                                            {errors.min_stock && <p className="text-sm text-red-500">{errors.min_stock}</p>}
+                                        </div>
+
+                                        <div className="space-y-2">
+                                            <Label htmlFor="min_order">Min Order</Label>
+                                            <Input
+                                                id="min_order"
+                                                type="number"
+                                                value={data.min_order}
+                                                onChange={(e) => setData('min_order', e.target.value)}
+                                            />
+                                            {errors.min_order && <p className="text-sm text-red-500">{errors.min_order}</p>}
                                         </div>
 
                                         <div className="space-y-2">

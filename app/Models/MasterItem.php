@@ -20,6 +20,9 @@ class MasterItem extends Model
         'lebar',
         'tinggi',
         'berat',
+        'nama_master_item',
+        'min_stock',
+        'min_order',
     ];
     public function typeItem()
     {
