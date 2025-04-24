@@ -12,6 +12,7 @@ import { Unit } from '@/types/unit';
 import { Head, Link, useForm } from '@inertiajs/react';
 
 import { toast, Toaster } from 'sonner';
+import { useEffect, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -52,6 +53,64 @@ export default function Create({ units, customerAddresses, typeItems }: CreatePr
         berat_kotor: '',
         berat_bersih: '',
     });
+
+    const [selectedTypeItemCode, setSelectedTypeItemCode] = useState('');
+    // State to track the user's input part
+    const [userInput, setUserInput] = useState('');
+
+    // Handle changes to the kode_material_produk field specifically
+    const handleKodeMaterialChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const inputValue = e.target.value.toUpperCase(); // Apply uppercase as per your requirement
+
+        if (selectedTypeItemCode) {
+            // Check if the input already has the type item code prefix
+            if (inputValue.startsWith(`${selectedTypeItemCode}-`)) {
+                // User is typing with the prefix already in place
+                setData('kode_material_produk', inputValue);
+                setUserInput(inputValue.substring(selectedTypeItemCode.length + 1));
+            } else if (inputValue.includes('-')) {
+                // User might be trying to replace the prefix, force our prefix
+                const parts = inputValue.split('-');
+                const userPart = parts.slice(1).join('-');
+                setUserInput(userPart);
+                setData('kode_material_produk', `${selectedTypeItemCode}-${userPart}`);
+            } else {
+                // User is typing just their part or deleted the prefix, restore it
+                setUserInput(inputValue);
+                setData('kode_material_produk', `${selectedTypeItemCode}-${inputValue}`);
+            }
+        } else {
+            // No type item selected yet, just update as is
+            setData('kode_material_produk', inputValue);
+            setUserInput(inputValue);
+        }
+    };
+
+    // Update the type item code when selection changes
+    useEffect(() => {
+        if (data.id_type_item) {
+            const selectedItem = typeItems.find((item) => String(item.id) === String(data.id_type_item));
+            if (selectedItem && selectedItem.kode_type_item) {
+                setSelectedTypeItemCode(selectedItem.kode_type_item);
+
+                // Update kode_material_produk with the new format
+                let userPart = userInput;
+
+                // If there's already a value, extract the user part
+                if (data.kode_material_produk) {
+                    const parts = data.kode_material_produk.split('-');
+                    if (parts.length > 1) {
+                        userPart = parts.slice(1).join('-');
+                    }
+                }
+
+                // Update with the new formatted value
+                setData('kode_material_produk', `${selectedItem.kode_type_item}-${userPart}`);
+            }
+        } else {
+            setSelectedTypeItemCode('');
+        }
+    }, [data.id_type_item, data.kode_material_produk, setData, typeItems, userInput]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -109,7 +168,9 @@ export default function Create({ units, customerAddresses, typeItems }: CreatePr
                                             <Label htmlFor="id_type_item">Type Item</Label>
                                             <SearchableSelect
                                                 items={typeItems
-                                                    .filter((item) => item.nama_type_item === 'BARANG JADI')
+                                                    .filter(
+                                                        (item) => item.nama_type_item && item.nama_type_item.toLowerCase().includes('barang jadi'),
+                                                    )
                                                     .map((item) => ({
                                                         key: String(item.id),
                                                         value: String(item.id),
@@ -128,7 +189,8 @@ export default function Create({ units, customerAddresses, typeItems }: CreatePr
                                                 id="kode_material_produk"
                                                 name="kode_material_produk"
                                                 value={data.kode_material_produk}
-                                                onChange={handleChange}
+                                                onChange={handleKodeMaterialChange}
+                                                placeholder={selectedTypeItemCode ? `${selectedTypeItemCode}-yourInput` : 'Select Type Item first'}
                                             />
                                             {errors.kode_material_produk && <p className="text-sm text-red-500">{errors.kode_material_produk}</p>}
                                         </div>

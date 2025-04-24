@@ -28,7 +28,7 @@ class FinishGoodItemController extends Controller
     public function create()
     {
         $units = Unit::select('id', 'nama_satuan')->get();
-        $typeItems = TypeItem::select('id', 'nama_type_item')->get();
+        $typeItems = TypeItem::select('id', 'nama_type_item', 'kode_type_item')->get();
         $customerAddresses = CustomerAddress::select('id', 'nama_customer')->get();
 
         return Inertia::render('finishGoodItem/create', [
