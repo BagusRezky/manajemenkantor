@@ -1,6 +1,7 @@
 import { CustomerAddress } from "./customerAddress";
 import { TypeItem } from "./typeItem";
 import { Unit } from "./unit";
+import { BomItem } from "./bomItem";
 
 export interface FinishGoodItem {
     id: string;
@@ -27,4 +28,5 @@ export interface FinishGoodItem {
     unit?: Unit;
     customer_address?: CustomerAddress;
     type_item?: TypeItem;
+    bill_of_materials?: BomItem[];
 }

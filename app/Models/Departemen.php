@@ -12,4 +12,8 @@ class Departemen extends Model
         'kode_departemen',
         'nama_departemen',
     ];
+    public function billOfMaterials()
+    {
+        return $this->hasMany(BillOfMaterial::class, 'id_departemen');
+    }
 }

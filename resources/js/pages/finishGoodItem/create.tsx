@@ -6,13 +6,17 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { CustomerAddress } from '@/types/customerAddress';
+import { MasterItem } from '@/types/masterItem';
 import { TypeItem } from '@/types/typeItem';
 
 import { Unit } from '@/types/unit';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-import { toast, Toaster } from 'sonner';
+import { BomItem } from '@/types/billOfMaterial';
+import { Departemen } from '@/types/departemen';
 import { useEffect, useState } from 'react';
+import { toast, Toaster } from 'sonner';
+import BillOfMaterialForm from './billoffmaterial/bill-of-material-form';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -29,9 +33,12 @@ interface CreateProps {
     units: Unit[];
     customerAddresses: CustomerAddress[];
     typeItems: TypeItem[];
+    masterItems: MasterItem[];
+    departements: Departemen[];
 }
 
-export default function Create({ units, customerAddresses, typeItems }: CreateProps) {
+export default function Create({ units, customerAddresses, typeItems, masterItems, departements }: CreateProps) {
+    const [bomItems, setBomItems] = useState<BomItem[]>([]);
     const { data, setData, post, processing, errors } = useForm({
         id_customer_address: '',
         id_type_item: '',
@@ -52,9 +59,19 @@ export default function Create({ units, customerAddresses, typeItems }: CreatePr
         tinggi: '',
         berat_kotor: '',
         berat_bersih: '',
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        bill_of_materials: [] as any[],
     });
 
+    // Update form data setiap kali bomItems berubah
+    useEffect(() => {
+        // Log untuk debugging
+        console.log('Setting bill_of_materials in form:', bomItems);
+        setData('bill_of_materials', bomItems);
+    }, [bomItems, setData]);
+
     const [selectedTypeItemCode, setSelectedTypeItemCode] = useState('');
+
     // State to track the user's input part
     const [userInput, setUserInput] = useState('');
 
@@ -86,7 +103,6 @@ export default function Create({ units, customerAddresses, typeItems }: CreatePr
         }
     };
 
-    // Update the type item code when selection changes
     useEffect(() => {
         if (data.id_type_item) {
             const selectedItem = typeItems.find((item) => String(item.id) === String(data.id_type_item));
@@ -103,8 +119,6 @@ export default function Create({ units, customerAddresses, typeItems }: CreatePr
                         userPart = parts.slice(1).join('-');
                     }
                 }
-
-                // Update with the new formatted value
                 setData('kode_material_produk', `${selectedItem.kode_type_item}-${userPart}`);
             }
         } else {
@@ -114,9 +128,7 @@ export default function Create({ units, customerAddresses, typeItems }: CreatePr
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-
         const upperCaseFields = ['kode_material_produk', 'nama_barang'];
-
         const newValue = upperCaseFields.includes(name) ? value.toUpperCase() : value;
         setData((prev) => ({
             ...prev,
@@ -124,14 +136,36 @@ export default function Create({ units, customerAddresses, typeItems }: CreatePr
         }));
     };
 
-    const handleSubmit = (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
+
+        // Validasi client-side untuk bill_of_materials
+        if (bomItems.length === 0) {
+            toast.error('Minimal harus ada 1 item Bill of Materials');
+            return;
+        }
+
+        // Log untuk memastikan data form sebelum submit
+        console.log('Form data before submit:', data);
+        console.log('BOM items before submit:', data.bill_of_materials);
+
+        // Post dengan transformasi data
         post(route('finishGoodItems.store'), {
+            onBefore: () => {
+                setData((prevData) => ({
+                    ...prevData,
+                    bill_of_materials: bomItems,
+                }));
+            },
             onSuccess: () => {
                 toast.success('Finish Good Item created successfully');
             },
             onError: () => {
                 toast.error('Failed to create Finish Good Item');
+                console.error('Error creating Finish Good Item:', errors);
+                if (errors.bill_of_materials) {
+                    console.error('Bill of Materials error:', errors.bill_of_materials);
+                }
             },
         });
     };
@@ -346,6 +380,13 @@ export default function Create({ units, customerAddresses, typeItems }: CreatePr
                                             {errors.satuan_satu_id && <p className="text-sm text-red-500">{errors.satuan_satu_id}</p>}
                                         </div>
                                     </div>
+
+                                    <BillOfMaterialForm
+                                        masterItems={masterItems}
+                                        departements={departements}
+                                        bomItems={bomItems}
+                                        setBomItems={setBomItems}
+                                    />
 
                                     <div className="flex justify-end space-x-4">
                                         <Link href={route('finishGoodItems.index')}>

@@ -36,4 +36,8 @@ class MasterItem extends Model
     {
         return $this->belongsTo(Unit::class, 'satuan_satu_id');
     }
+    public function billOfMaterials()
+    {
+        return $this->hasMany(BillOfMaterial::class, 'id_master_item');
+    }
 }

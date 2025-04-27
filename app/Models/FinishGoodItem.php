@@ -50,4 +50,8 @@ class FinishGoodItem extends Model
     {
         return $this->hasMany(SalesOrder::class, 'id_finish_good_item');
     }
+    public function billOfMaterials()
+    {
+        return $this->hasMany(BillOfMaterial::class, 'id_finish_good_item');
+    }
 }
