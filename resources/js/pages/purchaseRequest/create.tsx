@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
-import { Head, useForm } from "@inertiajs/react";
+import { DatePicker } from '@/components/date-picker';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
+import { Head, useForm } from '@inertiajs/react';
 
-import { PlusCircle, Trash } from "lucide-react";
-import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useState } from "react";
-import { toast, Toaster } from "sonner";
-
+import { PlusCircle, Trash } from 'lucide-react';
+import { JSXElementConstructor, Key, ReactElement, ReactNode, ReactPortal, useState } from 'react';
+import { toast, Toaster } from 'sonner';
 
 interface Department {
     id: number;
@@ -86,7 +86,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-export default function Create({departments,masterItems,customerAddresses,kartuInstruksiKerjas}: CreateProps) {
+export default function Create({ departments, masterItems, customerAddresses, kartuInstruksiKerjas }: CreateProps) {
     const { data, setData, post, processing, errors } = useForm({
         id_department: '',
         tgl_pr: '',
@@ -134,9 +134,9 @@ export default function Create({departments,masterItems,customerAddresses,kartuI
     };
 
     // Handle date change
-    const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setData('tgl_pr', e.target.value);
-    };
+    // const handleDateChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    //     setData('tgl_pr', e.target.value);
+    // };
 
     // Handle item input changes
     const handleItemInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -201,7 +201,6 @@ export default function Create({departments,masterItems,customerAddresses,kartuI
 
     // Open reference modal for a specific item
     const openReferenceModal = (index: number, e: React.MouseEvent) => {
-
         e.stopPropagation(); // Prevent event bubbling
         e.preventDefault(); // Prevent default action
         setCurrentItemIndex(index);
@@ -338,7 +337,12 @@ export default function Create({departments,masterItems,customerAddresses,kartuI
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="tgl_pr">Tanggal PR</Label>
-                                        <Input id="tgl_pr" name="tgl_pr" type="date" value={data.tgl_pr} onChange={handleDateChange} />
+                                        {/* <Input id="tgl_pr" name="tgl_pr" type="date" value={data.tgl_pr} onChange={handleDateChange} /> */}
+                                        <DatePicker
+                                            id="tgl_pr"
+                                            value={data.tgl_pr}
+                                            onChange={(e) => setData('tgl_pr', e.target.value ? e.target.value : '')}
+                                        />
                                         {errors.tgl_pr && <p className="text-sm text-red-500">{errors.tgl_pr}</p>}
                                     </div>
                                 </div>
@@ -384,7 +388,13 @@ export default function Create({departments,masterItems,customerAddresses,kartuI
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="eta">ETA</Label>
-                                            <Input id="eta" name="eta" type="date" value={itemInput.eta} onChange={handleItemInputChange} />
+                                            {/* <Input id="eta" name="eta" type="date" value={itemInput.eta} onChange={handleItemInputChange} /> */}
+                                            <DatePicker
+                                                id="eta"
+                                                value={itemInput.eta}
+                                                onChange={(e) => setItemInput({ ...itemInput, eta: e.target.value ? e.target.value : '' })}
+                                            />
+                                            {/* {errors. && <p className="text-sm text-red-500">{errors.eta}</p>} */}
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="catatan">Catatan</Label>
@@ -423,40 +433,152 @@ export default function Create({departments,masterItems,customerAddresses,kartuI
                                                         </TableCell>
                                                     </TableRow>
                                                 ) : (
-                                                    data.items.map((item: { id: Key | null | undefined; kode_master_item: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; id_master_item: number; qty: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; satuan: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; eta: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; catatan: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }, index: number) => (
-                                                        <TableRow key={item.id}>
-                                                            <TableCell>{index + 1}</TableCell>
-                                                            <TableCell>{item.kode_master_item}</TableCell>
-                                                            <TableCell>
-                                                                {masterItems.find((m) => m.id === item.id_master_item)?.type_item.nama_type_item}
-                                                            </TableCell>
-                                                            <TableCell>{item.qty}</TableCell>
-                                                            <TableCell>{item.satuan}</TableCell>
-                                                            <TableCell>{item.eta}</TableCell>
-                                                            <TableCell>{item.catatan}</TableCell>
-                                                            <TableCell>
-                                                                <div className="flex space-x-2">
-                                                                    <Button
-
-                                                                        variant="outline"
-                                                                        size="icon"
-                                                                        onClick={(e) => openReferenceModal(index, e)}
-                                                                        title="Tambah Referensi"
-                                                                    >
-                                                                        <PlusCircle className="h-4 w-4" />
-                                                                    </Button>
-                                                                    <Button
-                                                                        variant="destructive"
-                                                                        size="icon"
-                                                                        onClick={() => removeItem(index)}
-                                                                        title="Hapus Item"
-                                                                    >
-                                                                        <Trash className="h-4 w-4" />
-                                                                    </Button>
-                                                                </div>
-                                                            </TableCell>
-                                                        </TableRow>
-                                                    ))
+                                                    data.items.map(
+                                                        (
+                                                            item: {
+                                                                id: Key | null | undefined;
+                                                                kode_master_item:
+                                                                    | string
+                                                                    | number
+                                                                    | bigint
+                                                                    | boolean
+                                                                    | ReactElement<unknown, string | JSXElementConstructor<any>>
+                                                                    | Iterable<ReactNode>
+                                                                    | ReactPortal
+                                                                    | Promise<
+                                                                          | string
+                                                                          | number
+                                                                          | bigint
+                                                                          | boolean
+                                                                          | ReactPortal
+                                                                          | ReactElement<unknown, string | JSXElementConstructor<any>>
+                                                                          | Iterable<ReactNode>
+                                                                          | null
+                                                                          | undefined
+                                                                      >
+                                                                    | null
+                                                                    | undefined;
+                                                                id_master_item: number;
+                                                                qty:
+                                                                    | string
+                                                                    | number
+                                                                    | bigint
+                                                                    | boolean
+                                                                    | ReactElement<unknown, string | JSXElementConstructor<any>>
+                                                                    | Iterable<ReactNode>
+                                                                    | ReactPortal
+                                                                    | Promise<
+                                                                          | string
+                                                                          | number
+                                                                          | bigint
+                                                                          | boolean
+                                                                          | ReactPortal
+                                                                          | ReactElement<unknown, string | JSXElementConstructor<any>>
+                                                                          | Iterable<ReactNode>
+                                                                          | null
+                                                                          | undefined
+                                                                      >
+                                                                    | null
+                                                                    | undefined;
+                                                                satuan:
+                                                                    | string
+                                                                    | number
+                                                                    | bigint
+                                                                    | boolean
+                                                                    | ReactElement<unknown, string | JSXElementConstructor<any>>
+                                                                    | Iterable<ReactNode>
+                                                                    | ReactPortal
+                                                                    | Promise<
+                                                                          | string
+                                                                          | number
+                                                                          | bigint
+                                                                          | boolean
+                                                                          | ReactPortal
+                                                                          | ReactElement<unknown, string | JSXElementConstructor<any>>
+                                                                          | Iterable<ReactNode>
+                                                                          | null
+                                                                          | undefined
+                                                                      >
+                                                                    | null
+                                                                    | undefined;
+                                                                eta:
+                                                                    | string
+                                                                    | number
+                                                                    | bigint
+                                                                    | boolean
+                                                                    | ReactElement<unknown, string | JSXElementConstructor<any>>
+                                                                    | Iterable<ReactNode>
+                                                                    | ReactPortal
+                                                                    | Promise<
+                                                                          | string
+                                                                          | number
+                                                                          | bigint
+                                                                          | boolean
+                                                                          | ReactPortal
+                                                                          | ReactElement<unknown, string | JSXElementConstructor<any>>
+                                                                          | Iterable<ReactNode>
+                                                                          | null
+                                                                          | undefined
+                                                                      >
+                                                                    | null
+                                                                    | undefined;
+                                                                catatan:
+                                                                    | string
+                                                                    | number
+                                                                    | bigint
+                                                                    | boolean
+                                                                    | ReactElement<unknown, string | JSXElementConstructor<any>>
+                                                                    | Iterable<ReactNode>
+                                                                    | ReactPortal
+                                                                    | Promise<
+                                                                          | string
+                                                                          | number
+                                                                          | bigint
+                                                                          | boolean
+                                                                          | ReactPortal
+                                                                          | ReactElement<unknown, string | JSXElementConstructor<any>>
+                                                                          | Iterable<ReactNode>
+                                                                          | null
+                                                                          | undefined
+                                                                      >
+                                                                    | null
+                                                                    | undefined;
+                                                            },
+                                                            index: number,
+                                                        ) => (
+                                                            <TableRow key={item.id}>
+                                                                <TableCell>{index + 1}</TableCell>
+                                                                <TableCell>{item.kode_master_item}</TableCell>
+                                                                <TableCell>
+                                                                    {masterItems.find((m) => m.id === item.id_master_item)?.type_item.nama_type_item}
+                                                                </TableCell>
+                                                                <TableCell>{item.qty}</TableCell>
+                                                                <TableCell>{item.satuan}</TableCell>
+                                                                <TableCell>{item.eta}</TableCell>
+                                                                <TableCell>{item.catatan}</TableCell>
+                                                                <TableCell>
+                                                                    <div className="flex space-x-2">
+                                                                        <Button
+                                                                            variant="outline"
+                                                                            size="icon"
+                                                                            onClick={(e) => openReferenceModal(index, e)}
+                                                                            title="Tambah Referensi"
+                                                                        >
+                                                                            <PlusCircle className="h-4 w-4" />
+                                                                        </Button>
+                                                                        <Button
+                                                                            variant="destructive"
+                                                                            size="icon"
+                                                                            onClick={() => removeItem(index)}
+                                                                            title="Hapus Item"
+                                                                        >
+                                                                            <Trash className="h-4 w-4" />
+                                                                        </Button>
+                                                                    </div>
+                                                                </TableCell>
+                                                            </TableRow>
+                                                        ),
+                                                    )
                                                 )}
                                             </TableBody>
                                         </Table>
@@ -465,7 +587,7 @@ export default function Create({departments,masterItems,customerAddresses,kartuI
 
                                 {/* References Display */}
                                 {data.items.map(
-                                    (item: { references: any[]; id: any; id_master_item: number; }, itemIndex: number) =>
+                                    (item: { references: any[]; id: any; id_master_item: number }, itemIndex: number) =>
                                         item.references.length > 0 && (
                                             <div key={`ref-${item.id}`} className="rounded-md border p-4">
                                                 <h4 className="text-md mb-2 font-medium">
@@ -483,37 +605,73 @@ export default function Create({departments,masterItems,customerAddresses,kartuI
                                                         </TableRow>
                                                     </TableHeader>
                                                     <TableBody>
-                                                        {item.references.map((ref: { id: Key | null | undefined; type: string; id_department: number; id_customer: number; id_kartu_instruksi_kerja: number; qty: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }, refIndex: number) => (
-                                                            <TableRow key={ref.id}>
-                                                                <TableCell>{refIndex + 1}</TableCell>
-                                                                <TableCell>{ref.type === 'department' ? 'Departemen' : 'Customer'}</TableCell>
-                                                                <TableCell>
-                                                                    {ref.type === 'department'? (
-                                                                        departments.find((d) => d.id === ref.id_department)?.nama_departemen
-                                                                    ) : (
-                                                                        <>
-                                                                            {customerAddresses.find((c) => c.id === ref.id_customer)?.nama_customer} -
-                                                                            {
-                                                                                kartuInstruksiKerjas.find(
-                                                                                    (k) => k.id === ref.id_kartu_instruksi_kerja,
-                                                                                )?.no_kartu_instruksi_kerja
-                                                                            }
-                                                                        </>
-                                                                    )}
-                                                                </TableCell>
-                                                                <TableCell>{ref.qty}</TableCell>
-                                                                <TableCell>
-                                                                    <Button
-                                                                        variant="destructive"
-                                                                        size="icon"
-                                                                        onClick={() => removeReference(itemIndex, refIndex)}
-                                                                        title="Hapus Referensi"
-                                                                    >
-                                                                        <Trash className="h-4 w-4" />
-                                                                    </Button>
-                                                                </TableCell>
-                                                            </TableRow>
-                                                        ))}
+                                                        {item.references.map(
+                                                            (
+                                                                ref: {
+                                                                    id: Key | null | undefined;
+                                                                    type: string;
+                                                                    id_department: number;
+                                                                    id_customer: number;
+                                                                    id_kartu_instruksi_kerja: number;
+                                                                    qty:
+                                                                        | string
+                                                                        | number
+                                                                        | bigint
+                                                                        | boolean
+                                                                        | ReactElement<unknown, string | JSXElementConstructor<any>>
+                                                                        | Iterable<ReactNode>
+                                                                        | ReactPortal
+                                                                        | Promise<
+                                                                              | string
+                                                                              | number
+                                                                              | bigint
+                                                                              | boolean
+                                                                              | ReactPortal
+                                                                              | ReactElement<unknown, string | JSXElementConstructor<any>>
+                                                                              | Iterable<ReactNode>
+                                                                              | null
+                                                                              | undefined
+                                                                          >
+                                                                        | null
+                                                                        | undefined;
+                                                                },
+                                                                refIndex: number,
+                                                            ) => (
+                                                                <TableRow key={ref.id}>
+                                                                    <TableCell>{refIndex + 1}</TableCell>
+                                                                    <TableCell>{ref.type === 'department' ? 'Departemen' : 'Customer'}</TableCell>
+                                                                    <TableCell>
+                                                                        {ref.type === 'department' ? (
+                                                                            departments.find((d) => d.id === ref.id_department)?.nama_departemen
+                                                                        ) : (
+                                                                            <>
+                                                                                {
+                                                                                    customerAddresses.find((c) => c.id === ref.id_customer)
+                                                                                        ?.nama_customer
+                                                                                }{' '}
+                                                                                -
+                                                                                {
+                                                                                    kartuInstruksiKerjas.find(
+                                                                                        (k) => k.id === ref.id_kartu_instruksi_kerja,
+                                                                                    )?.no_kartu_instruksi_kerja
+                                                                                }
+                                                                            </>
+                                                                        )}
+                                                                    </TableCell>
+                                                                    <TableCell>{ref.qty}</TableCell>
+                                                                    <TableCell>
+                                                                        <Button
+                                                                            variant="destructive"
+                                                                            size="icon"
+                                                                            onClick={() => removeReference(itemIndex, refIndex)}
+                                                                            title="Hapus Referensi"
+                                                                        >
+                                                                            <Trash className="h-4 w-4" />
+                                                                        </Button>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            ),
+                                                        )}
                                                     </TableBody>
                                                 </Table>
                                             </div>
@@ -537,7 +695,7 @@ export default function Create({departments,masterItems,customerAddresses,kartuI
                                 <DialogDescription>
                                     Tambahkan referensi untuk item{' '}
                                     {currentItemIndex !== null
-                                       ? masterItems.find((m) => m.id === data.items[currentItemIndex]?.id_master_item)?.type_item.nama_type_item
+                                        ? masterItems.find((m) => m.id === data.items[currentItemIndex]?.id_master_item)?.type_item.nama_type_item
                                         : ''}
                                 </DialogDescription>
                             </DialogHeader>
@@ -648,4 +806,3 @@ export default function Create({departments,masterItems,customerAddresses,kartuI
         </AppLayout>
     );
 }
-

@@ -6,17 +6,8 @@ import { MoreHorizontal } from "lucide-react";
 
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
+import { PurchaseRequest } from "@/types/purchaseRequest";
 
-interface PurchaseRequest {
-    id: string;
-    no_pr: string;
-    tgl_pr: string;
-    departemen: {
-        nama_departemen: string;
-    };
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    purchaseRequestItems: any[];
-}
 
 const handleDelete = (id: string) => {
     if (confirm('Apakah Anda yakin ingin menghapus Purchase Request ini?')) {
@@ -31,10 +22,24 @@ const handleDelete = (id: string) => {
     }
 };
 
-export const columns = (
-    setSelectedItem: (item: PurchaseRequest | null) => void,
-    openDetailModal: (item: PurchaseRequest) => void,
-): ColumnDef<PurchaseRequest>[] => [
+const handleAuthorize = (id: string) => {
+    if (confirm('Apakah Anda yakin ingin mengotorisasi Purchase Request ini?')) {
+        router.post(
+            `/purchaseRequest/${id}/authorize`,
+            {},
+            {
+                onSuccess: () => {
+                    toast.success('Purchase Request berhasil diotorisasi');
+                },
+                onError: () => {
+                    toast.error('Gagal mengotorisasi Purchase Request');
+                },
+            },
+        );
+    }
+};
+
+export const columns = (): ColumnDef<PurchaseRequest>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -62,7 +67,7 @@ export const columns = (
     {
         accessorKey: 'tgl_pr',
         header: 'Tanggal PR',
-        cell: ({ row }) =>{
+        cell: ({ row }) => {
             const date = row.original.tgl_pr;
             if (!date) return '-';
 
@@ -75,11 +80,20 @@ export const columns = (
             }
         },
     },
-    // {
-    //     accessorKey: 'total_items',
-    //     header: 'Total Items',
-    //     cell: ({ row }) => row.original.purchaseRequestItems?.length || 0,
-    // },
+    {
+        accessorKey: 'status',
+        header: 'Status',
+        cell: ({ row }) => {
+            const status = row.original.status;
+
+            // Apply styling based on status
+            if (status === 'Otorisasi') {
+                return <span className="rounded-md bg-green-100 px-2 py-1 text-green-800">{status}</span>;
+            } else {
+                return <span className="rounded-md bg-red-200 px-2 py-1 text-red-800">{status}</span>;
+            }
+        },
+    },
     {
         id: 'actions',
         header: 'Actions',
@@ -99,7 +113,13 @@ export const columns = (
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.get(`/purchaseRequest/${item.id}/edit`)}>Edit</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => openDetailModal(item)}>Detail</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.get(`/purchaseRequest/${item.id}/detail`)}>Detail</DropdownMenuItem>
+                        {item.status === 'Deotorisasi' && (
+                            <>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuItem onClick={() => handleAuthorize(item.id)}>Otorisasi</DropdownMenuItem>
+                            </>
+                        )}
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

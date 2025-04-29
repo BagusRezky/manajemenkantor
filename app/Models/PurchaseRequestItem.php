@@ -22,6 +22,8 @@ class PurchaseRequestItem extends Model
         'eta' => 'date',
     ];
 
+    protected $with = ['masterItem', 'itemReferences'];
+
     public function purchaseRequest()
     {
         return $this->belongsTo(PurchaseRequest::class, 'id_purchase_request');

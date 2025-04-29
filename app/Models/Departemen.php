@@ -16,4 +16,12 @@ class Departemen extends Model
     {
         return $this->hasMany(BillOfMaterial::class, 'id_departemen');
     }
+    public function purchaseRequest()
+    {
+        return $this->hasMany(PurchaseRequest::class, 'id_department');
+    }
+    public function itemReference()
+    {
+        return $this->hasMany(ItemReference::class, 'id_department');
+    }
 }

@@ -40,4 +40,8 @@ class MasterItem extends Model
     {
         return $this->hasMany(BillOfMaterial::class, 'id_master_item');
     }
+    public function purchaseRequestItem()
+    {
+        return $this->hasMany(PurchaseRequestItem::class, 'id_master_item');
+    }
 }

@@ -81,7 +81,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/salesOrders/{id}', [SalesOrderController::class, 'update'])->name('salesOrders.update');
     Route::delete('/salesOrders/{id}', [SalesOrderController::class, 'destroy'])->name('salesOrders.destroy');
 
-     // Routes untuk Kartu Instruksi Kerja
+    // Routes untuk Kartu Instruksi Kerja
     Route::get('/kartuInstruksiKerja', [KartuInstruksiKerjaController::class, 'index'])->name('kartuInstruksiKerja.index');
     Route::get('/kartuInstruksiKerja/create', [KartuInstruksiKerjaController::class, 'create'])->name('kartuInstruksiKerja.create');
     Route::post('/kartuInstruksiKerja', [KartuInstruksiKerjaController::class, 'store'])->name('kartuInstruksiKerja.store');
@@ -92,12 +92,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/salesOrderData/{id}', [KartuInstruksiKerjaController::class, 'getSalesOrderData'])->name('salesOrderData.show');
 
     Route::get('/purchaseRequest', [PurchaseRequestController::class, 'index'])->name('purchaseRequest.index');
-Route::get('/purchaseRequest/create', [PurchaseRequestController::class, 'create'])->name('purchaseRequest.create');
-Route::post('/purchaseRequest', [PurchaseRequestController::class, 'store'])->name('purchaseRequest.store');
-Route::get('/purchaseRequest/{id}', [PurchaseRequestController::class, 'show'])->name('purchaseRequest.show');
-Route::get('/purchaseRequest/{id}/edit', [PurchaseRequestController::class, 'edit'])->name('purchaseRequest.edit');
-Route::put('/purchaseRequest/{id}', [PurchaseRequestController::class, 'update'])->name('purchaseRequest.update');
-Route::delete('/purchaseRequest/{id}', [PurchaseRequestController::class, 'destroy'])->name('purchaseRequest.destroy');
+    Route::get('/purchaseRequest/create', [PurchaseRequestController::class, 'create'])->name('purchaseRequest.create');
+    Route::post('/purchaseRequest', [PurchaseRequestController::class, 'store'])->name('purchaseRequest.store');
+    Route::get('/purchaseRequest/{id}', [PurchaseRequestController::class, 'show'])->name('purchaseRequest.show');
+    Route::get('/purchaseRequest/{id}/detail', [PurchaseRequestController::class, 'detail'])->name('purchaseRequest.detail');
+    Route::get('/purchaseRequest/{id}/edit', [PurchaseRequestController::class, 'edit'])->name('purchaseRequest.edit');
+    Route::put('/purchaseRequest/{id}', [PurchaseRequestController::class, 'update'])->name('purchaseRequest.update');
+    Route::delete('/purchaseRequest/{id}', [PurchaseRequestController::class, 'destroy'])->name('purchaseRequest.destroy');
+    Route::post('purchaseRequest/{id}/authorize', [PurchaseRequestController::class, 'authorize'])->name('purchaseRequest.authorize');
 });
 
 

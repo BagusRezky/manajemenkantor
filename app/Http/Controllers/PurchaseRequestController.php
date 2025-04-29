@@ -107,6 +107,23 @@ class PurchaseRequestController extends Controller
             ->with('success', 'Purchase Request berhasil dibuat!');
     }
 
+    public function authorize($id)
+    {
+        $purchaseRequest = PurchaseRequest::findOrFail($id);
+
+        // Only allow authorization if current status is Deotorisasi
+        if ($purchaseRequest->status !== PurchaseRequest::STATUS_DEOTORISASI) {
+            return redirect()->back()->with('error', 'Purchase Request sudah diotorisasi!');
+        }
+
+        // Update the status
+        $purchaseRequest->update([
+            'status' => PurchaseRequest::STATUS_OTORISASI
+        ]);
+
+        return redirect()->back()->with('success', 'Purchase Request berhasil diotorisasi!');
+    }
+
     /**
      * Display the specified resource.
      */
@@ -125,6 +142,22 @@ class PurchaseRequestController extends Controller
             'purchaseRequest' => $purchaseRequest
         ]);
     }
+
+    public function detail($id)
+{
+    $purchaseRequest = PurchaseRequest::with([
+        'departemen',
+        'purchaseRequestItems.masterItem.typeItem',
+        'purchaseRequestItems.masterItem.unit',
+        'purchaseRequestItems.itemReferences.departemen',
+        'purchaseRequestItems.itemReferences.customerAddress',
+        'purchaseRequestItems.itemReferences.kartuInstruksiKerja',
+    ])->findOrFail($id);
+
+    return Inertia::render('purchaseRequest/detail', [
+        'purchaseRequest' => $purchaseRequest
+    ]);
+}
 
     /**
      * Show the form for editing the specified resource.

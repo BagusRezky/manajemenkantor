@@ -133,6 +133,7 @@ export function MasterKonversiFormModal({ typeItems, units }: MasterKonversiForm
                             <Input
                                 id="jumlah_satuan_konversi"
                                 name="jumlah_satuan_konversi"
+                                type='number'
                                 value={formData.jumlah_satuan_konversi}
                                 onChange={handleChange}
                                 className="col-span-3"
