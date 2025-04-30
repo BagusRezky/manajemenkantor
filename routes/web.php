@@ -12,6 +12,7 @@ use App\Http\Controllers\FinishGoodItemController;
 use App\Http\Controllers\SalesOrderController;
 use App\Http\Controllers\KartuInstruksiKerjaController;
 use App\Http\Controllers\PurchaseRequestController;
+use App\Http\Controllers\PurchaseOrderController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -100,6 +101,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/purchaseRequest/{id}', [PurchaseRequestController::class, 'update'])->name('purchaseRequest.update');
     Route::delete('/purchaseRequest/{id}', [PurchaseRequestController::class, 'destroy'])->name('purchaseRequest.destroy');
     Route::post('purchaseRequest/{id}/authorize', [PurchaseRequestController::class, 'authorize'])->name('purchaseRequest.authorize');
+
+    Route::get('/purchaseOrders', [PurchaseOrderController::class, 'index'])->name('purchaseOrders.index');
+    Route::get('/purchaseOrders/create', [PurchaseOrderController::class, 'create'])->name('purchaseOrders.create');
+    Route::get('purchaseOrders/getPurchaseRequestItems/{id}/items', [PurchaseOrderController::class, 'getPurchaseRequestItems'])->name('purchaseOrders.getPurchaseRequestItems');
+    Route::get('purchaseOrders/getUnitConversions/{itemId}/{unitId}',[PurchaseOrderController::class, 'getUnitConversions'])->name('purchaseOrders.getUnitConversions');
+    Route::post('/purchaseOrders', [PurchaseOrderController::class, 'store'])->name('purchaseOrders.store');
 });
 
 

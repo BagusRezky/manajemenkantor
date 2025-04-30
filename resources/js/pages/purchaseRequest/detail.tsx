@@ -24,9 +24,6 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 export default function Detail({ purchaseRequest }: DetailProps) {
-    console.log("Detail Purchase Request:", purchaseRequest);
-    console.log('Purchase request items:', purchaseRequest.purchase_request_items);
-    console.log('Item references:', purchaseRequest.purchase_request_items[0]?.item_references);
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Detail PR: ${purchaseRequest.no_pr}`} />

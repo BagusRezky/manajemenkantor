@@ -33,4 +33,9 @@ class Unit extends Model
     {
         return $this->hasMany(FinishGoodItem::class, 'satuan_satu_id');
     }
+
+    public function purchaseOrderItem()
+    {
+        return $this->hasMany(PurchaseOrderItem::class, 'id_satuan_po');
+    }
 }

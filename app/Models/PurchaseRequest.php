@@ -39,4 +39,9 @@ class PurchaseRequest extends Model
     {
         return $this->status === self::STATUS_OTORISASI;
     }
+
+    public function purchaseOrders()
+    {
+        return $this->hasMany(PurchaseOrder::class, 'id_purchase_request');
+    }
 }

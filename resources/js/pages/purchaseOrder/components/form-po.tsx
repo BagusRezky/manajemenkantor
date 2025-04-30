@@ -1,0 +1,134 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { PurchaseRequest } from '@/types/purchaseRequest';
+import { Supplier } from '@/types/supplier';
+
+interface FormPOProps {
+    data: {
+        id_purchase_request?: string;
+        id_supplier?: string;
+        tanggal_po?: string;
+        eta?: string | Date;
+        mata_uang?: string;
+        ppn?: number;
+        [key: string]: any;
+    };
+    setData: (key: string, value: any) => void;
+    errors: Record<string, string | undefined>;
+    purchaseRequests: PurchaseRequest[];
+    suppliers: Supplier[];
+    currencies: string[];
+    handlePRSelection: (prId: string) => void;
+    selectedPR: PurchaseRequest | null;
+}
+
+export default function FormPO({ data, setData, errors, purchaseRequests, suppliers, currencies, handlePRSelection, selectedPR }: FormPOProps) {
+    return (
+        <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
+            {/* Card untuk detail PO */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Purchase Order Details</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="id_purchase_request">Purchase Request</Label>
+                        <Select value={data.id_purchase_request} onValueChange={handlePRSelection}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select Purchase Request" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {purchaseRequests.map((pr) => (
+                                    <SelectItem key={pr.id} value={pr.id}>
+                                        {pr.no_pr}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {errors.id_purchase_request && <p className="mt-1 text-sm text-red-500">{errors.id_purchase_request}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="tanggal_po">PO Date</Label>
+                        <Input
+                            type="date"
+                            id="tanggal_po"
+                            value={typeof data.tanggal_po === 'string' ? data.tanggal_po : ''}
+                            onChange={(e) => setData('tanggal_po', e.target.value)}
+                        />
+                        {errors.tanggal_po && <p className="mt-1 text-sm text-red-500">{errors.tanggal_po}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="id_supplier">Supplier</Label>
+                        <Select value={data.id_supplier} onValueChange={(val) => setData('id_supplier', val)}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select Supplier" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {suppliers.map((supplier) => (
+                                    <SelectItem key={supplier.id} value={supplier.id}>
+                                        {supplier.nama_suplier}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {errors.id_supplier && <p className="mt-1 text-sm text-red-500">{errors.id_supplier}</p>}
+                    </div>
+                </CardContent>
+            </Card>
+
+            {/* Card untuk informasi tambahan */}
+            <Card>
+                <CardHeader>
+                    <CardTitle>Additional Information</CardTitle>
+                </CardHeader>
+                <CardContent className="space-y-4">
+                    <div className="space-y-2">
+                        <Label htmlFor="eta">ETA</Label>
+                        <Input
+                            type="date"
+                            id="eta"
+                            value={typeof data.eta === 'string' ? data.eta : data.eta instanceof Date ? data.eta.toISOString().split('T')[0] : ''}
+                            onChange={(e) => setData('eta', e.target.value)}
+                        />
+                        {errors.eta && <p className="mt-1 text-sm text-red-500">{errors.eta}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="mata_uang">Currency</Label>
+                        <Select value={data.mata_uang} onValueChange={(val) => setData('mata_uang', val)}>
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select Currency" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                {currencies.map((currency) => (
+                                    <SelectItem key={currency} value={currency}>
+                                        {currency}
+                                    </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                        {errors.mata_uang && <p className="mt-1 text-sm text-red-500">{errors.mata_uang}</p>}
+                    </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="ppn">PPN (%)</Label>
+                        <Input
+                            type="number"
+                            id="ppn"
+                            value={data.ppn !== undefined ? data.ppn : 0}
+                            onChange={(e) => setData('ppn', parseFloat(e.target.value) || 0)}
+                        />
+                        {errors.ppn && <p className="mt-1 text-sm text-red-500">{errors.ppn}</p>}
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
+}

@@ -18,4 +18,9 @@ class Supplier extends Model
         'keterangan',
         'alamat_lengkap',
     ];
+
+    public function purchaseOrder()
+    {
+        return $this->hasMany(PurchaseOrder::class, 'id_supplier');
+    }
 }

@@ -38,4 +38,9 @@ class PurchaseRequestItem extends Model
     {
         return $this->hasMany(ItemReference::class, 'id_purchase_request_item');
     }
+
+    public function purchaseOrderItems()
+    {
+        return $this->hasMany(PurchaseOrderItem::class, 'id_purchase_request_item');
+    }
 }
