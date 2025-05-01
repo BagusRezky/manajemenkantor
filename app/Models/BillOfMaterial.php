@@ -30,4 +30,8 @@ class BillOfMaterial extends Model
     {
         return $this->belongsTo(Departemen::class,'id_departemen');
     }
+    public function kartuInstruksiKerjaBoms()
+    {
+        return $this->hasMany(KartuInstruksiKerjaBom::class, 'id_bom');
+    }
 }

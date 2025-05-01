@@ -27,7 +27,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
                 href: '/finishGoodItems',
             },
             {
-                title: 'Customer Address',
+                title: 'Master Customer',
                 icon: BaggageClaim,
                 href: '/customerAddresses',
             },

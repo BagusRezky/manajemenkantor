@@ -13,11 +13,11 @@ export const DetailModal = ({ isOpen, onClose, item }: DetailModalProps) => {
 
     return (
         <Dialog open={isOpen} onOpenChange={onClose}>
-            <DialogContent className="sm:max-w-[500px]">
+            <DialogContent className="sm:max-w-[1200px]">
                 <DialogHeader>
                     <DialogTitle>Detail Sales Order</DialogTitle>
                 </DialogHeader>
-                <div className="grid grid-cols-2 gap-4 py-4">
+                <div className="grid grid-cols-4 gap-4 py-4">
                     <div className="flex flex-col">
                         <span className="text-sm font-medium text-gray-500">Customer</span>
                         <span>{item.customer_address?.nama_customer || '-'}</span>

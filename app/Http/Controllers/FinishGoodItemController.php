@@ -50,12 +50,7 @@ class FinishGoodItemController extends Controller
      */
     public function store(Request $request)
     {
-        Log::info('Received data:', $request->all());
-        Log::info('BOM data:', [
-            'exists' => $request->has('bill_of_materials'),
-            'count' => $request->has('bill_of_materials') ? count($request->bill_of_materials) : 0,
-            'data' => $request->bill_of_materials
-        ]);
+
         $request->validate([
             'id_customer_address' => 'required|exists:customer_addresses,id',
             'id_type_item' => 'required|exists:type_items,id',
@@ -87,7 +82,7 @@ class FinishGoodItemController extends Controller
         $finishGoodItem = FinishGoodItem::create($request->except('bill_of_materials'));
 
         if ($request->has('bill_of_materials') && is_array($request->bill_of_materials)) {
-            Log::info('Processing BOM items: ' . count($request->bill_of_materials));
+
 
             foreach ($request->bill_of_materials as $bomItem) {
 
@@ -95,7 +90,6 @@ class FinishGoodItemController extends Controller
                     unset($bomItem['id']);
                 }
 
-                Log::info('Creating BOM item:', $bomItem);
 
                 $finishGoodItem->billOfMaterials()->create([
                     'id_master_item' => $bomItem['id_master_item'],

@@ -16,12 +16,6 @@ class KartuInstruksiKerja extends Model
         'no_kartu_instruksi_kerja',
         'production_plan',
         'tgl_estimasi_selesai',
-        'spesifikasi_kertas',
-        'up_satu',
-        'up_dua',
-        'up_tiga',
-        'ukuran_potong',
-        'ukuran_cetak'
     ];
 
     protected $casts = [
@@ -36,5 +30,10 @@ class KartuInstruksiKerja extends Model
     public function itemReferences()
     {
         return $this->hasMany(ItemReference::class, 'id_kartu_instruksi_kerja');
+    }
+
+    public function kartuInstruksiKerjaBoms()
+    {
+        return $this->hasMany(KartuInstruksiKerjaBom::class, 'id_kartu_instruksi_kerja');
     }
 }

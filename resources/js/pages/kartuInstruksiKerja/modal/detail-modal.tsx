@@ -48,30 +48,7 @@ export const DetailModal = ({ isOpen, onClose, item }: DetailModalProps) => {
                         <span className="text-sm font-medium text-gray-500">Kode Material</span>
                         <span>{item.sales_order?.finish_good_item?.kode_material_produk || '-'}</span>
                     </div>
-                    <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">Spesifikasi Kertas</span>
-                        <span>{item.spesifikasi_kertas || '-'}</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">Up Satu</span>
-                        <span>{item.up_satu || '-'}</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">Up Dua</span>
-                        <span>{item.up_dua || '-'}</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">Up Tiga</span>
-                        <span>{item.up_tiga || '-'}</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">Ukuran Potong</span>
-                        <span>{item.ukuran_potong || '-'}</span>
-                    </div>
-                    <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">Ukuran Cetak</span>
-                        <span>{item.ukuran_cetak || '-'}</span>
-                    </div>
+                    
                 </div>
             </DialogContent>
         </Dialog>

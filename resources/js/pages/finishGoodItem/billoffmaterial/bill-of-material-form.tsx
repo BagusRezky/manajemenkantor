@@ -196,7 +196,7 @@ export default function BillOfMaterialForm({ masterItems, departements, bomItems
 
                         <div className="space-y-2">
                             <Label htmlFor="waste">Waste</Label>
-                            <Input id="waste" name="waste" type="number" value={currentBomItem.waste} onChange={handleInputChange} disabled />
+                            <Input id="waste" name="waste" type="number" value={currentBomItem.waste} onChange={handleInputChange} />
                         </div>
 
                         <div className="space-y-2">

@@ -19,7 +19,10 @@ const handleDelete = (item: string) => {
     });
 };
 
-export const columns = (setSelectedItem: (item: FinishGoodItem | null) => void, openDetailModal: (item: FinishGoodItem) => void): ColumnDef<FinishGoodItem>[] => [
+export const columns = (
+    setSelectedItem: (item: FinishGoodItem | null) => void,
+    openDetailModal: (item: FinishGoodItem) => void,
+): ColumnDef<FinishGoodItem>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -36,17 +39,17 @@ export const columns = (setSelectedItem: (item: FinishGoodItem | null) => void, 
         enableHiding: false,
     },
     {
-        accessorKey: 'kode_barcode',
-        header: 'Kode Barcode',
-    },
-    {
         accessorKey: 'kode_material_produk',
         header: 'Kode Material',
-
     },
+
     {
         accessorKey: 'nama_barang',
         header: 'Nama Barang',
+    },
+    {
+        accessorKey: 'kode_barcode',
+        header: 'Kode Barcode',
     },
 
     {

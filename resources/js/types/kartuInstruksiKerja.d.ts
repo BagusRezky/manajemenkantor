@@ -1,3 +1,4 @@
+import { BomItem } from "./billOfMaterial";
 import { SalesOrder } from "./salesOrder";
 
 
@@ -7,13 +8,20 @@ export interface KartuInstruksiKerja {
     no_kartu_instruksi_kerja: string;
     production_plan: string;
     tgl_estimasi_selesai: string;
-    spesifikasi_kertas: string | null;
-    up_satu: number | null;
-    up_dua: number | null;
-    up_tiga: number | null;
-    ukuran_potong: string | null;
-    ukuran_cetak: string | null;
     created_at: string;
     updated_at: string;
     sales_order?: SalesOrder;
+}
+
+export interface KartuInstruksiKerjaBom {
+    id: string;
+    id_kartu_instruksi_kerja: string;
+    id_bom: string;
+    waste: number;
+    total_kebutuhan: number;
+    jumlah_sheet_cetak: number;
+    jumlah_total_sheet_cetak: number;
+    jumlah_produksi: number;
+    kartu_instruksi_kerja?: KartuInstruksiKerja;
+    bom?: BomItem;
 }
