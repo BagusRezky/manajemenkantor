@@ -10,16 +10,17 @@ import { PurchaseOrder } from '@/types/purchaseOrder';
 
 
 
-const handleDelete = ($customerAddress: string) => {
-    // Delete supplier with ID `id`
-    router.delete(`/customerAddresses/${$customerAddress}`, {
-        onSuccess: () => {
-            toast.success('Customer deleted successfully');
-        },
-        onError: () => {
-            toast.error('Failed to delete Customer');
-        },
-    });
+const handleDelete = (id: string) => {
+    if (confirm('Apakah Anda yakin ingin menghapus Purchase Order ini?')) {
+        router.delete(`/purchaseOrders/${id}`, {
+            onSuccess: () => {
+                toast.success('Purchase Order berhasil dihapus');
+            },
+            onError: () => {
+                toast.error('Gagal menghapus Purchase Order');
+            },
+        });
+    }
 };
 
 export const columns = (): ColumnDef<PurchaseOrder>[]=> [
@@ -58,7 +59,7 @@ export const columns = (): ColumnDef<PurchaseOrder>[]=> [
         id: 'actions',
         header: 'Actions',
         cell: ({ row }) => {
-            const customerAddress = row.original;
+            const purchaseOrder = row.original;
 
             return (
                 <DropdownMenu>
@@ -69,7 +70,7 @@ export const columns = (): ColumnDef<PurchaseOrder>[]=> [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => handleDelete(customerAddress.id)}>Delete</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => handleDelete(purchaseOrder.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
 
                     </DropdownMenuContent>

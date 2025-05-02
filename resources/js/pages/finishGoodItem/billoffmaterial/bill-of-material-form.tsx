@@ -165,6 +165,7 @@ export default function BillOfMaterialForm({ masterItems, departements, bomItems
                     )}
 
                     {/* BOM input form */}
+                    
                     <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div className="space-y-2">
                             <Label htmlFor="id_master_item">Material</Label>

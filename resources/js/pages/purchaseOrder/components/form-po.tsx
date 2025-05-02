@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
+import { SearchableSelect } from '@/components/search-select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -38,19 +39,17 @@ export default function FormPO({ data, setData, errors, purchaseRequests, suppli
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="id_purchase_request">Purchase Request</Label>
-                        <Select value={data.id_purchase_request} onValueChange={handlePRSelection}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select Purchase Request" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {purchaseRequests.map((pr) => (
-                                    <SelectItem key={pr.id} value={pr.id}>
-                                        {pr.no_pr}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        {errors.id_purchase_request && <p className="mt-1 text-sm text-red-500">{errors.id_purchase_request}</p>}
+                        <SearchableSelect
+                            items={purchaseRequests.map((pr) => ({
+                                key: String(pr.id),
+                                value: String(pr.id),
+                                label: pr.no_pr,
+                            }))}
+                            value={data.id_purchase_request || ''} // fallback biar tidak null
+                            placeholder="Pilih Purchase Request"
+                            onChange={(value) => setData('id_purchase_request', value)}
+                        />
+                        {errors.id_purchase_request && <p className="text-sm text-red-500">{errors.id_purchase_request}</p>}
                     </div>
 
                     <div className="space-y-2">
@@ -66,19 +65,17 @@ export default function FormPO({ data, setData, errors, purchaseRequests, suppli
 
                     <div className="space-y-2">
                         <Label htmlFor="id_supplier">Supplier</Label>
-                        <Select value={data.id_supplier} onValueChange={(val) => setData('id_supplier', val)}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select Supplier" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {suppliers.map((supplier) => (
-                                    <SelectItem key={supplier.id} value={supplier.id}>
-                                        {supplier.nama_suplier}
-                                    </SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                        {errors.id_supplier && <p className="mt-1 text-sm text-red-500">{errors.id_supplier}</p>}
+                        <SearchableSelect
+                            items={suppliers.map((supplier) => ({
+                                key: String(supplier.id),
+                                value: String(supplier.id),
+                                label: supplier.nama_suplier,
+                            }))}
+                            value={data.id_supplier || ''} // fallback biar tidak null
+                            placeholder="Pilih Supplier"
+                            onChange={(val) => setData('id_supplier', val)}
+                        />
+                        {errors.id_supplier && <p className="text-sm text-red-500">{errors.id_supplier}</p>}
                     </div>
                 </CardContent>
             </Card>

@@ -107,6 +107,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('purchaseOrders/getPurchaseRequestItems/{id}/items', [PurchaseOrderController::class, 'getPurchaseRequestItems'])->name('purchaseOrders.getPurchaseRequestItems');
     Route::get('purchaseOrders/getUnitConversions/{itemId}/{unitId}',[PurchaseOrderController::class, 'getUnitConversions'])->name('purchaseOrders.getUnitConversions');
     Route::post('/purchaseOrders', [PurchaseOrderController::class, 'store'])->name('purchaseOrders.store');
+    Route::delete('/purchaseOrders/{id}', [PurchaseOrderController::class, 'destroy'])->name('purchaseOrders.destroy');
 });
 
 

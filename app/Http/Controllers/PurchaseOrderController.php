@@ -50,23 +50,23 @@ class PurchaseOrderController extends Controller
 
 
     public function getPurchaseRequestItems($id)
-{
-    try {
-        $purchaseRequest = PurchaseRequest::with([
-            'purchaseRequestItems',
-            'purchaseRequestItems.masterItem',
-            'purchaseRequestItems.masterItem.unit',
-        ])->findOrFail($id);
+    {
+        try {
+            $purchaseRequest = PurchaseRequest::with([
+                'purchaseRequestItems',
+                'purchaseRequestItems.masterItem',
+                'purchaseRequestItems.masterItem.unit',
+            ])->findOrFail($id);
 
-        return response()->json([
-            'purchaseRequest' => $purchaseRequest
-        ]);
-    } catch (\Exception $e) {
-        return response()->json([
-            'error' => $e->getMessage()
-        ], 500);
+            return response()->json([
+                'purchaseRequest' => $purchaseRequest
+            ]);
+        } catch (\Exception $e) {
+            return response()->json([
+                'error' => $e->getMessage()
+            ], 500);
+        }
     }
-}
 
     public function getUnitConversions($itemId, $unitId)
     {
@@ -81,9 +81,9 @@ class PurchaseOrderController extends Controller
             ->get();
 
         return response()->json([
-        'conversions' => $conversions
-    ]);
-    dd($conversions->toArray());
+            'conversions' => $conversions
+        ]);
+        dd($conversions->toArray());
     }
 
 
@@ -127,7 +127,7 @@ class PurchaseOrderController extends Controller
         ]);
 
         // Create Purchase Order Items
-        foreach ($validated ['items'] as $item) {
+        foreach ($validated['items'] as $item) {
             PurchaseOrderItem::create([
                 'id_purchase_order' => $purchaseOrder->id,
                 'id_purchase_request_item' => $item['id_purchase_request_item'],
@@ -172,8 +172,20 @@ class PurchaseOrderController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(PurchaseOrder $purchaseOrder)
+    public function destroy($id)
     {
-        //
+        $purchaseOrder = PurchaseOrder::findOrFail($id);
+
+        // Delete related items
+        // Hapus item terkait
+        foreach ($purchaseOrder->items()->get() as $item) {
+            $item->delete();
+        }
+
+        // Hapus PO
+        $purchaseOrder->delete();
+
+        return redirect()->route('purchaseOrders.index')
+            ->with('success', 'Purchase Order berhasil dihapus!');
     }
 }
