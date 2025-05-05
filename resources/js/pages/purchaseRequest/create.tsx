@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { DatePicker } from '@/components/date-picker';
+import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
@@ -24,6 +25,7 @@ interface Department {
 
 interface MasterItem {
     id: number;
+    nama_master_item: string;
     kode_master_item: string;
     satuan_satu_id: number;
     id_type_item: number;
@@ -97,6 +99,7 @@ export default function Create({ departments, masterItems, customerAddresses, ka
     // State for managing temporary item input
     const [itemInput, setItemInput] = useState<{
         id_master_item: string;
+        nama_master_item: string;
         qty: string;
         eta: string;
         catatan: string;
@@ -104,6 +107,7 @@ export default function Create({ departments, masterItems, customerAddresses, ka
         satuan: string;
     }>({
         id_master_item: '',
+        nama_master_item: '',
         qty: '',
         eta: '',
         catatan: '',
@@ -184,6 +188,7 @@ export default function Create({ departments, masterItems, customerAddresses, ka
         // Reset item input
         setItemInput({
             id_master_item: '',
+            nama_master_item: '',
             qty: '',
             eta: '',
             catatan: '',
@@ -321,18 +326,16 @@ export default function Create({ departments, masterItems, customerAddresses, ka
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <Label htmlFor="id_department">Departemen</Label>
-                                        <Select value={data.id_department} onValueChange={handleDepartmentChange}>
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Pilih Departemen" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {departments.map((dept) => (
-                                                    <SelectItem key={dept.id} value={dept.id.toString()}>
-                                                        {dept.nama_departemen}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <SearchableSelect
+                                            items={departments.map((dept) => ({
+                                                key: String(dept.id),
+                                                value: String(dept.id),
+                                                label: `${dept.kode_departemen} - ${dept.nama_departemen}`,
+                                            }))}
+                                            value={data.id_department || ''}
+                                            placeholder="Pilih Departemen"
+                                            onChange={handleDepartmentChange}
+                                        />
                                         {errors.id_department && <p className="text-sm text-red-500">{errors.id_department}</p>}
                                     </div>
                                     <div className="space-y-2">
@@ -353,23 +356,21 @@ export default function Create({ departments, masterItems, customerAddresses, ka
                                     <div className="mb-4 grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                                         <div className="space-y-2">
                                             <Label htmlFor="id_master_item">Item</Label>
-                                            <Select value={itemInput.id_master_item} onValueChange={handleMasterItemChange}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Pilih Item" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {masterItems.map((item) => (
-                                                        <SelectItem key={item.id} value={item.id.toString()}>
-                                                            {item.type_item.nama_type_item}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
+                                            <SearchableSelect
+                                                items={masterItems.map((item) => ({
+                                                    key: String(item.id),
+                                                    value: String(item.id),
+                                                    label: `${item.kode_master_item} - ${item.nama_master_item}`,
+                                                }))}
+                                                value={itemInput.id_master_item || ''}
+                                                placeholder="Pilih Item"
+                                                onChange={handleMasterItemChange}
+                                            />
                                         </div>
-                                        <div className="space-y-2">
-                                            <Label htmlFor="kode_master_item">Kode Item</Label>
-                                            <Input id="kode_master_item" name="kode_master_item" value={itemInput.kode_master_item} disabled />
-                                        </div>
+                                        {/* <div className="space-y-2">
+                                            <Label htmlFor="kode_master_item">Type Item</Label>
+                                            <Input id="kode_master_item" name="kode_master_item" value={itemInput.type_item} disabled />
+                                        </div> */}
                                         <div className="space-y-2">
                                             <Label htmlFor="satuan">Satuan</Label>
                                             <Input id="satuan" name="satuan" value={itemInput.satuan} disabled />
@@ -383,7 +384,7 @@ export default function Create({ departments, masterItems, customerAddresses, ka
                                                 step="0.01"
                                                 value={itemInput.qty}
                                                 onChange={handleItemInputChange}
-                                                placeholder="0.00"
+                                                placeholder="0,00"
                                             />
                                         </div>
                                         <div className="space-y-2">

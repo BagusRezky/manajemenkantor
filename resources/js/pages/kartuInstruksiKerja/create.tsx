@@ -103,6 +103,7 @@ export default function Create({ salesOrders }: CreateProps) {
                 const waste = parseFloat(bom.waste || '0') / 100;
                 return Math.round(kebutuhanDasar * (1 + waste));
             }
+
             return 0;
         } else {
             return Math.round(jumlahPesanan * qty * (1 + toleransi));
@@ -155,6 +156,7 @@ export default function Create({ salesOrders }: CreateProps) {
 
                     // Formula umum untuk non-SHEET
                     const totalKebutuhan = Math.round(jumlahPesanan * qty * (1 + toleransi));
+
 
                     return {
                         ...bom,
@@ -210,6 +212,8 @@ export default function Create({ salesOrders }: CreateProps) {
 
         setBomItems(updatedItems);
     };
+
+
 
    const handleSubmit = (e: React.FormEvent) => {
        e.preventDefault();
@@ -306,6 +310,10 @@ export default function Create({ salesOrders }: CreateProps) {
                                                 }}
                                             />
                                             {errors.tgl_estimasi_selesai && <p className="text-sm text-red-500">{errors.tgl_estimasi_selesai}</p>}
+                                        </div>
+                                        <div className="space-y-2">
+                                            <Label htmlFor="production_plan">ETA Marketing</Label>
+                                            <Input value={selectedSalesOrder?.eta_marketing || ''} readOnly />
                                         </div>
                                     </div>
                                     {selectedSalesOrder && (
@@ -443,7 +451,6 @@ export default function Create({ salesOrders }: CreateProps) {
                                                                     <p>
                                                                         <span className="font-medium">Jumlah Total Sheet Cetak:</span>{' '}
                                                                         {sheetItem.jumlah_total_sheet_cetak || '-'}
-
                                                                     </p>
                                                                     <p>
                                                                         <span className="font-medium">Jumlah Produksi:</span>{' '}

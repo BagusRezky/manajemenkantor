@@ -102,6 +102,10 @@ export default function BillOfMaterialForm({ masterItems, departements, bomItems
         setBomItems(bomItems.filter((item) => String(item.id) !== id));
         toast.success('Material removed from BOM successfully!');
     };
+    const filteredItems = masterItems;
+
+    console.log('masterItems:', masterItems);
+    console.log('Filtered:', filteredItems);
 
     return (
         <div className="mt-6">
@@ -112,7 +116,6 @@ export default function BillOfMaterialForm({ masterItems, departements, bomItems
             {showBomSection && (
                 <div className="mt-4 rounded-md border p-4">
                     <h3 className="mb-4 text-lg font-medium">Bill of Materials</h3>
-
                     {/* BOM items list */}
                     {bomItems.length > 0 && (
                         <div className="mt-4 rounded-md border">
@@ -163,18 +166,19 @@ export default function BillOfMaterialForm({ masterItems, departements, bomItems
                             </table>
                         </div>
                     )}
-
                     {/* BOM input form */}
-                    
+
                     <div className="mt-4 grid grid-cols-1 gap-6 md:grid-cols-3">
                         <div className="space-y-2">
                             <Label htmlFor="id_master_item">Material</Label>
                             <SearchableSelect
-                                items={masterItems.map((item) => ({
-                                    key: String(item.id),
-                                    value: String(item.id),
-                                    label: `${item.kode_master_item} - ${item.nama_master_item}`,
-                                }))}
+                                items={masterItems
+                                    .filter((item) => item.category_item?.nama_category_item.toLowerCase() === 'material production')
+                                    .map((item) => ({
+                                        key: String(item.id),
+                                        value: String(item.id),
+                                        label: `${item.kode_master_item} - ${item.nama_master_item}`,
+                                    }))}
                                 value={currentBomItem.id_master_item}
                                 placeholder="Pilih Material"
                                 onChange={handleMasterItemChange}
@@ -215,7 +219,6 @@ export default function BillOfMaterialForm({ masterItems, departements, bomItems
                             <Input id="keterangan" name="keterangan" value={currentBomItem.keterangan} onChange={handleInputChange} />
                         </div>
                     </div>
-
                     <div className="mt-4">
                         <Button type="button" onClick={handleAddBomItem} className="bg-green-500 text-white">
                             Tambah Material

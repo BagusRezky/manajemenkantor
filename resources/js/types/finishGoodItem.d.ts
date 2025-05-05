@@ -1,7 +1,8 @@
+import { BomItem } from "./billOfMaterial";
 import { CustomerAddress } from "./customerAddress";
 import { TypeItem } from "./typeItem";
 import { Unit } from "./unit";
-import { BomItem } from "./bomItem";
+
 
 export interface FinishGoodItem {
     id: string;

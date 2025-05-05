@@ -19,4 +19,9 @@ class CategoryItem extends Model
         return $this->hasMany(TypeItem::class, 'id_category_item');
     }
 
+    public function masterItem()
+    {
+        return $this->hasMany(MasterItem::class, 'id_category_item');
+    }
+
 }

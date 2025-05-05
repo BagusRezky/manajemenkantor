@@ -74,6 +74,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/finishGoodItems/cut-off', [FinishGoodItemController::class, 'cutOff'])->name('finishGoodItems.cutOff');
     Route::post('/finishGoodItems/{id}/restore', [FinishGoodItemController::class, 'restore'])->name('finishGoodItems.restore');
     Route::delete('/finishGoodItems/{id}/force-delete', [FinishGoodItemController::class, 'forceDelete'])->name('finishGoodItems.forceDelete');
+    Route::get('/finishGoodItems/{id}/detail', [FinishGoodItemController::class, 'detail'])->name('finishGoodItems.detail');
 
     Route::get('/salesOrders', [SalesOrderController::class, 'index'])->name('salesOrders.index');
     Route::get('/salesOrders/create', [SalesOrderController::class, 'create'])->name('salesOrders.create');

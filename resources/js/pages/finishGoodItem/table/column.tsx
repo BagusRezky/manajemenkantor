@@ -19,10 +19,7 @@ const handleDelete = (item: string) => {
     });
 };
 
-export const columns = (
-    setSelectedItem: (item: FinishGoodItem | null) => void,
-    openDetailModal: (item: FinishGoodItem) => void,
-): ColumnDef<FinishGoodItem>[] => [
+export const columns = (): ColumnDef<FinishGoodItem>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -71,7 +68,7 @@ export const columns = (
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.get(`/finishGoodItems/${item.id}/edit`)}>Edit</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => openDetailModal(item)}>Detail</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.get(`/finishGoodItems/${item.id}/detail`)}>Detail</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

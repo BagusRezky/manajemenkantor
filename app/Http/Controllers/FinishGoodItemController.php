@@ -33,7 +33,7 @@ class FinishGoodItemController extends Controller
         $units = Unit::select('id', 'nama_satuan')->get();
         $typeItems = TypeItem::select('id', 'nama_type_item', 'kode_type_item')->get();
         $customerAddresses = CustomerAddress::select('id', 'nama_customer')->get();
-        $masterItems = MasterItem::select('id', 'kode_master_item', 'nama_master_item', 'satuan_satu_id')->with('unit')->get();
+        $masterItems = MasterItem::select('id', 'kode_master_item', 'nama_master_item', 'satuan_satu_id', 'id_category_item')->with(['unit', 'categoryItem'])->get();
         $departements = Departemen::select('id', 'nama_departemen')->get();
 
         return Inertia::render('finishGoodItem/create', [
@@ -106,9 +106,19 @@ class FinishGoodItemController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(FinishGoodItem $finishGoodItem)
+    public function detail($id)
     {
-        //
+        $finishGoodItem = FinishGoodItem::with([
+            'unit',
+            'customerAddress',
+            'typeItem',
+            'billOfMaterials.masterItem',
+            'billOfMaterials.departemen'
+        ])->findOrFail($id);
+
+        return Inertia::render('finishGoodItem/detail', [
+            'finishGoodItem' => $finishGoodItem,
+        ]);
     }
 
     /**
