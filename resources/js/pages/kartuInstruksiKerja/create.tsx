@@ -14,6 +14,7 @@ import { SalesOrder } from '@/types/salesOrder';
 import { Head, router, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { toast, Toaster } from 'sonner';
+import KartuInstruksiKerjaInput from './components/fieldnoKIK';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -28,9 +29,10 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface CreateProps {
     salesOrders: SalesOrder[];
+    latestKikId?: number;
 }
 
-export default function Create({ salesOrders }: CreateProps) {
+export default function Create({ salesOrders, latestKikId }: CreateProps) {
     const { data, setData, post, processing, errors } = useForm({
         id_sales_order: '',
         no_kartu_instruksi_kerja: '',
@@ -106,7 +108,14 @@ export default function Create({ salesOrders }: CreateProps) {
 
             return 0;
         } else {
-            return Math.round(jumlahPesanan * qty * (1 + toleransi));
+            const kebutuhanRaw = jumlahPesanan * qty * (1 + toleransi);
+            console.log(`Non-SHEET Item - ${bom.master_item?.nama_master_item}: Kebutuhan sebelum dibulatkan: ${kebutuhanRaw}`);
+
+            // Add console log after rounding
+            const totalKebutuhan = Math.round(kebutuhanRaw);
+            console.log(`Non-SHEET Item - ${bom.master_item?.nama_master_item}: Kebutuhan setelah dibulatkan: ${totalKebutuhan}`);
+
+            return totalKebutuhan;
         }
     };
 
@@ -154,9 +163,13 @@ export default function Create({ salesOrders }: CreateProps) {
                     const toleransi = parseFloat(selectedSalesOrder.toleransi_pengiriman || '0') / 100;
                     const qty = parseFloat(bom.qty || '0');
 
-                    // Formula umum untuk non-SHEET
-                    const totalKebutuhan = Math.round(jumlahPesanan * qty * (1 + toleransi));
+                    // Add console log before rounding
+                    const kebutuhanRaw = jumlahPesanan * qty * (1 + toleransi);
+                    console.log(`Non-SHEET Item - ${bom.master_item?.nama_master_item}: Kebutuhan sebelum dibulatkan: ${kebutuhanRaw}`);
 
+                    // Formula umum untuk non-SHEET dengan konsol log setelah dibulatkan
+                    const totalKebutuhan = Math.round(kebutuhanRaw);
+                    console.log(`Non-SHEET Item - ${bom.master_item?.nama_master_item}: Kebutuhan setelah dibulatkan: ${totalKebutuhan}`);
 
                     return {
                         ...bom,
@@ -213,39 +226,37 @@ export default function Create({ salesOrders }: CreateProps) {
         setBomItems(updatedItems);
     };
 
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
 
+        if (isDraft && bomItems.length > 0) {
+            // Sederhanakan struktur BOM
+            const simpleBomItems = bomItems.map((item) => ({
+                id: item.id,
+                waste: item.waste,
+                total_kebutuhan: item.total_kebutuhan,
+                jumlah_sheet_cetak: item.jumlah_sheet_cetak || null,
+                jumlah_total_sheet_cetak: item.jumlah_total_sheet_cetak || null,
+                jumlah_produksi: item.jumlah_produksi || null,
+            }));
 
-   const handleSubmit = (e: React.FormEvent) => {
-       e.preventDefault();
+            // Siapkan data untuk dikirim
+            const formData = {
+                id_sales_order: data.id_sales_order,
+                no_kartu_instruksi_kerja: data.no_kartu_instruksi_kerja,
+                production_plan: data.production_plan,
+                tgl_estimasi_selesai: data.tgl_estimasi_selesai,
+                bill_of_materials: simpleBomItems,
+            };
 
-       if (isDraft && bomItems.length > 0) {
-           // Sederhanakan struktur BOM
-           const simpleBomItems = bomItems.map((item) => ({
-               id: item.id,
-               waste: item.waste,
-               total_kebutuhan: item.total_kebutuhan,
-               jumlah_sheet_cetak: item.jumlah_sheet_cetak || null,
-               jumlah_total_sheet_cetak: item.jumlah_total_sheet_cetak || null,
-               jumlah_produksi: item.jumlah_produksi || null,
-           }));
+            // Submit form menggunakan Inertia
+            router.post(route('kartuInstruksiKerja.store'), formData);
 
-           // Siapkan data untuk dikirim
-           const formData = {
-               id_sales_order: data.id_sales_order,
-               no_kartu_instruksi_kerja: data.no_kartu_instruksi_kerja,
-               production_plan: data.production_plan,
-               tgl_estimasi_selesai: data.tgl_estimasi_selesai,
-               bill_of_materials: simpleBomItems,
-           };
-
-           // Submit form menggunakan Inertia
-          router.post(route('kartuInstruksiKerja.store'), formData);
-
-           toast.success('Form dikirim, silakan tunggu...');
-       } else {
-           toast.error('Harap klik Draft KIK terlebih dahulu');
-       }
-   };
+            toast.success('Form dikirim, silakan tunggu...');
+        } else {
+            toast.error('Harap klik Draft KIK terlebih dahulu');
+        }
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -261,18 +272,7 @@ export default function Create({ salesOrders }: CreateProps) {
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                         {/* No Kartu Instruksi Kerja */}
-                                        <div className="space-y-2">
-                                            <Label htmlFor="no_kartu_instruksi_kerja">No. Kartu Instruksi Kerja</Label>
-                                            <Input
-                                                id="no_kartu_instruksi_kerja"
-                                                name="no_kartu_instruksi_kerja"
-                                                value={data.no_kartu_instruksi_kerja}
-                                                onChange={handleChange}
-                                            />
-                                            {errors.no_kartu_instruksi_kerja && (
-                                                <p className="text-sm text-red-500">{errors.no_kartu_instruksi_kerja}</p>
-                                            )}
-                                        </div>
+                                        <KartuInstruksiKerjaInput data={data} setData={setData} errors={errors} latestId={latestKikId} />
 
                                         {/* Sales Order */}
                                         <div className="space-y-2">

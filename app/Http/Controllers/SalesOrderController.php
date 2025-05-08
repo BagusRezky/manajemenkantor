@@ -26,20 +26,9 @@ class SalesOrderController extends Controller
      */
     public function create()
     {
-        $currentDateSection = now()->format('my');
+        $lastOrder = SalesOrder::orderBy('id', 'desc')->first();
+        $lastId = $lastOrder ? $lastOrder->id : 0;
 
-        // Get the last order number from this month/year
-        $lastOrder = SalesOrder::where('no_bon_pesanan', 'like', "%/{$currentDateSection}")
-            ->orderBy('id', 'desc')
-            ->first();
-
-        // Extract the sequential number or default to 0
-        $lastSequentialNumber = 0;
-        if ($lastOrder) {
-            // Extract the sequential number part from the last order
-            $lastSequentialPart = explode('/', $lastOrder->no_bon_pesanan)[0];
-            $lastSequentialNumber = (int)$lastSequentialPart;
-        }
 
         $customerAddresses = customerAddress::select('id', 'nama_customer')->get();
         $finishGoodItems = FinishGoodItem::select('id', 'nama_barang')->get();
@@ -47,7 +36,7 @@ class SalesOrderController extends Controller
         return Inertia::render('salesOrder/create', [
             'customerAddresses' => $customerAddresses,
             'finishGoodItems' => $finishGoodItems,
-            'lastSequentialNumber' => $lastSequentialNumber
+            'lastId' => $lastId
         ]);
     }
 
@@ -59,6 +48,7 @@ class SalesOrderController extends Controller
         $validated = $request->validate([
             'id_customer_address' => 'required|exists:customer_addresses,id',
             'id_finish_good_item' => 'required|exists:finish_good_items,id',
+            'no_bon_pesanan' => 'required|string',
             'no_po_customer' => 'required|string',
             'jumlah_pesanan' => 'required|string',
             'harga_pcs_bp' => 'required|string',
@@ -74,17 +64,18 @@ class SalesOrderController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
-        // Extract custom_part from the request
-        $customPart = $request->input('custom_part', 'XX-XXX');
+       $salesOrder = SalesOrder::create($validated);
 
-        // Generate the order number
-        $orderNumber = SalesOrder::generateOrderNumber($customPart);
+        // If for some reason no_bon_pesanan is empty or needs to be generated server-side,
+        // we can fall back to generating it here
+        if (empty($salesOrder->no_bon_pesanan)) {
+            $yearMonth = now()->format('ym'); // Format: yymm
+            $formattedId = str_pad($salesOrder->id, 5, '0', STR_PAD_LEFT);
+            $orderNumber = "SO/{$formattedId}.{$yearMonth}";
 
-        // Add the generated order number to the validated data
-        $validated['no_bon_pesanan'] = $orderNumber;
-
-        // Create the sales order (only once)
-        $salesOrder = SalesOrder::create($validated);
+            $salesOrder->no_bon_pesanan = $orderNumber;
+            $salesOrder->save();
+        }
 
         return redirect()->route('salesOrders.index')->with('success', 'Sales Order created successfully!');
     }

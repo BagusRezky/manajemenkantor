@@ -39,8 +39,13 @@ class KartuInstruksiKerjaController extends Controller
             ->whereDoesntHave('kartuInstruksiKerja')
             ->get();
 
+        $currentYear = date('Y');
+        $latestKikId = KartuInstruksiKerja::whereYear('created_at', $currentYear)
+            ->count() + 1;
+
         return Inertia::render('kartuInstruksiKerja/create', [
-            'salesOrders' => $salesOrders
+            'salesOrders' => $salesOrders,
+            'latestKikId' => $latestKikId
         ]);
     }
 

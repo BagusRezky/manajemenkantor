@@ -14,11 +14,11 @@ interface DetailProps {
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Finish Good Item',
-        href: '/finishGoodItem',
+        href: '/finishGoodItems',
     },
     {
         title: 'Detail',
-        href: '#',
+        href: '/finishGoodItems/detail',
     },
 ];
 

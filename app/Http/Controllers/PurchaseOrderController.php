@@ -92,6 +92,7 @@ class PurchaseOrderController extends Controller
      */
     public function store(Request $request)
     {
+        
         $validated = $request->validate([
             'id_purchase_request' => 'required|exists:purchase_requests,id',
             'tanggal_po' => 'required|date',
@@ -108,7 +109,7 @@ class PurchaseOrderController extends Controller
             'items.*.harga_satuan' => 'required|numeric|min:0',
             'items.*.diskon_satuan' => 'required|numeric|min:0',
             'items.*.jumlah' => 'required|numeric|min:0',
-            'items.*.remark_iteem_po' => 'nullable|string|',
+            'items.*.remark_item_po' => 'nullable|string|',
         ]);
 
         // Generate PO number

@@ -10,6 +10,7 @@ import { BreadcrumbItem } from '@/types';
 import { CustomerAddress } from '@/types/customerAddress';
 import { FinishGoodItem } from '@/types/finishGoodItem';
 import { Head, Link, useForm } from '@inertiajs/react';
+import { useEffect } from 'react';
 
 import { toast, Toaster } from 'sonner';
 
@@ -27,14 +28,14 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface CreateProps {
     finishGoodItems: FinishGoodItem[];
     customerAddresses: CustomerAddress[];
-    lastSequentialNumber?: number;
+    lastId: number;
 }
 
-export default function Create({ finishGoodItems, customerAddresses, lastSequentialNumber = 0 }: CreateProps) {
+export default function Create({ finishGoodItems, customerAddresses, lastId }: CreateProps) {
     const { data, setData, post, processing, errors } = useForm({
         id_finish_good_item: '',
         id_customer_address: '',
-        custom_part: 'XX-XXX',
+        no_bon_pesanan: '',
         no_po_customer: '',
         jumlah_pesanan: '',
         harga_pcs_bp: '',
@@ -53,18 +54,25 @@ export default function Create({ finishGoodItems, customerAddresses, lastSequent
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
 
-        const upperCaseFields = ['custom_part'];
-
-        const newValue = upperCaseFields.includes(name) ? value.toUpperCase() : value;
+        // No need for special handling of custom_part/no_bon_pesanan as it's now read-only
         setData((prev) => ({
             ...prev,
-            [name]: newValue,
+            [name]: value,
         }));
     };
 
     const currentDate = new Date();
-    const monthYear = `${(currentDate.getMonth() + 1).toString().padStart(2, '0')}${currentDate.getFullYear().toString().slice(-2)}`;
-    const nextSequentialNumber = String(lastSequentialNumber + 1).padStart(3, '0');
+    const yearMonth = `${currentDate.getFullYear().toString().slice(-2)}${(currentDate.getMonth() + 1).toString().padStart(2, '0')}`;
+    const nextId = String(lastId + 1).padStart(5, '0');
+    const salesOrderNumber = `SO/${nextId}.${yearMonth}`;
+
+    useEffect(() => {
+        setData((prevData) => ({
+            ...prevData,
+            // Setting the salesOrderNumber directly to be used in the backend
+            no_bon_pesanan: salesOrderNumber,
+        }));
+    }, [salesOrderNumber]);
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -147,23 +155,14 @@ export default function Create({ finishGoodItems, customerAddresses, lastSequent
                                         <div className="space-y-2">
                                             <Label htmlFor="custom_part">No. Sales Order</Label>
                                             <div className="flex flex-col space-y-2">
-                                                <div className="bg-popover flex items-center rounded-md border p-1 shadow-lg">
-                                                    <span className="text-gray-500">{nextSequentialNumber}</span>
-                                                    <span className="text-gray-500">/</span>
-                                                    <span className="text-gray-500">00</span>
-                                                    <span className="text-gray-500">/</span>
-                                                    <Input
-                                                        id="custom_part"
-                                                        name="custom_part"
-                                                        value={data.custom_part}
-                                                        onChange={handleChange}
-                                                        className="mx-1 w-24 border-none bg-transparent focus:ring-0"
-                                                    />
-                                                    <span className="text-gray-500">/</span>
-                                                    <span className="text-gray-500">{monthYear}</span>
+                                                <div className="bg-popover flex items-center rounded-md border p-2 shadow-lg">
+                                                    <span className="font-medium text-white">{salesOrderNumber}</span>
                                                 </div>
+                                                {/* Hidden field for the actual form submission */}
+                                                <Input id="no_bon_pesanan" name="no_bon_pesanan" value={salesOrderNumber} type="hidden" />
+                                                {/* We're removing custom_part entirely since it's no longer needed */}
                                             </div>
-                                            {errors.custom_part && <p className="text-sm text-red-500">{errors.custom_part}</p>}
+                                            {errors.no_bon_pesanan && <p className="text-sm text-red-500">{errors.no_bon_pesanan}</p>}
                                         </div>
 
                                         <div className="space-y-2">

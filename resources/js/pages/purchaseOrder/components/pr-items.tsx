@@ -74,7 +74,7 @@ export default function PrItems({ poItems, setPoItems }: PrItemsProps) {
                                     <TableCell>{item.purchase_request_items?.master_item?.unit?.nama_satuan || '-'}</TableCell>
                                     <TableCell>{item.qty_po || 0}</TableCell>
                                     <TableCell>{item.master_konversi?.satuan_dua?.nama_satuan || '-'}</TableCell>
-                                    <TableCell>{formatRupiah(item.jumlah || 0)}</TableCell>
+                                    <TableCell>{formatRupiah(item.harga_satuan || 0)}</TableCell>
                                     <TableCell>{item.diskon_satuan || 0}%</TableCell>
                                     <TableCell>{formatRupiah(item.jumlah || 0)}</TableCell>
                                     <TableCell>{item.purchase_request_items?.catatan || '-'}</TableCell>

@@ -24,35 +24,19 @@ export default function EditItemPr({ isOpen, setIsOpen, currentItem, setCurrentI
     const [selectedConversion, setSelectedConversion] = useState<string | null>(null);
     const [loading, setLoading] = useState(false);
 
-    const calculatePrice = (conversionRate: number) => {
-        const qtyPr = currentItem.purchase_request_items?.qty || 0;
-        const diskon = currentItem.diskon_satuan || 0;
+     useEffect(() => {
+         if (isOpen && currentItem) {
+             const itemId = currentItem.id_master_item;
+             const unitId = currentItem.purchase_request_items?.master_item?.unit?.id;
 
-        if (qtyPr === 0) return;
-
-        const pricePerUnit = conversionRate / qtyPr;
-        const total = pricePerUnit * qtyPr * (1 - diskon / 100);
-
-        setCurrentItem({
-            ...currentItem,
-            harga_satuan: parseFloat(pricePerUnit.toFixed(2)),
-            jumlah: parseFloat(total.toFixed(2)),
-        });
-    };
-
-    useEffect(() => {
-        if (isOpen && currentItem) {
-            const itemId = currentItem.id_master_item;
-            const unitId = currentItem.purchase_request_items?.master_item?.unit?.id;
-
-            if (itemId && unitId) {
-                fetchConversions(itemId, unitId);
-            } else {
-                toast.error('Data tidak lengkap untuk mengambil konversi');
-            }
-        }
-        if (!isOpen) setSelectedConversion(null);
-    }, [isOpen, currentItem]);
+             if (itemId && unitId) {
+                 fetchConversions(itemId, unitId);
+             } else {
+                 toast.error('Data tidak lengkap untuk mengambil konversi');
+             }
+         }
+         if (!isOpen) setSelectedConversion(null);
+     }, [isOpen, currentItem]);
 
     const fetchConversions = async (itemId: string, unitId: string) => {
         try {
@@ -76,41 +60,13 @@ export default function EditItemPr({ isOpen, setIsOpen, currentItem, setCurrentI
         const conversion = availableConversions.find((c) => c.id === conversionId);
         if (!conversion) return;
 
-        const qtyPr = currentItem.purchase_request_items?.qty || 1; // Quantity PR
-        const conversionRate = parseFloat(conversion.jumlah_satuan_konversi) || 1; // Jumlah konversi
-
-        // Debug: Log nilai qtyPr dan conversionRate
-        console.log('qtyPr:', qtyPr, 'conversionRate:', conversionRate);
-
-        // Validasi harga satuan, pastikan tidak ada pembagian dengan 0
-        if (qtyPr <= 0 || conversionRate <= 0) {
-            toast.error('Invalid quantity or conversion rate.');
-            return;
-        }
-
-        const hargaSatuan = conversionRate / qtyPr;
-        console.log('hargaSatuan:', hargaSatuan); // Debug: Log hargaSatuan
-
-        // Perhitungan jumlah
-        const diskon = currentItem.diskon_satuan || 0;
-        const jumlah = hargaSatuan * qtyPr * (1 - diskon / 100);
-
-        // Debug: Log jumlah sebelum dibatasi
-        console.log('jumlah before discount:', jumlah);
-
-        // Pastikan jumlah tidak negatif
-        const finalJumlah = Math.max(jumlah, 0);
-
-        // Debug: Log finalJumlah setelah pembatasan
-        console.log('finalJumlah:', finalJumlah);
-
+        // Update item dengan satuan yang dipilih tanpa mengubah harga
         const updatedItem = {
             ...currentItem,
             id_satuan_po: conversion.satuan_dua_id,
             satuan: conversion.satuan_dua,
             master_konversi: conversion,
-            harga_satuan: parseFloat(hargaSatuan.toFixed(2)),
-            jumlah: parseFloat(finalJumlah.toFixed(2)),
+            // Harga satuan tetap sama atau 0 jika belum diinput
         };
 
         setCurrentItem(updatedItem);
@@ -118,31 +74,44 @@ export default function EditItemPr({ isOpen, setIsOpen, currentItem, setCurrentI
 
     const handleQtyPoChange = (qty: string) => {
         const qtyPo = parseFloat(qty) || 0;
-        const qtyPr = currentItem.purchase_request_items?.qty || 1;
-        const conversionRate = parseFloat(currentItem.master_konversi?.jumlah_satuan_konversi || '1') || 1;
-        const hargaSatuan = conversionRate / qtyPr;
-        const jumlah = hargaSatuan * qtyPr * (1 - (currentItem.diskon_satuan || 0) / 100);
 
+        // qty_po tidak mempengaruhi perhitungan jumlah
         setCurrentItem({
             ...currentItem,
             qty_po: qtyPo,
-            harga_satuan: parseFloat(hargaSatuan.toFixed(2)),
+            // Tidak mengubah jumlah karena qty_po tidak digunakan dalam perhitungan
+        });
+    };
+
+    const handleHargaSatuanChange = (harga: string) => {
+        const hargaSatuan = parseFloat(harga) || 0;
+        const qtyPr = currentItem.purchase_request_items?.qty || 0; // Gunakan qty_pr, bukan qty_po
+        const diskon = currentItem.diskon_satuan || 0;
+
+        // Hitung jumlah berdasarkan qty_pr, bukan qty_po
+        const jumlah = hargaSatuan * qtyPr * (1 - diskon / 100);
+
+        setCurrentItem({
+            ...currentItem,
+            harga_satuan: hargaSatuan,
             jumlah: parseFloat(jumlah.toFixed(2)),
         });
     };
 
-    const handleDiskonChange = (diskon: string) => {
-        const newDiskon = parseFloat(diskon) || 0;
-        const qtyPr = currentItem.purchase_request_items?.qty || 0;
-        const totalHarga = (currentItem.harga_satuan || 0) * qtyPr;
-        const totalSetelahDiskon = totalHarga * (1 - newDiskon / 100);
+     const handleDiskonChange = (diskon: string) => {
+         const newDiskon = parseFloat(diskon) || 0;
+         const qtyPr = currentItem.purchase_request_items?.qty || 0; // Gunakan qty_pr, bukan qty_po
+         const hargaSatuan = currentItem.harga_satuan || 0;
 
-        setCurrentItem({
-            ...currentItem,
-            diskon_satuan: newDiskon,
-            jumlah: parseFloat(totalSetelahDiskon.toFixed(2)),
-        });
-    };
+         // Hitung jumlah berdasarkan qty_pr, bukan qty_po
+         const jumlah = hargaSatuan * qtyPr * (1 - newDiskon / 100);
+
+         setCurrentItem({
+             ...currentItem,
+             diskon_satuan: newDiskon,
+             jumlah: parseFloat(jumlah.toFixed(2)),
+         });
+     };
 
     const handleRemarkChange = (remark: string) => {
         setCurrentItem({ ...currentItem, remark_item_po: remark });
@@ -154,16 +123,30 @@ export default function EditItemPr({ isOpen, setIsOpen, currentItem, setCurrentI
             return;
         }
 
+        if (!currentItem.qty_po || currentItem.qty_po <= 0) {
+            toast.error('Harap masukkan jumlah PO yang valid');
+            return;
+        }
+
+        if (!currentItem.harga_satuan) {
+            toast.error('Harap masukkan harga satuan');
+            return;
+        }
+
+        // Pastikan jumlah dihitung ulang sebelum simpan untuk memastikan nilai terbaru
         const qtyPr = currentItem.purchase_request_items?.qty || 0;
-        const subtotal = (currentItem.harga_satuan || 0) * qtyPr;
-        const total = subtotal * (1 - (currentItem.diskon_satuan || 0) / 100);
+        const hargaSatuan = currentItem.harga_satuan || 0;
+        const diskon = currentItem.diskon_satuan || 0;
+
+        const jumlah = hargaSatuan * qtyPr * (1 - diskon / 100);
 
         const finalItem = {
             ...currentItem,
-            jumlah: parseFloat(total.toFixed(2)),
+            jumlah: parseFloat(jumlah.toFixed(2)),
         };
 
-        onSave(finalItem); // Pastikan ini dipanggil untuk menyimpan perubahan
+        onSave(finalItem);
+        setIsOpen(false);
     };
 
     return (
@@ -261,8 +244,15 @@ export default function EditItemPr({ isOpen, setIsOpen, currentItem, setCurrentI
                             Price per Unit
                         </Label>
                         <div className="col-span-3">
-                            <Input id="price" type="number" min="0" step="0.01" value={currentItem.harga_satuan || 0} disabled />
-                            <p className="mt-1 text-xs text-gray-500">Price per unit = jumlah konversi / qty PR</p>
+                            <Input
+                                id="price"
+                                type="number"
+                                min="0"
+                                step="0.01"
+                                value={currentItem.harga_satuan || ''}
+                                onChange={(e) => handleHargaSatuanChange(e.target.value)}
+                            />
+                            <p className="mt-1 text-xs text-gray-500">Masukkan harga per unit</p>
                         </div>
                     </div>
 
@@ -281,6 +271,16 @@ export default function EditItemPr({ isOpen, setIsOpen, currentItem, setCurrentI
                                 onChange={(e) => handleDiskonChange(e.target.value)}
                             />
                             <span className="text-sm text-gray-500">%</span>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-4 items-center gap-4">
+                        <Label htmlFor="jumlah" className="text-right">
+                            Total
+                        </Label>
+                        <div className="col-span-3">
+                            <Input id="jumlah" type="number" value={currentItem.jumlah || 0} disabled />
+                            <p className="mt-1 text-xs text-gray-500">Total = Harga Satuan × Qty PR × (1 - Diskon/100)</p>
                         </div>
                     </div>
 

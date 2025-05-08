@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from '@/components/ui/button';
 import { Head, useForm } from '@inertiajs/react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { PurchaseRequest, PurchaseRequestItem } from '@/types/purchaseRequest';
 import { Supplier } from '@/types/supplier';
@@ -26,7 +26,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 interface PurchaseOrderFormData {
     id_purchase_request: string;
     id_supplier: string;
-    tgl_po: string;
+    tanggal_po: string;
     eta: string | Date;
     mata_uang: string;
     ppn: number;
@@ -46,22 +46,28 @@ export default function Create({ purchaseRequests = [], suppliers = [], currenci
     const [prItems, setPrItems] = useState<any[]>([]);
     const [poItems, setPoItems] = useState<any[]>([]);
     const [loading, setLoading] = useState(false);
-
+    const [formChanged, setFormChanged] = useState(false);
     const { data, setData, post, processing, errors } = useForm<PurchaseOrderFormData>({
         id_purchase_request: '',
         id_supplier: '',
-        tgl_po: new Date().toISOString().split('T')[0],
+        tanggal_po: new Date().toISOString().split('T')[0],
         eta: new Date().toISOString().split('T')[0],
         mata_uang: 'IDR',
         ppn: 0,
-        items: []
+        items: [],
     });
+
+    // Track perubahan di Form-PO
+    const handleFormChange = (fieldName: string, value: any) => {
+        setData(fieldName, value);
+        setFormChanged(true); // Tandai bahwa form telah berubah
+    };
 
     // Handler untuk memilih PR dari dropdown
     const handlePRSelection = (prId: string) => {
         setData('id_purchase_request', prId);
         // Cari PR yang dipilih dari daftar
-        const selectedRequest = purchaseRequests.find(pr => pr.id === prId) || null;
+        const selectedRequest = purchaseRequests.find((pr) => pr.id === prId) || null;
         setSelectedPR(selectedRequest);
         // Reset poItems karena perlu klik Get Data lagi
         setPoItems([]);
@@ -126,6 +132,8 @@ export default function Create({ purchaseRequests = [], suppliers = [], currenci
 
                 setPoItems(initialPoItems);
 
+                setData('items', initialPoItems);
+
                 toast.success('Data berhasil dimuat');
             })
             .catch((error) => {
@@ -137,57 +145,74 @@ export default function Create({ purchaseRequests = [], suppliers = [], currenci
             });
     };
 
+    // Perbarui form data items saat poItems berubah
+    useEffect(() => {
+        if (poItems.length > 0) {
+            setData('items', poItems);
+        }
+    }, [poItems]);
+
     // Handler untuk submit form
-   const handleSubmit = (e: React.FormEvent) => {
-       e.preventDefault();
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
 
-       if (poItems.length === 0) {
-           toast.error('Tidak ada item yang ditambahkan');
-           return;
-       }
+        if (poItems.length === 0) {
+            toast.error('Tidak ada item yang ditambahkan');
+            return;
+        }
 
-       // Validasi semua item
-       const invalidItems = poItems.filter((item) => !item.qty_po || !item.id_satuan_po);
-       if (invalidItems.length > 0) {
-           toast.error('Terdapat item yang belum lengkap');
-           return;
-       }
+        // Validasi semua item
+        const invalidItems = poItems.filter((item) => !item.qty_po || !item.id_satuan_po);
+        if (invalidItems.length > 0) {
+            toast.error('Terdapat item yang belum lengkap');
+            return;
+        }
 
-       // Format items untuk dikirim ke server
-       const formattedItems = poItems.map((item) => ({
-           id_purchase_request_item: item.id_purchase_request_item,
-           id_master_item: item.id_master_item,
-           qty_po: item.qty_po,
-           id_satuan_po: item.id_satuan_po,
-           harga_satuan: item.harga_satuan,
-           diskon_satuan: item.diskon_satuan,
-           jumlah: item.jumlah,
-           remark_item_po: item.remark_item_po,
-       }));
+        // Format items untuk dikirim ke server
+        const formattedItems = poItems.map((item) => ({
+            id_purchase_request_item: item.id_purchase_request_item,
+            id_master_item: item.id_master_item,
+            qty_po: item.qty_po,
+            id_satuan_po: item.id_satuan_po,
+            harga_satuan: item.harga_satuan,
+            diskon_satuan: item.diskon_satuan || 0,
+            jumlah: item.jumlah,
+            remark_item_po: item.remark_item_po || '',
+        }));
 
-       // First update the data state with the formatted items
-       const updatedData = {
-           ...data,
-           items: formattedItems,
-       };
+        // Dapatkan current state terbaru dari form
+        const currentFormData = {
+            id_purchase_request: data.id_purchase_request,
+            id_supplier: data.id_supplier,
+            tanggal_po: data.tanggal_po,
+            eta: data.eta,
+            mata_uang: data.mata_uang,
+            ppn: data.ppn,
+        };
 
-       // Debug log to check what's being sent
-       console.log('Data to be submitted:', updatedData);
+        // Log state saat ini untuk debugging
+        console.log('Current form data:', currentFormData);
+        console.log('Formatted items:', formattedItems);
 
-       // Then post the data directly without modifying the form data
-       post(
-           route('purchaseOrders.store'),
-           {
-               onSuccess: () => {
-                   toast.success('Purchase Order berhasil dibuat');
-               },
-               onError: (errors) => {
-                   console.error(errors);
-                   toast.error('Gagal membuat Purchase Order');
-               },
-           },
-       );
-   };
+        // PENTING: Update items array di form data final
+        const finalData = {
+            ...currentFormData,
+            items: formattedItems,
+        };
+
+        // Then post the form data after updating the state
+        // A small timeout ensures the state update is completed
+        post(route('purchaseOrders.store'), {
+            ...finalData,
+            onSuccess: () => {
+                toast.success('Purchase Order berhasil dibuat');
+            },
+            onError: (errors: any) => {
+                console.error('Validation errors:', errors);
+                toast.error('Gagal membuat Purchase Order');
+            },
+        });
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -200,7 +225,7 @@ export default function Create({ purchaseRequests = [], suppliers = [], currenci
                     {/* Form PO Component */}
                     <FormPO
                         data={data}
-                        setData={setData}
+                        setData={handleFormChange}
                         errors={errors}
                         purchaseRequests={purchaseRequests}
                         suppliers={suppliers}
@@ -219,7 +244,16 @@ export default function Create({ purchaseRequests = [], suppliers = [], currenci
                     </div>
 
                     {/* PR Items Component - hanya tampilkan jika ada poItems */}
-                    {poItems.length > 0 && <PrItems poItems={poItems} setPoItems={setPoItems} />}
+                    {poItems.length > 0 && (
+                        <PrItems
+                            poItems={poItems}
+                            setPoItems={(updatedItems) => {
+                                setPoItems(updatedItems);
+                                // PENTING: Perbarui form data items saat poItems diupdate
+                                setData('items', updatedItems);
+                            }}
+                        />
+                    )}
                 </form>
             </div>
         </AppLayout>

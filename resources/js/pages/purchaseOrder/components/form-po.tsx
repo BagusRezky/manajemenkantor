@@ -30,6 +30,9 @@ interface FormPOProps {
 }
 
 export default function FormPO({ data, setData, errors, purchaseRequests, suppliers, currencies, handlePRSelection, selectedPR }: FormPOProps) {
+    const handleInputChange = (fieldName: string, value: any) => {
+        setData(fieldName, value);
+    };
     return (
         <div className="mb-6 grid grid-cols-1 gap-6 md:grid-cols-2">
             {/* Card untuk detail PO */}

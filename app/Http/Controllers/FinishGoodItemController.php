@@ -121,27 +121,53 @@ class FinishGoodItemController extends Controller
         ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
     public function edit($id)
     {
-        $finishGoodItem = FinishGoodItem::findOrFail($id);
+        // Eager load the BOM and related models with complete data needed for the form
+        $finishGoodItem = FinishGoodItem::with([
+            'unit',
+            'customerAddress',
+            'typeItem',
+            'billOfMaterials.masterItem.unit', // Include unit for each master item
+            'billOfMaterials.departemen'
+        ])->findOrFail($id);
+
+        // Transform the billOfMaterials to the format expected by the frontend
+        $transformedBom = $finishGoodItem->billOfMaterials->map(function($item) {
+            return [
+                'id' => $item->id,
+                'id_master_item' => (string)$item->id_master_item,
+                'id_departemen' => (string)$item->id_departemen,
+                'waste' => $item->waste,
+                'qty' => $item->qty,
+                'keterangan' => $item->keterangan,
+                'master_item' => $item->masterItem, // Include related master item
+                'departemen' => $item->departemen   // Include related departemen
+            ];
+        });
+
+        // Set the transformed BOM data
+        $finishGoodItem->bill_of_materials = $transformedBom;
+
+        // Get all required data for the edit form
         $units = Unit::select('id', 'nama_satuan')->get();
         $typeItems = TypeItem::select('id', 'nama_type_item')->get();
         $customerAddresses = CustomerAddress::select('id', 'nama_customer')->get();
+        $masterItems = MasterItem::select('id', 'kode_master_item', 'nama_master_item', 'satuan_satu_id', 'id_category_item')
+            ->with(['unit', 'categoryItem'])
+            ->get();
+        $departements = Departemen::select('id', 'nama_departemen')->get();
 
         return Inertia::render('finishGoodItem/edit', [
             'finishGoodItem' => $finishGoodItem,
             'units' => $units,
             'typeItems' => $typeItems,
             'customerAddresses' => $customerAddresses,
+            'masterItems' => $masterItems,
+            'departements' => $departements,
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, $id)
     {
         $finishGoodItem = FinishGoodItem::findOrFail($id);
@@ -165,10 +191,51 @@ class FinishGoodItemController extends Controller
             'lebar' => 'required|numeric',
             'tinggi' => 'required|numeric',
             'berat_kotor' => 'required|numeric',
-            'berat_bersih' => 'required|numeric'
+            'berat_bersih' => 'required|numeric',
+            'bill_of_materials' => 'nullable|array',
+            'bill_of_materials.*.id_master_item' => 'required|exists:master_items,id',
+            'bill_of_materials.*.id_departemen' => 'required|exists:departemens,id',
+            'bill_of_materials.*.waste' => 'required|string',
+            'bill_of_materials.*.qty' => 'required|string',
+            'bill_of_materials.*.keterangan' => 'nullable|string',
         ]);
 
-        $finishGoodItem->update($request->all());
+        // Update the FinishGoodItem
+        $finishGoodItem->update($request->except('bill_of_materials'));
+
+        // Handle bill of materials
+        if ($request->has('bill_of_materials') && is_array($request->bill_of_materials)) {
+            // Delete existing bill of materials
+            $finishGoodItem->billOfMaterials()->delete();
+
+            // Create new bill of materials
+            foreach ($request->bill_of_materials as $bomItem) {
+                // Skip temporary IDs that start with 'temp-'
+                if (isset($bomItem['id']) && strpos($bomItem['id'], 'temp-') === 0) {
+                    unset($bomItem['id']);
+                }
+
+                // Remove any related models before creating
+                if (isset($bomItem['master_item'])) {
+                    unset($bomItem['master_item']);
+                }
+
+                if (isset($bomItem['departemen'])) {
+                    unset($bomItem['departemen']);
+                }
+
+                $finishGoodItem->billOfMaterials()->create([
+                    'id_master_item' => $bomItem['id_master_item'],
+                    'id_departemen' => $bomItem['id_departemen'],
+                    'waste' => $bomItem['waste'],
+                    'qty' => $bomItem['qty'],
+                    'keterangan' => $bomItem['keterangan'] ?? null,
+                ]);
+            }
+        } else {
+            // If no bill_of_materials provided, delete all existing ones
+            $finishGoodItem->billOfMaterials()->delete();
+        }
 
         return redirect()->route('finishGoodItems.index')->with('success', 'Finish Good Item updated successfully.');
     }

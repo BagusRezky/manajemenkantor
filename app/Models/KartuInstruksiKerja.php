@@ -36,4 +36,12 @@ class KartuInstruksiKerja extends Model
     {
         return $this->hasMany(KartuInstruksiKerjaBom::class, 'id_kartu_instruksi_kerja');
     }
+
+     public static function generateYearlySequentialId(): int
+    {
+        $currentYear = date('Y');
+
+        // Count records from the current year and add 1
+        return static::whereYear('created_at', $currentYear)->count() + 1;
+    }
 }
