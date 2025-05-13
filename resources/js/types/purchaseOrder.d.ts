@@ -14,11 +14,11 @@ export interface PurchaseOrderItem {
     diskon_satuan: number;
     jumlah: number;
     remark_item_po: string;
+    qty_after_conversion: number;
     purchase_order?: PurchaseOrder;
     purchase_request_items?: PurchaseRequestItem;
     master_item?: MasterItem;
     master_konversi?: MasterKonversi;
-
 }
 
 export interface PurchaseOrder {
