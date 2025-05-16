@@ -11,6 +11,7 @@ export interface KartuInstruksiKerja {
     created_at: string;
     updated_at: string;
     sales_order?: SalesOrder;
+    kartuInstruksiKerjaBoms?: KartuInstruksiKerjaBom[];
 }
 
 export interface KartuInstruksiKerjaBom {

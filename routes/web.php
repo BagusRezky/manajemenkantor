@@ -13,6 +13,7 @@ use App\Http\Controllers\SalesOrderController;
 use App\Http\Controllers\KartuInstruksiKerjaController;
 use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\PurchaseOrderController;
+use App\Http\Controllers\PenerimaanBarangController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -92,6 +93,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/kartuInstruksiKerja/{id}', [KartuInstruksiKerjaController::class, 'destroy'])->name('kartuInstruksiKerja.destroy');
     Route::get('/kartuInstruksiKerja/{id}', [KartuInstruksiKerjaController::class, 'show'])->name('kartuInstruksiKerja.show');
     Route::get('/salesOrderData/{id}', [KartuInstruksiKerjaController::class, 'getSalesOrderData'])->name('salesOrderData.show');
+    Route::get('/kartuInstruksiKerja/{id}', [KartuInstruksiKerjaController::class, 'generatePDF']);
+
 
     Route::get('/purchaseRequest', [PurchaseRequestController::class, 'index'])->name('purchaseRequest.index');
     Route::get('/purchaseRequest/create', [PurchaseRequestController::class, 'create'])->name('purchaseRequest.create');
@@ -102,6 +105,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/purchaseRequest/{id}', [PurchaseRequestController::class, 'update'])->name('purchaseRequest.update');
     Route::delete('/purchaseRequest/{id}', [PurchaseRequestController::class, 'destroy'])->name('purchaseRequest.destroy');
     Route::post('purchaseRequest/{id}/authorize', [PurchaseRequestController::class, 'authorize'])->name('purchaseRequest.authorize');
+    Route::get('/purchaseRequest/{id}/pdf', [PurchaseRequestController::class, 'generatePdf'])->name('purchaseRequest.pdf');
 
     Route::get('/purchaseOrders', [PurchaseOrderController::class, 'index'])->name('purchaseOrders.index');
     Route::get('/purchaseOrders/create', [PurchaseOrderController::class, 'create'])->name('purchaseOrders.create');
@@ -109,6 +113,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('purchaseOrders/getUnitConversions/{itemId}/{unitId}',[PurchaseOrderController::class, 'getUnitConversions'])->name('purchaseOrders.getUnitConversions');
     Route::post('/purchaseOrders', [PurchaseOrderController::class, 'store'])->name('purchaseOrders.store');
     Route::delete('/purchaseOrders/{id}', [PurchaseOrderController::class, 'destroy'])->name('purchaseOrders.destroy');
+
+    Route::get('/penerimaanBarangs', [PenerimaanBarangController::class, 'index'])->name('penerimaanBarangs.index');
+    Route::get('/penerimaanBarangs/create', [PenerimaanBarangController::class, 'create'])->name('penerimaanBarangs.create');
+    Route::post('/penerimaanBarangs', [PenerimaanBarangController::class, 'store'])->name('penerimaanBarangs.store');
 });
 
 

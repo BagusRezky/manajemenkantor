@@ -36,4 +36,10 @@ class PurchaseOrderItem extends Model
     {
         return $this->belongsTo(Unit::class, 'id_satuan_po');
     }
+    public function penerimaanBarangItem()
+    {
+        return $this->hasMany(PenerimaanBarangItem::class, 'id_purchase_order_item');
+    }
+    
+
 }

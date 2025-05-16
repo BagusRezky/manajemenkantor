@@ -10,6 +10,7 @@ use App\Models\MasterItem;
 use App\Models\customerAddress;
 use App\Models\KartuInstruksiKerja;
 use App\Models\ItemReference;
+use Barryvdh\DomPDF\Facade\Pdf;
 use Inertia\Inertia;
 
 class PurchaseRequestController extends Controller
@@ -17,7 +18,7 @@ class PurchaseRequestController extends Controller
     /**
      * Display a listing of the resource.
      */
-     public function index()
+    public function index()
     {
         $purchaseRequests = PurchaseRequest::with(['departemen', 'purchaseRequestItems.masterItem.typeItem', 'purchaseRequestItems.masterItem.unit'])
             ->orderBy('created_at', 'desc')
@@ -144,20 +145,20 @@ class PurchaseRequestController extends Controller
     }
 
     public function detail($id)
-{
-    $purchaseRequest = PurchaseRequest::with([
-        'departemen',
-        'purchaseRequestItems.masterItem.typeItem',
-        'purchaseRequestItems.masterItem.unit',
-        'purchaseRequestItems.itemReferences.departemen',
-        'purchaseRequestItems.itemReferences.customerAddress',
-        'purchaseRequestItems.itemReferences.kartuInstruksiKerja',
-    ])->findOrFail($id);
+    {
+        $purchaseRequest = PurchaseRequest::with([
+            'departemen',
+            'purchaseRequestItems.masterItem.typeItem',
+            'purchaseRequestItems.masterItem.unit',
+            'purchaseRequestItems.itemReferences.departemen',
+            'purchaseRequestItems.itemReferences.customerAddress',
+            'purchaseRequestItems.itemReferences.kartuInstruksiKerja',
+        ])->findOrFail($id);
 
-    return Inertia::render('purchaseRequest/detail', [
-        'purchaseRequest' => $purchaseRequest
-    ]);
-}
+        return Inertia::render('purchaseRequest/detail', [
+            'purchaseRequest' => $purchaseRequest
+        ]);
+    }
 
     /**
      * Show the form for editing the specified resource.
@@ -268,5 +269,31 @@ class PurchaseRequestController extends Controller
 
         return redirect()->route('purchaseRequest.index')
             ->with('success', 'Purchase Request berhasil dihapus!');
+    }
+
+    public function generatePdf($id)
+    {
+        $purchaseRequest = PurchaseRequest::with([
+            'departemen',
+            'purchaseRequestItems.masterItem.typeItem',
+            'purchaseRequestItems.masterItem.unit',
+            'purchaseRequestItems.itemReferences'
+        ])->findOrFail($id);
+
+        // Data untuk dikirim ke React
+        $data = [
+            'purchaseRequest' => $purchaseRequest,
+            'companyInfo' => [
+                'name' => 'CV. Indigama Khatulistiwa',
+                'address' => 'Jurangpelem Satu, Bulusari, Kec. Gempol, Pasuruan, Jawa Timur 67155',
+                'phone' => '081703101012',
+                'email' => 'indigama.khatulistiwa01@gmail.com',
+                // 'logo' => asset('images/logo.png')
+            ],
+            'currentDate' => now()->format('l d F Y'),
+            'downloadMode' => request()->has('download')
+        ];
+
+        return Inertia::render('purchaseRequest/pdf/pdfpreview', $data);
     }
 }

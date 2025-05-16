@@ -120,6 +120,14 @@ export const columns = (): ColumnDef<PurchaseRequest>[] => [
                                 <DropdownMenuItem onClick={() => handleAuthorize(item.id)}>Otorisasi</DropdownMenuItem>
                             </>
                         )}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => window.open(route('purchaseRequest.pdf', { id: item.id, preview: true }), '_blank')}>
+                            Preview PDF
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => window.open(route('purchaseRequest.pdf', { id: item.id, download: true }), '_blank')}>
+                            Download PDF
+                        </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );

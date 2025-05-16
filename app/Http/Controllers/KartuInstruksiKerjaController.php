@@ -7,6 +7,7 @@ use App\Models\SalesOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\BillOfMaterial;
+use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 
 
@@ -226,5 +227,24 @@ class KartuInstruksiKerjaController extends Controller
         return response()->json([
             'finish_good_item' => $salesOrder->finishGoodItem
         ]);
+    }
+
+    public function generatePDF($id): JsonResponse
+    {
+        try {
+            $kartuInstruksiKerja = KartuInstruksiKerja::with([
+                'salesOrder.finishGoodItem.unit',
+                'salesOrder.customerAddress',
+                'kartuInstruksiKerjaBoms.billOfMaterial.departemen',
+                'kartuInstruksiKerjaBoms.billOfMaterial.masterItem.unit'
+            ])->findOrFail($id);
+
+            return response()->json($kartuInstruksiKerja);
+        } catch (\Exception $e) {
+            return response()->json([
+                'message' => 'Data not found',
+                'error' => $e->getMessage()
+            ], 404);
+        }
     }
 }

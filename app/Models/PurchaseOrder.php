@@ -37,4 +37,14 @@ class PurchaseOrder extends Model
     {
         return $this->hasMany(PurchaseOrderItem::class, 'id_purchase_order');
     }
+
+    public function purchaseOrderItems()
+    {
+        return $this->hasMany(PurchaseOrderItem::class, 'id_purchase_order');
+    }
+
+    public function penerimaanBarang()
+    {
+        return $this->hasMany(PenerimaanBarang::class, 'id_purchase_order');
+    }
 }

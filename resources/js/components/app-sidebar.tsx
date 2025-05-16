@@ -105,9 +105,9 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         icon: Users,
         children: [
             {
-                title: 'Members',
+                title: 'Penerimaan Barang',
                 icon: Users,
-                href: '/team/members',
+                href: '/penerimaanBarangs',
             },
         ],
     },
