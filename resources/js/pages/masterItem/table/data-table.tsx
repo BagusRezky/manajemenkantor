@@ -44,7 +44,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                     <Button>Add New Master Item</Button>
                 </Link>
             </div>
-            <div className="rounded-md bg-violet-600">
+            <div className="rounded-md border-2 dark:border-0 dark:bg-violet-600">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (

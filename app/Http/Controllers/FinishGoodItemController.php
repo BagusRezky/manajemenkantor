@@ -31,7 +31,12 @@ class FinishGoodItemController extends Controller
     public function create()
     {
         $units = Unit::select('id', 'nama_satuan')->get();
-        $typeItems = TypeItem::select('id', 'nama_type_item', 'kode_type_item')->get();
+        $typeItems = TypeItem::select('id', 'nama_type_item', 'kode_type_item', 'id_category_item')
+        ->with('categoryItem')
+        ->whereHas('categoryItem', function($query) {
+            $query->whereRaw('LOWER(nama_category_item) = ?', ['finish goods']);
+        })
+        ->get();
         $customerAddresses = CustomerAddress::select('id', 'nama_customer')->get();
         $masterItems = MasterItem::select('id', 'kode_master_item', 'nama_master_item', 'satuan_satu_id', 'id_category_item')->with(['unit', 'categoryItem'])->get();
         $departements = Departemen::select('id', 'nama_departemen')->get();

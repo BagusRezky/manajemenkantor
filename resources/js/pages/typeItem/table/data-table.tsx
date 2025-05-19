@@ -48,9 +48,9 @@ export function DataTable<TData, TValue>({ columns, data, categoryItems }: DataT
                     onChange={(event) => table.getColumn('kode_type_item')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
-                <TypeItemFormModal categoryItems={categoryItems}/>
+                <TypeItemFormModal categoryItems={categoryItems} />
             </div>
-            <div className="rounded-md bg-violet-600">
+            <div className="rounded-md border-2 dark:border-0 dark:bg-violet-600">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (
