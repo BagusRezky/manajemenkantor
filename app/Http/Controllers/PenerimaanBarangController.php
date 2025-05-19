@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\PenerimaanBarang;
 use App\Models\PurchaseOrder;
-
 use App\Models\PenerimaanBarangItem;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -122,13 +122,15 @@ class PenerimaanBarangController extends Controller
      */
     public function show(string $id)
     {
+        // Load penerimaan barang dengan semua relasi yang dibutuhkan
         $penerimaanBarang = PenerimaanBarang::with([
             'purchaseOrder.supplier',
             'items.purchaseOrderItem.masterItem',
             'items.purchaseOrderItem.satuan'
         ])->findOrFail($id);
 
-        return Inertia::render('penerimaanBarangs/show', [
+        // Render halaman detail dengan data yang sudah di-load
+        return Inertia::render('penerimaanBarang/show', [
             'penerimaanBarang' => $penerimaanBarang
         ]);
     }
@@ -178,4 +180,20 @@ class PenerimaanBarangController extends Controller
                 ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
         }
     }
+
+    public function generatePdf($id): JsonResponse
+    {
+        try {
+            $penerimaanBarang = PenerimaanBarang::with([
+                'purchaseOrder.supplier',
+                'items.purchaseOrderItem.masterItem',
+                'items.purchaseOrderItem.satuan'
+            ])->findOrFail($id);
+            return response()->json($penerimaanBarang);
+        } catch (\Exception $e) {
+            return response()->json(['error' => 'Failed to generate PDF: ' . $e->getMessage()], 500);
+        }
+
+    }
+
 }

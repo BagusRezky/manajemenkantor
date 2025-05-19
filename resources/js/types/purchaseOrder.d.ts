@@ -2,6 +2,7 @@ import { MasterItem } from "./masterItem";
 import { MasterKonversi } from "./masterKonversi";
 import { PurchaseRequest, PurchaseRequestItem } from "./purchaseRequest";
 import { Supplier } from "./supplier";
+import { Unit } from "./unit";
 
 export interface PurchaseOrderItem {
     id: string;
@@ -17,8 +18,10 @@ export interface PurchaseOrderItem {
     qty_after_conversion: number;
     purchase_order?: PurchaseOrder;
     purchase_request_items?: PurchaseRequestItem;
+    purchaseRequestItem?: PurchaseRequestItem;
     master_item?: MasterItem;
     master_konversi?: MasterKonversi;
+    satuan?: Unit;
 }
 
 export interface PurchaseOrder {
@@ -30,7 +33,7 @@ export interface PurchaseOrder {
     eta: Date;
     mata_uang: string;
     ppn: number;
-    purchase_order_items: PurchaseOrderItem[];
+    items?: PurchaseOrderItem[];
     supplier?: Supplier;
     purchase_request?: PurchaseRequest;
 }

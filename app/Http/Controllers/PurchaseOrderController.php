@@ -92,7 +92,7 @@ class PurchaseOrderController extends Controller
      */
     public function store(Request $request)
     {
-        
+
         $validated = $request->validate([
             'id_purchase_request' => 'required|exists:purchase_requests,id',
             'tanggal_po' => 'required|date',
@@ -149,25 +149,104 @@ class PurchaseOrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PurchaseOrder $purchaseOrder)
+    public function show($id)
     {
-        //
+        $purchaseOrder = PurchaseOrder::with([
+            'supplier',
+            'purchaseRequest',
+            'items.masterItem',
+            'items.satuan'
+        ])->findOrFail($id);
+
+        return Inertia::render('purchaseOrder/show', [
+            'purchaseOrder' => $purchaseOrder
+        ]);
     }
 
     /**
      * Show the form for editing the specified resource.
      */
-    public function edit(PurchaseOrder $purchaseOrder)
+    public function edit($id)
     {
-        //
+        $purchaseOrder = PurchaseOrder::with([
+            'supplier',
+            'purchaseRequest',
+            'items.masterItem',
+            'items.satuan',
+            'items.purchaseRequestItem',
+            'items.purchaseRequestItem.masterItem',
+            'items.purchaseRequestItem.masterItem.unit'
+        ])->findOrFail($id);
+
+        $purchaseRequests = PurchaseRequest::with('departemen')->get();
+        $suppliers = Supplier::all();
+        $currencies = ['IDR', 'USD', 'EUR'];
+
+        return Inertia::render('purchaseOrder/edit', [
+            'purchaseOrder' => $purchaseOrder,
+            'purchaseRequests' => $purchaseRequests,
+            'suppliers' => $suppliers,
+            'currencies' => $currencies
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, PurchaseOrder $purchaseOrder)
+    public function update(Request $request, $id)
     {
-        //
+        $validated = $request->validate([
+            'id_purchase_request' => 'required|exists:purchase_requests,id',
+            'tanggal_po' => 'required|date',
+            'id_supplier' => 'required|exists:suppliers,id',
+            'eta' => 'required|date',
+            'mata_uang' => 'required|string',
+            'ppn' => 'required|numeric',
+            'items' => 'required|array|min:1',
+            'items.*.id_purchase_request_item' => 'required|exists:purchase_request_items,id',
+            'items.*.id_master_item' => 'required|exists:master_items,id',
+            'items.*.qty_po' => 'required|numeric|min:0.01',
+            'items.*.id_satuan_po' => 'required|exists:units,id',
+            'items.*.diskon_satuan' => 'nullable|numeric|min:0',
+            'items.*.harga_satuan' => 'required|numeric|min:0',
+            'items.*.diskon_satuan' => 'required|numeric|min:0',
+            'items.*.jumlah' => 'required|numeric|min:0',
+            'items.*.remark_item_po' => 'nullable|string|',
+        ]);
+
+        // Get the purchase order
+        $purchaseOrder = PurchaseOrder::findOrFail($id);
+
+        // Update Purchase Order
+        $purchaseOrder->update([
+            'id_purchase_request' => $validated['id_purchase_request'],
+            'tanggal_po' => $validated['tanggal_po'],
+            'id_supplier' => $validated['id_supplier'],
+            'eta' => $validated['eta'],
+            'mata_uang' => $validated['mata_uang'],
+            'ppn' => $validated['ppn'],
+        ]);
+
+        // Delete existing items to replace with updated ones
+        $purchaseOrder->items()->delete();
+
+        // Create Purchase Order Items
+        foreach ($validated['items'] as $item) {
+            PurchaseOrderItem::create([
+                'id_purchase_order' => $purchaseOrder->id,
+                'id_purchase_request_item' => $item['id_purchase_request_item'],
+                'id_master_item' => $item['id_master_item'],
+                'qty_po' => $item['qty_po'],
+                'id_satuan_po' => $item['id_satuan_po'],
+                'harga_satuan' => $item['harga_satuan'],
+                'diskon_satuan' => $item['diskon_satuan'],
+                'jumlah' => $item['jumlah'],
+                'remark_item_po' => $item['remark_item_po'] ?? null,
+            ]);
+        }
+
+        return redirect()->route('purchaseOrders.index')
+            ->with('success', 'Purchase Order berhasil diperbarui!');
     }
 
     /**
@@ -188,5 +267,20 @@ class PurchaseOrderController extends Controller
 
         return redirect()->route('purchaseOrders.index')
             ->with('success', 'Purchase Order berhasil dihapus!');
+    }
+
+    public function generatePdf($id)
+    {
+        $purchaseOrder = PurchaseOrder::with([
+            'supplier',
+            'purchaseRequest',
+            'items.masterItem',
+            'items.satuan'
+        ])->findOrFail($id);
+
+        // Generate PDF logic here
+        // ...
+
+        return response()->json($purchaseOrder);
     }
 }

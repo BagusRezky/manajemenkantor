@@ -40,6 +40,4 @@ class PurchaseOrderItem extends Model
     {
         return $this->hasMany(PenerimaanBarangItem::class, 'id_purchase_order_item');
     }
-    
-
 }

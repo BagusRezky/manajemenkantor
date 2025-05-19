@@ -24,5 +24,7 @@ export interface KartuInstruksiKerjaBom {
     jumlah_total_sheet_cetak: number;
     jumlah_produksi: number;
     kartu_instruksi_kerja?: KartuInstruksiKerja;
-    bom?: BomItem;
+    billOfMaterial?: BomItem;
+    
 }
+

@@ -35,4 +35,5 @@ export interface PurchaseRequest {
         nama_departemen: string;
     };
     purchase_request_items: PurchaseRequestItem[];
+    purchaseRequestItem?: PurchaseRequestItem;
 }

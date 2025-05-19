@@ -167,17 +167,17 @@ export default function PdfPreview({ purchaseRequest, companyInfo, currentDate, 
 
             doc.setFontSize(8);
             doc.text(currentDate, margin, footerY);
-           
+
 
             // Output PDF
             if (downloadMode) {
-                doc.save(`purchase-request-${purchaseRequest.no_pr}.pdf`);
+                doc.save(`${purchaseRequest.no_pr}.pdf`);
                 // Opsional: tutup window jika dalam mode download
                 setTimeout(() => {
                     window.close();
                 }, 500);
             } else {
-                doc.save(`purchase-request-${purchaseRequest.no_pr}.pdf`);
+                doc.save(`${purchaseRequest.no_pr}.pdf`);
             }
         } catch (error) {
             console.error('Error generating PDF:', error);
@@ -208,7 +208,7 @@ export default function PdfPreview({ purchaseRequest, companyInfo, currentDate, 
                         </div>
 
                         <div className="border border-black bg-gray-50 p-4">
-                            <h1 className="mb-2 text-center text-xl font-bold">PURCHASE REQUEST ORDER</h1>
+                            <h1 className="mb-2 text-center text-xl font-bold">PURCHASE REQUEST</h1>
                             <div className="grid grid-cols-2 gap-2">
                                 <div className="border border-black p-1 text-center">{purchaseRequest.no_pr}</div>
                                 <div className="border border-black p-1 text-center">

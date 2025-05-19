@@ -110,13 +110,20 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/purchaseOrders', [PurchaseOrderController::class, 'index'])->name('purchaseOrders.index');
     Route::get('/purchaseOrders/create', [PurchaseOrderController::class, 'create'])->name('purchaseOrders.create');
     Route::get('purchaseOrders/getPurchaseRequestItems/{id}/items', [PurchaseOrderController::class, 'getPurchaseRequestItems'])->name('purchaseOrders.getPurchaseRequestItems');
-    Route::get('purchaseOrders/getUnitConversions/{itemId}/{unitId}',[PurchaseOrderController::class, 'getUnitConversions'])->name('purchaseOrders.getUnitConversions');
+    Route::get('purchaseOrders/getUnitConversions/{itemId}/{unitId}', [PurchaseOrderController::class, 'getUnitConversions'])->name('purchaseOrders.getUnitConversions');
     Route::post('/purchaseOrders', [PurchaseOrderController::class, 'store'])->name('purchaseOrders.store');
+    Route::get('/purchaseOrders/{id}', [PurchaseOrderController::class, 'show'])->name('purchaseOrders.show');
     Route::delete('/purchaseOrders/{id}', [PurchaseOrderController::class, 'destroy'])->name('purchaseOrders.destroy');
+    Route::get('/purchaseOrders/{purchaseOrder}/edit', [PurchaseOrderController::class, 'edit'])->name('purchaseOrders.edit');
+    Route::put('/purchaseOrders/{purchaseOrder}', [PurchaseOrderController::class, 'update'])->name('purchaseOrders.update');
+    Route::get('/purchaseOrders/{id}/pdf', [PurchaseOrderController::class, 'generatePdf'])->name('purchaseOrders.pdf');
+
 
     Route::get('/penerimaanBarangs', [PenerimaanBarangController::class, 'index'])->name('penerimaanBarangs.index');
     Route::get('/penerimaanBarangs/create', [PenerimaanBarangController::class, 'create'])->name('penerimaanBarangs.create');
     Route::post('/penerimaanBarangs', [PenerimaanBarangController::class, 'store'])->name('penerimaanBarangs.store');
+    Route::get('/penerimaanBarangs/{id}', [PenerimaanBarangController::class, 'show'])->name('penerimaanBarangs.show');
+    Route::get('/penerimaanBarangs/{id}/pdf', [PenerimaanBarangController::class, 'generatePdf'])->name('penerimaanBarangs.pdf');
 });
 
 

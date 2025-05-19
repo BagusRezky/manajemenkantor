@@ -6,7 +6,6 @@ use App\Models\KartuInstruksiKerja;
 use App\Models\SalesOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use App\Models\BillOfMaterial;
 use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 
@@ -109,37 +108,6 @@ class KartuInstruksiKerjaController extends Controller
      * Method untuk menghitung total kebutuhan
      * Method ini tidak dipanggil langsung, hanya untuk referensi perhitungan di backend
      */
-    private function hitungTotalKebutuhan($salesOrder, $bom)
-    {
-        $jumlahPesanan = (int)$salesOrder->jumlah_pesanan;
-        $toleransi = (float)$salesOrder->toleransi_pengiriman / 100;
-        $qty = (float)$bom->qty;
-
-        // Cek apakah master item ini adalah SHEET
-        $isSheet = $bom->masterItem->unit->nama_satuan == 'SHEET'; // Sesuaikan dengan nama satuan SHEET Anda
-
-        if ($isSheet) {
-            $finishGoodItem = $salesOrder->finishGoodItem;
-            $totalUp = (int)($finishGoodItem->up_satu + $finishGoodItem->up_dua + $finishGoodItem->up_tiga);
-            $ukuranPotong = (float)$finishGoodItem->ukuran_potong;
-            $ukuranCetak = (float)$finishGoodItem->ukuran_cetak;
-
-            // Formula untuk SHEET
-            if ($totalUp > 0 && $ukuranPotong > 0 && $ukuranCetak > 0) {
-                $kebutuhanDasar = $jumlahPesanan / $totalUp / ($ukuranPotong * $ukuranCetak);
-                // Tambahkan waste
-                $waste = (float)$bom->waste;
-                $totalKebutuhan = $kebutuhanDasar + $waste;
-            } else {
-                $totalKebutuhan = 0;
-            }
-        } else {
-            // Formula umum untuk non-SHEET
-            $totalKebutuhan = $jumlahPesanan * $qty * (1 + $toleransi);
-        }
-
-        return round($totalKebutuhan);
-    }
 
     /**
      * Display the specified resource.
@@ -232,19 +200,36 @@ class KartuInstruksiKerjaController extends Controller
     public function generatePDF($id): JsonResponse
     {
         try {
+            // Load data dengan relasi yang dibutuhkan
             $kartuInstruksiKerja = KartuInstruksiKerja::with([
                 'salesOrder.finishGoodItem.unit',
                 'salesOrder.customerAddress',
+                'kartuInstruksiKerjaBoms',
                 'kartuInstruksiKerjaBoms.billOfMaterial.departemen',
                 'kartuInstruksiKerjaBoms.billOfMaterial.masterItem.unit'
             ])->findOrFail($id);
 
+            // Debug log sebelum return
+            Log::info('Kartu Instruksi Kerja ditemukan:', ['id' => $id]);
+
+            // Cek relasi kartuInstruksiKerjaBoms dan isi billOfMaterial-nya
+            foreach ($kartuInstruksiKerja->kartuInstruksiKerjaBoms as $bom) {
+                Log::info('Data BOM:', [
+                    'id_bom' => $bom->id_bom,
+                    'exists' => $bom->billOfMaterial !== null,
+                    'bill_of_material' => optional($bom->billOfMaterial)->toArray(),
+                ]);
+            }
+
+            // Kembalikan JSON response
             return response()->json($kartuInstruksiKerja);
+
         } catch (\Exception $e) {
+            Log::error('Gagal generate PDF:', ['message' => $e->getMessage()]);
             return response()->json([
-                'message' => 'Data not found',
+                'message' => 'Data tidak ditemukan',
                 'error' => $e->getMessage()
             ], 404);
         }
-    }
+}
 }

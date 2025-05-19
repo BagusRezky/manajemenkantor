@@ -166,6 +166,7 @@ class PurchaseRequestController extends Controller
     public function edit($id)
     {
         $purchaseRequest = PurchaseRequest::with([
+            'departemen',
             'purchaseRequestItems.masterItem.typeItem',
             'purchaseRequestItems.masterItem.unit',
             'purchaseRequestItems.itemReferences.departemen',
@@ -178,7 +179,7 @@ class PurchaseRequestController extends Controller
         $customerAddresses = customerAddress::all();
         $kartuInstruksiKerjas = KartuInstruksiKerja::all();
 
-        return Inertia::render('PurchaseRequest/Edit', [
+        return Inertia::render('purchaseRequest/edit', [
             'purchaseRequest' => $purchaseRequest,
             'departments' => $departments,
             'masterItems' => $masterItems,
@@ -187,9 +188,9 @@ class PurchaseRequestController extends Controller
         ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
+    // Update method:
+    // The update method in the controller looks good, but I'd make some minor improvements:
+
     public function update(Request $request, $id)
     {
         $request->validate([
@@ -200,6 +201,11 @@ class PurchaseRequestController extends Controller
             'items.*.qty' => 'required|numeric|min:0.01',
             'items.*.eta' => 'required|date',
             'items.*.references' => 'sometimes|array',
+            'items.*.references.*.type' => 'required|in:department,customer',
+            'items.*.references.*.qty' => 'required|numeric|min:0.01',
+            'items.*.references.*.id_department' => 'required_if:items.*.references.*.type,department|exists:departemens,id',
+            'items.*.references.*.id_customer_address' => 'required_if:items.*.references.*.type,customer|exists:customer_addresses,id',
+            'items.*.references.*.id_kartu_instruksi_kerja' => 'required_if:items.*.references.*.type,customer|exists:kartu_instruksi_kerjas,id',
         ]);
 
         $purchaseRequest = PurchaseRequest::findOrFail($id);
@@ -237,7 +243,10 @@ class PurchaseRequestController extends Controller
 
                     if ($reference['type'] === 'department') {
                         $referenceData['id_department'] = $reference['id_department'];
+                        $referenceData['id_customer_address'] = null;
+                        $referenceData['id_kartu_instruksi_kerja'] = null;
                     } else {
+                        $referenceData['id_department'] = null;
                         $referenceData['id_customer_address'] = $reference['id_customer_address'];
                         $referenceData['id_kartu_instruksi_kerja'] = $reference['id_kartu_instruksi_kerja'];
                     }

@@ -18,8 +18,8 @@ export interface PenerimaanBarangItem {
         qty_po: number;
         master_item?: {
             id: string;
-            kode_item: string;
-            nama_item: string;
+            kode_master_item: string;
+            nama_master_item: string;
         };
         master_konversi?: {
             id: string;

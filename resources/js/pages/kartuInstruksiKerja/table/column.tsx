@@ -159,44 +159,44 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
     doc.text('Bill of Materials', 15, y);
 
     y += 5;
-    const tableColumn = ['Departemen', 'Kode Item', 'Nama Item', 'Qty', 'Satuan', 'Waste', 'Total Kebutuhan'];
+    // const tableColumn = ['Departemen', 'Kode Item', 'Nama Item', 'Qty', 'Satuan', 'Waste', 'Total Kebutuhan'];
+    const tableColumn = [
+        { header: 'No', dataKey: 'no' },
+        { header: 'Departemen', dataKey: 'Departemen' },
+        { header: 'Kode Item', dataKey: 'kitem' },
+        { header: 'Nama Item', dataKey: 'nitem' },
+        { header: 'Qty', dataKey: 'qty' },
+        { header: 'Satuan', dataKey: 'satuan' },
+        { header: 'Waste', dataKey: 'waste' },
+        { header: 'Total Kebutuhan', dataKey: 'total_kebutuhan' },
+    ];
 
-    const tableRows: string[][] = [];
-
-    kartuInstruksiKerja.kartuInstruksiKerjaBoms?.forEach((bom, i) => {
-        console.log(`BOM ${i}:`, bom);
-
-        const material = bom.bom;
-        if (!material) {
-            console.warn(`Data kosong untuk bom index ${i}`);
-            return;
-        }
-
-        tableRows.push([
-            material.departemen?.nama_departemen || '-',
-            material.master_item?.kode_master_item || '-',
-            material.master_item?.nama_master_item || '-',
-            material.qty?.toString() || '0',
-            material.master_item?.unit?.nama_satuan || '-',
-            material.waste?.toString() || '0',
-        ]);
-    });
-
+    const tableRows =
+        kartuInstruksiKerja.kartuInstruksiKerjaBoms?.map((item, index) => {
+            return {
+                no: (index + 1).toString(),
+                Departemen: item.billOfMaterial?.departemen?.nama_departemen || '-',
+                kitem: item.billOfMaterial?.master_item?.kode_master_item || '-',
+                nitem: item.billOfMaterial?.master_item?.nama_master_item || '-',
+                qty: item.billOfMaterial?.qty?.toString() || '0',
+                satuan: item.billOfMaterial?.master_item?.unit?.nama_satuan || '-',
+                waste: item.waste || '0',
+                total_kebutuhan: item.total_kebutuhan || '0',
+            };
+        }) || [];
 
     autoTable(doc, {
-        head: [tableColumn],
+        columns: tableColumn,
         body: tableRows,
         startY: y,
         styles: {
             fontSize: 8,
         },
-        bodyStyles: {
-            textColor: [0, 0, 0], // 🔥 Warna teks body jadi hitam
-        },
+        bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.5 },
     });
 
     if (download) {
-        doc.save(`KIK-${kikNumber}.pdf`);
+        doc.save(`${kikNumber}.pdf`);
     } else {
         window.open(doc.output('bloburl'), '_blank');
     }
