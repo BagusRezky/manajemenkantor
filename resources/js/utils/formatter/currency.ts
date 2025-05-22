@@ -1,6 +1,6 @@
 /**
  * Format angka menjadi format mata uang Rupiah
- * @param {number | string | null | undefined} amount 
+ * @param {number | string | null | undefined} amount
  * @param {boolean} withSymbol - A
  * @returns {string} -
  */
@@ -15,7 +15,7 @@ export const formatRupiah = (amount: number | string | null | undefined, withSym
             minimumFractionDigits: 2,
             maximumFractionDigits: 2,
         })
-        .replace('.', ','); // Memastikan koma digunakan untuk desimal
+        .replace('.', '.'); // Memastikan koma digunakan untuk desimal
 
     // Tambahkan simbol Rupiah jika diperlukan
     return withSymbol ? `Rp ${formattedAmount}` : formattedAmount;

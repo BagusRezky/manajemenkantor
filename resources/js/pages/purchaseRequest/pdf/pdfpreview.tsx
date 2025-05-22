@@ -1,3 +1,4 @@
+/* eslint-disable prefer-const */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PurchaseRequest } from '@/types/purchaseRequest';
 import { Head } from '@inertiajs/react';
@@ -20,7 +21,7 @@ interface PdfPreviewProps {
     downloadMode?: boolean;
 }
 
-export default function PdfPreview({ purchaseRequest, companyInfo, currentDate, downloadMode = false }: PdfPreviewProps) {
+export default function PdfPreview({ purchaseRequest, companyInfo, downloadMode = false }: PdfPreviewProps) {
     const previewRef = useRef<HTMLDivElement>(null);
 
     // Auto download jika dalam mode download
@@ -37,137 +38,117 @@ export default function PdfPreview({ purchaseRequest, companyInfo, currentDate, 
 
     const generatePdf = (): void => {
         try {
-            // Inisialisasi jsPDF dengan ukuran A4
-            const doc = new jsPDF({
-                orientation: 'portrait',
-                unit: 'mm',
-                format: 'a4',
-            });
-
-            // Margin
-            const margin = 10;
-
-            // Posisi awal
-            let y = margin;
-
-            // Lebar konten
+            // Inisialisasi dokumen PDF
+            const doc = new jsPDF('p', 'mm', 'a4');
             const pageWidth = doc.internal.pageSize.getWidth();
-            const contentWidth = pageWidth - 2 * margin;
 
-            // Header - Informasi Perusahaan
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.text(companyInfo.name, margin, y);
+            // Header Document - PURCHASE REQUEST
+            doc.setFontSize(14).setFont('helvetica', 'bold');
+            doc.text('PURCHASE REQUEST', pageWidth - 15, 18, { align: 'right' });
 
-            doc.setFontSize(9);
             doc.setFont('helvetica', 'normal');
-            y += 5;
-            doc.text(companyInfo.address, margin, y);
-            y += 4;
-            doc.text(`Telp. ${companyInfo.phone}`, margin, y);
-            y += 4;
-            doc.text(`Email: ${companyInfo.email}`, margin, y);
-            y += 8;
+            doc.text(purchaseRequest.no_pr || '', pageWidth - 15, 25, { align: 'right' });
 
-            // Header - Informasi Purchase Request
-            const prInfoWidth = 80;
-            const prInfoX = pageWidth - margin - prInfoWidth;
+            // Tambahkan header dengan border
+            doc.setDrawColor(0);
+            doc.setLineWidth(0.5);
+            doc.rect(10, 10, pageWidth - 20, 30);
 
-            doc.setFillColor(240, 240, 240);
-            doc.rect(prInfoX, margin, prInfoWidth, 25, 'S');
+            // Company Info
+            doc.setFontSize(14).setFont('helvetica', 'bold');
+            doc.text(companyInfo.name, 15, 18);
+            doc.setFontSize(10).setFont('helvetica', 'normal');
+            doc.text(companyInfo.address, 15, 23);
+            doc.text('Jawa Timur 67155', 15, 28); // Assuming this is part of the address
+            doc.text(`Email: ${companyInfo.email}`, 15, 33);
+            doc.text(`Telp: ${companyInfo.phone}`, 15, 38);
 
-            doc.setFontSize(12);
-            doc.setFont('helvetica', 'bold');
-            doc.text('PURCHASE REQUEST ORDER', prInfoX + prInfoWidth / 2, margin + 6, { align: 'center' });
+            // Informasi Purchase Request
+            doc.setLineWidth(0.5);
+            doc.rect(10, 45, pageWidth - 20, 35);
 
-            // PR Number dan Tanggal
-            const halfWidth = prInfoWidth / 2;
-            doc.rect(prInfoX, margin + 10, halfWidth, 8, 'S');
-            doc.rect(prInfoX + halfWidth, margin + 10, halfWidth, 8, 'S');
-
-            doc.setFontSize(9);
-            doc.text(purchaseRequest.no_pr, prInfoX + halfWidth / 2, margin + 15, { align: 'center' });
-
+            doc.setFontSize(10).setFont('helvetica', 'bold');
+            doc.text('Tanggal PR', 15, 52);
+            doc.text(':', 65, 52);
+            doc.setFont('helvetica', 'normal');
             const prDate = new Date(purchaseRequest.tgl_pr);
             const formattedDate = prDate.toLocaleDateString('id-ID');
-            doc.text(formattedDate, prInfoX + halfWidth + halfWidth / 2, margin + 15, { align: 'center' });
+            doc.text(formattedDate, 70, 52);
 
-            // Diajukan Oleh
-            doc.setFontSize(8);
-            doc.text('Diajukan Oleh:', prInfoX + 5, margin + 22);
-
-            doc.setFontSize(9);
             doc.setFont('helvetica', 'bold');
-            doc.text(purchaseRequest.departemen.nama_departemen, prInfoX + prInfoWidth / 2, margin + 22, { align: 'center' });
+            doc.text('Departemen', 15, 59);
+            doc.text(':', 65, 59);
+            doc.setFont('helvetica', 'normal');
+            doc.text(purchaseRequest.departemen.nama_departemen || '', 70, 59);
 
-            // Tabel Item
-            y += 20;
+            doc.setFont('helvetica', 'bold');
+            doc.text('Status', 15, 66);
+            doc.text(':', 65, 66);
+            doc.setFont('helvetica', 'normal');
+            doc.text(purchaseRequest.status || '', 70, 66);
 
-            // Buat array untuk tabel items
-            const itemsTableData = purchaseRequest.purchase_request_items.map((item, index) => [
-                (index + 1).toString(),
-                item.master_item ? `(${item.master_item.kode_master_item}) ${item.master_item.nama_master_item}` : '',
-                `${item.qty} ${item.master_item?.unit?.nama_satuan || ''}`,
-                new Date(item.eta).toLocaleDateString('id-ID'),
-                item.catatan || '',
-            ]);
+            // Header tabel "DATA ITEM"
+            doc.setFontSize(10).setFont('helvetica', 'bold');
+            doc.rect(10, 95, pageWidth - 20, 10);
+            doc.text('DATA ITEM', pageWidth / 2, 101, { align: 'center' });
 
-            // Header tabel
+            // Isi tabel item menggunakan autoTable
+            const tableColumns = [
+                { header: 'No', dataKey: 'no' },
+                { header: 'Deskripsi', dataKey: 'item' },
+                { header: 'Qty', dataKey: 'qty' },
+                { header: 'Satuan', dataKey: 'satuan' },
+                { header: 'ETA', dataKey: 'eta' },
+                { header: 'Catatan', dataKey: 'catatan' },
+            ];
+
+            const tableRows =
+                purchaseRequest.purchase_request_items.map((item, index) => {
+                    return {
+                        no: (index + 1).toString(),
+                        item: item.master_item ? `(${item.master_item.kode_master_item}) ${item.master_item.nama_master_item}` : '',
+                        qty: item.qty || 0,
+                        satuan: item.master_item?.unit?.nama_satuan || '-',
+                        eta: new Date(item.eta).toLocaleDateString('id-ID'),
+                        catatan: item.catatan || '-',
+                    };
+                }) || [];
+
             autoTable(doc, {
-                startY: y,
-                head: [['No', 'Deskripsi', 'Qty', 'ETA', 'Catatan']],
-                body: itemsTableData,
-                headStyles: {
-                    fillColor: [240, 240, 240],
-                    textColor: [0, 0, 0],
-                    fontStyle: 'bold',
-                },
-                styles: {
-                    fontSize: 9,
-                    cellPadding: 3,
-                },
+                columns: tableColumns,
+                body: tableRows,
+                startY: 105,
+                margin: { left: 10, right: 10 },
+                styles: { fontSize: 9, cellPadding: 2 },
+                headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontStyle: 'bold', lineColor: [0, 0, 0], lineWidth: 0.5 },
+                bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.5 },
                 columnStyles: {
-                    0: { cellWidth: 10, halign: 'center' },
-                    2: { halign: 'center' },
-                    3: { halign: 'center' },
+                    no: { cellWidth: 10, halign: 'center' },
+                    item: { cellWidth: 65 },
+                    qty: { cellWidth: 15, halign: 'center' },
+                    satuan: { cellWidth: 20, halign: 'center' },
+                    eta: { cellWidth: 25, halign: 'center' },
+                    catatan: { cellWidth: 45 },
                 },
-                margin: { left: margin, right: margin },
-                tableWidth: 'auto',
-                theme: 'grid',
             });
 
+            // Ambil posisi Y setelah tabel
+            const tableEndY = (doc as any).lastAutoTable.finalY;
 
-            // Footer - Tanda tangan
-            // Mendapatkan posisi y setelah tabel terakhir
-            y = (doc as any).lastAutoTable.finalY + 20;
+            // Tanda tangan
+            let currentY = tableEndY + 35;
+            doc.setFontSize(10).setFont('helvetica', 'normal');
+            doc.text('Dibuat Oleh,', 50, currentY, { align: 'center' });
+            doc.text('Disetujui Oleh,', pageWidth - 50, currentY, { align: 'center' });
 
-            const signatureWidth = (contentWidth - margin) / 2;
+            // Tempat tanda tangan
+            doc.text('( ..................................... )', 50, currentY + 30, { align: 'center' });
+            doc.text('( ..................................... )', pageWidth - 50, currentY + 30, { align: 'center' });
 
-            // Signature 1 - Dibuat oleh
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'normal');
-            doc.text('Dibuat Oleh,', margin + signatureWidth / 3, y, { align: 'center' });
-
-            y += 20;
-            const lineWidth = 50;
-            doc.line(margin + signatureWidth / 3 - lineWidth / 2, y, margin + signatureWidth / 3 + lineWidth / 2, y);
-
-            // Signature 2 - Disetujui oleh
-            doc.text('Disetujui Oleh,', margin + signatureWidth + signatureWidth / 3, y - 20, { align: 'center' });
-
-            doc.line(
-                margin + signatureWidth + signatureWidth / 3 - lineWidth / 2,
-                y,
-                margin + signatureWidth + signatureWidth / 3 + lineWidth / 2,
-                y,
-            );
-
-            // Footer - Date and page
-            const footerY = doc.internal.pageSize.getHeight() - 10;
-
-            doc.setFontSize(8);
-            doc.text(currentDate, margin, footerY);
-
+            // // Footer - Date
+            // const footerY = doc.internal.pageSize.getHeight() - 10;
+            // doc.setFontSize(8);
+            // doc.text(currentDate, 10, footerY);
 
             // Output PDF
             if (downloadMode) {
@@ -187,7 +168,7 @@ export default function PdfPreview({ purchaseRequest, companyInfo, currentDate, 
 
     return (
         <>
-            <Head title={`Purchase Request - ${purchaseRequest.no_pr}`} />
+            <Head title={`${purchaseRequest.no_pr}`} />
 
             <div className="p-6" ref={previewRef}>
                 {/* Hanya tampilkan tombol jika bukan dalam mode download */}
@@ -197,38 +178,59 @@ export default function PdfPreview({ purchaseRequest, companyInfo, currentDate, 
                     </button>
                 )}
 
-                {/* Preview Container - Bukan lagi untuk PDF rendering, hanya untuk tampilan */}
+                {/* Preview Container - Visual style matching PO PDF */}
                 <div className="mx-auto border border-gray-200 bg-white p-8 text-black shadow-lg" style={{ width: '210mm', minHeight: '297mm' }}>
-                    <div className="mb-6 flex items-start justify-between">
-                        <div>
+                    {/* Header */}
+                    <div className="relative border border-black p-4">
+                        <div className="mb-4">
                             <h2 className="text-lg font-bold">{companyInfo.name}</h2>
                             <p className="text-sm">{companyInfo.address}</p>
-                            <p className="text-sm">Telp. {companyInfo.phone}</p>
+                            <p className="text-sm">Jawa Timur 67155</p>
                             <p className="text-sm">Email: {companyInfo.email}</p>
+                            <p className="text-sm">Telp: {companyInfo.phone}</p>
                         </div>
+                        <div className="absolute top-4 right-4 text-right">
+                            <h1 className="text-lg font-bold">PURCHASE REQUEST</h1>
+                            <p>{purchaseRequest.no_pr}</p>
+                        </div>
+                    </div>
 
-                        <div className="border border-black bg-gray-50 p-4">
-                            <h1 className="mb-2 text-center text-xl font-bold">PURCHASE REQUEST</h1>
-                            <div className="grid grid-cols-2 gap-2">
-                                <div className="border border-black p-1 text-center">{purchaseRequest.no_pr}</div>
-                                <div className="border border-black p-1 text-center">
-                                    {new Date(purchaseRequest.tgl_pr).toLocaleDateString('id-ID')}
+                    {/* PR Information */}
+                    <div className="mt-4 border border-black p-4">
+                        <div className="grid grid-cols-2 gap-x-4">
+                            <div className="mb-2">
+                                <div className="grid grid-cols-2">
+                                    <span className="font-bold">Tanggal PR</span>
+                                    <span>: {new Date(purchaseRequest.tgl_pr).toLocaleDateString('id-ID')}</span>
                                 </div>
                             </div>
-                            <div className="mt-2">
-                                <p className="text-sm">Diajukan Oleh :</p>
-                                <p className="text-center font-bold">{purchaseRequest.departemen.nama_departemen}</p>
+                            <div className="mb-2">
+                                <div className="grid grid-cols-2">
+                                    <span className="font-bold">Departemen</span>
+                                    <span>: {purchaseRequest.departemen.nama_departemen}</span>
+                                </div>
+                            </div>
+                            <div className="mb-2">
+                                <div className="grid grid-cols-2">
+                                    <span className="font-bold">Status</span>
+                                    <span>: {purchaseRequest.status}</span>
+                                </div>
                             </div>
                         </div>
                     </div>
 
-                    <table className="mb-6 w-full border-collapse border border-black">
+                    {/* Table Header */}
+                    <div className="mt-8 border border-black p-2 text-center font-bold">DATA ITEM</div>
+
+                    {/* Items Table */}
+                    <table className="w-full border-collapse border border-black">
                         <thead>
-                            <tr className="bg-gray-100">
-                                <th className="w-10 border border-black p-2 text-center">No</th>
+                            <tr className="bg-white">
+                                <th className="border border-black p-2 text-center">No</th>
                                 <th className="border border-black p-2">Deskripsi</th>
-                                <th className="w-20 border border-black p-2 text-center">Qty</th>
-                                <th className="w-32 border border-black p-2 text-center">ETA</th>
+                                <th className="border border-black p-2 text-center">Qty</th>
+                                <th className="border border-black p-2 text-center">Satuan</th>
+                                <th className="border border-black p-2 text-center">ETA</th>
                                 <th className="border border-black p-2">Catatan</th>
                             </tr>
                         </thead>
@@ -243,34 +245,31 @@ export default function PdfPreview({ purchaseRequest, companyInfo, currentDate, 
                                             </>
                                         )}
                                     </td>
-                                    <td className="border border-black p-2 text-center">
-                                        {item.qty} {item.master_item?.unit?.nama_satuan || ''}
-                                    </td>
+                                    <td className="border border-black p-2 text-center">{item.qty}</td>
+                                    <td className="border border-black p-2 text-center">{item.master_item?.unit?.nama_satuan || '-'}</td>
                                     <td className="border border-black p-2 text-center">{new Date(item.eta).toLocaleDateString('id-ID')}</td>
-                                    <td className="border border-black p-2">{item.catatan}</td>
+                                    <td className="border border-black p-2">{item.catatan || '-'}</td>
                                 </tr>
                             ))}
                         </tbody>
                     </table>
 
-
-
-                    <div className="mt-20 mb-8 flex justify-between">
+                    {/* Signatures */}
+                    <div className="mt-20 flex justify-between">
                         <div className="w-1/3 text-center">
                             <p>Dibuat Oleh,</p>
-                            <div className="h-16"></div>
-                            <p className="border-black pt-2">_________________________</p>
+                            <div className="h-28"></div>
+                            <p>( ..................................... )</p>
                         </div>
                         <div className="w-1/3 text-center">
                             <p>Disetujui Oleh,</p>
-                            <div className="h-16"></div>
-                            <p className="border-black pt-2">_________________________</p>
+                            <div className="h-28"></div>
+                            <p>( ..................................... )</p>
                         </div>
                     </div>
 
-                    <div className="mt-20 flex justify-between text-xs text-gray-600">
-                        <div>{currentDate}</div>
-                    </div>
+                    {/* Footer
+                    <div className="mt-16 text-xs">{currentDate}</div> */}
                 </div>
             </div>
         </>
