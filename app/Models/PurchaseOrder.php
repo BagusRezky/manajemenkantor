@@ -16,7 +16,9 @@ class PurchaseOrder extends Model
         'tanggal_po',
         'eta',
         'mata_uang',
-        'ppn'
+        'ppn',
+        'ongkir',
+        'dp'
     ];
 
     protected $casts = [

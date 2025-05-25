@@ -78,6 +78,14 @@ export default function Show({ purchaseOrder }: ShowProps) {
                                     <h3 className="text-sm font-medium text-gray-500">PPN</h3>
                                     <p className="text-base">{purchaseOrder.ppn}</p>
                                 </div>
+                                <div className="mb-4">
+                                    <h3 className="text-sm font-medium text-gray-500">Ongkir</h3>
+                                    <p className="text-base">{purchaseOrder.ongkir}</p>
+                                </div>
+                                <div className="mb-4">
+                                    <h3 className="text-sm font-medium text-gray-500">DP</h3>
+                                    <p className="text-base">{purchaseOrder.dp}</p>
+                                </div>
                             </div>
                         </div>
                         {/* <div className="mt-4 grid grid-cols-2 gap-6">

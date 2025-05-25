@@ -18,6 +18,8 @@ interface FormPOProps {
         eta?: string | Date;
         mata_uang?: string;
         ppn?: number;
+        ongkir?: number;
+        dp?: number;
         [key: string]: any;
     };
     setData: (key: string, value: any) => void;
@@ -130,6 +132,28 @@ export default function FormPO({ data, setData, errors, purchaseRequests, suppli
                         />
                         {errors.ppn && <p className="mt-1 text-sm text-red-500">{errors.ppn}</p>}
                     </div>
+
+                    <div className="space-y-2">
+                        <Label htmlFor="ongkir">Ongkir</Label>
+                        <Input
+                            type="number"
+                            id="ongkir"
+                            value={data.ongkir !== undefined ? data.ongkir : 0}
+                            onChange={(e) => setData('ongkir', parseFloat(e.target.value) || 0)}
+                        />
+                        {errors.ongkir && <p className="mt-1 text-sm text-red-500">{errors.ongkir}</p>}
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="dp">DP</Label>
+                        <Input
+                            type="number"
+                            id="dp"
+                            value={data.dp !== undefined ? data.dp : 0}
+                            onChange={(e) => setData('dp', parseFloat(e.target.value) || 0)}
+                        />
+                        {errors.dp && <p className="mt-1 text-sm text-red-500">{errors.dp}</p>}
+                    </div>
+
                 </CardContent>
             </Card>
         </div>

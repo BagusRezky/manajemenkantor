@@ -25,8 +25,6 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     doc.setFont('helvetica', 'normal');
     doc.text(purchaseOrder.no_po || '', pageWidth - 15, 25, { align: 'right' });
 
-
-
     // Tambahkan header dengan border
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
@@ -51,13 +49,11 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     doc.setFont('helvetica', 'normal');
     const formattedPODate = purchaseOrder.tanggal_po ? format(new Date(purchaseOrder.tanggal_po), 'dd-MM-yyyy') : '';
     doc.text(formattedPODate, 70, 52);
-    // doc.text(purchaseOrder.supplier?.nama_suplier || '', 70, 52);
 
     doc.setFont('helvetica', 'bold');
     doc.text('Supplier', 15, 59);
     doc.text(':', 65, 59);
     doc.setFont('helvetica', 'normal');
-    // doc.text(purchaseOrder.supplier?.alamat_lengkap || '', 70, 59);
     doc.text(purchaseOrder.supplier?.nama_suplier || '', 70, 59);
 
     doc.setFont('helvetica', 'bold');
@@ -70,9 +66,7 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     doc.text('Mata Uang', 15, 73);
     doc.text(':', 65, 73);
     doc.setFont('helvetica', 'normal');
-    // const formattedPODate = purchaseOrder.tanggal_po ? format(new Date(purchaseOrder.tanggal_po), 'dd-MM-yyyy') : '';
     doc.text(purchaseOrder.mata_uang || '', 70, 73);
-
 
     // Header tabel "DATA ITEM"
     doc.setFontSize(10).setFont('helvetica', 'bold');
@@ -128,14 +122,24 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     const ppnRate = Number(purchaseOrder.ppn || 0);
     const ppnAmount = (totalBruto * ppnRate) / 100;
 
-    // Hitung total bayar (total bruto + ppn) - ensure numeric addition
-    const totalBayar = Number(totalBruto) + Number(ppnAmount);
+    // Ambil nilai ONGKIR dan DP
+    const ongkir = Number(purchaseOrder.ongkir || 0);
+    const dp = Number(purchaseOrder.dp || 0);
+
+    // Hitung total akhir (total bruto + ppn + ongkir)
+    const totalAkhir = Number(totalBruto) + Number(ppnAmount) + Number(ongkir);
+
+    // Hitung sisa (total akhir - dp)
+    const sisa = Number(totalAkhir) - Number(dp);
 
     // Log untuk debugging
     console.log('Total Bruto:', totalBruto);
     console.log('PPN Rate:', ppnRate, '%');
     console.log('PPN Amount:', ppnAmount);
-    console.log('Total Bayar (should be Total Bruto + PPN):', totalBayar);
+    console.log('ONGKIR:', ongkir);
+    console.log('Total Akhir:', totalAkhir);
+    console.log('DP:', dp);
+    console.log('Sisa:', sisa);
 
     autoTable(doc, {
         columns: tableColumns,
@@ -150,7 +154,7 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
             item: { cellWidth: 45 },
             qty: { cellWidth: 20, halign: 'center' },
             satuan: { cellWidth: 20, halign: 'center' },
-            tonase: { cellWidth: 20, halign: 'center' }, 
+            tonase: { cellWidth: 20, halign: 'center' },
             hsatuan: { cellWidth: 25, halign: 'right' },
             diskon: { cellWidth: 20, halign: 'right' },
             jumlah: { cellWidth: 30, halign: 'right' },
@@ -179,16 +183,34 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     doc.line(totalStartX, currentY + 2, totalStartX + totalWidth, currentY + 2);
     currentY += 7;
 
-    // Total Bayar
+    // ONGKIR
+    doc.text('ONGKIR', totalStartX + 5, currentY);
+    doc.text(formatRupiah(ongkir), pageWidth - 15, currentY, { align: 'right' });
+    doc.line(totalStartX, currentY + 2, totalStartX + totalWidth, currentY + 2);
+    currentY += 7;
+
+    // Total Akhir
     doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.text('Total Bayar', totalStartX + 5, currentY);
-    // Ensure we're dealing with numbers for the calculation
-    const finalTotal = Number(totalBruto) + Number(ppnAmount);
-    doc.text(formatRupiah(finalTotal), pageWidth - 15, currentY, { align: 'right' });
+    doc.text('Total Akhir', totalStartX + 5, currentY);
+    doc.text(formatRupiah(totalAkhir), pageWidth - 15, currentY, { align: 'right' });
+    doc.line(totalStartX, currentY + 2, totalStartX + totalWidth, currentY + 2);
+    currentY += 7;
+
+    // DP
+    doc.setFontSize(9).setFont('helvetica', 'bold');
+    doc.text('DP', totalStartX + 5, currentY);
+    doc.text(formatRupiah(dp), pageWidth - 15, currentY, { align: 'right' });
+    doc.line(totalStartX, currentY + 2, totalStartX + totalWidth, currentY + 2);
+    currentY += 7;
+
+    // Sisa
+    doc.setFontSize(10).setFont('helvetica', 'bold');
+    doc.text('Sisa', totalStartX + 5, currentY);
+    doc.text(formatRupiah(sisa), pageWidth - 15, currentY, { align: 'right' });
     doc.line(totalStartX, currentY + 2, totalStartX + totalWidth, currentY + 2);
 
     // Tanda tangan
-    currentY = tableEndY + 35;
+    currentY = tableEndY + 60; // Tambah jarak karena ada lebih banyak baris total
     doc.setFontSize(10).setFont('helvetica', 'normal');
     doc.text('Dibuat Oleh,', 50, currentY, { align: 'center' });
     doc.text('Disetujui Oleh,', pageWidth - 50, currentY, { align: 'center' });

@@ -30,6 +30,8 @@ interface PurchaseOrderFormData {
     eta: string | Date;
     mata_uang: string;
     ppn: number;
+    ongkir: number;
+    dp: number;
     items: Record<string, any>[]; // Gunakan Record<string, any>[] untuk array items
     [key: string]: any;
 }
@@ -54,6 +56,8 @@ export default function Create({ purchaseRequests = [], suppliers = [], currenci
         eta: new Date().toISOString().split('T')[0],
         mata_uang: 'IDR',
         ppn: 0,
+        ongkir: 0,
+        dp: 0,
         items: [],
     });
 
@@ -188,6 +192,8 @@ export default function Create({ purchaseRequests = [], suppliers = [], currenci
             eta: data.eta,
             mata_uang: data.mata_uang,
             ppn: data.ppn,
+            ongkir: data.ongkir,
+            dp: data.dp,
         };
 
         // Log state saat ini untuk debugging

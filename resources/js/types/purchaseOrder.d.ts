@@ -33,6 +33,8 @@ export interface PurchaseOrder {
     eta: Date;
     mata_uang: string;
     ppn: number;
+    ongkir: number;
+    dp: number;
     items?: PurchaseOrderItem[];
     supplier?: Supplier;
     purchase_request?: PurchaseRequest;

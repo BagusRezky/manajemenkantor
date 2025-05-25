@@ -100,6 +100,8 @@ class PurchaseOrderController extends Controller
             'eta' => 'required|date',
             'mata_uang' => 'required|string',
             'ppn' => 'required|numeric',
+            'ongkir' => 'required|integer|min:0',
+            'dp' => 'required|integer|min:0',
             'items' => 'required|array|min:1',
             'items.*.id_purchase_request_item' => 'required|exists:purchase_request_items,id',
             'items.*.id_master_item' => 'required|exists:master_items,id',
@@ -125,6 +127,8 @@ class PurchaseOrderController extends Controller
             'eta' => $validated['eta'],
             'mata_uang' => $validated['mata_uang'],
             'ppn' => $validated['ppn'],
+            'ongkir' => $validated['ongkir'],
+            'dp' => $validated['dp'],
         ]);
 
         // Create Purchase Order Items
@@ -202,6 +206,8 @@ class PurchaseOrderController extends Controller
             'eta' => 'required|date',
             'mata_uang' => 'required|string',
             'ppn' => 'required|numeric',
+            'ongkir' => 'required|integer|min:0',
+            'dp' => 'required|integer|min:0',
             'items' => 'required|array|min:1',
             'items.*.id_purchase_request_item' => 'required|exists:purchase_request_items,id',
             'items.*.id_master_item' => 'required|exists:master_items,id',
@@ -225,6 +231,8 @@ class PurchaseOrderController extends Controller
             'eta' => $validated['eta'],
             'mata_uang' => $validated['mata_uang'],
             'ppn' => $validated['ppn'],
+            'ongkir' => $validated['ongkir'],
+            'dp' => $validated['dp'],
         ]);
 
         // Delete existing items to replace with updated ones
