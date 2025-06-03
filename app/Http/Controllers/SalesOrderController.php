@@ -15,7 +15,7 @@ class SalesOrderController extends Controller
      */
     public function index()
     {
-        $salesOrders = SalesOrder::with(['customerAddress', 'finishGoodItem'])->get();
+        $salesOrders = SalesOrder::with(['customerAddress', 'finishGoodItem', 'finishGoodItem.billOfMaterials'])->get();
         return Inertia::render('salesOrder/salesOrders', [
             'salesOrders' => $salesOrders,
         ]);
@@ -66,8 +66,6 @@ class SalesOrderController extends Controller
 
        $salesOrder = SalesOrder::create($validated);
 
-        // If for some reason no_bon_pesanan is empty or needs to be generated server-side,
-        // we can fall back to generating it here
         if (empty($salesOrder->no_bon_pesanan)) {
             $yearMonth = now()->format('ym'); // Format: yymm
             $formattedId = str_pad($salesOrder->id, 5, '0', STR_PAD_LEFT);
@@ -143,5 +141,19 @@ class SalesOrderController extends Controller
         $salesOrder->delete();
 
         return redirect()->route('salesOrders.index')->with('success', 'Sales Order deleted successfully!');
+    }
+
+    public function generatePdf($id)
+    {
+        $salesOrder = SalesOrder::with([
+            'customerAddress',
+            'finishGoodItem.billOfMaterials.masterItem.unit',
+            'finishGoodItem.billOfMaterials.departemen',
+            'finishGoodItem.unit',
+            'finishGoodItem.customerAddress',
+            'finishGoodItem.typeItem'
+        ])->findOrFail($id);
+
+        return response()->json($salesOrder);
     }
 }

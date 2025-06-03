@@ -289,20 +289,7 @@ class PurchaseRequestController extends Controller
             'purchaseRequestItems.itemReferences'
         ])->findOrFail($id);
 
-        // Data untuk dikirim ke React
-        $data = [
-            'purchaseRequest' => $purchaseRequest,
-            'companyInfo' => [
-                'name' => 'CV. Indigama Khatulistiwa',
-                'address' => 'Jurangpelem Satu, Bulusari, Kec. Gempol, Pasuruan, Jawa Timur 67155',
-                'phone' => '081703101012',
-                'email' => 'indigama.khatulistiwa01@gmail.com',
-                // 'logo' => asset('images/logo.png')
-            ],
-            'currentDate' => now()->format('l d F Y'),
-            'downloadMode' => request()->has('download')
-        ];
+        return response()->json($purchaseRequest);
 
-        return Inertia::render('purchaseRequest/pdf/pdfpreview', $data);
     }
 }

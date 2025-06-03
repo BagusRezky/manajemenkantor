@@ -1,4 +1,7 @@
-import { BomItem } from "./billOfMaterial";
+
+
+
+import { BillOfMaterial } from "./billOfMaterial";
 import { CustomerAddress } from "./customerAddress";
 import { TypeItem } from "./typeItem";
 import { Unit } from "./unit";
@@ -29,5 +32,5 @@ export interface FinishGoodItem {
     unit?: Unit;
     customer_address?: CustomerAddress;
     type_item?: TypeItem;
-    bill_of_materials?: BomItem[];
+    bill_of_materials?: BillOfMaterial[];
 }

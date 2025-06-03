@@ -83,6 +83,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/salesOrders/{id}/edit', [SalesOrderController::class, 'edit'])->name('salesOrders.edit');
     Route::put('/salesOrders/{id}', [SalesOrderController::class, 'update'])->name('salesOrders.update');
     Route::delete('/salesOrders/{id}', [SalesOrderController::class, 'destroy'])->name('salesOrders.destroy');
+    Route::get('/salesOrders/{id}/pdf', [SalesOrderController::class, 'generatePdf']);
 
     // Routes untuk Kartu Instruksi Kerja
     Route::get('/kartuInstruksiKerja', [KartuInstruksiKerjaController::class, 'index'])->name('kartuInstruksiKerja.index');
@@ -93,7 +94,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/kartuInstruksiKerja/{id}', [KartuInstruksiKerjaController::class, 'destroy'])->name('kartuInstruksiKerja.destroy');
     Route::get('/kartuInstruksiKerja/{id}', [KartuInstruksiKerjaController::class, 'show'])->name('kartuInstruksiKerja.show');
     Route::get('/salesOrderData/{id}', [KartuInstruksiKerjaController::class, 'getSalesOrderData'])->name('salesOrderData.show');
-    Route::get('/kartuInstruksiKerja/{id}', [KartuInstruksiKerjaController::class, 'generatePDF']);
+    Route::get('/kartuInstruksiKerja/{id}/pdf', [KartuInstruksiKerjaController::class, 'generatePdf'])->name('kartuInstruksiKerja.pdf');
 
 
     Route::get('/purchaseRequest', [PurchaseRequestController::class, 'index'])->name('purchaseRequest.index');

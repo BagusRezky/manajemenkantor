@@ -5,6 +5,7 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { PurchaseOrder } from '@/types/purchaseOrder';
 import { formatRupiah } from '@/utils/formatter/currency';
+import { formatToPercent } from '@/utils/formatter/percent';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
@@ -110,7 +111,7 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
                 satuan: item.satuan?.nama_satuan || '-',
                 tonase: tonase.toFixed(4), // Format ke 4 angka desimal
                 hsatuan: formatRupiah(item.harga_satuan || 0),
-                diskon: item.diskon_satuan,
+                diskon: formatToPercent(item.diskon_satuan),
                 jumlah: formatRupiah(item.jumlah || 0),
             };
         }) || [];
@@ -147,7 +148,7 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
         startY: 105,
         margin: { left: 10, right: 10 },
         styles: { fontSize: 9, cellPadding: 2 },
-        headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontStyle: 'bold', lineColor: [0, 0, 0], lineWidth: 0.5 },
+        headStyles: { fillColor: [40, 88, 247], textColor: [0, 0, 0], fontStyle: 'bold', lineColor: [0, 0, 0], lineWidth: 0.5 },
         bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.5 },
         columnStyles: {
             no: { cellWidth: 10, halign: 'center' },

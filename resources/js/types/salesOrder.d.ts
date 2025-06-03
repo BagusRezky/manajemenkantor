@@ -1,9 +1,10 @@
 import { CustomerAddress } from "./customerAddress";
 import { FinishGoodItem } from "./finishGoodItem";
+import { KartuInstruksiKerja } from "./kartuInstruksiKerja";
 
 export interface SalesOrder {
     id: string;
-    id_cusomer_address: string;
+    id_customer_address: string;
     id_finish_good_item: string;
     no_bon_pesanan: string;
     no_po_customer: string;
@@ -21,5 +22,5 @@ export interface SalesOrder {
     catatan: string;
     customer_address?: CustomerAddress;
     finish_good_item?: FinishGoodItem;
-    kartu_instruksi_kerja?: KartuInstruksiKerja;
+    kartu_instruksi_kerja?: KartuInstruksiKerja[];
 }

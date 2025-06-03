@@ -6,7 +6,6 @@ use App\Models\KartuInstruksiKerja;
 use App\Models\SalesOrder;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Http\JsonResponse;
 use Inertia\Inertia;
 
 
@@ -17,7 +16,7 @@ class KartuInstruksiKerjaController extends Controller
      */
     public function index()
     {
-        $kartuInstruksiKerja = KartuInstruksiKerja::with(['salesOrder.finishGoodItem', 'salesOrder.customerAddress'])->get();
+        $kartuInstruksiKerja = KartuInstruksiKerja::with(['salesOrder.finishGoodItem', 'salesOrder.customerAddress','kartuInstruksiKerjaBoms','kartuInstruksiKerjaBoms.billOfMaterials'])->get();
 
         return Inertia::render('kartuInstruksiKerja/kartuInstruksiKerja', [
             'kartuInstruksiKerja' => $kartuInstruksiKerja
@@ -113,27 +112,40 @@ class KartuInstruksiKerjaController extends Controller
      * Display the specified resource.
      */
     public function show($id)
-    {
-        $kartuInstruksiKerja = KartuInstruksiKerja::with(['salesOrder.finishGoodItem', 'salesOrder.customerAddress'])
-            ->findOrFail($id);
+{
+    $kartuInstruksiKerja = KartuInstruksiKerja::with([
+        'salesOrder.customerAddress',
+        'salesOrder.finishGoodItem',
+        'kartuInstruksiKerjaBoms.billOfMaterials.masterItem.unit',
+        'kartuInstruksiKerjaBoms.billOfMaterials.departemen'
+    ])->findOrFail($id);
 
-        return Inertia::render('kartuInstruksiKerja/show', [
-            'kartuInstruksiKerja' => $kartuInstruksiKerja
-        ]);
-    }
+    return Inertia::render('kartuInstruksiKerja/show', [
+        'kartuInstruksiKerja' => $kartuInstruksiKerja
+    ]);
+}
 
     /**
      * Show the form for editing the specified resource.
      */
     public function edit($id)
     {
-        $kartuInstruksiKerja = KartuInstruksiKerja::with(['salesOrder.finishGoodItem'])
-            ->findOrFail($id);
+        $kartuInstruksiKerja = KartuInstruksiKerja::with([
+            'salesOrder.finishGoodItem.billOfMaterials.masterItem.unit',
+            'salesOrder.finishGoodItem.billOfMaterials.departemen',
+            'salesOrder.customerAddress',
+            'kartuInstruksiKerjaBoms.billOfMaterials.masterItem.unit',
+            'kartuInstruksiKerjaBoms.billOfMaterials.departemen'
+        ])->findOrFail($id);
 
-        $salesOrders = SalesOrder::with('finishGoodItem')
-            ->where('id', $kartuInstruksiKerja->id_sales_order)
-            ->orWhereDoesntHave('kartuInstruksiKerja')
-            ->get();
+        $salesOrders = SalesOrder::with([
+            'finishGoodItem.billOfMaterials.masterItem.unit',
+            'finishGoodItem.billOfMaterials.departemen',
+            'customerAddress'
+        ])
+        ->where('id', $kartuInstruksiKerja->id_sales_order)
+        ->orWhereDoesntHave('kartuInstruksiKerja')
+        ->get();
 
         return Inertia::render('kartuInstruksiKerja/edit', [
             'kartuInstruksiKerja' => $kartuInstruksiKerja,
@@ -145,29 +157,57 @@ class KartuInstruksiKerjaController extends Controller
      * Update the specified resource in storage.
      */
     public function update(Request $request, $id)
-    {
-        $kartuInstruksiKerja = KartuInstruksiKerja::findOrFail($id);
+{
+    $kartuInstruksiKerja = KartuInstruksiKerja::findOrFail($id);
 
-        $validated = $request->validate([
-            'id_sales_order' => 'required|exists:sales_orders,id',
-            'no_kartu_instruksi_kerja' => 'required|string|unique:kartu_instruksi_kerja,no_kartu_instruksi_kerjas,' . $id,
-            'production_plan' => 'required|string',
-            'tgl_estimasi_selesai' => 'required|date',
-            'spesifikasi_kertas' => 'nullable|string',
-            'up_satu' => 'nullable|integer',
-            'up_dua' => 'nullable|integer',
-            'up_tiga' => 'nullable|integer',
-            'ukuran_potong' => 'nullable|string',
-            'ukuran_cetak' => 'nullable|string',
-        ]);
+    // Debug untuk melihat data yang diterima
+    Log::info('Update Request data:', $request->all());
 
-        $validated['no_kartu_instruksi_kerja'] = strtoupper($validated['no_kartu_instruksi_kerja']);
+    $validated = $request->validate([
+        'id_sales_order' => 'required|exists:sales_orders,id',
+        'no_kartu_instruksi_kerja' => 'required|string|unique:kartu_instruksi_kerjas,no_kartu_instruksi_kerja,' . $id,
+        'production_plan' => 'required|string',
+        'tgl_estimasi_selesai' => 'required|date',
+        'bill_of_materials' => 'nullable|array',
+        'bill_of_materials.*.id' => 'required_with:bill_of_materials|exists:bill_of_materials,id',
+        'bill_of_materials.*.waste' => 'required_with:bill_of_materials',
+        'bill_of_materials.*.total_kebutuhan' => 'required_with:bill_of_materials|numeric',
+        'bill_of_materials.*.jumlah_sheet_cetak' => 'nullable|integer',
+        'bill_of_materials.*.jumlah_total_sheet_cetak' => 'nullable|integer',
+        'bill_of_materials.*.jumlah_produksi' => 'nullable|integer',
+    ]);
 
-        $kartuInstruksiKerja->update($validated);
+    $validated['no_kartu_instruksi_kerja'] = strtoupper($validated['no_kartu_instruksi_kerja']);
 
-        return redirect()->route('kartuInstruksiKerja.index')
-            ->with('success', 'Kartu Instruksi Kerja berhasil diperbarui!');
+    // Update KIK basic data
+    $kartuInstruksiKerja->update([
+        'id_sales_order' => $validated['id_sales_order'],
+        'no_kartu_instruksi_kerja' => $validated['no_kartu_instruksi_kerja'],
+        'production_plan' => $validated['production_plan'],
+        'tgl_estimasi_selesai' => $validated['tgl_estimasi_selesai'],
+    ]);
+
+    // Update BOM data jika ada
+    if (isset($validated['bill_of_materials']) && is_array($validated['bill_of_materials'])) {
+        // Hapus data BOM lama
+        $kartuInstruksiKerja->kartuInstruksiKerjaBoms()->delete();
+
+        // Simpan data BOM baru
+        foreach ($validated['bill_of_materials'] as $bomItem) {
+            $kartuInstruksiKerja->kartuInstruksiKerjaBoms()->create([
+                'id_bom' => $bomItem['id'],
+                'waste' => $bomItem['waste'],
+                'total_kebutuhan' => $bomItem['total_kebutuhan'],
+                'jumlah_sheet_cetak' => $bomItem['jumlah_sheet_cetak'] ?? null,
+                'jumlah_total_sheet_cetak' => $bomItem['jumlah_total_sheet_cetak'] ?? null,
+                'jumlah_produksi' => $bomItem['jumlah_produksi'] ?? null,
+            ]);
+        }
     }
+
+    return redirect()->route('kartuInstruksiKerja.index')
+        ->with('success', 'Kartu Instruksi Kerja berhasil diperbarui!');
+}
 
     /**
      * Remove the specified resource from storage.
@@ -197,39 +237,59 @@ class KartuInstruksiKerjaController extends Controller
         ]);
     }
 
-    public function generatePDF($id): JsonResponse
+    public function generatePdf($id)
     {
         try {
-            // Load data dengan relasi yang dibutuhkan
             $kartuInstruksiKerja = KartuInstruksiKerja::with([
-                'salesOrder.finishGoodItem.unit',
-                'salesOrder.customerAddress',
-                'kartuInstruksiKerjaBoms',
-                'kartuInstruksiKerjaBoms.billOfMaterial.departemen',
-                'kartuInstruksiKerjaBoms.billOfMaterial.masterItem.unit'
+                'salesOrder' => function($query) {
+                    $query->with([
+                        'customerAddress',
+                        'finishGoodItem' => function($subQuery) {
+                            $subQuery->with([
+                                'unit',
+                                'customerAddress',
+                                'typeItem',
+                                'billOfMaterials' => function($bomQuery) {
+                                    $bomQuery->with([
+                                        'masterItem.unit',
+                                        'departemen'
+                                    ]);
+                                }
+                            ]);
+                        }
+                    ]);
+                },
+                'kartuInstruksiKerjaBoms' => function($query) {
+                    $query->with([
+                        'billOfMaterials' => function($bomQuery) {
+                            $bomQuery->with([
+                                'departemen',
+                                'masterItem.unit'
+                            ]);
+                        }
+                    ]);
+                }
             ])->findOrFail($id);
 
-            // Debug log sebelum return
-            Log::info('Kartu Instruksi Kerja ditemukan:', ['id' => $id]);
+            // Add debug logging
+            Log::info('KIK Data:', [
+                'id' => $kartuInstruksiKerja->id,
+                'boms_count' => $kartuInstruksiKerja->kartuInstruksiKerjaBoms->count(),
+                'boms_data' => $kartuInstruksiKerja->kartuInstruksiKerjaBoms->toArray()
+            ]);
 
-            // Cek relasi kartuInstruksiKerjaBoms dan isi billOfMaterial-nya
-            foreach ($kartuInstruksiKerja->kartuInstruksiKerjaBoms as $bom) {
-                Log::info('Data BOM:', [
-                    'id_bom' => $bom->id_bom,
-                    'exists' => $bom->billOfMaterial !== null,
-                    'bill_of_material' => optional($bom->billOfMaterial)->toArray(),
-                ]);
-            }
-
-            // Kembalikan JSON response
             return response()->json($kartuInstruksiKerja);
 
         } catch (\Exception $e) {
-            Log::error('Gagal generate PDF:', ['message' => $e->getMessage()]);
+            Log::error('Generate PDF Error:', [
+                'message' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
             return response()->json([
                 'message' => 'Data tidak ditemukan',
                 'error' => $e->getMessage()
             ], 404);
         }
-}
+    }
 }

@@ -110,20 +110,7 @@ export default function Create({ finishGoodItems, customerAddresses, lastId }: C
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                         <div className="space-y-2">
-                                            <Label htmlFor="id_finish_good_item">Master Barang</Label>
-                                            {/* <Select value={data.id_finish_good_item} onValueChange={(value) => setData('id_finish_good_item', value)}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Pilih Master Barang" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {finishGoodItems.map((finishGoodItem) => (
-                                                        <SelectItem key={finishGoodItem.id} value={finishGoodItem.id.toString()}>
-                                                            {finishGoodItem.kode_material_produk ? `${finishGoodItem.kode_material_produk} | ` : ''}
-                                                            {finishGoodItem.nama_barang}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select> */}
+                                            <Label htmlFor="id_finish_good_item">Finish Good Item</Label>
                                             <SearchableSelect
                                                 items={finishGoodItems.map((item) => ({
                                                     key: String(item.id),
@@ -131,7 +118,7 @@ export default function Create({ finishGoodItems, customerAddresses, lastId }: C
                                                     label: item.nama_barang,
                                                 }))}
                                                 value={data.id_finish_good_item || ''} // Add fallback to empty string
-                                                placeholder="Pilih Master Barang"
+                                                placeholder="Pilih Barang dari Finish Good Item"
                                                 onChange={(value) => setData('id_finish_good_item', value)}
                                             />
                                             {errors.id_finish_good_item && <p className="text-sm text-red-500">{errors.id_finish_good_item}</p>}

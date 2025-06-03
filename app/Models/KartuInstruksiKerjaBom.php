@@ -24,7 +24,7 @@ class KartuInstruksiKerjaBom extends Model
         return $this->belongsTo(KartuInstruksiKerja::class, 'id_kartu_instruksi_kerja');
     }
 
-    public function billOfMaterial()
+    public function billOfMaterials()
     {
         return $this->belongsTo(BillOfMaterial::class, 'id_bom');
     }

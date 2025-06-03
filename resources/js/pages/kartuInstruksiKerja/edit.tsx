@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DatePicker } from '@/components/date-picker';
-import { SearchableSelect } from '@/components/search-select';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem } from '@/types';
-import { BillOfMaterial } from '@/types/billOfMaterial';
-import { SalesOrder } from '@/types/salesOrder';
-import { Head, router, useForm } from '@inertiajs/react';
-import { useState } from 'react';
-import { toast, Toaster } from 'sonner';
-import KartuInstruksiKerjaInput from './components/fieldnoKIK';
+import { DatePicker } from "@/components/date-picker";
+import { SearchableSelect } from "@/components/search-select";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import AppLayout from "@/layouts/app-layout";
+import { BreadcrumbItem } from "@/types";
+import { BillOfMaterial } from "@/types/billOfMaterial";
+import { KartuInstruksiKerja } from "@/types/kartuInstruksiKerja";
+import { SalesOrder } from "@/types/salesOrder";
+import { Head, useForm } from "@inertiajs/react";
+import { useEffect, useState } from "react";
+import { toast, Toaster } from "sonner";
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -22,22 +22,35 @@ const breadcrumbs: BreadcrumbItem[] = [
         href: '/kartuInstruksiKerja',
     },
     {
-        title: 'Create',
-        href: '/kartuInstruksiKerja/create',
+        title: 'Edit',
+        href: '#',
     },
 ];
 
-interface CreateProps {
+interface EditProps {
+    kartuInstruksiKerja: KartuInstruksiKerja;
     salesOrders: SalesOrder[];
-    latestKikId?: number;
 }
 
-export default function Create({ salesOrders, latestKikId }: CreateProps) {
-    const { data, setData, post, processing, errors } = useForm({
-        id_sales_order: '',
-        no_kartu_instruksi_kerja: '',
-        production_plan: '',
-        tgl_estimasi_selesai: '',
+export default function Edit({ kartuInstruksiKerja, salesOrders }: EditProps) {
+    const { data, setData, put, processing, errors } = useForm<{
+        id_sales_order: string;
+        no_kartu_instruksi_kerja: string;
+        production_plan: string;
+        tgl_estimasi_selesai: string;
+        bill_of_materials: Array<{
+            id: any;
+            waste: any;
+            total_kebutuhan: any;
+            jumlah_sheet_cetak: any | null;
+            jumlah_total_sheet_cetak: any | null;
+            jumlah_produksi: any | null;
+        }>;
+    }>({
+        id_sales_order: kartuInstruksiKerja.id_sales_order?.toString() || '',
+        no_kartu_instruksi_kerja: kartuInstruksiKerja.no_kartu_instruksi_kerja || '',
+        production_plan: kartuInstruksiKerja.production_plan || '',
+        tgl_estimasi_selesai: kartuInstruksiKerja.tgl_estimasi_selesai || '',
         bill_of_materials: [],
     });
 
@@ -50,18 +63,38 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
     // State untuk menyimpan BOM items dengan perhitungan
     const [bomItems, setBomItems] = useState<any[]>([]);
 
-    // // eslint-disable-next-line @typescript-eslint/no-unused-vars, @typescript-eslint/no-explicit-any
-    // const [finishGoodItem, setFinishGoodItem] = useState<any>(null);
+    // Initialize selected sales order pada saat component mount
+    useEffect(() => {
+        if (data.id_sales_order) {
+            const selected = salesOrders.find((so) => so.id.toString() === data.id_sales_order);
+            if (selected) {
+                setSelectedSalesOrder(selected);
+            }
+        }
+    }, [data.id_sales_order, salesOrders]);
+
+    // Load existing BOM data jika ada
+    useEffect(() => {
+        if (kartuInstruksiKerja.kartuInstruksiKerjaBoms && kartuInstruksiKerja.kartuInstruksiKerjaBoms.length > 0) {
+            const existingBomItems = kartuInstruksiKerja.kartuInstruksiKerjaBoms.map((kikBom: any) => ({
+                ...kikBom.billOfMaterials,
+                waste: kikBom.waste,
+                total_kebutuhan: kikBom.total_kebutuhan,
+                jumlah_sheet_cetak: kikBom.jumlah_sheet_cetak,
+                jumlah_total_sheet_cetak: kikBom.jumlah_total_sheet_cetak,
+                jumlah_produksi: kikBom.jumlah_produksi,
+                editable_waste: kikBom.billOfMaterials?.master_item?.unit?.nama_satuan === 'SHEET',
+            }));
+            setBomItems(existingBomItems);
+            setIsDraft(true);
+        }
+    }, [kartuInstruksiKerja]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
-
-        const upperCaseFields = ['no_kartu_instruksi_kerja'];
-
-        const newValue = upperCaseFields.includes(name) ? value.toUpperCase() : value;
         setData((prev) => ({
             ...prev,
-            [name]: newValue,
+            [name]: value,
         }));
     };
 
@@ -69,17 +102,12 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
     const handleSalesOrderChange = (value: string) => {
         setData('id_sales_order', value);
         setIsDraft(false); // Reset draft state
+        setBomItems([]); // Clear existing BOM items
 
         // Cari sales order yang dipilih
         const selected = salesOrders.find((so) => so.id.toString() === value);
         if (selected) {
             setSelectedSalesOrder(selected);
-
-            // Isi field dengan data dari Finish Good Item
-            setData((prev) => ({
-                ...prev,
-                id_sales_order: value,
-            }));
         } else {
             setSelectedSalesOrder(null);
         }
@@ -109,12 +137,7 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
             return 0;
         } else {
             const kebutuhanRaw = jumlahPesanan * qty * (1 + toleransi);
-            console.log(`Non-SHEET Item - ${bom.master_item?.nama_master_item}: Kebutuhan sebelum dibulatkan: ${kebutuhanRaw}`);
-
-            // Add console log after rounding
             const totalKebutuhan = Math.round(kebutuhanRaw);
-            console.log(`Non-SHEET Item - ${bom.master_item?.nama_master_item}: Kebutuhan setelah dibulatkan: ${totalKebutuhan}`);
-
             return totalKebutuhan;
         }
     };
@@ -163,13 +186,8 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                     const toleransi = parseFloat(selectedSalesOrder.toleransi_pengiriman || '0') / 100;
                     const qty = parseFloat(bom.qty || '0');
 
-                    // Add console log before rounding
                     const kebutuhanRaw = jumlahPesanan * qty * (1 + toleransi);
-                    console.log(`Non-SHEET Item - ${bom.master_item?.nama_master_item}: Kebutuhan sebelum dibulatkan: ${kebutuhanRaw}`);
-
-                    // Formula umum untuk non-SHEET dengan konsol log setelah dibulatkan
                     const totalKebutuhan = Math.round(kebutuhanRaw);
-                    console.log(`Non-SHEET Item - ${bom.master_item?.nama_master_item}: Kebutuhan setelah dibulatkan: ${totalKebutuhan}`);
 
                     return {
                         ...bom,
@@ -200,7 +218,6 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                 parseInt(finishGoodItem.up_satu || '0') + parseInt(finishGoodItem.up_dua || '0') + parseInt(finishGoodItem.up_tiga || '0');
             const ukuranPotong = parseFloat(finishGoodItem.ukuran_potong || '0');
             const ukuranCetak = parseFloat(finishGoodItem.ukuran_cetak || '0');
-            const jumlahPesanan = parseInt(selectedSalesOrder.jumlah_pesanan || '0');
 
             // Jumlah sheet cetak tetap sama (tidak dipengaruhi waste)
             const jumlahSheetCetak = updatedItems[index].jumlah_sheet_cetak;
@@ -240,51 +257,69 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                 jumlah_produksi: item.jumlah_produksi || null,
             }));
 
-            // Siapkan data untuk dikirim
-            const formData = {
-                id_sales_order: data.id_sales_order,
-                no_kartu_instruksi_kerja: data.no_kartu_instruksi_kerja,
-                production_plan: data.production_plan,
-                tgl_estimasi_selesai: data.tgl_estimasi_selesai,
+            // Update data form dengan BOM
+            setData((prev) => ({
+                ...prev,
                 bill_of_materials: simpleBomItems,
-            };
+            }));
 
-            // Submit form menggunakan Inertia
-            router.post(route('kartuInstruksiKerja.store'), formData);
-
-            toast.success('Form dikirim, silakan tunggu...');
+            // Submit form menggunakan Inertia dengan data yang sudah diupdate
+            put(route('kartuInstruksiKerja.update', kartuInstruksiKerja.id), {
+                onSuccess: () => {
+                    toast.success('Kartu Instruksi Kerja berhasil diperbarui!');
+                },
+                onError: () => {
+                    toast.error('Terjadi kesalahan saat memperbarui data');
+                },
+            });
         } else {
-            toast.error('Harap klik Draft KIK terlebih dahulu');
+            // Jika tidak ada draft baru, update data dasar saja
+            put(route('kartuInstruksiKerja.update', kartuInstruksiKerja.id), {
+                onSuccess: () => {
+                    toast.success('Kartu Instruksi Kerja berhasil diperbarui!');
+                },
+                onError: () => {
+                    toast.error('Terjadi kesalahan saat memperbarui data');
+                },
+            });
         }
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create Kartu Instruksi Kerja" />
+            <Head title="Edit Kartu Instruksi Kerja" />
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="p-2">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Buat Kartu Instruksi Kerja</CardTitle>
+                                <CardTitle>Edit Kartu Instruksi Kerja</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                        {/* No Kartu Instruksi Kerja */}
-                                        <KartuInstruksiKerjaInput data={data} setData={setData} errors={errors} latestId={latestKikId} />
+                                        {/* No Kartu Instruksi Kerja - READONLY */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="no_kartu_instruksi_kerja">No. Kartu Instruksi Kerja</Label>
+                                            <Input
+                                                id="no_kartu_instruksi_kerja"
+                                                name="no_kartu_instruksi_kerja"
+                                                value={data.no_kartu_instruksi_kerja}
+                                                readOnly
+                                                
+                                            />
+                                        </div>
 
                                         {/* Sales Order */}
                                         <div className="space-y-2">
                                             <Label htmlFor="id_sales_order">No. Sales Order</Label>
-
                                             <SearchableSelect
                                                 items={salesOrders.map((item) => ({
                                                     key: String(item.id),
                                                     value: String(item.id),
                                                     label: item.no_bon_pesanan,
                                                 }))}
-                                                value={data.id_sales_order || ''} // Add fallback to empty string
+                                                value={data.id_sales_order || ''}
                                                 placeholder="Pilih No. Sales Order"
                                                 onChange={(value) => handleSalesOrderChange(value)}
                                             />
@@ -301,7 +336,6 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                                         {/* Tanggal Estimasi Selesai */}
                                         <div className="space-y-2">
                                             <Label htmlFor="tgl_estimasi_selesai">Tanggal Estimasi Selesai</Label>
-
                                             <DatePicker
                                                 id="tgl_estimasi_selesai"
                                                 value={data.tgl_estimasi_selesai}
@@ -311,56 +345,61 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                                             />
                                             {errors.tgl_estimasi_selesai && <p className="text-sm text-red-500">{errors.tgl_estimasi_selesai}</p>}
                                         </div>
+
+                                        {/* ETA Marketing */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="production_plan">ETA Marketing</Label>
+                                            <Label htmlFor="eta_marketing">ETA Marketing</Label>
                                             <Input value={selectedSalesOrder?.eta_marketing || ''} readOnly />
                                         </div>
                                     </div>
+
                                     {selectedSalesOrder && (
                                         <div className="rounded-md border p-4">
                                             <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                                                 {/* Up Satu */}
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="up_satu">Up Satu</Label>
-                                                    <Input value={selectedSalesOrder.finish_good_item.up_satu} readOnly />
+                                                    <Label>Up Satu</Label>
+                                                    <Input value={selectedSalesOrder.finish_good_item?.up_satu || ''} readOnly />
                                                 </div>
 
                                                 {/* Up Dua */}
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="up_dua">Up Dua</Label>
-                                                    <Input value={selectedSalesOrder.finish_good_item.up_dua} readOnly />
+                                                    <Label>Up Dua</Label>
+                                                    <Input value={selectedSalesOrder.finish_good_item?.up_dua || ''} readOnly />
                                                 </div>
 
                                                 {/* Up Tiga */}
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="up_tiga">Up Tiga</Label>
-                                                    <Input value={selectedSalesOrder.finish_good_item.up_tiga} readOnly />
+                                                    <Label>Up Tiga</Label>
+                                                    <Input value={selectedSalesOrder.finish_good_item?.up_tiga || ''} readOnly />
                                                 </div>
 
                                                 {/* Ukuran Potong */}
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="ukuran_potong">Ukuran Potong</Label>
-                                                    <Input value={selectedSalesOrder.finish_good_item.ukuran_potong} readOnly />
+                                                    <Label>Ukuran Potong</Label>
+                                                    <Input value={selectedSalesOrder.finish_good_item?.ukuran_potong || ''} readOnly />
                                                 </div>
 
                                                 {/* Ukuran Cetak */}
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="ukuran_cetak">Ukuran Cetak</Label>
-                                                    <Input value={selectedSalesOrder.finish_good_item.ukuran_cetak} readOnly />
+                                                    <Label>Ukuran Cetak</Label>
+                                                    <Input value={selectedSalesOrder.finish_good_item?.ukuran_cetak || ''} readOnly />
                                                 </div>
 
+                                                {/* Spesifikasi Kertas */}
                                                 <div className="space-y-2">
-                                                    <Label htmlFor="spesifikasi_kertas">Spesifikasi Kertas</Label>
-                                                    <Input value={selectedSalesOrder.finish_good_item.spesifikasi_kertas} readOnly />
+                                                    <Label>Spesifikasi Kertas</Label>
+                                                    <Input value={selectedSalesOrder.finish_good_item?.spesifikasi_kertas || ''} readOnly />
                                                 </div>
                                             </div>
                                             <div className="mt-4">
                                                 <Button type="button" variant="outline" onClick={handleShowDraft}>
-                                                    Draft Kik
+                                                    {bomItems.length > 0 ? 'Refresh Draft SPK' : 'Draft SPK'}
                                                 </Button>
                                             </div>
                                         </div>
                                     )}
+
                                     {isDraft && (
                                         <div className="mt-8">
                                             {/* Tampilkan data sales order */}
@@ -369,81 +408,61 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                                                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                     <div>
                                                         <p>
-                                                            <span className="font-medium">No Bon Pesanan:</span> {selectedSalesOrder.no_bon_pesanan}
+                                                            <span className="font-medium">No Bon Pesanan:</span> {selectedSalesOrder?.no_bon_pesanan}
                                                         </p>
                                                         <p>
-                                                            <span className="font-medium">No PO Customer:</span> {selectedSalesOrder.no_po_customer}
+                                                            <span className="font-medium">No PO Customer:</span> {selectedSalesOrder?.no_po_customer}
                                                         </p>
                                                         <p>
                                                             <span className="font-medium">Customer:</span>{' '}
-                                                            {selectedSalesOrder.customer_address.nama_customer}
+                                                            {selectedSalesOrder?.customer_address?.nama_customer}
                                                         </p>
                                                         <p>
-                                                            <span className="font-medium">Harga pcs bp:</span> {selectedSalesOrder.harga_pcs_bp}
+                                                            <span className="font-medium">Harga pcs bp:</span> {selectedSalesOrder?.harga_pcs_bp}
                                                         </p>
                                                         <p>
                                                             <span className="font-medium">Nama Barang:</span>{' '}
-                                                            {selectedSalesOrder.finish_good_item.nama_barang}
+                                                            {selectedSalesOrder?.finish_good_item?.nama_barang}
                                                         </p>
                                                         <p>
                                                             <span className="font-medium">Deskripsi:</span>{' '}
-                                                            {selectedSalesOrder.finish_good_item.deskripsi}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Jumlah Up:</span> UP 1:{' '}
-                                                            {selectedSalesOrder.finish_good_item.up_satu} | UP 2:{' '}
-                                                            {selectedSalesOrder.finish_good_item.up_dua} | UP 3:{' '}
-                                                            {selectedSalesOrder.finish_good_item.up_tiga}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Ukuran Potong | Ukuran Cetak:</span>{' '}
-                                                            {selectedSalesOrder.finish_good_item.ukuran_potong} |{' '}
-                                                            {selectedSalesOrder.finish_good_item.ukuran_cetak}
+                                                            {selectedSalesOrder?.finish_good_item?.deskripsi}
                                                         </p>
                                                     </div>
                                                     <div>
                                                         <p>
-                                                            <span className="font-medium">Jumlah Pesanan:</span> {selectedSalesOrder.jumlah_pesanan}
+                                                            <span className="font-medium">Jumlah Pesanan:</span> {selectedSalesOrder?.jumlah_pesanan}
                                                         </p>
                                                         <p>
                                                             <span className="font-medium">Toleransi Pengiriman:</span>{' '}
-                                                            {selectedSalesOrder.toleransi_pengiriman}%
+                                                            {selectedSalesOrder?.toleransi_pengiriman}%
                                                         </p>
                                                         <p>
-                                                            <span className="font-medium">Tipe Pesanan:</span> {selectedSalesOrder.tipe_pesanan}
+                                                            <span className="font-medium">Tipe Pesanan:</span> {selectedSalesOrder?.tipe_pesanan}
                                                         </p>
                                                         <p>
-                                                            <span className="font-medium">Mata Uang:</span> {selectedSalesOrder.mata_uang}
+                                                            <span className="font-medium">Mata Uang:</span> {selectedSalesOrder?.mata_uang}
                                                         </p>
                                                         <p>
                                                             <span className="font-medium">Syarat Pembayaran:</span>{' '}
-                                                            {selectedSalesOrder.syarat_pembayaran}
+                                                            {selectedSalesOrder?.syarat_pembayaran}
                                                         </p>
                                                         <p>
-                                                            <span className="font-medium">Properti:</span> Panjang{' '}
-                                                            {selectedSalesOrder.finish_good_item.panjang}, Lebar{' '}
-                                                            {selectedSalesOrder.finish_good_item.lebar}, tinggi{' '}
-                                                            {selectedSalesOrder.finish_good_item.tinggi}, Berat Kotor{' '}
-                                                            {selectedSalesOrder.finish_good_item.berat_kotor}, Berat Bersih{' '}
-                                                            {selectedSalesOrder.finish_good_item.berat_bersih}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Tanggal Pesanan:</span> {selectedSalesOrder.eta_marketing}
+                                                            <span className="font-medium">Tanggal Pesanan:</span> {selectedSalesOrder?.eta_marketing}
                                                         </p>
                                                     </div>
                                                 </div>
                                             </div>
 
+                                            {/* Detail Perhitungan Sheet */}
                                             <div className="mb-6 rounded-md border p-4">
                                                 <h3 className="mb-4 text-lg font-medium">Detail Perhitungan Sheet</h3>
-
-                                                {/* Hanya tampilkan jika ada item dengan satuan SHEET */}
                                                 {bomItems.some((item) => item.master_item?.unit?.nama_satuan === 'SHEET') && (
                                                     <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                         {bomItems
                                                             .filter((item) => item.master_item?.unit?.nama_satuan === 'SHEET')
                                                             .map((sheetItem, index) => (
-                                                                <div key={index} className="borde rounded p-3">
+                                                                <div key={index} className="rounded border p-3">
                                                                     <p>
                                                                         <span className="font-medium">Jumlah Sheet Cetak:</span>{' '}
                                                                         {sheetItem.jumlah_sheet_cetak || '-'}
@@ -479,9 +498,9 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                                                     <TableBody>
                                                         {bomItems.map((bom, index) => (
                                                             <TableRow key={bom.id}>
-                                                                <TableCell>{bom.master_item.nama_master_item}</TableCell>
-                                                                <TableCell>{bom.departemen.nama_departemen}</TableCell>
-                                                                <TableCell>{bom.master_item.unit.nama_satuan}</TableCell>
+                                                                <TableCell>{bom.master_item?.nama_master_item}</TableCell>
+                                                                <TableCell>{bom.departemen?.nama_departemen}</TableCell>
+                                                                <TableCell>{bom.master_item?.unit?.nama_satuan}</TableCell>
                                                                 <TableCell>{bom.qty}</TableCell>
                                                                 <TableCell>
                                                                     {bom.editable_waste ? (
@@ -505,12 +524,13 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                                             </div>
                                         </div>
                                     )}
+
                                     <div className="flex justify-end space-x-4">
                                         <Button type="button" variant="outline" onClick={() => window.history.back()}>
                                             Batal
                                         </Button>
                                         <Button type="submit" disabled={processing}>
-                                            {processing ? 'Menyimpan...' : 'Simpan'}
+                                            {processing ? 'Menyimpan...' : 'Update'}
                                         </Button>
                                     </div>
                                 </form>

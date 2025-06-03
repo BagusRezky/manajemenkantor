@@ -1,13 +1,133 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Checkbox } from "@/components/ui/checkbox";
 import { router } from "@inertiajs/react";
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
 import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
+import { Download, FileText, MoreHorizontal } from "lucide-react";
 
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { PurchaseRequest } from "@/types/purchaseRequest";
+import { jsPDF } from "jspdf";
+import autoTable from 'jspdf-autotable';
+import { format } from "date-fns";
 
+const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download = false): void => {
+    // Inisialisasi dokumen PDF
+    const doc = new jsPDF('p', 'mm', 'a4');
+    const pageWidth = doc.internal.pageSize.getWidth();
+
+    doc.setFillColor(230, 240, 255);
+    doc.roundedRect(pageWidth - 73, 12, 61, 16, 2, 2, 'F');
+
+    doc.setFontSize(14).setFont('helvetica', 'bold');
+    doc.text('PURCHASE REQUEST', pageWidth - 15, 18, { align: 'right' });
+
+    doc.setFont('helvetica', 'normal');
+    doc.text(purchaseRequest.no_pr || '', pageWidth - 15, 25, { align: 'right' });
+
+    // Tambahkan header dengan border
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.rect(10, 10, pageWidth - 20, 30);
+
+    // Company Info
+    doc.setFontSize(14).setFont('helvetica', 'bold');
+    doc.text('CV. Indigama Khatulistiwa', 15, 18);
+    doc.setFontSize(10).setFont('helvetica', 'normal');
+    doc.text('Jurangpelem Satu, Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
+    doc.text('Jawa Timur 67155', 15, 28);
+    doc.text('Email: indigama.khatulistiwa01@gmail.com', 15, 33);
+    doc.text('Telp: 081703101012', 15, 38);
+
+    // Informasi Purchase Request
+    doc.setLineWidth(0.5);
+    doc.rect(10, 45, pageWidth - 20, 25);
+
+    doc.setFontSize(10).setFont('helvetica', 'bold');
+    doc.text('Tanggal PR', 15, 52);
+    doc.text(':', 65, 52);
+    doc.setFont('helvetica', 'normal');
+    const formattedPRDate = purchaseRequest.tgl_pr ? format(new Date(purchaseRequest.tgl_pr), 'dd-MM-yyyy') : '';
+    doc.text(formattedPRDate, 70, 52);
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Departemen', 15, 59);
+    doc.text(':', 65, 59);
+    doc.setFont('helvetica', 'normal');
+    doc.text(purchaseRequest.departemen?.nama_departemen || '', 70, 59);
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('Status', 15, 66);
+    doc.text(':', 65, 66);
+    doc.setFont('helvetica', 'normal');
+    doc.text(purchaseRequest.status || '', 70, 66);
+
+    // Header tabel "DATA ITEM"
+    doc.setFontSize(10).setFont('helvetica', 'bold');
+    doc.rect(10, 75, pageWidth - 20, 10);
+    doc.text('DATA ITEM', pageWidth / 2, 81, { align: 'center' });
+
+    // Isi tabel item menggunakan autoTable
+    const tableColumns = [
+        { header: 'No', dataKey: 'no' },
+        { header: 'Item', dataKey: 'item' },
+        { header: 'Qty', dataKey: 'qty' },
+        { header: 'Satuan', dataKey: 'satuan' },
+        { header: 'ETA', dataKey: 'eta' },
+        { header: 'Catatan', dataKey: 'catatan' },
+    ];
+
+    const tableRows =
+        purchaseRequest.purchase_request_items?.map((item, index) => {
+            return {
+                no: (index + 1).toString(),
+                item: item.master_item ? `(${item.master_item.kode_master_item}) ${item.master_item.nama_master_item}` : '',
+                qty: item.qty || 0,
+                satuan: item.master_item?.unit?.nama_satuan || '-',
+                eta: item.eta ? format(new Date(item.eta), 'dd-MM-yyyy') : '-',
+                catatan: item.catatan || '-',
+            };
+        }) || [];
+
+    autoTable(doc, {
+        columns: tableColumns,
+        body: tableRows,
+        startY: 84,
+        margin: { left: 10, right: 10 },
+        styles: { fontSize: 9, cellPadding: 2 },
+        headStyles: { fillColor: [40, 88, 247], textColor: [0, 0, 0], fontStyle: 'bold', lineColor: [0, 0, 0], lineWidth: 0.5 },
+        bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.5 },
+        columnStyles: {
+            no: { cellWidth: 10, halign: 'center' },
+            item: { cellWidth: 65 },
+            qty: { cellWidth: 20, halign: 'center' },
+            satuan: { cellWidth: 25, halign: 'center' },
+            eta: { cellWidth: 25, halign: 'center' },
+            catatan: { cellWidth: 45 },
+        },
+    });
+
+    // Ambil posisi Y setelah tabel
+    const tableEndY = (doc as any).lastAutoTable.finalY;
+
+    // Tanda tangan
+    const currentY = tableEndY + 35;
+    doc.setFontSize(10).setFont('helvetica', 'normal');
+    doc.text('Dibuat Oleh,', 50, currentY, { align: 'center' });
+    doc.text('Disetujui Oleh,', pageWidth - 50, currentY, { align: 'center' });
+
+    // Tempat tanda tangan
+    doc.text('( ..................................... )', 50, currentY + 30, { align: 'center' });
+    doc.text('( ..................................... )', pageWidth - 50, currentY + 30, { align: 'center' });
+
+    // Output PDF
+    if (download) {
+        doc.save(`PR_${purchaseRequest.no_pr}.pdf`);
+    } else {
+        window.open(doc.output('bloburl'), '_blank');
+    }
+};
 
 const handleDelete = (id: string) => {
     if (confirm('Apakah Anda yakin ingin menghapus Purchase Request ini?')) {
@@ -100,6 +220,38 @@ export const columns = (): ColumnDef<PurchaseRequest>[] => [
         cell: ({ row }) => {
             const item = row.original;
 
+            const handlePreviewPdf = async () => {
+                try {
+                    // Fetch data lengkap purchase request beserta relasinya
+                    const response = await fetch(`/purchaseRequest/${item.id}/pdf`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch data');
+                    }
+                    const data = await response.json();
+                    // Generate dan tampilkan PDF
+                    generatePurchaseRequestPdf(data, false);
+                } catch (error) {
+                    console.error('Error generating PDF:', error);
+                    toast.error('Gagal menghasilkan PDF. Silakan coba lagi.');
+                }
+            };
+
+            const handleDownloadPdf = async () => {
+                try {
+                    // Fetch data lengkap purchase request beserta relasinya
+                    const response = await fetch(`/purchaseRequest/${item.id}/pdf`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch data');
+                    }
+                    const data = await response.json();
+                    // Generate dan download PDF
+                    generatePurchaseRequestPdf(data, true);
+                } catch (error) {
+                    console.error('Error downloading PDF:', error);
+                    toast.error('Gagal mengunduh PDF. Silakan coba lagi.');
+                }
+            };
+
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -121,11 +273,13 @@ export const columns = (): ColumnDef<PurchaseRequest>[] => [
                             </>
                         )}
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => window.open(route('purchaseRequest.pdf', { id: item.id, preview: true }), '_blank')}>
+                        <DropdownMenuItem onClick={handlePreviewPdf}>
+                            <FileText className="mr-2 h-4 w-4" />
                             Preview PDF
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => window.open(route('purchaseRequest.pdf', { id: item.id, download: true }), '_blank')}>
+                        <DropdownMenuItem onClick={handleDownloadPdf}>
+                            <Download className="mr-2 h-4 w-4" />
                             Download PDF
                         </DropdownMenuItem>
                     </DropdownMenuContent>

@@ -1,18 +1,18 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
-import autoTable from 'jspdf-autotable';
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 
+import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { Download, FileText, MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
-
-
+import { formatToInteger } from '@/utils/formatter/decimaltoint';
 
 export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, download = false): void => {
     const doc = new jsPDF('p', 'mm', 'a4');
@@ -28,51 +28,48 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
         });
     };
 
-    // Logo Placeholder
-    doc.setFillColor(230, 230, 230);
-    doc.circle(20, 20, 10, 'F');
-    doc.setTextColor(0, 0, 0);
-    doc.setFontSize(12);
-    doc.setFont('helvetica', 'bold');
-    doc.text('IK', 17, 22);
+    // Debug logging - remove this after fixing
+    console.log('KIK Data received:', kartuInstruksiKerja);
+    console.log('BOMs Data (camelCase):', kartuInstruksiKerja.kartuInstruksiKerjaBoms);
+    console.log('BOMs Data (snake_case):', kartuInstruksiKerja.kartu_instruksi_kerja_boms);
 
-    // Company Info
+    // Header Border Box
+    doc.setDrawColor(0);
+    doc.setLineWidth(0.5);
+    doc.rect(10, 10, pageWidth - 20, 30);
+
+    // Company Info (Left)
     doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('CV. Indigama Khatulistiwa', 35, 18);
+    doc.text('CV. Indigama Khatulistiwa', 15, 18);
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Jurangpelem Satu, Bulusari, Kec. Gempol, Pasuruan,', 35, 23);
-    doc.text('Jawa Timur 67155', 35, 28);
-    doc.text('Email: indigama.khatulistiwa01@gmail.com', 35, 33);
-    doc.text('Telp: 081703101012', 35, 38);
+    doc.text('Jurangpelem Satu, Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
+    doc.text('Jawa Timur 67155', 15, 28);
+    doc.text('Email: indigama.khatulistiwa01@gmail.com', 15, 33);
+    doc.text('Telp: 081703101012', 15, 38);
 
-    // Title Box
-    doc.setFillColor(230, 240, 255);
-    doc.roundedRect(pageWidth - 80, 12, 70, 25, 2, 2, 'F');
+    // Title (Right)
     doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('Kartu Instruksi Kerja', pageWidth - 45, 22, { align: 'center' });
+    doc.text('KARTU INSTRUKSI KERJA', pageWidth - 15, 18, { align: 'right' });
 
+    // Nomor dan Tanggal
     const kikNumber = kartuInstruksiKerja?.no_kartu_instruksi_kerja || '-';
     const currentDate = new Date().toLocaleDateString('id-ID', {
         day: '2-digit',
         month: '2-digit',
         year: 'numeric',
     });
-
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text(kikNumber, pageWidth - 70, 30);
-    doc.text(currentDate, pageWidth - 20, 30, { align: 'right' });
+    doc.text(`No: ${kikNumber}`, pageWidth - 15, 25, { align: 'right' });
+    doc.text(`Tanggal: ${currentDate}`, pageWidth - 15, 30, { align: 'right' });
 
-    // Content Box
-    doc.setDrawColor(100).setLineWidth(0.3);
-    doc.roundedRect(10, 45, pageWidth - 20, 150, 2, 2, 'S');
+    let y = 50;
 
-    let y = 55;
-
+    // Info Pesanan dan Pelanggan
     doc.setFontSize(11).setFont('helvetica', 'bold');
     doc.text('Informasi Pesanan', 15, y);
     doc.text('Informasi Pelanggan', pageWidth / 2 + 5, y);
+    y += 6;
 
-    y += 7;
     const info = [
         {
             label: 'No Sales Order',
@@ -89,23 +86,17 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
         {
             label: 'No PO',
             value: kartuInstruksiKerja.sales_order?.no_po_customer || '-',
-            // rightLabel: 'Telepon',
-            // rightValue: kartuInstruksiKerja.sales_order?. || '-',
+            rightLabel: '',
+            rightValue: '',
         },
-        // {
-        //     label: 'Tgl PO',
-        //     value: formatDate(kartuInstruksiKerja.sales_order?.),
-        //     rightLabel: 'Email',
-        //     rightValue: kartuInstruksiKerja.salesOrder?.customerAddress?.email || '-',
-        // },
     ];
 
     doc.setFontSize(9).setFont('helvetica', 'normal');
     info.forEach((row) => {
-        doc.setFont('helvetica', 'bold').text(row.label, 15, y);
-        doc.setFont('helvetica', 'normal').text(`: ${row.value}`, 50, y);
-        // doc.setFont('helvetica', 'bold').text(row.rightLabel, pageWidth / 2 + 5, y);
-        doc.setFont('helvetica', 'normal').text(`: ${row.rightValue}`, pageWidth / 2 + 30, y);
+        doc.text(`${row.label}`, 15, y);
+        doc.text(`: ${row.value}`, 50, y);
+        if (row.rightLabel) doc.text(`${row.rightLabel}`, pageWidth / 2 + 5, y);
+        doc.text(`: ${row.rightValue}`, pageWidth / 2 + 30, y);
         y += 6;
     });
 
@@ -113,10 +104,10 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
     doc.line(10, y, pageWidth - 10, y);
     y += 10;
 
-    // Production Details
+    // Detail Produksi
     doc.setFontSize(11).setFont('helvetica', 'bold');
     doc.text('Detail Produksi', 15, y);
-    y += 7;
+    y += 6;
     doc.setFontSize(9).setFont('helvetica', 'normal');
 
     const produksi = [
@@ -137,16 +128,16 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
             value: `${kartuInstruksiKerja.sales_order?.jumlah_pesanan || '-'} ${
                 kartuInstruksiKerja.sales_order?.finish_good_item?.unit?.nama_satuan || ''
             }`,
-            // rightLabel: 'Status',
-            // rightValue: kartuInstruksiKerja.status || 'draft',
+            rightLabel: '',
+            rightValue: '',
         },
     ];
 
     produksi.forEach((row) => {
-        doc.setFont('helvetica', 'bold').text(row.label, 15, y);
-        doc.setFont('helvetica', 'normal').text(`: ${row.value}`, 50, y);
-        // doc.setFont('helvetica', 'bold').text(row.rightLabel, pageWidth / 2 + 5, y);
-        doc.setFont('helvetica', 'normal').text(`: ${row.rightValue}`, pageWidth / 2 + 50, y);
+        doc.text(`${row.label}`, 15, y);
+        doc.text(`: ${row.value}`, 50, y);
+        if (row.rightLabel) doc.text(`${row.rightLabel}`, pageWidth / 2 + 5, y);
+        doc.text(`: ${row.rightValue}`, pageWidth / 2 + 50, y);
         y += 6;
     });
 
@@ -154,15 +145,14 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
     doc.line(10, y, pageWidth - 10, y);
     y += 10;
 
-    // Bill of Materials Section
+    // Bill of Materials
     doc.setFontSize(11).setFont('helvetica', 'bold');
     doc.text('Bill of Materials', 15, y);
-
     y += 5;
-    // const tableColumn = ['Departemen', 'Kode Item', 'Nama Item', 'Qty', 'Satuan', 'Waste', 'Total Kebutuhan'];
+
     const tableColumn = [
         { header: 'No', dataKey: 'no' },
-        { header: 'Departemen', dataKey: 'Departemen' },
+        { header: 'Departemen', dataKey: 'departemen' },
         { header: 'Kode Item', dataKey: 'kitem' },
         { header: 'Nama Item', dataKey: 'nitem' },
         { header: 'Qty', dataKey: 'qty' },
@@ -171,19 +161,48 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
         { header: 'Total Kebutuhan', dataKey: 'total_kebutuhan' },
     ];
 
-    const tableRows =
-        kartuInstruksiKerja.kartuInstruksiKerjaBoms?.map((item, index) => {
+    // Fixed the table rows generation
+    let tableRows: any[] = [];
+
+    // Get BOMs data - try both camelCase and snake_case
+    const bomsData = kartuInstruksiKerja.kartuInstruksiKerjaBoms || kartuInstruksiKerja.kartu_instruksi_kerja_boms;
+
+    // Check if BOMs data exists and has data
+    if (bomsData && Array.isArray(bomsData)) {
+        console.log('Processing BOMs:', bomsData.length, 'items');
+
+        tableRows = bomsData.map((bom, index) => {
+            console.log(`Processing BOM ${index + 1}:`, bom);
+
             return {
                 no: (index + 1).toString(),
-                Departemen: item.billOfMaterial?.departemen?.nama_departemen || '-',
-                kitem: item.billOfMaterial?.master_item?.kode_master_item || '-',
-                nitem: item.billOfMaterial?.master_item?.nama_master_item || '-',
-                qty: item.billOfMaterial?.qty?.toString() || '0',
-                satuan: item.billOfMaterial?.master_item?.unit?.nama_satuan || '-',
-                waste: item.waste || '0',
-                total_kebutuhan: item.total_kebutuhan || '0',
+                departemen: bom.bill_of_materials?.departemen?.nama_departemen || '-',
+                kitem: bom.bill_of_materials?.master_item?.kode_master_item || '-',
+                nitem: bom.bill_of_materials?.master_item?.nama_master_item || '-',
+                qty: bom.bill_of_materials?.qty || 0,
+                satuan: bom.bill_of_materials?.master_item?.unit?.nama_satuan || '-',
+                waste: formatToInteger(bom.waste || '0'),
+                total_kebutuhan: bom.total_kebutuhan || '0',
             };
-        }) || [];
+        });
+    } else {
+        console.log('No BOMs data found or data is not an array');
+        // Add a row indicating no data
+        tableRows = [
+            {
+                no: '1',
+                departemen: 'No data available',
+                kitem: '-',
+                nitem: '-',
+                qty: 0,
+                satuan: '-',
+                waste: '0',
+                total_kebutuhan: '0',
+            },
+        ];
+    }
+
+    console.log('Final table rows:', tableRows);
 
     autoTable(doc, {
         columns: tableColumn,
@@ -192,7 +211,18 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
         styles: {
             fontSize: 8,
         },
-        bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.5 },
+        headStyles: {
+            fillColor: [240, 240, 240],
+            textColor: [0, 0, 0],
+            lineColor: [0, 0, 0],
+            lineWidth: 0.5,
+        },
+        bodyStyles: {
+            fillColor: [255, 255, 255],
+            textColor: [0, 0, 0],
+            lineColor: [0, 0, 0],
+            lineWidth: 0.5,
+        },
     });
 
     if (download) {
@@ -201,7 +231,6 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
         window.open(doc.output('bloburl'), '_blank');
     }
 };
-
 
 const handleDelete = (item: string) => {
     if (confirm('Apakah Anda yakin ingin menghapus kartu instruksi kerja ini?')) {
@@ -216,12 +245,7 @@ const handleDelete = (item: string) => {
     }
 };
 
-
-
-export const columns = (
-    setSelectedItem: (item: KartuInstruksiKerja | null) => void,
-    openDetailModal: (item: KartuInstruksiKerja) => void,
-): ColumnDef<KartuInstruksiKerja>[] => [
+export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -279,7 +303,7 @@ export const columns = (
             const handlePreviewPdf = async () => {
                 try {
                     // Fetch data lengkap kartuInstruksiKerja beserta relasinya
-                    const response = await fetch(`/kartuInstruksiKerja/${item.id}`);
+                    const response = await fetch(`/kartuInstruksiKerja/${item.id}/pdf`);
                     if (!response.ok) {
                         throw new Error('Failed to fetch data');
                     }
@@ -295,7 +319,7 @@ export const columns = (
             const handleDownloadPdf = async () => {
                 try {
                     // Fetch data lengkap kartuInstruksiKerja beserta relasinya
-                    const response = await fetch(`/kartuInstruksiKerja/${item.id}`);
+                    const response = await fetch(`/kartuInstruksiKerja/${item.id}/pdf`);
                     if (!response.ok) {
                         throw new Error('Failed to fetch data');
                     }
@@ -308,7 +332,6 @@ export const columns = (
                 }
             };
 
-
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -320,9 +343,9 @@ export const columns = (
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        {/* <DropdownMenuItem onClick={() => router.get(`/kartuInstruksiKerja/${item.id}/edit`)}>Edit</DropdownMenuItem>
-                        <DropdownMenuSeparator /> */}
-                        <DropdownMenuItem onClick={() => openDetailModal(item)}>Detail</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.get(`/kartuInstruksiKerja/${item.id}/edit`)}>Edit</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => router.get(`/kartuInstruksiKerja/${item.id}`)}>Detail</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handlePreviewPdf}>
                             <FileText className="mr-2 h-4 w-4" />
