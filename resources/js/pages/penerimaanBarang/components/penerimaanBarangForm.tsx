@@ -111,9 +111,9 @@ export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({purch
     useEffect(() => {
         if (selectedPO) {
             const po = purchaseOrders.find((po) => String(po.id) === selectedPO);
-            if (po && po.purchase_order_items) {
+            if (po && po.items) {
                 // Transform PO items to penerimaan items
-                const penerimaanItems = po.purchase_order_items.map((item) => {
+                const penerimaanItems = po.items.map((item) => {
                     // Check if there are previous receipts for this item
                     const previousReceiptForItem = previousReceipts?.find((receipt) => receipt.id_purchase_order_item === item.id);
 

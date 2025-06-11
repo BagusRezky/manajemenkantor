@@ -25,4 +25,8 @@ class PenerimaanBarangItem extends Model
     {
         return $this->belongsTo(PurchaseOrderItem::class, 'id_purchase_order_item');
     }
+    public function returEksternalItems()
+    {
+        return $this->hasMany(ReturEksternalItem::class, 'id_penerimaan_barang_item');
+    }
 }

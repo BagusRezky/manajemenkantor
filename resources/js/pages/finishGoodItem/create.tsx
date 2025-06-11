@@ -12,7 +12,7 @@ import { TypeItem } from '@/types/typeItem';
 import { Unit } from '@/types/unit';
 import { Head, Link, useForm } from '@inertiajs/react';
 
-import { BomItem } from '@/types/billOfMaterial';
+import { BillOfMaterial } from '@/types/billOfMaterial';
 import { Departemen } from '@/types/departemen';
 import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
@@ -38,7 +38,7 @@ interface CreateProps {
 }
 
 export default function Create({ units, customerAddresses, typeItems, masterItems, departements }: CreateProps) {
-    const [bomItems, setBomItems] = useState<BomItem[]>([]);
+    const [bomItems, setBomItems] = useState<BillOfMaterial[]>([]);
     const { data, setData, post, processing, errors } = useForm({
         id_customer_address: '',
         id_type_item: '',

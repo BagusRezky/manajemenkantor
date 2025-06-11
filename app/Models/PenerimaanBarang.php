@@ -29,4 +29,9 @@ class PenerimaanBarang extends Model
     {
         return $this->hasMany(PenerimaanBarangItem::class, 'id_penerimaan_barang');
     }
+
+    public function returEksternals()
+    {
+        return $this->hasMany(ReturEksternal::class, 'id_penerimaan_barang');
+    }
 }

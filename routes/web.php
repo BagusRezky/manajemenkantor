@@ -14,6 +14,7 @@ use App\Http\Controllers\KartuInstruksiKerjaController;
 use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PenerimaanBarangController;
+use App\Http\Controllers\ReturEksternalController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -125,6 +126,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/penerimaanBarangs', [PenerimaanBarangController::class, 'store'])->name('penerimaanBarangs.store');
     Route::get('/penerimaanBarangs/{id}', [PenerimaanBarangController::class, 'show'])->name('penerimaanBarangs.show');
     Route::get('/penerimaanBarangs/{id}/pdf', [PenerimaanBarangController::class, 'generatePdf'])->name('penerimaanBarangs.pdf');
+
+    Route::get('/returEksternals', [ReturEksternalController::class, 'index'])->name('returEksternals.index');
+    Route::get('/returEksternals/create', [ReturEksternalController::class, 'create'])->name('returEksternals.create');
+    Route::post('/returEksternals', [ReturEksternalController::class, 'store'])->name('returEksternals.store');
+    Route::get('/returEksternals/{id}', [ReturEksternalController::class, 'show'])->name('returEksternals.show');
+    Route::get('/returEksternals/{id}/edit', [ReturEksternalController::class, 'edit'])->name('returEksternals.edit');
+    Route::put('/returEksternals/{id}', [ReturEksternalController::class, 'update'])->name('returEksternals.update');
+    Route::delete('/returEksternals/{id}', [ReturEksternalController::class, 'destroy'])->name('returEksternals.destroy');
+    Route::get('/returEksternals/{id}/pdf', [ReturEksternalController::class, 'generatePdf'])->name('returEksternals.pdf');
+    Route::get('/penerimaan-barang/{id}/details', [ReturEksternalController::class, 'getPenerimaanBarangDetails'])->name('penerimaanBarang.details');
 });
 
 

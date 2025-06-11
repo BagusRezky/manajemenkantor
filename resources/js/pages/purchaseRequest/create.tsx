@@ -92,7 +92,7 @@ export default function Create({ departments, masterItems, customerAddresses, ka
     const { data, setData, post, processing, errors } = useForm({
         id_department: '',
         tgl_pr: '',
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+         
         items: [] as any,
     });
 

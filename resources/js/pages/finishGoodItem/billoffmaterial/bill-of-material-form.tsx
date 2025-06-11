@@ -7,22 +7,23 @@ import { MasterItem } from '@/types/masterItem';
 
 import { SearchableSelect } from '@/components/search-select';
 
-import { BomItem } from '@/types/billOfMaterial';
+import { BillOfMaterial } from '@/types/billOfMaterial';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 interface BillOfMaterialFormProps {
     masterItems: MasterItem[];
     departements: Departemen[];
-    bomItems: BomItem[];
-    setBomItems: React.Dispatch<React.SetStateAction<BomItem[]>>;
+    bomItems: BillOfMaterial[];
+    setBomItems: React.Dispatch<React.SetStateAction<BillOfMaterial[]>>;
 }
 
 export default function BillOfMaterialForm({ masterItems, departements, bomItems, setBomItems }: BillOfMaterialFormProps) {
     const [showBomSection, setShowBomSection] = useState(false);
     const [selectedMasterItemUnit, setSelectedMasterItemUnit] = useState<string>('');
     const [selectedDepartemen, setSelectedDepartemen] = useState<string>('');
-    const [currentBomItem, setCurrentBomItem] = useState<BomItem>({
+    const [currentBomItem, setCurrentBomItem] = useState<BillOfMaterial>({
+        id: '',
         id_master_item: '',
         id_departemen: '',
         waste: '0',
@@ -74,7 +75,7 @@ export default function BillOfMaterialForm({ masterItems, departements, bomItems
             const masterItem = masterItems.find((item) => String(item.id) === currentBomItem.id_master_item);
             const departemen = departements.find((dep) => String(dep.id) === currentBomItem.id_departemen);
 
-            const newBomItem: BomItem = {
+            const newBomItem: BillOfMaterial = {
                 ...currentBomItem,
                 id: String(Date.now()), // Generate a unique ID for the new item
                 master_item: masterItem, // Add the full object for display purposes
@@ -87,6 +88,7 @@ export default function BillOfMaterialForm({ masterItems, departements, bomItems
 
             // Reset form
             setCurrentBomItem({
+                id: '',
                 id_master_item: '',
                 id_departemen: '',
                 waste: '',
@@ -208,11 +210,6 @@ export default function BillOfMaterialForm({ masterItems, departements, bomItems
                             <Label htmlFor="qty">Qty</Label>
                             <Input id="qty" name="qty" type="number" step={0.01} value={currentBomItem.qty} onChange={handleInputChange} />
                         </div>
-                        {/*
-                        <div className="space-y-2">
-                            <Label htmlFor="satuan">Satuan</Label>
-                            <Input id="satuan" name="satuan" value={selectedMasterItemUnit} disabled />
-                        </div> */}
 
                         <div className="space-y-2">
                             <Label htmlFor="keterangan">Keterangan</Label>

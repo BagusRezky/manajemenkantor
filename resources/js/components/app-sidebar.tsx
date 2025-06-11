@@ -85,7 +85,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             {
                 title: 'External Return',
                 icon: ContainerIcon,
-                href: '/team/members',
+                href: '/returEksternals',
             },
         ],
     },
