@@ -28,4 +28,9 @@ class KartuInstruksiKerjaBom extends Model
     {
         return $this->belongsTo(BillOfMaterial::class, 'id_bom');
     }
+
+    public function internalMaterialRequestItems()
+    {
+        return $this->hasMany(InternalMaterialRequestItem::class, 'id_kartu_instruksi_kerja_bom');
+    }
 }

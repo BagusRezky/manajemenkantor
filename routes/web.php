@@ -15,6 +15,7 @@ use App\Http\Controllers\PurchaseRequestController;
 use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PenerimaanBarangController;
 use App\Http\Controllers\ReturEksternalController;
+use App\Http\Controllers\InternalMaterialRequestController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -136,6 +137,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/returEksternals/{id}', [ReturEksternalController::class, 'destroy'])->name('returEksternals.destroy');
     Route::get('/returEksternals/{id}/pdf', [ReturEksternalController::class, 'generatePdf'])->name('returEksternals.pdf');
     Route::get('/penerimaan-barang/{id}/details', [ReturEksternalController::class, 'getPenerimaanBarangDetails'])->name('penerimaanBarang.details');
+
+    Route::get('/internalMaterialRequests', [InternalMaterialRequestController::class, 'index'])->name('internalMaterialRequests.index');
+    Route::get('/internalMaterialRequests/create', [InternalMaterialRequestController::class, 'create'])->name('internalMaterialRequests.create');
+    Route::post('/internalMaterialRequests', [InternalMaterialRequestController::class, 'store'])->name('internalMaterialRequests.store');
+    Route::get('/internalMaterialRequests/{id}', [InternalMaterialRequestController::class, 'show'])->name('internalMaterialRequests.show');
+    Route::get('/internalMaterialRequests/{id}/edit', [InternalMaterialRequestController::class, 'edit'])->name('internalMaterialRequests.edit');
+    Route::put('/internalMaterialRequests/{id}', [InternalMaterialRequestController::class, 'update'])->name('internalMaterialRequests.update');
+    Route::get('/internalMaterialRequests/{id}/approve', [InternalMaterialRequestController::class, 'showApproval'])->name('internalMaterialRequests.showApproval');
+    Route::post('/internalMaterialRequests/{id}/approve', [InternalMaterialRequestController::class, 'approve'])->name('internalMaterialRequests.approve');
+    Route::delete('/internalMaterialRequests/{id}', [InternalMaterialRequestController::class, 'destroy'])->name('internalMaterialRequests.destroy');
+    Route::get('/internalMaterialRequests/{id}/pdf', [InternalMaterialRequestController::class, 'generatePdf'])->name('internalMaterialRequests.pdf');
 });
 
 

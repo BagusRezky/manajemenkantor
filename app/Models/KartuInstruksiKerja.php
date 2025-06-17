@@ -37,6 +37,12 @@ class KartuInstruksiKerja extends Model
         return $this->hasMany(KartuInstruksiKerjaBom::class, 'id_kartu_instruksi_kerja');
     }
 
+    public function internalMaterialRequests()
+    {
+        return $this->hasMany(InternalMaterialRequest::class, 'id_kartu_instruksi_kerja');
+    }
+
+
      public static function generateYearlySequentialId(): int
     {
         $currentYear = date('Y');

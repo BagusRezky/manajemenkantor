@@ -107,7 +107,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             {
                 title: 'IMR',
                 icon: Paperclip,
-                href: '/kartuInstruksiKerja',
+                href: '/internalMaterialRequests',
             },
         ],
     },
