@@ -16,6 +16,7 @@ use App\Http\Controllers\PurchaseOrderController;
 use App\Http\Controllers\PenerimaanBarangController;
 use App\Http\Controllers\ReturEksternalController;
 use App\Http\Controllers\InternalMaterialRequestController;
+use App\Http\Controllers\MaterialStockController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -148,6 +149,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/internalMaterialRequests/{id}/approve', [InternalMaterialRequestController::class, 'approve'])->name('internalMaterialRequests.approve');
     Route::delete('/internalMaterialRequests/{id}', [InternalMaterialRequestController::class, 'destroy'])->name('internalMaterialRequests.destroy');
     Route::get('/internalMaterialRequests/{id}/pdf', [InternalMaterialRequestController::class, 'generatePdf'])->name('internalMaterialRequests.pdf');
+
+    Route::get('/materialStocks', [MaterialStockController::class, 'index'])->name('materialStocks.index');
+    Route::get('/materialStocks/pdf', [MaterialStockController::class, 'generatePdf'])->name('materialStocks.pdf');
+    Route::get('/materialStocks/{id}/details', [MaterialStockController::class, 'getStockDetails'])->name('materialStocks.details');
 });
 
 

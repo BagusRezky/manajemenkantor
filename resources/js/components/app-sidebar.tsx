@@ -120,6 +120,11 @@ export const dropdownNavItems: NavItemWithChildren[] = [
                 icon: Users,
                 href: '/penerimaanBarangs',
             },
+            {
+                title: 'Material Stock',
+                icon: Users,
+                href: '/materialStocks',
+            },
         ],
     },
     {
