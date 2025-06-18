@@ -7,14 +7,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
-import { InternalMaterialRequest } from '@/types/internalMaterialRequest';
+import { ApprovalFormData, InternalMaterialRequest } from '@/types/internalMaterialRequest';
 import { Head, useForm } from '@inertiajs/react';
-
-// Define ApprovalFormData with index signature to satisfy FormDataType constraint
-interface ApprovalFormData {
-    items: ApprovalItem[];
-    [key: string]: any; // Add index signature for FormDataType compatibility
-}
 import { ArrowLeft, CheckCircle, Edit } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -47,10 +41,10 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
     useEffect(() => {
         if (internalMaterialRequest.items) {
             const initialApprovals: Record<string, ApprovalItem> = {};
-            internalMaterialRequest.items.forEach((item) => {
+            internalMaterialRequest.items.forEach(item => {
                 initialApprovals[item.id] = {
                     id: item.id,
-                    qty_approved: item.qty_approved,
+                    qty_approved: item.qty_approved
                 };
             });
             setApprovalItems(initialApprovals);
@@ -61,19 +55,19 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
         setEditingItem(item);
         const existingApproval = approvalItems[item.id] || { qty_approved: 0 };
         setEditForm({
-            qty_approved: existingApproval.qty_approved,
+            qty_approved: existingApproval.qty_approved
         });
         setIsEditModalOpen(true);
     };
 
     const handleSaveApproval = () => {
         if (editingItem && editForm.qty_approved >= 0) {
-            setApprovalItems((prev) => ({
+            setApprovalItems(prev => ({
                 ...prev,
                 [editingItem.id]: {
                     id: editingItem.id,
-                    qty_approved: editForm.qty_approved,
-                },
+                    qty_approved: editForm.qty_approved
+                }
             }));
             setIsEditModalOpen(false);
             setEditingItem(null);
@@ -93,7 +87,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
             },
             onError: () => {
                 toast.error('Gagal approve Internal Material Request');
-            },
+            }
         });
     };
 
@@ -101,7 +95,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
         return new Date(dateString).toLocaleDateString('id-ID', {
             day: '2-digit',
             month: '2-digit',
-            year: 'numeric',
+            year: 'numeric'
         });
     };
 
@@ -110,8 +104,12 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
             <Head title={`Approval IMR - ${internalMaterialRequest.no_imr}`} />
 
             <div className="mx-5 py-5">
-                <div className="mb-6 flex items-center gap-4">
-                    <Button variant="outline" onClick={() => window.history.back()} className="flex items-center gap-2">
+                <div className="flex items-center gap-4 mb-6">
+                    <Button
+                        variant="outline"
+                        onClick={() => window.history.back()}
+                        className="flex items-center gap-2"
+                    >
                         <ArrowLeft className="h-4 w-4" />
                         Kembali
                     </Button>
@@ -124,16 +122,16 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                         <CardHeader>
                             <CardTitle className="flex items-center justify-between">
                                 <span>Informasi IMR</span>
-                                <span className="rounded bg-gray-100 px-3 py-1 font-mono text-sm">{internalMaterialRequest.no_imr}</span>
+                                <span className="text-sm font-mono bg-gray-100 px-3 py-1 rounded">
+                                    {internalMaterialRequest.no_imr}
+                                </span>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">No. KIK</label>
-                                    <p className="mt-1 text-sm text-gray-900">
-                                        {internalMaterialRequest.kartu_instruksi_kerja?.no_kartu_instruksi_kerja}
-                                    </p>
+                                    <p className="mt-1 text-sm text-gray-900">{internalMaterialRequest.kartu_instruksi_kerja?.no_kartu_instruksi_kerja}</p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Tgl Request</label>
@@ -145,15 +143,11 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Sales Order</label>
-                                    <p className="mt-1 text-sm text-gray-900">
-                                        {internalMaterialRequest.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}
-                                    </p>
+                                    <p className="mt-1 text-sm text-gray-900">{internalMaterialRequest.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}</p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Production Plan</label>
-                                    <p className="mt-1 text-sm text-gray-900">
-                                        {internalMaterialRequest.kartu_instruksi_kerja?.production_plan || '-'}
-                                    </p>
+                                    <p className="mt-1 text-sm text-gray-900">{internalMaterialRequest.kartu_instruksi_kerja?.production_plan || '-'}</p>
                                 </div>
                             </div>
                         </CardContent>
@@ -169,28 +163,20 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                                 <table className="w-full border-collapse">
                                     <thead>
                                         <tr className="border-b bg-gray-50">
-                                            <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">No</th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                                Material Item
-                                            </th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                                Total Kebutuhan
-                                            </th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                                Qty Request
-                                            </th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
-                                                Qty Approved
-                                            </th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">Action</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Material Item</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Kebutuhan</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty Request</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty Approved</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Action</th>
                                         </tr>
                                     </thead>
-                                    <tbody className="divide-y divide-gray-200 bg-white">
+                                    <tbody className="bg-white divide-y divide-gray-200">
                                         {internalMaterialRequest.items?.map((item, index) => {
                                             const approvalItem = approvalItems[item.id];
                                             return (
                                                 <tr key={item.id} className="hover:bg-gray-50">
-                                                    <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">{index + 1}</td>
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{index + 1}</td>
                                                     <td className="px-4 py-4 text-sm text-gray-900">
                                                         <div>
                                                             <div className="font-medium">
@@ -201,15 +187,22 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                                                             </div>
                                                         </div>
                                                     </td>
-                                                    <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                                                         {item.kartu_instruksi_kerja_bom?.total_kebutuhan || 0}
                                                     </td>
-                                                    <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">{item.qty_request}</td>
-                                                    <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                        {item.qty_request}
+                                                    </td>
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
                                                         {approvalItem ? approvalItem.qty_approved : item.qty_approved}
                                                     </td>
-                                                    <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
-                                                        <Button type="button" variant="outline" size="sm" onClick={() => handleEditApproval(item)}>
+                                                    <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                        <Button
+                                                            type="button"
+                                                            variant="outline"
+                                                            size="sm"
+                                                            onClick={() => handleEditApproval(item)}
+                                                        >
                                                             <Edit className="h-4 w-4" />
                                                         </Button>
                                                     </td>
@@ -269,12 +262,20 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
 
                         <div className="space-y-2">
                             <Label>Total Kebutuhan</Label>
-                            <Input value={editingItem?.kartu_instruksi_kerja_bom?.total_kebutuhan || 0} disabled className="bg-gray-100" />
+                            <Input
+                                value={editingItem?.kartu_instruksi_kerja_bom?.total_kebutuhan || 0}
+                                disabled
+                                className="bg-gray-100"
+                            />
                         </div>
 
                         <div className="space-y-2">
                             <Label>Qty Request</Label>
-                            <Input value={editingItem?.qty_request || 0} disabled className="bg-gray-100" />
+                            <Input
+                                value={editingItem?.qty_request || 0}
+                                disabled
+                                className="bg-gray-100"
+                            />
                         </div>
 
                         <div className="space-y-2">
@@ -285,10 +286,12 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                                 min="0"
                                 max={editingItem?.qty_request || 0}
                                 value={editForm.qty_approved}
-                                onChange={(e) => setEditForm((prev) => ({ ...prev, qty_approved: parseFloat(e.target.value) || 0 }))}
+                                onChange={(e) => setEditForm(prev => ({ ...prev, qty_approved: parseFloat(e.target.value) || 0 }))}
                                 placeholder="0.00"
                             />
-                            <p className="text-xs text-gray-500">Maksimal: {editingItem?.qty_request || 0}</p>
+                            <p className="text-xs text-gray-500">
+                                Maksimal: {editingItem?.qty_request || 0}
+                            </p>
                         </div>
                     </div>
 
@@ -296,7 +299,11 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                         <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)}>
                             TUTUP
                         </Button>
-                        <Button type="button" onClick={handleSaveApproval} className="bg-blue-600 hover:bg-blue-700">
+                        <Button
+                            type="button"
+                            onClick={handleSaveApproval}
+                            className="bg-blue-600 hover:bg-blue-700"
+                        >
                             SIMPAN
                         </Button>
                     </DialogFooter>

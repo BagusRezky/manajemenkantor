@@ -245,7 +245,7 @@ class InternalMaterialRequestController extends Controller
     {
         $request->validate([
             'items' => 'required|array|min:1',
-            'items.*.id' => 'required|exists:internal_material_request_items,id',
+            'items.*.id' => 'required|exists:imr_items,id',
             'items.*.qty_approved' => 'required|numeric|min:0',
         ]);
 

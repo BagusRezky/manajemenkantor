@@ -38,6 +38,7 @@ export interface InternalMaterialRequestItemFormData {
 
 export interface ApprovalFormData {
     items: ApprovalItemFormData[];
+    [key: string]: any;
 }
 
 export interface ApprovalItemFormData {
