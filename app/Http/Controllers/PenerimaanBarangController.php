@@ -35,26 +35,26 @@ class PenerimaanBarangController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-    {
-        // Ini sudah benar
-        $purchaseOrders = PurchaseOrder::with([
-            'purchaseOrderItems.masterItem',
-            'purchaseOrderItems.satuan',
-            'supplier'
-        ])->get();
+{
+    // Ubah dari purchaseOrderItems menjadi items
+    $purchaseOrders = PurchaseOrder::with([
+        'items.masterItem',     // ← Ubah dari purchaseOrderItems ke items
+        'items.satuan',         // ← Ubah dari purchaseOrderItems ke items
+        'supplier'
+    ])->get();
 
-        $previousReceipts = PenerimaanBarangItem::select(
-                'id_purchase_order_item',
-                DB::raw('SUM(qty_penerimaan) as total_qty_penerimaan')
-            )
-            ->groupBy('id_purchase_order_item')
-            ->get();
+    $previousReceipts = PenerimaanBarangItem::select(
+            'id_purchase_order_item',
+            DB::raw('SUM(qty_penerimaan) as total_qty_penerimaan')
+        )
+        ->groupBy('id_purchase_order_item')
+        ->get();
 
-        return Inertia::render('penerimaanBarang/create', [
-            'purchaseOrders' => $purchaseOrders,
-            'previousReceipts' => $previousReceipts
-        ]);
-    }
+    return Inertia::render('penerimaanBarang/create', [
+        'purchaseOrders' => $purchaseOrders,
+        'previousReceipts' => $previousReceipts
+    ]);
+}
 
     /**
      * Store a newly created resource in storage.

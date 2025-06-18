@@ -65,8 +65,6 @@ interface PreviousReceipt {
     total_qty_penerimaan: number;
 }
 
-
-// Tambahkan interface ini di bagian deklarasi tipe
 interface FormItemData {
     id: string;
     qty_penerimaan: number;
@@ -82,8 +80,8 @@ interface FormData {
     nama_pengirim: string;
     catatan_pengirim: string;
     id_purchase_order: string;
-    items: FormItemData[]; // Gunakan FormItemData, bukan PenerimaanItem
-    [key: string]: any; // Tambahkan ini untuk mengatasi constraint
+    items: FormItemData[];
+    [key: string]: any;
 }
 
 interface PenerimaanBarangFormProps {
@@ -91,7 +89,7 @@ interface PenerimaanBarangFormProps {
     previousReceipts: PreviousReceipt[];
 }
 
-export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({purchaseOrders,previousReceipts}) => {
+export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({purchaseOrders, previousReceipts}) => {
     const [selectedPO, setSelectedPO] = useState<string>('');
     const [poItems, setPoItems] = useState<PenerimaanItem[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -107,36 +105,72 @@ export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({purch
         items: [],
     });
 
+    // DEBUGGING: Tambahkan console.log untuk memeriksa data
+    useEffect(() => {
+        console.log('=== DEBUG INFO ===');
+        console.log('purchaseOrders:', purchaseOrders);
+        console.log('selectedPO:', selectedPO);
+        console.log('poItems:', poItems);
+        console.log('previousReceipts:', previousReceipts);
+    }, [purchaseOrders, selectedPO, poItems, previousReceipts]);
+
     // When purchase order is selected, load the items
     useEffect(() => {
+        console.log('=== USEEFFECT TRIGGERED ===');
+        console.log('selectedPO:', selectedPO);
+
         if (selectedPO) {
+            console.log('Looking for PO with ID:', selectedPO);
+
             const po = purchaseOrders.find((po) => String(po.id) === selectedPO);
-            if (po && po.items) {
-                // Transform PO items to penerimaan items
-                const penerimaanItems = po.items.map((item) => {
-                    // Check if there are previous receipts for this item
-                    const previousReceiptForItem = previousReceipts?.find((receipt) => receipt.id_purchase_order_item === item.id);
+            console.log('Found PO:', po);
 
-                    // Pastikan semua properti PenerimaanItem terpenuhi
-                    return {
-                        ...item, // Gunakan semua properti dari item asli
-                        qty_penerimaan: 0,
-                        qty_penerimaan_sebelumnya: previousReceiptForItem?.total_qty_penerimaan || 0,
-                        catatan_item: '',
-                        tgl_expired: '',
-                        no_delivery_order: '',
-                        isEdited: false,
-                    } as PenerimaanItem; // Cast ke PenerimaanItem untuk mengatasi error
-                });
+            if (po) {
+                console.log('PO items:', po.items);
 
-                setPoItems(penerimaanItems);
-                setData('id_purchase_order', selectedPO);
+                if (po.items && po.items.length > 0) {
+                    // Transform PO items to penerimaan items
+                    const penerimaanItems = po.items.map((item) => {
+                        console.log('Processing item:', item);
+
+                        // Check if there are previous receipts for this item
+                        const previousReceiptForItem = previousReceipts?.find((receipt) => receipt.id_purchase_order_item === item.id);
+                        console.log('Previous receipt for item:', previousReceiptForItem);
+
+                        const penerimaanItem = {
+                            ...item,
+                            qty_penerimaan: 0,
+                            qty_penerimaan_sebelumnya: previousReceiptForItem?.total_qty_penerimaan || 0,
+                            catatan_item: '',
+                            tgl_expired: '',
+                            no_delivery_order: '',
+                            isEdited: false,
+                        } as PenerimaanItem;
+
+                        console.log('Created penerimaan item:', penerimaanItem);
+                        return penerimaanItem;
+                    });
+
+                    console.log('All penerimaan items:', penerimaanItems);
+                    setPoItems(penerimaanItems);
+                    setData('id_purchase_order', selectedPO);
+                } else {
+                    console.log('No items found in PO or items array is empty');
+                    setPoItems([]);
+                }
+            } else {
+                console.log('PO not found');
+                setPoItems([]);
             }
+        } else {
+            console.log('No PO selected, clearing items');
+            setPoItems([]);
         }
     }, [selectedPO, purchaseOrders, previousReceipts, setData]);
 
     const handlePOChange = (val: string) => {
-        setSelectedPO(val); // JANGAN di-Number
+        console.log('PO Changed to:', val);
+        setSelectedPO(val);
     };
 
     const openEditModal = (item: PenerimaanItem) => {
@@ -218,6 +252,15 @@ export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({purch
                 <CardTitle>Form Penerimaan Barang</CardTitle>
             </CardHeader>
             <CardContent>
+                {/* DEBUG INFO PANEL - Hapus setelah debugging selesai */}
+                <div className="mb-4 p-4 bg-gray-100 rounded">
+                    <h4 className="font-bold mb-2">Debug Info:</h4>
+                    <p>Selected PO: {selectedPO}</p>
+                    <p>Purchase Orders Count: {purchaseOrders.length}</p>
+                    <p>PO Items Count: {poItems.length}</p>
+                    <p>Previous Receipts Count: {previousReceipts.length}</p>
+                </div>
+
                 <form onSubmit={handleSubmit}>
                     <div className="mb-6 grid grid-cols-3 gap-4">
                         <div>
@@ -228,7 +271,7 @@ export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({purch
                                     value: String(po.id),
                                     label: po.no_po,
                                 }))}
-                                value={selectedPO || ''} // fallback ke string kosong agar tidak error
+                                value={selectedPO || ''}
                                 placeholder="Input Purchase Order"
                                 onChange={(value) => handlePOChange(value)}
                             />
@@ -306,7 +349,7 @@ export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({purch
                                 {poItems.length === 0 ? (
                                     <TableRow>
                                         <TableCell colSpan={9} className="text-center">
-                                            Pilih Purchase Order terlebih dahulu
+                                            {selectedPO ? 'Tidak ada item dalam Purchase Order ini' : 'Pilih Purchase Order terlebih dahulu'}
                                         </TableCell>
                                     </TableRow>
                                 ) : (

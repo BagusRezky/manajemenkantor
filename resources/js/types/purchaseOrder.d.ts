@@ -36,6 +36,7 @@ export interface PurchaseOrder {
     ongkir: number;
     dp: number;
     items?: PurchaseOrderItem[];
+    purchaseOrderItems?: PurchaseOrderItem[];
     supplier?: Supplier;
     purchase_request?: PurchaseRequest;
 }
