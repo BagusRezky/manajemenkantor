@@ -183,7 +183,7 @@ export const columns = (): ColumnDef<InternalMaterialRequest>[] => [
     },
     {
         accessorKey: 'kartu_instruksi_kerja.no_kartu_instruksi_kerja',
-        header: 'No. KIK',
+        header: 'No. SPK',
         cell: ({ row }) => {
             const data = row.original;
             return <span>{data.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}</span>;

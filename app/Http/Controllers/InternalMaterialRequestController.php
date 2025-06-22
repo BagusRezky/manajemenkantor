@@ -20,6 +20,7 @@ class InternalMaterialRequestController extends Controller
         $internalMaterialRequests = InternalMaterialRequest::with([
             'kartuInstruksiKerja.salesOrder',
             'items.kartuInstruksiKerjaBom.billOfMaterials.masterItem',
+            'items.kartuInstruksiKerjaBom.billOfMaterials.masterItem.unit',
         ])
         ->orderBy('created_at', 'desc')
         ->get();
@@ -36,7 +37,9 @@ class InternalMaterialRequestController extends Controller
     {
         $kartuInstruksiKerjas = KartuInstruksiKerja::with([
             'salesOrder',
-            'kartuInstruksiKerjaBoms.billOfMaterials.masterItem'
+            'kartuInstruksiKerjaBoms.billOfMaterials.masterItem',
+            'kartuInstruksiKerjaBoms.billOfMaterials.masterItem.unit',
+            'kartuInstruksiKerjaBoms.billOfMaterials.departemen'
         ])->get();
 
         // Generate nomor IMR untuk preview
@@ -136,6 +139,8 @@ class InternalMaterialRequestController extends Controller
         $imr = InternalMaterialRequest::with([
             'kartuInstruksiKerja.salesOrder',
             'items.kartuInstruksiKerjaBom.billOfMaterials.masterItem',
+            'items.kartuInstruksiKerjaBom.billOfMaterials.departemen',
+            'items.kartuInstruksiKerjaBom.billOfMaterials.masterItem.unit',
         ])->findOrFail($id);
 
         return Inertia::render('internalMaterialRequest/show', [

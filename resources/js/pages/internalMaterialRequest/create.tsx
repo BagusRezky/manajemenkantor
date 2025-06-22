@@ -92,7 +92,7 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
         const kikId = selectedKik?.id || data.id_kartu_instruksi_kerja;
 
         if (!kikId) {
-            toast.error('Pilih Kartu Instruksi Kerja terlebih dahulu');
+            toast.error('Pilih SPK terlebih dahulu');
             return;
         }
 
@@ -135,7 +135,7 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
                         <div onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                 <div className="space-y-2">
-                                    <Label htmlFor="no_kartu_instruksi_kerja">Kartu Instruksi Kerja *</Label>
+                                    <Label htmlFor="no_kartu_instruksi_kerja">Surat Perintah Kerja *</Label>
                                     <Select onValueChange={handleKikChange}>
                                         <SelectTrigger>
                                             <SelectValue placeholder="Pilih Kartu Instruksi Kerja" />
@@ -204,12 +204,12 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
                                                     const itemRequest = itemRequests[item.id];
                                                     return (
                                                         <tr key={item.id} className="hover:bg-gray-50">
-                                                            <td className="px-4 py-4 text-sm text-gray-900">Printing</td>
+                                                            <td className="px-4 py-4 text-sm text-gray-900">{item.bill_of_materials?.departemen?.nama_departemen}</td>
                                                             <td className="px-4 py-4 text-sm text-gray-900">
                                                                 {item.bill_of_materials?.master_item?.kode_master_item} - {item.bill_of_materials?.master_item?.nama_master_item}
                                                             </td>
                                                             <td className="px-4 py-4 text-sm text-gray-900">-</td>
-                                                            <td className="px-4 py-4 text-sm text-gray-900">KILOGRAM</td>
+                                                            <td className="px-4 py-4 text-sm text-gray-900">{item.bill_of_materials?.master_item?.unit?.nama_satuan}</td>
                                                             <td className="px-4 py-4 text-sm text-gray-900">{item.total_kebutuhan}</td>
                                                             <td className="px-4 py-4 text-sm text-gray-900">0.00</td>
                                                             <td className="px-4 py-4 text-sm text-gray-900">0.00</td>
@@ -261,7 +261,7 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
 
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label>No.KIK</Label>
+                            <Label>No.SPK</Label>
                             <Input
                                 value={selectedKik?.no_kartu_instruksi_kerja || ''}
                                 disabled
