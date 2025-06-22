@@ -366,71 +366,63 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                                             {/* Tampilkan data sales order */}
                                             <div className="mb-6 rounded-md border p-4">
                                                 <h3 className="mb-4 text-lg font-medium">Detail Sales Order</h3>
-                                                <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                                    <div>
-                                                        <p>
-                                                            <span className="font-medium">No Bon Pesanan:</span> {selectedSalesOrder.no_bon_pesanan}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">No PO Customer:</span> {selectedSalesOrder.no_po_customer}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Customer:</span>{' '}
-                                                            {selectedSalesOrder.customer_address.nama_customer}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Harga pcs bp:</span> {selectedSalesOrder.harga_pcs_bp}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Nama Barang:</span>{' '}
-                                                            {selectedSalesOrder.finish_good_item.nama_barang}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Deskripsi:</span>{' '}
-                                                            {selectedSalesOrder.finish_good_item.deskripsi}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Jumlah Up:</span> UP 1:{' '}
-                                                            {selectedSalesOrder.finish_good_item.up_satu} | UP 2:{' '}
-                                                            {selectedSalesOrder.finish_good_item.up_dua} | UP 3:{' '}
-                                                            {selectedSalesOrder.finish_good_item.up_tiga}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Ukuran Potong | Ukuran Cetak:</span>{' '}
-                                                            {selectedSalesOrder.finish_good_item.ukuran_potong} |{' '}
-                                                            {selectedSalesOrder.finish_good_item.ukuran_cetak}
-                                                        </p>
-                                                    </div>
-                                                    <div>
-                                                        <p>
-                                                            <span className="font-medium">Jumlah Pesanan:</span> {selectedSalesOrder.jumlah_pesanan}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Toleransi Pengiriman:</span>{' '}
-                                                            {selectedSalesOrder.toleransi_pengiriman}%
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Tipe Pesanan:</span> {selectedSalesOrder.tipe_pesanan}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Mata Uang:</span> {selectedSalesOrder.mata_uang}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Syarat Pembayaran:</span>{' '}
-                                                            {selectedSalesOrder.syarat_pembayaran}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Properti:</span> Panjang{' '}
-                                                            {selectedSalesOrder.finish_good_item.panjang}, Lebar{' '}
-                                                            {selectedSalesOrder.finish_good_item.lebar}, tinggi{' '}
-                                                            {selectedSalesOrder.finish_good_item.tinggi}, Berat Kotor{' '}
-                                                            {selectedSalesOrder.finish_good_item.berat_kotor}, Berat Bersih{' '}
-                                                            {selectedSalesOrder.finish_good_item.berat_bersih}
-                                                        </p>
-                                                        <p>
-                                                            <span className="font-medium">Tanggal Pesanan:</span> {selectedSalesOrder.eta_marketing}
-                                                        </p>
-                                                    </div>
+
+                                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                                    <dl className="space-y-3">
+                                                        <div className="flex flex-col sm:flex-row sm:items-center">
+                                                            <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">No Bon Pesanan:</dt>
+                                                            <dd className="mt-1 text-gray-900 sm:mt-0 sm:ml-4">
+                                                                {selectedSalesOrder.no_bon_pesanan}
+                                                            </dd>
+                                                        </div>
+                                                        <div className="flex flex-col sm:flex-row sm:items-center">
+                                                            <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">No PO Customer:</dt>
+                                                            <dd className="mt-1 text-gray-900 sm:mt-0 sm:ml-4">
+                                                                {selectedSalesOrder.no_po_customer}
+                                                            </dd>
+                                                        </div>
+                                                        <div className="flex flex-col sm:flex-row sm:items-center">
+                                                            <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">Customer:</dt>
+                                                            <dd className="mt-1 text-gray-900 sm:mt-0 sm:ml-4">
+                                                                {selectedSalesOrder.customer_address.nama_customer}
+                                                            </dd>
+                                                        </div>
+                                                        <div className="flex flex-col sm:flex-row sm:items-start">
+                                                            <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">Nama Barang:</dt>
+                                                            <dd className="mt-1 text-gray-900 sm:mt-0 sm:ml-4">
+                                                                {selectedSalesOrder.finish_good_item.nama_barang}
+                                                            </dd>
+                                                        </div>
+                                                        <div className="flex flex-col sm:flex-row sm:items-start">
+                                                            <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">Deskripsi:</dt>
+                                                            <dd className="mt-1 text-gray-900 sm:mt-0 sm:ml-4">
+                                                                {selectedSalesOrder.finish_good_item.deskripsi}
+                                                            </dd>
+                                                        </div>
+                                                    </dl>
+
+                                                    <dl className="space-y-3">
+                                                        <div className="flex flex-col sm:flex-row sm:items-center">
+                                                            <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">Jumlah Pesanan:</dt>
+                                                            <dd className="mt-1 text-gray-900 sm:mt-0 sm:ml-4">
+                                                                {selectedSalesOrder.jumlah_pesanan}
+                                                            </dd>
+                                                        </div>
+                                                        <div className="flex flex-col sm:flex-row sm:items-center">
+                                                            <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">Toleransi:</dt>
+                                                            <dd className="mt-1 text-gray-900 sm:mt-0 sm:ml-4">
+                                                                {selectedSalesOrder.toleransi_pengiriman}%
+                                                            </dd>
+                                                        </div>
+                                                        <div className="flex flex-col sm:flex-row sm:items-center">
+                                                            <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">Tipe Pesanan:</dt>
+                                                            <dd className="mt-1 text-gray-900 sm:mt-0 sm:ml-4">{selectedSalesOrder.tipe_pesanan}</dd>
+                                                        </div>
+                                                        <div className="flex flex-col sm:flex-row sm:items-center">
+                                                            <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">Tanggal Pesanan:</dt>
+                                                            <dd className="mt-1 text-gray-900 sm:mt-0 sm:ml-4">{selectedSalesOrder.eta_marketing}</dd>
+                                                        </div>
+                                                    </dl>
                                                 </div>
                                             </div>
 
