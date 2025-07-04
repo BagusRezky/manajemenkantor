@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('printings', function (Blueprint $table) {
             $table->id();
-            $table->string('kode_diemaking')->unique();
+            $table->string('kode_printing');
             $table->foreignId('id_kartu_instruksi_kerja')->constrained('kartu_instruksi_kerjas')->onDelete('cascade');
             $table->foreignId('id_mesin')->constrained('mesins')->onDelete('cascade');
             $table->foreignId('id_operator')->constrained('operators')->onDelete('cascade');
