@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BaggageClaim, ClipboardList, ContainerIcon, LayoutGrid, Paperclip, Printer, StretchHorizontalIcon, Users } from 'lucide-react';
+import { BaggageClaim, ClipboardList, ContainerIcon, LayoutGrid, PanelTopOpen, Paperclip, Printer, StretchHorizontalIcon, Users } from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavDropdown, NavItemWithChildren } from './nav-dropdown';
 
@@ -101,9 +101,36 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         ],
     },
     {
+        title: 'DIE MAKING',
+        icon: Users,
+        children: [
+            {
+                title: 'Die Making',
+                icon: Users,
+                href: '/dieMakings',
+            },
+        ],
+    },
+    {
         title: 'PRINTING',
         icon: Printer,
         children: [
+            {
+                title: 'Printing',
+                icon: Printer,
+                href: '/printings',
+            },
+            {
+                title: 'Manajemen Mesin',
+                icon: PanelTopOpen,
+                href: '/mesins',
+            },
+            {
+                title: 'Operator',
+                icon: Users,
+                href: '/operators',
+            },
+
             {
                 title: 'IMR',
                 icon: Paperclip,

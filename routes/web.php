@@ -3,6 +3,7 @@
 use App\Http\Controllers\CategoryItemController;
 use App\Http\Controllers\CustomerAddressController;
 use App\Http\Controllers\DepartemenController;
+use App\Http\Controllers\DieMakingController;
 use App\Http\Controllers\MasterKonversiController;
 use App\Http\Controllers\SupplierController;
 use App\Http\Controllers\TypeItemController;
@@ -17,6 +18,10 @@ use App\Http\Controllers\PenerimaanBarangController;
 use App\Http\Controllers\ReturEksternalController;
 use App\Http\Controllers\InternalMaterialRequestController;
 use App\Http\Controllers\MaterialStockController;
+use App\Http\Controllers\MesinController;
+use App\Http\Controllers\OperatorController;
+use App\Http\Controllers\PrintingController;
+use App\Models\DieMaking;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -153,6 +158,33 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/materialStocks', [MaterialStockController::class, 'index'])->name('materialStocks.index');
     Route::get('/materialStocks/pdf', [MaterialStockController::class, 'generatePdf'])->name('materialStocks.pdf');
     Route::get('/materialStocks/{id}/details', [MaterialStockController::class, 'getStockDetails'])->name('materialStocks.details');
+
+    Route::get('/mesins', [MesinController::class, 'index'])->name('mesins.index');
+    Route::post('/mesins', [MesinController::class, 'store'])->name('mesins.store');
+    Route::put('/mesins/{id}', [MesinController::class, 'update'])->name('mesins.update');
+    Route::delete('/mesins/{id}', [MesinController::class, 'destroy'])->name('mesins.destroy');
+    Route::get('/mesins/{id}/show', [MesinController::class, 'show'])->name('mesins.show');
+
+    Route::get('/operators', [OperatorController::class, 'index'])->name('operators.index');
+    Route::post('/operators', [OperatorController::class, 'store'])->name('operators.store');
+    Route::put('/operators/{id}', [OperatorController::class, 'update'])->name('operators.update');
+    Route::delete('/operators/{id}', [OperatorController::class, 'destroy'])->name('operators.destroy');
+    Route::get('/operators/{id}/show', [OperatorController::class, 'show'])->name('operators.show');
+
+    Route::get('/printings', [PrintingController::class, 'index'])->name('printings.index');
+    Route::get('/printings/create', [PrintingController::class, 'create'])->name('printings.create');
+    Route::post('/printings', [PrintingController::class, 'store'])->name('printings.store');
+    Route::get('/printings/{printing}/edit', [PrintingController::class, 'edit'])->name('printings.edit');
+    Route::put('/printings/{printing}', [PrintingController::class, 'update'])->name('printings.update');
+    Route::delete('/printings/{printing}', [PrintingController::class, 'destroy'])->name('printings.destroy');
+    Route::get('/printings/{printing}/pdf', [PrintingController::class, 'pdf'])->name('printings.pdf');
+    Route::get('/printings/{printing}/show', [PrintingController::class, 'show'])->name('printings.show');
+    Route::get('/printings/{printing}/detail', [PrintingController::class, 'detail'])->name('printings.detail');
+
+    Route::get('/dieMakings', [DieMakingController::class, 'index'])->name('dieMakings.index');
+    Route::get('/dieMakings/create', [DieMakingController::class, 'create'])->name('dieMakings.create');
+    Route::post('/dieMakings', [DieMakingController::class, 'store'])->name('dieMakings.store');
+    Route::delete('/dieMakings/{dieMaking}', [DieMakingController::class, 'destroy'])->name('dieMakings.destroy');
 });
 
 

@@ -41,7 +41,14 @@ class KartuInstruksiKerja extends Model
     {
         return $this->hasMany(InternalMaterialRequest::class, 'id_kartu_instruksi_kerja');
     }
-
+    public function printings()
+    {
+        return $this->hasMany(Printing::class, 'id_kartu_instruksi_kerja');
+    }
+    public function dieMakings()
+    {
+        return $this->hasMany(DieMaking::class, 'id_kartu_instruksi_kerja');
+    }
 
      public static function generateYearlySequentialId(): int
     {

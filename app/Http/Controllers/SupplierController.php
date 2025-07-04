@@ -71,7 +71,7 @@ class SupplierController extends Controller
     {
         $supplier = Supplier::findOrFail($id);
         $validated = $request->validate([
-            'kode_suplier' => 'required|unique:suppliers,kode_siplier,' . $id,
+            'kode_suplier' => 'required|unique:suppliers,kode_suplier,' . $id,
             'nama_suplier' => 'required',
             'jenis_suplier' => 'required',
             'keterangan' => 'required',

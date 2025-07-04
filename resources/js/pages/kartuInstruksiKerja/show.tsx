@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -9,8 +12,168 @@ import { BreadcrumbItem } from '@/types';
 import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { formatToInteger } from '@/utils/formatter/decimaltoint';
 import { Head, Link } from '@inertiajs/react';
+import { format } from 'date-fns';
+import { AlertTriangle, CheckCircle, Factory, Printer, Search, Wrench, XCircle } from 'lucide-react';
+import { useState } from 'react';
 
 
+// Production Detail Modal Component
+interface ProductionDetailModalProps {
+    printings: any[];
+    dieMakings: any[];
+}
+
+function ProductionDetailModal({ printings, dieMakings }: ProductionDetailModalProps) {
+    const [open, setOpen] = useState(false);
+
+    return (
+        <Dialog open={open} onOpenChange={setOpen}>
+            <DialogTrigger asChild>
+                <Button variant="outline" size="sm">
+                    <Search className="h-4 w-4" />
+                </Button>
+            </DialogTrigger>
+            <DialogContent className="sm:max-w-[800px] md:max-w-[1000px] lg:max-w-[1200px] xl:max-w-[1400px] overflow-auto">
+                <DialogHeader>
+                    <DialogTitle>Detail Data Produksi</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-6">
+                    {/* Printing Details */}
+                    <div>
+                        <h4 className="mb-3 flex items-center gap-2 font-medium">
+                            <Printer className="h-4 w-4 text-blue-600" />
+                            Detail Printing
+                        </h4>
+                        {printings.length > 0 ? (
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        
+                                        <TableHead>Tgl.Entri </TableHead>
+
+                                        <TableHead>Proses</TableHead>
+                                        <TableHead>Mesin</TableHead>
+                                        <TableHead>Operator</TableHead>
+                                        <TableHead>Jumlah Baik</TableHead>
+                                        <TableHead>Jumlah Rusak</TableHead>
+                                        <TableHead>Semi Waste</TableHead>
+                                        <TableHead>Keterangan</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {printings.map((printing, index) => (
+                                        <TableRow key={index}>
+
+                                            <TableCell>
+                                                <div className="text-sm">
+                                                    <div>{format(new Date(printing.tanggal_entri), 'dd-MM-yyyy')}</div>
+
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell>
+                                                <Badge variant="secondary">{printing.proses_printing}</Badge>
+                                            </TableCell>
+                                            <TableCell>{printing.mesin?.nama_mesin || '-'}</TableCell>
+                                            <TableCell>{printing.operator?.nama_operator || '-'}</TableCell>
+                                            <TableCell>
+                                                <span className="font-semibold text-green-600">{printing.hasil_baik_printing.toLocaleString()}</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="font-semibold text-red-600">{printing.hasil_rusak_printing.toLocaleString()}</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="font-semibold text-yellow-600">{printing.semi_waste_printing.toLocaleString()}</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant={printing.keterangan_printing === 'Reguler' ? 'default' : 'destructive'}>
+                                                    {printing.keterangan_printing}
+                                                </Badge>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        ) : (
+                            <div className="py-8 text-center text-gray-500">
+                                <Printer className="mx-auto mb-3 h-12 w-12 opacity-50" />
+                                <p>Belum ada data printing untuk SPK ini</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Die Making Details */}
+                    <div>
+                        <h4 className="mb-3 flex items-center gap-2 font-medium">
+                            <Wrench className="h-4 w-4 text-purple-600" />
+                            Detail Die Making
+                        </h4>
+                        {dieMakings.length > 0 ? (
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+
+                                        <TableHead>Tgl.Entri </TableHead>
+
+                                        <TableHead>Proses</TableHead>
+                                        <TableHead>Mesin</TableHead>
+                                        <TableHead>Operator</TableHead>
+                                        <TableHead>Jumlah Baik</TableHead>
+                                        <TableHead>Jumlah Rusak</TableHead>
+                                        <TableHead>Semi Waste</TableHead>
+                                        <TableHead>Keterangan</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {dieMakings.map((diemaking, index) => (
+                                        <TableRow key={index}>
+
+                                            <TableCell>
+                                                <div className="text-sm">
+                                                    <div>{format(new Date(diemaking.tanggal_entri), 'dd-MM-yyyy')}</div>
+
+                                                </div>
+                                            </TableCell>
+
+                                            <TableCell>
+                                                <Badge variant="secondary">{diemaking.proses_diemaking}</Badge>
+                                            </TableCell>
+                                            <TableCell>{diemaking.mesin?.nama_mesin || '-'}</TableCell>
+                                            <TableCell>{diemaking.operator?.nama_operator || '-'}</TableCell>
+                                            <TableCell>
+                                                <span className="font-semibold text-green-600">
+                                                    {diemaking.hasil_baik_diemaking.toLocaleString()}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="font-semibold text-red-600">{diemaking.hasil_rusak_diemaking.toLocaleString()}</span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <span className="font-semibold text-yellow-600">
+                                                    {diemaking.semi_waste_diemaking.toLocaleString()}
+                                                </span>
+                                            </TableCell>
+                                            <TableCell>
+                                                <Badge variant={diemaking.keterangan_diemaking === 'Reguler' ? 'default' : 'destructive'}>
+                                                    {diemaking.keterangan_diemaking}
+                                                </Badge>
+                                            </TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        ) : (
+                            <div className="py-8 text-center text-gray-500">
+                                <Wrench className="mx-auto mb-3 h-12 w-12 opacity-50" />
+                                <p>Belum ada data die making untuk SPK ini</p>
+                            </div>
+                        )}
+                    </div>
+                </div>
+            </DialogContent>
+        </Dialog>
+    );
+}
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -36,6 +199,17 @@ export default function Show({ kartuInstruksiKerja }: ShowProps) {
     const salesOrder = kartuInstruksiKerja.sales_order;
     const finishGoodItem = salesOrder?.finish_good_item;
     const bomItems = kartuInstruksiKerja.kartu_instruksi_kerja_boms || [];
+    const printings = kartuInstruksiKerja.printings || [];
+    const dieMakings = kartuInstruksiKerja.die_makings || [];
+
+    // // Calculate totals for production summary
+    // const totalPrintingBaik = printings.reduce((sum, p) => sum + (p.hasil_baik_printing || 0), 0);
+    // const totalPrintingRusak = printings.reduce((sum, p) => sum + (p.hasil_rusak_printing || 0), 0);
+    // const totalPrintingWaste = printings.reduce((sum, p) => sum + (p.semi_waste_printing || 0), 0);
+
+    // const totalDieMakingBaik = dieMakings.reduce((sum, d) => sum + (d.hasil_baik_diemaking || 0), 0);
+    // const totalDieMakingRusak = dieMakings.reduce((sum, d) => sum + (d.hasil_rusak_diemaking || 0), 0);
+    // const totalDieMakingWaste = dieMakings.reduce((sum, d) => sum + (d.semi_waste_diemaking || 0), 0);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -249,6 +423,112 @@ export default function Show({ kartuInstruksiKerja }: ShowProps) {
                                             </Table>
                                         </div>
                                     )}
+
+                                    {/* LIST INFORMASI PRODUKSI */}
+                                    <div className="rounded-md border p-4">
+                                        <div className="flex items-center justify-between mb-4">
+                                            <h3 className="text-lg font-medium flex items-center gap-2">
+                                                <Factory className="h-5 w-5" />
+                                                List Informasi Produksi
+                                            </h3>
+                                            <ProductionDetailModal
+                                                printings={printings}
+                                                dieMakings={dieMakings}
+                                            />
+                                        </div>
+
+                                        {/* Simple Production Summary Table */}
+                                        <Table>
+                                            <TableHeader>
+                                                <TableRow className=" dark:bg-gray-800">
+                                                    <TableHead className="font-medium">Proses</TableHead>
+                                                    <TableHead className="font-medium text-green-600">
+                                                        <div className="flex items-center gap-1">
+                                                            <CheckCircle className="h-4 w-4" />
+                                                            Hasil Baik
+                                                        </div>
+                                                    </TableHead>
+                                                    <TableHead className="font-medium text-red-600">
+                                                        <div className="flex items-center gap-1">
+                                                            <XCircle className="h-4 w-4" />
+                                                            Hasil Rusak
+                                                        </div>
+                                                    </TableHead>
+                                                    <TableHead className="font-medium text-yellow-600">
+                                                        <div className="flex items-center gap-1">
+                                                            <AlertTriangle className="h-4 w-4" />
+                                                            Semi Waste
+                                                        </div>
+                                                    </TableHead>
+                                                </TableRow>
+                                            </TableHeader>
+                                            <TableBody>
+                                                {/* Printing Processes */}
+                                                {printings.map((printing, index) => (
+                                                    <TableRow key={`printing-${index}`}>
+                                                        <TableCell className="font-medium">
+                                                            <div className="flex items-center gap-2">
+                                                                <Printer className="h-4 w-4 text-blue-600" />
+                                                                {printing.proses_printing}
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <span className="text-green-600 font-semibold text-lg">
+                                                                {printing.hasil_baik_printing.toLocaleString()}
+                                                            </span>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <span className="text-red-600 font-semibold text-lg">
+                                                                {printing.hasil_rusak_printing.toLocaleString()}
+                                                            </span>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <span className="text-yellow-600 font-semibold text-lg">
+                                                                {printing.semi_waste_printing.toLocaleString()}
+                                                            </span>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+
+                                                {/* Die Making Processes */}
+                                                {dieMakings.map((diemaking, index) => (
+                                                    <TableRow key={`diemaking-${index}`}>
+                                                        <TableCell className="font-medium">
+                                                            <div className="flex items-center gap-2">
+                                                                <Wrench className="h-4 w-4 text-purple-600" />
+                                                                {diemaking.proses_diemaking}
+                                                            </div>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <span className="text-green-600 font-semibold text-lg">
+                                                                {diemaking.hasil_baik_diemaking.toLocaleString()}
+                                                            </span>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <span className="text-red-600 font-semibold text-lg">
+                                                                {diemaking.hasil_rusak_diemaking.toLocaleString()}
+                                                            </span>
+                                                        </TableCell>
+                                                        <TableCell>
+                                                            <span className="text-yellow-600 font-semibold text-lg">
+                                                                {diemaking.semi_waste_diemaking.toLocaleString()}
+                                                            </span>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                ))}
+
+                                                {/* Empty State */}
+                                                {printings.length === 0 && dieMakings.length === 0 && (
+                                                    <TableRow>
+                                                        <TableCell colSpan={4} className="text-center py-8 text-gray-500">
+                                                            <Factory className="h-12 w-12 mx-auto mb-3 opacity-50" />
+                                                            <p>Belum ada data produksi untuk SPK ini</p>
+                                                        </TableCell>
+                                                    </TableRow>
+                                                )}
+                                            </TableBody>
+                                        </Table>
+                                    </div>
 
                                     <div className="flex justify-start">
                                         <Link href={route('kartuInstruksiKerja.index')}>
