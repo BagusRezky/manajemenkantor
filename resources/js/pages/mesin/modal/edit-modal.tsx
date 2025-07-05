@@ -63,7 +63,7 @@ const EditMesinModal: React.FC<EditMesinModalProps> = ({ isOpen, onClose, mesin 
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>EdMesin</DialogTitle>
+                    <DialogTitle>Edit Mesin</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-2">
 

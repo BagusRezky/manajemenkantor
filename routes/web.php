@@ -19,9 +19,13 @@ use App\Http\Controllers\ReturEksternalController;
 use App\Http\Controllers\InternalMaterialRequestController;
 use App\Http\Controllers\MaterialStockController;
 use App\Http\Controllers\MesinController;
+use App\Http\Controllers\MesinDiemakingController;
 use App\Http\Controllers\OperatorController;
 use App\Http\Controllers\PrintingController;
-use App\Models\DieMaking;
+use App\Http\Controllers\OperatorDiemakingController;
+use App\Http\Controllers\OperatorFinishingController;
+use App\Http\Controllers\MesinFinishingController;
+use App\Http\Controllers\FinishingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -185,6 +189,40 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dieMakings/create', [DieMakingController::class, 'create'])->name('dieMakings.create');
     Route::post('/dieMakings', [DieMakingController::class, 'store'])->name('dieMakings.store');
     Route::delete('/dieMakings/{dieMaking}', [DieMakingController::class, 'destroy'])->name('dieMakings.destroy');
+
+    Route::get('/mesinDiemakings', [MesinDiemakingController::class, 'index'])->name('mesinDiemakings.index');
+    Route::post('/mesinDiemakings', [MesinDiemakingController::class, 'store'])->name('mesinDiemakings.store');
+    Route::put('/mesinDiemakings/{mesinDiemaking}', [MesinDiemakingController::class, 'update'])->name('mesinDiemakings.update');
+    Route::delete('/mesinDiemakings/{mesinDiemaking}', [MesinDiemakingController::class, 'destroy'])->name('mesinDiemakings.destroy');
+    Route::get('/mesinDiemakings/{mesinDiemaking}/show', [MesinDiemakingController::class, 'show'])->name('mesinDiemakings.show');
+
+    Route::get('/operatorDiemakings', [OperatorDiemakingController::class, 'index'])->name('operatorDiemakings.index');
+    Route::post('/operatorDiemakings', [OperatorDiemakingController::class, 'store'])->name('operatorDiemakings.store');
+    Route::put('/operatorDiemakings/{operatorDiemaking}', [OperatorDiemakingController::class, 'update'])->name('operatorDiemakings.update');
+    Route::delete('/operatorDiemakings/{operatorDiemaking}', [OperatorDiemakingController::class, 'destroy'])->name('operatorDiemakings.destroy');
+    Route::get('/operatorDiemakings/{operatorDiemaking}/show', [OperatorDiemakingController::class, 'show'])->name('operatorDiemakings.show');
+
+    Route::get('/operatorFinishings', [OperatorFinishingController::class, 'index'])->name('operatorFinishings.index');
+    Route::post('/operatorFinishings', [OperatorFinishingController::class, 'store'])->name('operatorFinishings.store');
+    Route::put('/operatorFinishings/{operatorFinishing}', [OperatorFinishingController::class, 'update'])->name('operatorFinishings.update');
+    Route::delete('/operatorFinishings/{operatorFinishing}', [OperatorFinishingController::class, 'destroy'])->name('operatorFinishings.destroy');
+    Route::get('/operatorFinishings/{operatorFinishing}/show', [OperatorFinishingController::class, 'show'])->name('operatorFinishings.show');
+
+    Route::get('/mesinFinishings', [MesinFinishingController::class, 'index'])->name('mesinFinishings.index');
+    Route::post('/mesinFinishings', [MesinFinishingController::class, 'store'])->name('mesinFinishings.store');
+    Route::put('/mesinFinishings/{mesinFinishing}', [MesinFinishingController::class, 'update'])->name('mesinFinishings.update');
+    Route::delete('/mesinFinishings/{mesinFinishing}', [MesinFinishingController::class, 'destroy'])->name('mesinFinishings.destroy');
+    Route::get('/mesinFinishings/{mesinFinishing}/show', [MesinFinishingController::class, 'show'])->name('mesinFinishings.show');
+
+    Route::get('/finishings', [FinishingController::class, 'index'])->name('finishings.index');
+    Route::get('/finishings/create', [FinishingController::class, 'create'])->name('finishings.create');
+    Route::post('/finishings', [FinishingController::class, 'store'])->name('finishings.store');
+    Route::get('/finishings/{finishing}/edit', [FinishingController::class, 'edit'])->name('finishings.edit');
+    Route::put('/finishings/{finishing}', [FinishingController::class, 'update'])->name('finishings.update');
+    Route::delete('/finishings/{finishing}', [FinishingController::class, 'destroy'])->name('finishings.destroy');
+    Route::get('/finishings/{finishing}/pdf', [FinishingController::class, 'generatePdf'])->name('finishings.pdf');
+    Route::get('/finishings/{finishing}/show', [FinishingController::class, 'show'])->name('finishings.show');
+    Route::get('/finishings/{finishing}/detail', [FinishingController::class, 'detail'])->name('finishings.detail');
 });
 
 

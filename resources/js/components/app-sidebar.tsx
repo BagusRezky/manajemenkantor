@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BaggageClaim, ClipboardList, ContainerIcon, LayoutGrid, PanelTopOpen, Paperclip, Printer, StretchHorizontalIcon, Users } from 'lucide-react';
+import { BaggageClaim, CandlestickChartIcon, ClipboardList, ContainerIcon, CuboidIcon, LayoutGrid, Mailbox, MailsIcon, PanelTopOpen, Paperclip, Printer, ScrollIcon, StretchHorizontalIcon, Users, Users2Icon, WarehouseIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavDropdown, NavItemWithChildren } from './nav-dropdown';
 
@@ -28,7 +28,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             },
             {
                 title: 'Master Customer',
-                icon: BaggageClaim,
+                icon: Users2Icon,
                 href: '/customerAddresses',
             },
             {
@@ -91,26 +91,16 @@ export const dropdownNavItems: NavItemWithChildren[] = [
     },
     {
         title: 'PPIC',
-        icon: Users,
+        icon: Mailbox,
         children: [
             {
                 title: 'Surat Perintah Kerja',
-                icon: Users,
+                icon: MailsIcon,
                 href: '/kartuInstruksiKerja',
             },
         ],
     },
-    {
-        title: 'DIE MAKING',
-        icon: Users,
-        children: [
-            {
-                title: 'Die Making',
-                icon: Users,
-                href: '/dieMakings',
-            },
-        ],
-    },
+
     {
         title: 'PRINTING',
         icon: Printer,
@@ -121,18 +111,44 @@ export const dropdownNavItems: NavItemWithChildren[] = [
                 href: '/printings',
             },
             {
-                title: 'Manajemen Mesin',
+                title: 'Mesin Printing',
                 icon: PanelTopOpen,
                 href: '/mesins',
             },
             {
-                title: 'Operator',
+                title: 'Operator Printing',
                 icon: Users,
                 href: '/operators',
             },
 
             {
-                title: 'IMR',
+                title: 'IMR Printing',
+                icon: Paperclip,
+                href: '/internalMaterialRequests',
+            },
+        ],
+    },
+    {
+        title: 'DIE MAKING',
+        icon: ScrollIcon,
+        children: [
+            {
+                title: 'Die Making',
+                icon: ScrollIcon,
+                href: '/dieMakings',
+            },
+            {
+                title: 'Mesin Die Making',
+                icon: PanelTopOpen,
+                href: '/mesinDiemakings',
+            },
+            {
+                title: 'Operator Die Making',
+                icon: Users,
+                href: '/operatorDiemakings',
+            },
+            {
+                title: 'IMR Die Making',
                 icon: Paperclip,
                 href: '/internalMaterialRequests',
             },
@@ -140,17 +156,43 @@ export const dropdownNavItems: NavItemWithChildren[] = [
     },
     {
         title: 'WAREHOUSE',
-        icon: Users,
+        icon: WarehouseIcon,
         children: [
             {
                 title: 'Penerimaan Barang',
-                icon: Users,
+                icon: CuboidIcon,
                 href: '/penerimaanBarangs',
             },
             {
                 title: 'Material Stock',
-                icon: Users,
+                icon: CandlestickChartIcon,
                 href: '/materialStocks',
+            },
+        ],
+    },
+    {
+        title: 'FINISHING',
+        icon: ScrollIcon,
+        children: [
+            {
+                title: 'Finishing',
+                icon: ScrollIcon,
+                href: '/finishings',
+            },
+            {
+                title: 'Mesin Finish',
+                icon: PanelTopOpen,
+                href: '/mesinFinishings',
+            },
+            {
+                title: 'Operator Finish',
+                icon: Users,
+                href: '/operatorFinishings',
+            },
+            {
+                title: 'IMR Finish',
+                icon: Paperclip,
+                href: '/imrFinishings',
             },
         ],
     },

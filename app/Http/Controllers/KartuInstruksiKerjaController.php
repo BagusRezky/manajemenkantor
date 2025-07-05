@@ -121,7 +121,9 @@ class KartuInstruksiKerjaController extends Controller
             'printings.mesin',
             'printings.operator',
             'dieMakings.mesin',
-            'dieMakings.operator'
+            'dieMakings.operator',
+            'finishings.mesinFinishing',
+            'finishings.operatorFinishing',
         ])->findOrFail($id);
 
         return Inertia::render('kartuInstruksiKerja/show', [
