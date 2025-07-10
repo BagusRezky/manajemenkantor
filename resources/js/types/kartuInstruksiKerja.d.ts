@@ -1,6 +1,7 @@
 import { BillOfMaterial } from "./billOfMaterial";
 import { DieMaking } from "./dieMaking";
 import { Finishing } from "./finishing";
+import { Packaging } from "./packaging";
 import { Printing } from "./printing";
 import { SalesOrder } from "./salesOrder";
 
@@ -17,6 +18,7 @@ export interface KartuInstruksiKerja {
     printings?: Printing[];
     die_makings?: DieMaking[];
     finishings?: Finishing[];
+    packagings?: Packaging[];
     kartuInstruksiKerjaBoms?: KartuInstruksiKerjaBom[]; // camelCase version
     kartu_instruksi_kerja_boms?: KartuInstruksiKerjaBom[]; // snake_case version from Laravel
 }

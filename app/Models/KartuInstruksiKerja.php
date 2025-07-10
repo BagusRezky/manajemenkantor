@@ -55,6 +55,11 @@ class KartuInstruksiKerja extends Model
         return $this->hasMany(Finishing::class, 'id_kartu_instruksi_kerja');
     }
 
+    public function packagings()
+    {
+        return $this->hasMany(Packaging::class, 'id_kartu_instruksi_kerja');
+    }
+
      public static function generateYearlySequentialId(): int
     {
         $currentYear = date('Y');

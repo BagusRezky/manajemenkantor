@@ -12,7 +12,7 @@ import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { formatToInteger } from '@/utils/formatter/decimaltoint';
 import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { AlertTriangle, CheckCircle, Factory, Printer, Search, Sparkles, Wrench, XCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Factory, Package, Printer, Search, Sparkles, Wrench, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
 // Production Detail Modal Component
@@ -259,6 +259,11 @@ export default function Show({ kartuInstruksiKerja }: ShowProps) {
     const printings = kartuInstruksiKerja.printings || [];
     const dieMakings = kartuInstruksiKerja.die_makings || [];
     const finishings = kartuInstruksiKerja.finishings || [];
+    const packagings = kartuInstruksiKerja.packagings || [];
+
+    const totalStokBarangJadi = packagings.reduce((total, packaging) => {
+        return total + packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
+    }, 0);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -600,6 +605,79 @@ export default function Show({ kartuInstruksiKerja }: ShowProps) {
                                                 )}
                                             </TableBody>
                                         </Table>
+                                    </div>
+
+                                    {/* LIST TRANSFER BARANG JADI */}
+                                    <div className="rounded-md border p-4">
+                                        <div className="mb-4 flex items-center justify-between">
+                                            <h3 className="flex items-center gap-2 text-lg font-medium">
+                                                <Package className="h-5 w-5 text-indigo-600" />
+                                                List Transfer Barang Jadi
+                                            </h3>
+                                        </div>
+
+                                        {packagings.length > 0 ? (
+                                            <>
+                                                <Table>
+                                                    <TableHeader>
+                                                        <TableRow className="bg-gray-50 dark:bg-gray-800">
+                                                            <TableHead className="font-medium">Tanggal Transfer</TableHead>
+                                                            <TableHead className="font-medium">Satuan Transfer</TableHead>
+                                                            <TableHead className="font-medium">Jenis Transfer</TableHead>
+                                                            <TableHead className="text-right font-medium">Transfer Barang Jadi (pcs)</TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        {packagings.map((packaging, index) => {
+                                                            const transferBarangJadi = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
+                                                            return (
+                                                                <TableRow key={`packaging-${index}`}>
+                                                                    <TableCell>{format(new Date(packaging.tgl_transfer), 'dd-MM-yyyy')}</TableCell>
+                                                                    <TableCell>
+                                                                        <Badge variant="outline" className="font-medium">
+                                                                            {packaging.satuan_transfer}
+                                                                        </Badge>
+                                                                    </TableCell>
+                                                                    <TableCell>
+                                                                        <Badge
+                                                                            variant={
+                                                                                packaging.jenis_transfer === 'Barang Hasil Baik'
+                                                                                    ? 'default'
+                                                                                    : packaging.jenis_transfer === 'Label Kuning'
+                                                                                      ? 'secondary'
+                                                                                      : 'destructive'
+                                                                            }
+                                                                        >
+                                                                            {packaging.jenis_transfer}
+                                                                        </Badge>
+                                                                    </TableCell>
+                                                                    <TableCell className="text-right">
+                                                                        <span className="text-lg font-semibold text-blue-600">
+                                                                            {transferBarangJadi.toLocaleString()}
+                                                                        </span>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            );
+                                                        })}
+                                                    </TableBody>
+                                                </Table>
+
+                                                {/* Total Stok Barang Jadi */}
+                                                <div className="mt-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-lg font-medium">Total Stok Barang Jadi:</span>
+                                                        <span className="text-2xl font-bold text-blue-600">
+                                                            {totalStokBarangJadi.toLocaleString()} pcs
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="py-8 text-center text-gray-500">
+                                                <Package className="mx-auto mb-3 h-12 w-12 opacity-50" />
+                                                <p>Belum ada data transfer barang jadi untuk SPK ini</p>
+                                            </div>
+                                        )}
                                     </div>
 
                                     <div className="flex justify-start">

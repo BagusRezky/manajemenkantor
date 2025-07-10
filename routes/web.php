@@ -26,6 +26,7 @@ use App\Http\Controllers\OperatorDiemakingController;
 use App\Http\Controllers\OperatorFinishingController;
 use App\Http\Controllers\MesinFinishingController;
 use App\Http\Controllers\FinishingController;
+use App\Http\Controllers\PackagingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -223,6 +224,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/finishings/{finishing}/pdf', [FinishingController::class, 'generatePdf'])->name('finishings.pdf');
     Route::get('/finishings/{finishing}/show', [FinishingController::class, 'show'])->name('finishings.show');
     Route::get('/finishings/{finishing}/detail', [FinishingController::class, 'detail'])->name('finishings.detail');
+
+    Route::get('/packagings', [PackagingController::class, 'index'])->name('packagings.index');
+    Route::get('/packagings/create', [PackagingController::class, 'create'])->name('packagings.create');
+    Route::post('/packagings', [PackagingController::class, 'store'])->name('packagings.store');
+    Route::get('/packagings/{packaging}/edit', [PackagingController::class, 'edit'])->name('packagings.edit');
+    Route::put('/packagings/{packaging}', [PackagingController::class, 'update'])->name('packagings.update');
+    Route::delete('/packagings/{packaging}', [PackagingController::class, 'destroy'])->name('packagings.destroy');
+    Route::get('/packagings/{packaging}/show', [PackagingController::class, 'show'])->name('packagings.show');
+    Route::get('/packagings/{packaging}/pdf', [PackagingController::class, 'generatePdf'])->name('packagings.pdf');
 });
 
 

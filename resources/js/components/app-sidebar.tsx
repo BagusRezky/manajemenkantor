@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BaggageClaim, CandlestickChartIcon, ClipboardList, ContainerIcon, CuboidIcon, LayoutGrid, Mailbox, MailsIcon, PanelTopOpen, Paperclip, Printer, ScrollIcon, StretchHorizontalIcon, Users, Users2Icon, WarehouseIcon } from 'lucide-react';
+import { BaggageClaim, BoxIcon, CandlestickChartIcon, ClipboardList, ContainerIcon, CuboidIcon, LayoutGrid, Mailbox, MailsIcon, PanelTopOpen, Paperclip, Printer, ScrollIcon, StretchHorizontalIcon, Users, Users2Icon, WarehouseIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavDropdown, NavItemWithChildren } from './nav-dropdown';
 
@@ -175,6 +175,11 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         icon: ScrollIcon,
         children: [
             {
+                title: 'Packaging',
+                icon: BoxIcon,
+                href: '/packagings',
+            },
+            {
                 title: 'Finishing',
                 icon: ScrollIcon,
                 href: '/finishings',
@@ -229,17 +234,17 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             },
         ],
     },
-    {
-        title: 'REPORT',
-        icon: Users,
-        children: [
-            {
-                title: 'Members',
-                icon: Users,
-                href: '/team/members',
-            },
-        ],
-    },
+    // {
+    //     title: 'REPORT',
+    //     icon: Users,
+    //     children: [
+    //         {
+    //             title: 'Members',
+    //             icon: Users,
+    //             href: '/team/members',
+    //         },
+    //     ],
+    // },
 ];
 
 
