@@ -7,19 +7,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
-import { ApprovalFormData, InternalMaterialRequest } from '@/types/internalMaterialRequest';
+import { ApprovalFormData, ImrDiemaking } from '@/types/imrDiemaking';
+
 import { Head, router, useForm } from '@inertiajs/react';
 import { ArrowLeft, CheckCircle, Edit } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Internal Material Request', href: '/internalMaterialRequests' },
+    { title: 'Internal Material Request', href: '/imrDiemakings' },
     { title: 'Approval', href: '#' },
 ];
 
 interface Props {
-    internalMaterialRequest: InternalMaterialRequest;
+    imrDiemaking: ImrDiemaking;
 }
 
 interface ApprovalItem {
@@ -27,7 +28,7 @@ interface ApprovalItem {
     qty_approved: number;
 }
 
-export default function ApprovalInternalMaterialRequest({ internalMaterialRequest }: Props) {
+export default function ApprovalInternalMaterialRequest({ imrDiemaking }: Props) {
     const [approvalItems, setApprovalItems] = useState<Record<string, ApprovalItem>>({});
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<any>(null);
@@ -39,11 +40,11 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
 
     // Initialize approval data
     useEffect(() => {
-        if (internalMaterialRequest.items) {
+        if (imrDiemaking.items) {
             const initialApprovals: Record<string, ApprovalItem> = {};
             const initialFormData: any[] = [];
 
-            internalMaterialRequest.items.forEach((item) => {
+            imrDiemaking.items.forEach((item) => {
                 const approvalItem = {
                     id: item.id,
                     qty_approved: item.qty_approved || 0,
@@ -57,7 +58,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
             // Set initial form data immediately
             setData('items', initialFormData);
         }
-    }, [internalMaterialRequest]);
+    }, [imrDiemaking]);
 
     // Update form data whenever approvalItems changes
     useEffect(() => {
@@ -99,7 +100,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
 
         // Tunggu sebentar untuk memastikan state ter-update
         setTimeout(() => {
-            post(`/internalMaterialRequests/${internalMaterialRequest.id}/approve`, {
+            post(`/imrDiemakings/${imrDiemaking.id}/approve`, {
                 onSuccess: () => {
                     toast.success('Internal Material Request berhasil diapprove');
                 },
@@ -126,7 +127,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
 
         // Submit setelah data di-set
         setTimeout(() => {
-            post(`/internalMaterialRequests/${internalMaterialRequest.id}/approve`, {
+            post(`/imrDiemakings/${imrDiemaking.id}/approve`, {
                 onSuccess: () => {
                     toast.success('Internal Material Request berhasil diapprove');
                 },
@@ -159,7 +160,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
 
         // Submit langsung menggunakan router tanpa useForm
         router.post(
-            `/internalMaterialRequests/${internalMaterialRequest.id}/approve`,
+            `/imrDiemakings/${imrDiemaking.id}/approve`,
             {
                 items: formattedData,
             },
@@ -188,7 +189,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Approval IMR - ${internalMaterialRequest.no_imr}`} />
+            <Head title={`Approval IMR - ${imrDiemaking.no_imr_diemaking}`} />
 
             <div className="mx-5 py-5">
                 <div className="mb-6 flex items-center gap-4">
@@ -205,7 +206,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                         <CardHeader>
                             <CardTitle className="flex items-center justify-between">
                                 <span>Informasi IMR</span>
-                                <span className="rounded bg-gray-100 px-3 py-1 font-mono text-sm">{internalMaterialRequest.no_imr}</span>
+                                <span className="rounded bg-gray-100 px-3 py-1 font-mono text-sm">{imrDiemaking.no_imr_diemaking}</span>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
@@ -213,27 +214,27 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">No. KIK</label>
                                     <p className="mt-1 text-sm text-gray-900">
-                                        {internalMaterialRequest.kartu_instruksi_kerja?.no_kartu_instruksi_kerja}
+                                        {imrDiemaking.kartu_instruksi_kerja?.no_kartu_instruksi_kerja}
                                     </p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Tgl Request</label>
-                                    <p className="mt-1 text-sm text-gray-900">{formatDate(internalMaterialRequest.tgl_request)}</p>
+                                    <p className="mt-1 text-sm text-gray-900">{formatDate(imrDiemaking.tgl_request)}</p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Status</label>
-                                    <p className="mt-1 text-sm text-gray-900 uppercase">{internalMaterialRequest.status}</p>
+                                    <p className="mt-1 text-sm text-gray-900 uppercase">{imrDiemaking.status}</p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Sales Order</label>
                                     <p className="mt-1 text-sm text-gray-900">
-                                        {internalMaterialRequest.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}
+                                        {imrDiemaking.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}
                                     </p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Production Plan</label>
                                     <p className="mt-1 text-sm text-gray-900">
-                                        {internalMaterialRequest.kartu_instruksi_kerja?.production_plan || '-'}
+                                        {imrDiemaking.kartu_instruksi_kerja?.production_plan || '-'}
                                     </p>
                                 </div>
                             </div>
@@ -267,7 +268,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 bg-white">
-                                        {internalMaterialRequest.items?.map((item, index) => {
+                                        {imrDiemaking.items?.map((item, index) => {
                                             const approvalItem = approvalItems[item.id];
                                             return (
                                                 <tr key={item.id} className="hover:bg-gray-50">
@@ -299,7 +300,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                                                 </tr>
                                             );
                                         })}
-                                        {(!internalMaterialRequest.items || internalMaterialRequest.items.length === 0) && (
+                                        {(!imrDiemaking.items || imrDiemaking.items.length === 0) && (
                                             <tr>
                                                 <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                                                     Tidak ada data item material.
@@ -311,6 +312,8 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                             </div>
                         </CardContent>
                     </Card>
+
+
 
                     {/* Action Buttons */}
                     <Card>
@@ -324,7 +327,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                                 {/* <Button
                                     type="button"
                                     onClick={handleSubmitApprovalAlternative}
-                                    disabled={processing || internalMaterialRequest.status !== 'pending'}
+                                    disabled={processing || imrDiemaking.status !== 'pending'}
                                     className="bg-green-600 hover:bg-green-700"
                                 >
                                     <CheckCircle className="mr-2 h-4 w-4" />
@@ -335,7 +338,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                                 <Button
                                     type="button"
                                     onClick={handleDirectSubmit}
-                                    disabled={processing || internalMaterialRequest.status !== 'pending'}
+                                    disabled={processing || imrDiemaking.status !== 'pending'}
                                     className="bg-blue-600 hover:bg-blue-700"
                                     variant="outline"
                                 >

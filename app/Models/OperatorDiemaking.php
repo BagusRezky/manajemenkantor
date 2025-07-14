@@ -12,5 +12,10 @@ class OperatorDiemaking extends Model
     protected $fillable = [
         'nama_operator_diemaking',
     ];
-    
+
+    public function dieMakings()
+    {
+        return $this->hasMany(DieMaking::class, 'id_operator_diemaking');
+    }
+
 }

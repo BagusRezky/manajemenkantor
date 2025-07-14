@@ -27,6 +27,11 @@ class KartuInstruksiKerja extends Model
         return $this->belongsTo(SalesOrder::class, 'id_sales_order');
     }
 
+    public function sales_order() // alias untuk backward compatibility
+    {
+        return $this->salesOrder();
+    }
+
     public function itemReferences()
     {
         return $this->hasMany(ItemReference::class, 'id_kartu_instruksi_kerja');
@@ -60,7 +65,22 @@ class KartuInstruksiKerja extends Model
         return $this->hasMany(Packaging::class, 'id_kartu_instruksi_kerja');
     }
 
-     public static function generateYearlySequentialId(): int
+    public function suratJalans()
+    {
+        return $this->hasMany(SuratJalan::class, 'id_kartu_instruksi_kerja');
+    }
+
+    public function imrDiemakings()
+    {
+        return $this->hasMany(ImrDiemaking::class, 'id_kartu_instruksi_kerja');
+    }
+
+    public function imrFinishings()
+    {
+        return $this->hasMany(ImrFinishing::class, 'id_kartu_instruksi_kerja');
+    }
+
+    public static function generateYearlySequentialId(): int
     {
         $currentYear = date('Y');
 

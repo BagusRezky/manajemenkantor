@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\DieMaking;
 use App\Models\KartuInstruksiKerja;
-use App\Models\Mesin;
-use App\Models\Operator;
+use App\Models\MesinDiemaking;
+use App\Models\OperatorDiemaking;
 use Illuminate\Http\Request;
 
 class DieMakingController extends Controller
@@ -15,7 +15,7 @@ class DieMakingController extends Controller
      */
     public function index()
     {
-        $dieMakings = DieMaking::with(['mesin', 'operator', 'kartuInstruksiKerja'])->get();
+        $dieMakings = DieMaking::with(['mesinDiemaking', 'operatorDiemaking', 'kartuInstruksiKerja'])->get();
         return inertia('dieMaking/dieMakings', [
             'dieMakings' => $dieMakings,
         ]);
@@ -27,12 +27,12 @@ class DieMakingController extends Controller
     public function create()
     {
         $kartuInstruksiKerjas = KartuInstruksiKerja::all();
-        $mesins = Mesin::all();
-        $operators = Operator::all();
+        $mesinDiemakings = MesinDiemaking::all();
+        $operatorDiemakings = OperatorDiemaking::all();
         return inertia('dieMaking/create', [
             'kartuInstruksiKerjas' => $kartuInstruksiKerjas,
-            'mesins' => $mesins,
-            'operators' => $operators
+            'mesinDiemakings' => $mesinDiemakings,
+            'operatorDiemakings' => $operatorDiemakings
         ]);
     }
 
@@ -43,10 +43,10 @@ class DieMakingController extends Controller
     {
         $validated = $request->validate([
             'id_kartu_instruksi_kerja' => 'required|exists:kartu_instruksi_kerjas,id',
-            'id_mesin' => 'required|exists:mesins,id',
-            'id_operator' => 'required|exists:operators,id',
+            'id_mesin_diemaking' => 'required|exists:mesin_diemakings,id',
+            'id_operator_diemaking' => 'required|exists:operator_diemakings,id',
             'tanggal_entri' => 'required|date',
-            'proses_diemaking' => 'required|in:Hot Print,Uv Spot, Uv Holo, Embos',
+            'proses_diemaking' => 'required|in:Hot Print,Uv Spot,Uv Holo,Embos',
             'tahap_diemaking' => 'required|in:Proses Die Making 1,Proses Die Making 2',
             'hasil_baik_diemaking' => 'required|numeric|min:0',
             'hasil_rusak_diemaking' => 'required|numeric|min:0',

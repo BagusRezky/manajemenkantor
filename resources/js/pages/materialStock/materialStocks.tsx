@@ -25,9 +25,6 @@ export default function MaterialStockPage({ materialStocks }: { materialStocks: 
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Material Stock" />
             <div className="mx-5 py-5">
-                {/* <div className="mb-6 flex items-center justify-between">
-                    <h1 className="text-2xl font-bold">Material Stock Management</h1>
-                </div> */}
                 <DataTable columns={columns()} data={data} materialStocks={materialStocks} />
             </div>
         </AppLayout>

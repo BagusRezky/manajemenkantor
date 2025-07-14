@@ -33,4 +33,14 @@ class KartuInstruksiKerjaBom extends Model
     {
         return $this->hasMany(InternalMaterialRequestItem::class, 'id_kartu_instruksi_kerja_bom');
     }
+
+    public function imrDiemakingItems()
+    {
+        return $this->hasMany(ImrDiemakingItem::class, 'id_kartu_instruksi_kerja_bom');
+    }
+
+    public function imrFinishingItems()
+    {
+        return $this->hasMany(ImrFinishingItem::class, 'id_kartu_instruksi_kerja_bom');
+    }
 }

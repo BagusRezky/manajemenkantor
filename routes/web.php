@@ -27,6 +27,9 @@ use App\Http\Controllers\OperatorFinishingController;
 use App\Http\Controllers\MesinFinishingController;
 use App\Http\Controllers\FinishingController;
 use App\Http\Controllers\PackagingController;
+use App\Http\Controllers\SuratJalanController;
+use App\Http\Controllers\ImrDiemakingController;
+use App\Http\Controllers\ImrFinishingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -233,6 +236,38 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/packagings/{packaging}', [PackagingController::class, 'destroy'])->name('packagings.destroy');
     Route::get('/packagings/{packaging}/show', [PackagingController::class, 'show'])->name('packagings.show');
     Route::get('/packagings/{packaging}/pdf', [PackagingController::class, 'generatePdf'])->name('packagings.pdf');
+
+    Route::get('/suratJalans', [SuratJalanController::class, 'index'])->name('suratJalans.index');
+    Route::get('/suratJalans/create', [SuratJalanController::class, 'create'])->name('suratJalans.create');
+    Route::post('/suratJalans', [SuratJalanController::class, 'store'])->name('suratJalans.store');
+    Route::get('/suratJalans/{suratJalan}/edit', [SuratJalanController::class, 'edit'])->name('suratJalans.edit');
+    Route::put('/suratJalans/{suratJalan}', [SuratJalanController::class, 'update'])->name('suratJalans.update');
+    Route::delete('/suratJalans/{suratJalan}', [SuratJalanController::class, 'destroy'])->name('suratJalans.destroy');
+    Route::get('/suratJalans/{suratJalan}', [SuratJalanController::class, 'show'])->name('suratJalans.show');
+    Route::get('/suratJalans/{suratJalan}/pdf', [SuratJalanController::class, 'generatePdf'])->name('suratJalans.pdf');
+    Route::get('kartuInstruksiKerjas/{kartuInstruksiKerja}/customer-address', [SuratJalanController::class, 'getCustomerAddress'])->name('kartuInstruksiKerjas.customer-address');
+
+    Route::get('/imrDiemakings', [ImrDiemakingController::class, 'index'])->name('imrDiemakings.index');
+    Route::get('/imrDiemakings/create', [ImrDiemakingController::class, 'create'])->name('imrDiemakings.create');
+    Route::post('/imrDiemakings', [ImrDiemakingController::class, 'store'])->name('imrDiemakings.store');
+    Route::get('/imrDiemakings/{imrDiemaking}/edit', [ImrDiemakingController::class, 'edit'])->name('imrDiemakings.edit');
+    Route::put('/imrDiemakings/{imrDiemaking}', [ImrDiemakingController::class, 'update'])->name('imrDiemakings.update');
+    Route::delete('/imrDiemakings/{imrDiemaking}', [ImrDiemakingController::class, 'destroy'])->name('imrDiemakings.destroy');
+    Route::get('/imrDiemakings/{imrDiemaking}', [ImrDiemakingController::class, 'show'])->name('imrDiemakings.show');
+    Route::get('/imrDiemakings/{imrDiemaking}/pdf', [ImrDiemakingController::class, 'generatePdf'])->name('imrDiemakings.pdf');
+    Route::get('/imrDiemakings/{id}/approve', [ImrDiemakingController::class, 'showApproval'])->name('imrDiemakings.showApproval');
+    Route::post('/imrDiemakings/{id}/approve', [ImrDiemakingController::class, 'approve'])->name('imrDiemakings.approve');
+
+    Route::get('/imrFinishings', [ImrFinishingController::class, 'index'])->name('imrFinishings.index');
+    Route::get('/imrFinishings/create', [ImrFinishingController::class, 'create'])->name('imrFinishings.create');
+    Route::post('/imrFinishings', [ImrFinishingController::class, 'store'])->name('imrFinishings.store');
+    Route::get('/imrFinishings/{imrFinishing}/edit', [ImrFinishingController::class, 'edit'])->name('imrFinishings.edit');
+    Route::put('/imrFinishings/{imrFinishing}', [ImrFinishingController::class, 'update'])->name('imrFinishings.update');
+    Route::delete('/imrFinishings/{imrFinishing}', [ImrFinishingController::class, 'destroy'])->name('imrFinishings.destroy');
+    Route::get('/imrFinishings/{imrFinishing}', [ImrFinishingController::class, 'show'])->name('imrFinishings.show');
+    Route::get('/imrFinishings/{imrFinishing}/pdf', [ImrFinishingController::class, 'generatePdf'])->name('imrFinishings.pdf');
+    Route::get('/imrFinishings/{id}/approve', [ImrFinishingController::class, 'showApproval'])->name('imrFinishings.showApproval');
+    Route::post('/imrFinishings/{id}/approve', [ImrFinishingController::class, 'approve'])->name('imrFinishings.approve');
 });
 
 

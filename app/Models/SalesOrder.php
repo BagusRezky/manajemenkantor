@@ -60,9 +60,20 @@ class SalesOrder extends Model
     {
         return $this->belongsTo(FinishGoodItem::class, 'id_finish_good_item');
     }
+
+    public function finish_good_item() // alias untuk backward compatibility
+    {
+        return $this->finishGoodItem();
+    }
+    
     public function customerAddress()
     {
         return $this->belongsTo(CustomerAddress::class, 'id_customer_address');
+    }
+
+    public function customer_address() // alias untuk backward compatibility
+    {
+        return $this->customerAddress();
     }
 
     public function kartuInstruksiKerja()

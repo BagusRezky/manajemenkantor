@@ -12,8 +12,8 @@ class DieMaking extends Model
     protected $fillable = [
         'kode_diemaking',
         'id_kartu_instruksi_kerja',
-        'id_mesin',
-        'id_operator',
+        'id_mesin_diemaking',      // Updated
+        'id_operator_diemaking',   // Updated
         'tanggal_entri',
         'proses_diemaking',
         'tahap_diemaking',
@@ -26,12 +26,12 @@ class DieMaking extends Model
     {
         return $this->belongsTo(KartuInstruksiKerja::class, 'id_kartu_instruksi_kerja');
     }
-    public function mesin()
+    public function mesinDiemaking()
     {
-        return $this->belongsTo(Mesin::class, 'id_mesin');
+        return $this->belongsTo(MesinDiemaking::class, 'id_mesin_diemaking');
     }
-    public function operator()
+    public function operatorDiemaking()
     {
-        return $this->belongsTo(Operator::class, 'id_operator');
+        return $this->belongsTo(OperatorDiemaking::class, 'id_operator_diemaking');
     }
 }

@@ -7,19 +7,20 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
-import { ApprovalFormData, InternalMaterialRequest } from '@/types/internalMaterialRequest';
+import { ApprovalFormData, ImrFinishing } from '@/types/imrFinishing';
+
 import { Head, router, useForm } from '@inertiajs/react';
 import { ArrowLeft, CheckCircle, Edit } from 'lucide-react';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Internal Material Request', href: '/internalMaterialRequests' },
+    { title: 'Internal Material Request', href: '/imrFinishings' },
     { title: 'Approval', href: '#' },
 ];
 
 interface Props {
-    internalMaterialRequest: InternalMaterialRequest;
+    imrFinishing: ImrFinishing;
 }
 
 interface ApprovalItem {
@@ -27,7 +28,7 @@ interface ApprovalItem {
     qty_approved: number;
 }
 
-export default function ApprovalInternalMaterialRequest({ internalMaterialRequest }: Props) {
+export default function ApprovalInternalMaterialRequest({ imrFinishing }: Props) {
     const [approvalItems, setApprovalItems] = useState<Record<string, ApprovalItem>>({});
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [editingItem, setEditingItem] = useState<any>(null);
@@ -39,11 +40,11 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
 
     // Initialize approval data
     useEffect(() => {
-        if (internalMaterialRequest.items) {
+        if (imrFinishing.items) {
             const initialApprovals: Record<string, ApprovalItem> = {};
             const initialFormData: any[] = [];
 
-            internalMaterialRequest.items.forEach((item) => {
+            imrFinishing.items.forEach((item) => {
                 const approvalItem = {
                     id: item.id,
                     qty_approved: item.qty_approved || 0,
@@ -57,7 +58,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
             // Set initial form data immediately
             setData('items', initialFormData);
         }
-    }, [internalMaterialRequest]);
+    }, [imrFinishing]);
 
     // Update form data whenever approvalItems changes
     useEffect(() => {
@@ -99,7 +100,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
 
         // Tunggu sebentar untuk memastikan state ter-update
         setTimeout(() => {
-            post(`/internalMaterialRequests/${internalMaterialRequest.id}/approve`, {
+            post(`/imrFinishings/${imrFinishing.id}/approve`, {
                 onSuccess: () => {
                     toast.success('Internal Material Request berhasil diapprove');
                 },
@@ -126,7 +127,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
 
         // Submit setelah data di-set
         setTimeout(() => {
-            post(`/internalMaterialRequests/${internalMaterialRequest.id}/approve`, {
+            post(`/imrFinishings/${imrFinishing.id}/approve`, {
                 onSuccess: () => {
                     toast.success('Internal Material Request berhasil diapprove');
                 },
@@ -159,7 +160,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
 
         // Submit langsung menggunakan router tanpa useForm
         router.post(
-            `/internalMaterialRequests/${internalMaterialRequest.id}/approve`,
+            `/imrFinishings/${imrFinishing.id}/approve`,
             {
                 items: formattedData,
             },
@@ -188,7 +189,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title={`Approval IMR - ${internalMaterialRequest.no_imr}`} />
+            <Head title={`Approval IMR - ${imrFinishing.no_imr_finishing}`} />
 
             <div className="mx-5 py-5">
                 <div className="mb-6 flex items-center gap-4">
@@ -205,35 +206,35 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                         <CardHeader>
                             <CardTitle className="flex items-center justify-between">
                                 <span>Informasi IMR</span>
-                                <span className="rounded bg-gray-100 px-3 py-1 font-mono text-sm">{internalMaterialRequest.no_imr}</span>
+                                <span className="rounded bg-gray-100 px-3 py-1 font-mono text-sm">{imrFinishing.no_imr_finishing}</span>
                             </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                                 <div>
-                                    <label className="text-sm font-medium text-gray-500">No. KIK</label>
+                                    <label className="text-sm font-medium text-gray-500">No. SPK</label>
                                     <p className="mt-1 text-sm text-gray-900">
-                                        {internalMaterialRequest.kartu_instruksi_kerja?.no_kartu_instruksi_kerja}
+                                        {imrFinishing.kartu_instruksi_kerja?.no_kartu_instruksi_kerja}
                                     </p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Tgl Request</label>
-                                    <p className="mt-1 text-sm text-gray-900">{formatDate(internalMaterialRequest.tgl_request)}</p>
+                                    <p className="mt-1 text-sm text-gray-900">{formatDate(imrFinishing.tgl_request)}</p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Status</label>
-                                    <p className="mt-1 text-sm text-gray-900 uppercase">{internalMaterialRequest.status}</p>
+                                    <p className="mt-1 text-sm text-gray-900 uppercase">{imrFinishing.status}</p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Sales Order</label>
                                     <p className="mt-1 text-sm text-gray-900">
-                                        {internalMaterialRequest.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}
+                                        {imrFinishing.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}
                                     </p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Production Plan</label>
                                     <p className="mt-1 text-sm text-gray-900">
-                                        {internalMaterialRequest.kartu_instruksi_kerja?.production_plan || '-'}
+                                        {imrFinishing.kartu_instruksi_kerja?.production_plan || '-'}
                                     </p>
                                 </div>
                             </div>
@@ -267,7 +268,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                                         </tr>
                                     </thead>
                                     <tbody className="divide-y divide-gray-200 bg-white">
-                                        {internalMaterialRequest.items?.map((item, index) => {
+                                        {imrFinishing.items?.map((item, index) => {
                                             const approvalItem = approvalItems[item.id];
                                             return (
                                                 <tr key={item.id} className="hover:bg-gray-50">
@@ -299,7 +300,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                                                 </tr>
                                             );
                                         })}
-                                        {(!internalMaterialRequest.items || internalMaterialRequest.items.length === 0) && (
+                                        {(!imrFinishing.items || imrFinishing.items.length === 0) && (
                                             <tr>
                                                 <td colSpan={6} className="px-4 py-8 text-center text-gray-500">
                                                     Tidak ada data item material.
@@ -312,6 +313,8 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                         </CardContent>
                     </Card>
 
+                    
+
                     {/* Action Buttons */}
                     <Card>
                         <CardContent className="pt-6">
@@ -319,23 +322,10 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                                 <Button type="button" variant="outline" onClick={() => window.history.back()}>
                                     BATAL
                                 </Button>
-
-                                {/* Button dengan useForm */}
-                                {/* <Button
-                                    type="button"
-                                    onClick={handleSubmitApprovalAlternative}
-                                    disabled={processing || internalMaterialRequest.status !== 'pending'}
-                                    className="bg-green-600 hover:bg-green-700"
-                                >
-                                    <CheckCircle className="mr-2 h-4 w-4" />
-                                    {processing ? 'PROCESSING...' : 'APPROVE (useForm)'}
-                                </Button> */}
-
-                                {/* Button dengan router langsung - gunakan ini jika useForm masih bermasalah */}
                                 <Button
                                     type="button"
                                     onClick={handleDirectSubmit}
-                                    disabled={processing || internalMaterialRequest.status !== 'pending'}
+                                    disabled={processing || imrFinishing.status !== 'pending'}
                                     className="bg-blue-600 hover:bg-blue-700"
                                     variant="outline"
                                 >

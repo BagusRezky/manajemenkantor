@@ -150,7 +150,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             {
                 title: 'IMR Die Making',
                 icon: Paperclip,
-                href: '/internalMaterialRequests',
+                href: '/imrDiemakings',
             },
         ],
     },
@@ -202,13 +202,13 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         ],
     },
     {
-        title: 'DELIVERY ORDER',
+        title: 'DISPATCH',
         icon: Users,
         children: [
             {
-                title: 'Members',
-                icon: Users,
-                href: '/team/members',
+                title: 'Surat Jalan',
+                icon: MailsIcon,
+                href: '/suratJalans',
             },
         ],
     },

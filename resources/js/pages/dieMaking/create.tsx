@@ -8,8 +8,9 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
-import { Mesin, Operator } from '@/types/dieMaking';
 import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
+import { MesinDiemaking } from '@/types/mesinDiemaking';
+import { OperatorDiemaking } from '@/types/operatorDiemaking';
 
 import { Head, useForm } from '@inertiajs/react';
 
@@ -26,15 +27,15 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 interface Props {
     kartuInstruksiKerjas: KartuInstruksiKerja[];
-    mesins: Mesin[];
-    operators: Operator[];
+    mesinDiemakings: MesinDiemaking[];
+    operatorDiemakings: OperatorDiemaking[];
 }
 
-export default function CreateDieMaking({ kartuInstruksiKerjas, mesins, operators }: Props) {
+export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings, operatorDiemakings }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         id_kartu_instruksi_kerja: '',
-        id_mesin: '',
-        id_operator: '',
+        id_mesin_diemaking: '',
+        id_operator_diemaking: '',
         tanggal_entri: '',
         proses_diemaking: '',
         tahap_diemaking: '',
@@ -96,34 +97,34 @@ export default function CreateDieMaking({ kartuInstruksiKerjas, mesins, operator
 
                                 {/* Mesin */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="id_mesin">Mesin *</Label>
+                                    <Label htmlFor="id_mesin_diemaking">Mesin *</Label>
                                     <SearchableSelect
-                                        items={mesins.map((mesin) => ({
+                                        items={mesinDiemakings.map((mesin) => ({
                                             key: String(mesin.id),
                                             value: String(mesin.id),
-                                            label: mesin.nama_mesin,
+                                            label: mesin.nama_mesin_diemaking,
                                         }))}
-                                        value={data.id_mesin || ''}
+                                        value={data.id_mesin_diemaking || ''}
                                         placeholder="Pilih Mesin"
-                                        onChange={(value) => setData('id_mesin', value)}
+                                        onChange={(value) => setData('id_mesin_diemaking', value)}
                                     />
-                                    {errors.id_mesin && <div className="text-sm text-red-600">{errors.id_mesin}</div>}
+                                    {errors.id_mesin_diemaking && <div className="text-sm text-red-600">{errors.id_mesin_diemaking}</div>}
                                 </div>
 
                                 {/* Operator */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="id_operator">Operator *</Label>
+                                    <Label htmlFor="id_operator_diemaking">Operator *</Label>
                                     <SearchableSelect
-                                        items={operators.map((operator) => ({
+                                        items={operatorDiemakings.map((operator) => ({
                                             key: String(operator.id),
                                             value: String(operator.id),
-                                            label: operator.nama_operator,
+                                            label: operator.nama_operator_diemaking,
                                         }))}
-                                        value={data.id_operator || ''}
+                                        value={data.id_operator_diemaking || ''}
                                         placeholder="Pilih Operator"
-                                        onChange={(value) => setData('id_operator', value)}
+                                        onChange={(value) => setData('id_operator_diemaking', value)}
                                     />
-                                    {errors.id_operator && <div className="text-sm text-red-600">{errors.id_operator}</div>}
+                                    {errors.id_operator_diemaking && <div className="text-sm text-red-600">{errors.id_operator_diemaking}</div>}
                                 </div>
 
                                 {/* Tanggal Entri */}

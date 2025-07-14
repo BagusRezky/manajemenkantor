@@ -16,4 +16,8 @@ class MesinDiemaking extends Model
         'proses_diemaking',
         'status_diemaking',
     ];
+    public function dieMakings()
+    {
+        return $this->hasMany(DieMaking::class, 'id_mesin_diemaking');
+    }
 }

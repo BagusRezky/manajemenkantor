@@ -120,8 +120,8 @@ class KartuInstruksiKerjaController extends Controller
             'kartuInstruksiKerjaBoms.billOfMaterials.departemen',
             'printings.mesin',
             'printings.operator',
-            'dieMakings.mesin',
-            'dieMakings.operator',
+            'dieMakings.mesinDiemaking',
+            'dieMakings.operatorDiemaking',
             'finishings.mesinFinishing',
             'finishings.operatorFinishing',
             'packagings'

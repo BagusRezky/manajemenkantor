@@ -63,13 +63,13 @@ const generateDieMakingPdf = (diemaking: DieMaking, download = false): void => {
     doc.text('Mesin', 15, 73);
     doc.text(':', 65, 73);
     doc.setFont('helvetica', 'normal');
-    doc.text(diemaking.mesin?.nama_mesin || '', 70, 73);
+    doc.text(diemaking.mesin_diemaking?.nama_mesin_diemaking || '', 70, 73);
 
     doc.setFont('helvetica', 'bold');
     doc.text('Operator', 15, 80);
     doc.text(':', 65, 80);
     doc.setFont('helvetica', 'normal');
-    doc.text(diemaking.operator?.nama_operator || '', 70, 80);
+    doc.text(diemaking.operator_diemaking?.nama_operator_diemaking || '', 70, 80);
 
     doc.setFont('helvetica', 'bold');
     doc.text('Proses Die Making', 15, 87);
@@ -197,19 +197,19 @@ export const columns = (): ColumnDef<DieMaking>[] => [
     //     },
     // },
     {
-        accessorKey: 'mesin.nama_mesin',
+        accessorKey: 'mesin_diemaking.nama_mesin_diemaking',
         header: 'Mesin',
         cell: ({ row }) => {
             const data = row.original;
-            return <span>{data.mesin?.nama_mesin || '-'}</span>;
+            return <span>{data.mesin_diemaking?.nama_mesin_diemaking || '-'}</span>;
         },
     },
     {
-        accessorKey: 'operator.nama_operator',
+        accessorKey: 'operator_diemaking.nama_operator_diemaking',
         header: 'Operator',
         cell: ({ row }) => {
             const data = row.original;
-            return <span>{data.operator?.nama_operator || '-'}</span>;
+            return <span>{data.operator_diemaking?.nama_operator_diemaking || '-'}</span>;
         },
     },
     {

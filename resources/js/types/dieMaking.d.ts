@@ -1,21 +1,13 @@
 import { KartuInstruksiKerja } from "./kartuInstruksiKerja";
-
-export interface Mesin {
-    id: string;
-    nama_mesin: string;
-}
-
-export interface Operator {
-    id: string;
-    nama_operator: string;
-}
+import { MesinDiemaking } from "./mesinDiemaking";
+import { OperatorDiemaking } from "./operatorDiemaking";
 
 export interface DieMaking {
     id: string;
     kode_diemaking: string;
     id_kartu_instruksi_kerja: string;
-    id_mesin: string;
-    id_operator: string;
+    id_mesin_diemaking: string;
+    id_operator_diemaking: string;
     tanggal_entri: string;
     proses_diemaking: string;
     tahap_diemaking: string;
@@ -26,6 +18,6 @@ export interface DieMaking {
     created_at: string;
     updated_at: string;
     kartu_instruksi_kerja?: KartuInstruksiKerja;
-    mesin?: Mesin;
-    operator?: Operator;
+    mesin_diemaking?: MesinDiemaking;
+    operator_diemaking?: OperatorDiemaking;
 }
