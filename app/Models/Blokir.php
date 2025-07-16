@@ -2,30 +2,24 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Model;
 
-class SuratJalan extends Model
+class Blokir extends Model
 {
     use HasFactory;
 
     protected $fillable = [
         'id_kartu_instruksi_kerja',
-        'no_surat_jalan',
-        'tgl_surat_jalan',
-        'transportasi',
-        'no_polisi',
-        'driver',
-        'pengirim',
-        'keterangan',
-        'alamat_tujuan',
-        'qty_pengiriman',
+        'no_blokir',
+        'tgl_blokir',
+        'operator',
+        'qty_blokir',
+        'keterangan_blokir',
     ];
 
     public function kartuInstruksiKerja()
     {
         return $this->belongsTo(KartuInstruksiKerja::class, 'id_kartu_instruksi_kerja');
     }
-
-
 }

@@ -80,6 +80,12 @@ class KartuInstruksiKerja extends Model
         return $this->hasMany(ImrFinishing::class, 'id_kartu_instruksi_kerja');
     }
 
+    public function blokirs()
+    {
+        return $this->hasMany(Blokir::class, 'id_kartu_instruksi_kerja');
+    }
+
+
     public static function generateYearlySequentialId(): int
     {
         $currentYear = date('Y');

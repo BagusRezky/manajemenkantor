@@ -30,6 +30,7 @@ use App\Http\Controllers\PackagingController;
 use App\Http\Controllers\SuratJalanController;
 use App\Http\Controllers\ImrDiemakingController;
 use App\Http\Controllers\ImrFinishingController;
+use App\Http\Controllers\BlokirController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -236,6 +237,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/packagings/{packaging}', [PackagingController::class, 'destroy'])->name('packagings.destroy');
     Route::get('/packagings/{packaging}/show', [PackagingController::class, 'show'])->name('packagings.show');
     Route::get('/packagings/{packaging}/pdf', [PackagingController::class, 'generatePdf'])->name('packagings.pdf');
+    Route::get('/packagings/{packaging}/pdf', [PackagingController::class, 'generatePdf'])->name('packagings.pdf');
+    Route::get('/packagings/label-start-number/{kikId}', [PackagingController::class, 'getLabelStartNumber'])->name('packagings.labelStartNumber');
 
     Route::get('/suratJalans', [SuratJalanController::class, 'index'])->name('suratJalans.index');
     Route::get('/suratJalans/create', [SuratJalanController::class, 'create'])->name('suratJalans.create');
@@ -268,6 +271,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/imrFinishings/{imrFinishing}/pdf', [ImrFinishingController::class, 'generatePdf'])->name('imrFinishings.pdf');
     Route::get('/imrFinishings/{id}/approve', [ImrFinishingController::class, 'showApproval'])->name('imrFinishings.showApproval');
     Route::post('/imrFinishings/{id}/approve', [ImrFinishingController::class, 'approve'])->name('imrFinishings.approve');
+
+    Route::get('/blokirs', [BlokirController::class, 'index'])->name('blokirs.index');
+    Route::get('/blokirs/create', [BlokirController::class, 'create'])->name('blokirs.create');
+    Route::post('/blokirs', [BlokirController::class, 'store'])->name('blokirs.store');
+    Route::get('/blokirs/{blokir}/edit', [BlokirController::class, 'edit'])->name('blokirs.edit');
+    Route::put('/blokirs/{blokir}', [BlokirController::class, 'update'])->name('blokirs.update');
+    Route::delete('/blokirs/{blokir}', [BlokirController::class, 'destroy'])->name('blokirs.destroy');
+    Route::get('/blokirs/{blokir}', [BlokirController::class, 'show'])->name('blokirs.show');
+    Route::get('/blokirs/{blokir}/pdf', [BlokirController::class, 'generatePdf'])->name('blokirs.pdf');
 });
 
 

@@ -125,4 +125,30 @@ class PackagingController extends Controller
 
         return response()->json($packaging);
     }
+
+    public function getLabelStartNumber($kikId)
+    {
+        // Get all packagings for this KIK ordered by creation date
+        $previousPackagings = Packaging::where('id_kartu_instruksi_kerja', $kikId)
+            ->orderBy('created_at', 'asc')
+            ->get();
+
+        $startNumber = 1;
+
+        // Calculate total labels from all previous packagings
+        foreach ($previousPackagings as $packaging) {
+            $totalPenuh = $packaging->jumlah_satuan_penuh * $packaging->qty_persatuan_penuh;
+            $totalSisa = $packaging->jumlah_satuan_sisa * $packaging->qty_persatuan_sisa;
+            $totalLabels = $totalPenuh + $totalSisa;
+
+            // If this is not the current packaging being processed, add to start number
+            if ($packaging->id != request()->route('packaging_id')) {
+                $startNumber += $totalLabels;
+            }
+        }
+
+        return response()->json([
+            'startNumber' => $startNumber
+        ]);
+    }
 }

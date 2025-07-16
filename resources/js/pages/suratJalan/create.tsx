@@ -42,6 +42,7 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
         pengirim: '',
         keterangan: '',
         alamat_tujuan: '',
+        qty_pengiriman: '',
     });
 
     const handleKIKChange = (kikId: string) => {
@@ -278,6 +279,38 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
                                             />
                                             {errors.pengirim && <p className="text-sm text-red-600">{errors.pengirim}</p>}
                                         </div>
+
+                                        {/* Qty Pengiriman */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="qty_pengiriman">
+                                                Qty Pengiriman <span className="text-red-500">*</span>
+                                            </Label>
+                                            <Input
+                                                id="qty_pengiriman"
+                                                type="number"
+                                                value={data.qty_pengiriman}
+                                                onChange={(e) => setData('qty_pengiriman', e.target.value)}
+                                                placeholder="Masukkan jumlah pengiriman"
+                                                className={errors.qty_pengiriman ? 'border-red-500' : ''}
+                                            />
+                                            {errors.qty_pengiriman && <p className="text-sm text-red-600">{errors.qty_pengiriman}</p>}
+                                        </div>
+
+                                        {/* Keterangan */}
+                                        <div className="space-y-2">
+                                            <Label htmlFor="keterangan">
+                                                Keterangan <span className="text-red-500">*</span>
+                                            </Label>
+                                            <Textarea
+                                                id="keterangan"
+                                                value={data.keterangan}
+                                                onChange={(e) => setData('keterangan', e.target.value)}
+                                                placeholder="Keterangan tambahan"
+                                                className="min-h-[80px]"
+                                                rows={3}
+                                            />
+                                            {errors.keterangan && <p className="text-sm text-red-600">{errors.keterangan}</p>}
+                                        </div>
                                     </div>
 
                                     {/* Pilih Alamat Tujuan */}
@@ -294,20 +327,6 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
                                             />
                                         </div>
                                     )}
-
-                                    {/* Keterangan */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="keterangan">Keterangan</Label>
-                                        <Textarea
-                                            id="keterangan"
-                                            value={data.keterangan}
-                                            onChange={(e) => setData('keterangan', e.target.value)}
-                                            placeholder="Keterangan tambahan (opsional)"
-                                            className="min-h-[80px]"
-                                            rows={3}
-                                        />
-                                        {errors.keterangan && <p className="text-sm text-red-600">{errors.keterangan}</p>}
-                                    </div>
 
                                     {/* Action Buttons */}
                                     <div className="flex justify-end space-x-2">

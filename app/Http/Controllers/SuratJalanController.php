@@ -16,7 +16,7 @@ class SuratJalanController extends Controller
     public function index()
     {
         $suratJalans = SuratJalan::with([
-            
+
             'kartuInstruksiKerja.salesOrder.customerAddress',
             'kartuInstruksiKerja.salesOrder.finishGoodItem'
         ])->orderBy('created_at', 'desc')->get();
@@ -31,13 +31,13 @@ class SuratJalanController extends Controller
         // Ambil KIK yang belum memiliki surat jalan
         $kartuInstruksiKerjas = KartuInstruksiKerja::with([
             'salesOrder.customerAddress', // camelCase version
-        'sales_order.customer_address', // snake_case version
-        'salesOrder.finishGoodItem',
-        'sales_order.finish_good_item'
+            'sales_order.customer_address', // snake_case version
+            'salesOrder.finishGoodItem',
+            'sales_order.finish_good_item'
         ])
-        ->whereDoesntHave('suratJalans')
-        ->orderBy('created_at', 'desc')
-        ->get();
+            // ->whereDoesntHave('suratJalans')
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return Inertia::render('suratJalan/create', [
             'kartuInstruksiKerjas' => $kartuInstruksiKerjas
@@ -56,6 +56,7 @@ class SuratJalanController extends Controller
             'pengirim' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
             'alamat_tujuan' => 'required|string',
+            'qty_pengiriman' => 'required|integer|min:0',
         ]);
 
         DB::transaction(function () use ($validated) {
@@ -89,12 +90,12 @@ class SuratJalanController extends Controller
             'salesOrder.customerAddress',
             'salesOrder.finishGoodItem'
         ])
-        ->where(function($query) use ($suratJalan) {
-            $query->whereDoesntHave('suratJalans')
-                  ->orWhere('id', $suratJalan->id_kartu_instruksi_kerja);
-        })
-        ->orderBy('created_at', 'desc')
-        ->get();
+            ->where(function ($query) use ($suratJalan) {
+                $query->whereDoesntHave('suratJalans')
+                    ->orWhere('id', $suratJalan->id_kartu_instruksi_kerja);
+            })
+            ->orderBy('created_at', 'desc')
+            ->get();
 
         return Inertia::render('suratJalan/edit', [
             'suratJalan' => $suratJalan,
@@ -114,6 +115,7 @@ class SuratJalanController extends Controller
             'pengirim' => 'required|string|max:255',
             'keterangan' => 'nullable|string',
             'alamat_tujuan' => 'required|string',
+            'qty_pengiriman' => 'required|integer|min:0', // New field for quantity
         ]);
 
         DB::transaction(function () use ($suratJalan, $validated) {

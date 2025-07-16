@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -8,10 +9,125 @@ import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { Download, Edit, Eye, FileText, MoreHorizontal } from 'lucide-react';
+import { Download, Edit, Eye, FileText, MoreHorizontal, Tag } from 'lucide-react';
 import { toast } from 'sonner';
 
-// Function untuk generate PDF packaging
+// Function untuk generate label PDF
+const generateLabelsPdf = async (packaging: Packaging, download = false): Promise<void> => {
+    try {
+        // Fetch semua packaging dengan KIK yang sama untuk mendapatkan start number
+        const response = await fetch(`/packagings/label-start-number/${packaging.id_kartu_instruksi_kerja}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch label start number');
+        }
+        const { startNumber } = await response.json();
+
+        // Inisialisasi dokumen PDF (A4)
+        const doc = new jsPDF('p', 'cm', 'a4');
+
+        // Ukuran label
+        const labelWidth = 6; // 6 cm
+        const labelHeight = 3; // 3 cm
+        const marginX = 0.5; // margin horizontal antar label
+        const marginY = 0.5; // margin vertical antar label
+        const pageMargin = 1; // margin halaman
+
+        // Hitung jumlah label per baris dan kolom
+        const pageWidth = 21; // A4 width in cm
+        const pageHeight = 29.7; // A4 height in cm
+        const labelsPerRow = Math.floor((pageWidth - 2 * pageMargin) / (labelWidth + marginX));
+        const labelsPerColumn = Math.floor((pageHeight - 2 * pageMargin) / (labelHeight + marginY));
+        const labelsPerPage = labelsPerRow * labelsPerColumn;
+
+        // Hitung total label
+        const totalPenuh = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
+        const totalSisa = packaging.jumlah_satuan_sisa * packaging.qty_persatuan_sisa;
+        const grandTotal = totalPenuh + totalSisa;
+
+        let currentLabel = 0;
+        let currentPage = 1;
+
+        // Generate labels
+        for (let i = 0; i < grandTotal; i++) {
+            // Hitung posisi label
+            const labelOnPage = currentLabel % labelsPerPage;
+            const row = Math.floor(labelOnPage / labelsPerRow);
+            const col = labelOnPage % labelsPerRow;
+
+            const x = pageMargin + col * (labelWidth + marginX);
+            const y = pageMargin + row * (labelHeight + marginY);
+
+            // Gambar border label
+            doc.setDrawColor(0);
+            doc.setLineWidth(0.02);
+            doc.rect(x, y, labelWidth, labelHeight);
+
+            // Content label
+            const labelNumber = startNumber + i;
+            const kikNo = packaging.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '';
+            const kodePackaging = packaging.kode_packaging || '-';
+            const packagingDate = packaging.tgl_transfer ? format(new Date(packaging.tgl_transfer), 'dd/MM/yyyy') : '';
+
+            // Set font size kecil untuk muat di label 3x6 cm
+            doc.setFontSize(8);
+
+            // Nomor label (pojok kanan atas)
+            doc.setFont('helvetica', 'bold');
+            doc.text(`#${labelNumber}`, x + labelWidth - 0.5, y + 0.5, { align: 'right' });
+
+            // Logo atau nama perusahaan (kecil)
+            doc.setFontSize(7);
+            doc.setFont('helvetica', 'normal');
+            doc.text('CV. Indigama', x + 0.2, y + 0.4);
+
+            // Barcode area (simulasi dengan text, bisa diganti dengan barcode library)
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'bold');
+            doc.text(kikNo, x + labelWidth/2, y + 1.2, { align: 'center' });
+
+            // Info detail
+            doc.setFontSize(6);
+            doc.setFont('helvetica', 'normal');
+
+            // // Customer (potong jika terlalu panjang)
+            // const customerText = customerName.length > 25 ? customerName.substring(0, 25) + '...' : customerName;
+            // doc.text(`Cust: ${customerText}`, x + 0.2, y + 1.6);
+
+            // // Item name (potong jika terlalu panjang)
+            // const itemText = itemName.length > 30 ? itemName.substring(0, 30) + '...' : itemName;
+            // doc.text(`Item: ${itemText}`, x + 0.2, y + 1.9);
+
+            // Sales Order & Date
+            doc.text(`Kode Packaging: ${kodePackaging}`, x + 0.2, y + 2.2);
+            doc.text(`Tgl: ${packagingDate}`, x + 0.2, y + 2.5);
+
+            // Jenis transfer (pojok kanan bawah)
+            doc.setFontSize(5);
+            doc.setFont('helvetica', 'italic');
+            doc.text(packaging.jenis_transfer, x + labelWidth - 0.2, y + labelHeight - 0.2, { align: 'right' });
+
+            currentLabel++;
+
+            // Cek apakah perlu halaman baru
+            if (currentLabel % labelsPerPage === 0 && i < grandTotal - 1) {
+                doc.addPage();
+                currentPage++;
+            }
+        }
+
+        // Output PDF
+        if (download) {
+            doc.save(`Labels_${packaging.kode_packaging}.pdf`);
+        } else {
+            window.open(doc.output('bloburl'), '_blank');
+        }
+    } catch (error) {
+        console.error('Error generating labels:', error);
+        toast.error('Gagal menghasilkan label. Silakan coba lagi.');
+    }
+};
+
+// Function untuk generate PDF packaging (existing)
 const generatePackagingPdf = (packaging: Packaging, download = false): void => {
     // Inisialisasi dokumen PDF
     const doc = new jsPDF('p', 'mm', 'a4');
@@ -255,6 +371,38 @@ export const columns = (): ColumnDef<Packaging>[] => [
                 }
             };
 
+            const handlePreviewLabels = async () => {
+                try {
+                    // Fetch data lengkap packaging beserta relasinya
+                    const response = await fetch(`/packagings/${item.id}/pdf`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch data');
+                    }
+                    const data = await response.json();
+                    // Generate dan tampilkan label PDF
+                    await generateLabelsPdf(data, false);
+                } catch (error) {
+                    console.error('Error generating labels:', error);
+                    toast.error('Gagal menghasilkan label. Silakan coba lagi.');
+                }
+            };
+
+            const handleDownloadLabels = async () => {
+                try {
+                    // Fetch data lengkap packaging beserta relasinya
+                    const response = await fetch(`/packagings/${item.id}/pdf`);
+                    if (!response.ok) {
+                        throw new Error('Failed to fetch data');
+                    }
+                    const data = await response.json();
+                    // Generate dan download label PDF
+                    await generateLabelsPdf(data, true);
+                } catch (error) {
+                    console.error('Error downloading labels:', error);
+                    toast.error('Gagal mengunduh label. Silakan coba lagi.');
+                }
+            };
+
             return (
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
@@ -264,7 +412,7 @@ export const columns = (): ColumnDef<Packaging>[] => [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.get(`/packagings/${item.id}`)}>
+                        {/* <DropdownMenuItem onClick={() => router.get(`/packagings/${item.id}`)}>
                             <Eye className="mr-2 h-4 w-4" />
                             Detail
                         </DropdownMenuItem>
@@ -273,17 +421,25 @@ export const columns = (): ColumnDef<Packaging>[] => [
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator /> */}
                         <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handlePreviewPdf}>
                             <FileText className="mr-2 h-4 w-4" />
                             Preview PDF
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleDownloadPdf}>
                             <Download className="mr-2 h-4 w-4" />
                             Download PDF
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handlePreviewLabels}>
+                            <Tag className="mr-2 h-4 w-4" />
+                            Preview Labels
+                        </DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleDownloadLabels}>
+                            <Tag className="mr-2 h-4 w-4" />
+                            Download Labels
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

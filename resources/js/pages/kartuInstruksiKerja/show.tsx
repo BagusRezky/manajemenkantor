@@ -12,7 +12,7 @@ import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { formatToInteger } from '@/utils/formatter/decimaltoint';
 import { Head, Link } from '@inertiajs/react';
 import { format } from 'date-fns';
-import { AlertTriangle, CheckCircle, Factory, Package, Printer, Search, Sparkles, Wrench, XCircle } from 'lucide-react';
+import { AlertTriangle, CheckCircle, Factory, Package, Printer, Search, Sparkles, Truck, Wrench, XCircle } from 'lucide-react';
 import { useState } from 'react';
 
 // Production Detail Modal Component
@@ -108,7 +108,6 @@ function ProductionDetailModal({ printings, dieMakings, finishings }: Production
                                 <TableHeader>
                                     <TableRow>
                                         <TableHead>Tgl.Entri / User Input</TableHead>
-
                                         <TableHead>Proses</TableHead>
                                         <TableHead>Mesin</TableHead>
                                         <TableHead>Operator</TableHead>
@@ -130,8 +129,8 @@ function ProductionDetailModal({ printings, dieMakings, finishings }: Production
                                             <TableCell>
                                                 <Badge variant="secondary">{diemaking.proses_diemaking}</Badge>
                                             </TableCell>
-                                            <TableCell>{diemaking.mesin?.nama_mesin || '-'}</TableCell>
-                                            <TableCell>{diemaking.operator?.nama_operator || '-'}</TableCell>
+                                            <TableCell>{diemaking.mesin_diemaking?.nama_mesin_diemaking || '-'}</TableCell>
+                                            <TableCell>{diemaking.operator_diemaking?.nama_operator_diemaking || '-'}</TableCell>
                                             <TableCell>
                                                 <span className="font-semibold text-green-600">
                                                     {diemaking.hasil_baik_diemaking.toLocaleString()}
@@ -260,9 +259,16 @@ export default function Show({ kartuInstruksiKerja }: ShowProps) {
     const dieMakings = kartuInstruksiKerja.die_makings || [];
     const finishings = kartuInstruksiKerja.finishings || [];
     const packagings = kartuInstruksiKerja.packagings || [];
+    const suratJalans = kartuInstruksiKerja.surat_jalans || [];
 
     const totalStokBarangJadi = packagings.reduce((total, packaging) => {
-        return total + packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
+        const totalPenuh = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
+        const totalSisa = packaging.jumlah_satuan_sisa * packaging.qty_persatuan_sisa;
+        return total + totalPenuh + totalSisa;
+    }, 0);
+
+    const totalPengiriman = suratJalans.reduce((total, suratJalan) => {
+        return total + (suratJalan.qty_pengiriman || 0);
     }, 0);
 
     return (
@@ -629,7 +635,9 @@ export default function Show({ kartuInstruksiKerja }: ShowProps) {
                                                     </TableHeader>
                                                     <TableBody>
                                                         {packagings.map((packaging, index) => {
-                                                            const transferBarangJadi = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
+                                                            const totalPenuh = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
+                                                            const totalSisa = packaging.jumlah_satuan_sisa * packaging.qty_persatuan_sisa;
+                                                            const transferBarangJadi = totalPenuh + totalSisa;
                                                             return (
                                                                 <TableRow key={`packaging-${index}`}>
                                                                     <TableCell>{format(new Date(packaging.tgl_transfer), 'dd-MM-yyyy')}</TableCell>
@@ -676,6 +684,63 @@ export default function Show({ kartuInstruksiKerja }: ShowProps) {
                                             <div className="py-8 text-center text-gray-500">
                                                 <Package className="mx-auto mb-3 h-12 w-12 opacity-50" />
                                                 <p>Belum ada data transfer barang jadi untuk SPK ini</p>
+                                            </div>
+                                        )}
+                                    </div>
+
+                                    {/* List Surat Jalan */}
+                                    <div className="rounded-md border p-4">
+                                        <div className="mb-4 flex items-center justify-between">
+                                            <h3 className="flex items-center gap-2 text-lg font-medium">
+                                                <Truck className="h-5 w-5 text-indigo-600" />
+                                                Pengiriman
+                                            </h3>
+                                        </div>
+
+                                        {suratJalans.length > 0 ? (
+                                            <>
+                                                <Table>
+                                                    <TableHeader>
+                                                        <TableRow className="bg-gray-50 dark:bg-gray-800">
+                                                            <TableHead className="font-medium">Tanggal Surat Jalan</TableHead>
+                                                            <TableHead className="font-medium">Pengirim</TableHead>
+                                                            <TableHead className="font-medium">Driver</TableHead>
+                                                            <TableHead className="text-right font-medium">Pengiriman (pcs)</TableHead>
+                                                        </TableRow>
+                                                    </TableHeader>
+                                                    <TableBody>
+                                                        {suratJalans.map((suratJalan, index) => {
+                                                            return (
+                                                                <TableRow key={`suratJalan-${index}`}>
+                                                                    <TableCell>
+                                                                        {format(new Date(suratJalan.tgl_surat_jalan), 'dd-MM-yyyy')}
+                                                                    </TableCell>
+                                                                    <TableCell>{suratJalan.pengirim}</TableCell>
+                                                                    <TableCell>{suratJalan.driver}</TableCell>
+                                                                    <TableCell className="text-right">
+                                                                        <span className="text-lg font-semibold text-blue-600">
+                                                                            {suratJalan.qty_pengiriman.toLocaleString()}
+                                                                        </span>
+                                                                    </TableCell>
+                                                                </TableRow>
+                                                            );
+                                                        })}
+                                                    </TableBody>
+                                                </Table>
+                                                {/* Total Pengiriman */}
+                                                <div className="mt-4 rounded-lg bg-gray-50 p-4 dark:bg-gray-800">
+                                                    <div className="flex items-center justify-between">
+                                                        <span className="text-lg font-medium">Total Pengiriman:</span>
+                                                        <span className="text-2xl font-bold text-blue-600">
+                                                            {totalPengiriman.toLocaleString()} pcs
+                                                        </span>
+                                                    </div>
+                                                </div>
+                                            </>
+                                        ) : (
+                                            <div className="py-8 text-center text-gray-500">
+                                                <Package className="mx-auto mb-3 h-12 w-12 opacity-50" />
+                                                <p>Belum ada data pengiriman untuk SPK ini</p>
                                             </div>
                                         )}
                                     </div>

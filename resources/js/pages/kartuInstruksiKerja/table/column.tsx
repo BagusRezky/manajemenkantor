@@ -263,7 +263,7 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
     },
     {
         accessorKey: 'no_kartu_instruksi_kerja',
-        header: 'No. Surat Perintah Kerja',
+        header: 'No. SPK',
     },
     {
         accessorKey: 'sales_order.no_bon_pesanan',
@@ -271,12 +271,47 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
         cell: ({ row }) => row.original.sales_order?.no_bon_pesanan || '-',
     },
     {
-        accessorKey: 'production_plan',
-        header: 'Production Plan',
+        accessorKey: 'sales_order.jumlah_pesanan',
+        header: 'Jumlah Order',
     },
     {
+
+        header: 'Jumlah Produksi',
+        cell: ({ row }) => {
+            const packagings = row.original.packagings || [];
+            const totalStokBarangJadi = packagings.reduce((total, packaging) => {
+                const totalPenuh = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
+                const totalSisa = packaging.jumlah_satuan_sisa * packaging.qty_persatuan_sisa;
+                return total + totalPenuh + totalSisa;
+            }, 0);
+            return totalStokBarangJadi.toLocaleString();
+        },
+    },
+    {
+        
+        header: 'On Hand Stock',
+        cell: ({ row }) => {
+            const packagings = row.original.packagings || [];
+            const suratJalans = row.original.surat_jalans || [];
+
+            const totalStokBarangJadi = packagings.reduce((total, packaging) => {
+                const totalPenuh = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
+                const totalSisa = packaging.jumlah_satuan_sisa * packaging.qty_persatuan_sisa;
+                return total + totalPenuh + totalSisa;
+            }, 0);
+
+            const totalPengiriman = suratJalans.reduce((total, suratJalan) => {
+                return total + (suratJalan.qty_pengiriman || 0);
+            }, 0);
+
+            const onHandStock = totalStokBarangJadi - totalPengiriman;
+            return onHandStock.toLocaleString();
+        },
+    },
+
+    {
         accessorKey: 'tgl_estimasi_selesai',
-        header: 'Tanggal Estimasi Selesai',
+        header: 'Tanggal ETA',
         cell: ({ row }) => {
             const date = row.original.tgl_estimasi_selesai;
             if (!date) return '-';

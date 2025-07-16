@@ -14,6 +14,7 @@ export interface SuratJalan {
     alamat_tujuan: string;
     created_at: string;
     updated_at: string;
+    qty_pengiriman: number;
     kartuInstruksiKerja?: KartuInstruksiKerja;
     kartu_instruksi_kerja?: KartuInstruksiKerja; // snake_case version for backward compatibility
 }
@@ -28,5 +29,6 @@ export interface SuratJalanFormData {
     pengirim: string;
     keterangan: string;
     alamat_tujuan: string;
+    qty_pengiriman: string;
     [key: string]: string | undefined;
 }

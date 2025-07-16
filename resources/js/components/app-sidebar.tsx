@@ -210,6 +210,11 @@ export const dropdownNavItems: NavItemWithChildren[] = [
                 icon: MailsIcon,
                 href: '/suratJalans',
             },
+            {
+                title: 'Blokir',
+                icon: Users,
+                href: '/blokirs',
+            },
         ],
     },
     {
@@ -234,17 +239,6 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             },
         ],
     },
-    // {
-    //     title: 'REPORT',
-    //     icon: Users,
-    //     children: [
-    //         {
-    //             title: 'Members',
-    //             icon: Users,
-    //             href: '/team/members',
-    //         },
-    //     ],
-    // },
 ];
 
 
