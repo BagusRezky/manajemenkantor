@@ -186,22 +186,6 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
                                     )}
 
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                        {/* No Surat Jalan */}
-                                        <div className="space-y-2">
-                                            <Label htmlFor="no_surat_jalan">
-                                                No. Surat Jalan <span className="text-red-500">*</span>
-                                            </Label>
-                                            <Input
-                                                id="no_surat_jalan"
-                                                type="text"
-                                                value={data.no_surat_jalan}
-                                                onChange={(e) => setData('no_surat_jalan', e.target.value)}
-                                                placeholder="Masukkan nomor surat jalan"
-                                                className={errors.no_surat_jalan ? 'border-red-500' : ''}
-                                            />
-                                            {errors.no_surat_jalan && <p className="text-sm text-red-600">{errors.no_surat_jalan}</p>}
-                                        </div>
-
                                         {/* Tanggal Surat Jalan */}
                                         <div className="space-y-2">
                                             <Label htmlFor="tgl_surat_jalan">

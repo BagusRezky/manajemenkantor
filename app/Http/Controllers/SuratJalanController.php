@@ -48,7 +48,6 @@ class SuratJalanController extends Controller
     {
         $validated = $request->validate([
             'id_kartu_instruksi_kerja' => 'required|exists:kartu_instruksi_kerjas,id',
-            'no_surat_jalan' => 'required|string|max:255|unique:surat_jalans,no_surat_jalan',
             'tgl_surat_jalan' => 'required|date',
             'transportasi' => 'required|string|max:255',
             'no_polisi' => 'required|string|max:255',
@@ -59,13 +58,38 @@ class SuratJalanController extends Controller
             'qty_pengiriman' => 'required|integer|min:0',
         ]);
 
-        DB::transaction(function () use ($validated) {
-            SuratJalan::create($validated);
-        });
+         // Generate the no_surat_jalan
+    $currentMonth = date('m');
+    $currentYear = date('y');
 
-        return redirect()->route('suratJalans.index')
-            ->with('success', 'Surat Jalan berhasil dibuat');
+    // Get the latest surat_jalan number for the current year
+    $latestSuratJalan = SuratJalan::where('no_surat_jalan', 'like', '%/SJ/' . $currentYear)
+        ->orderBy('created_at', 'desc')
+        ->first();
+
+    $sequentialNumber = 1;
+
+    if ($latestSuratJalan) {
+        // Extract the sequential number from the latest surat jalan
+        $parts = explode('/', $latestSuratJalan->no_surat_jalan);
+        if (isset($parts[0])) {
+            $sequentialNumber = (int) $parts[0] + 1;
+        }
     }
+
+    // Format the sequential number with leading zeros
+    $formattedNumber = str_pad($sequentialNumber, 6, '0', STR_PAD_LEFT);
+
+    // Create the final no_surat_jalan
+    $validated['no_surat_jalan'] = $formattedNumber . '/SJ/' . $currentMonth . $currentYear;
+
+    DB::transaction(function () use ($validated) {
+        SuratJalan::create($validated);
+    });
+
+    return redirect()->route('suratJalans.index')
+        ->with('success', 'Surat Jalan berhasil dibuat');
+}
 
     public function show(SuratJalan $suratJalan)
     {
