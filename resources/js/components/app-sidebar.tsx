@@ -4,7 +4,7 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BaggageClaim, BoxIcon, CandlestickChartIcon, ClipboardList, ContainerIcon, CuboidIcon, LayoutGrid, Mailbox, MailsIcon, PanelTopOpen, Paperclip, Printer, ScrollIcon, StretchHorizontalIcon, Users, Users2Icon, WarehouseIcon } from 'lucide-react';
+import { BaggageClaim, BoxIcon, CandlestickChartIcon, ClipboardList, ContainerIcon, CuboidIcon, LayoutGrid, Mailbox, MailsIcon, PanelTopOpen, Paperclip, Printer, ScrollIcon, StickyNote, StretchHorizontalIcon, Users, Users2Icon, WarehouseIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavDropdown, NavItemWithChildren } from './nav-dropdown';
 
@@ -219,12 +219,12 @@ export const dropdownNavItems: NavItemWithChildren[] = [
     },
     {
         title: 'FINANCE',
-        icon: Users,
+        icon: StickyNote,
         children: [
             {
-                title: 'Members',
-                icon: Users,
-                href: '/team/members',
+                title: 'Invoice',
+                icon: StickyNote,
+                href: '/invoices',
             },
         ],
     },

@@ -27,5 +27,9 @@ class SuratJalan extends Model
         return $this->belongsTo(KartuInstruksiKerja::class, 'id_kartu_instruksi_kerja');
     }
 
+    public function invoice()
+    {
+        return $this->hasOne(Invoice::class, 'id_surat_jalan');
+    }
 
 }
