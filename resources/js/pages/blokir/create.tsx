@@ -75,7 +75,7 @@ export default function CreateBlokir({ kartuInstruksiKerjas }: Props) {
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                {/* Kartu Instruksi Kerja */}
+                                {/* Surat Perintah Kerja */}
                                 <div className="space-y-2">
                                     <Label htmlFor="id_kartu_instruksi_kerja">Surat Perintah Kerja *</Label>
                                     <SearchableSelect
@@ -165,7 +165,7 @@ export default function CreateBlokir({ kartuInstruksiKerjas }: Props) {
                             {/* Selected KIK Details */}
                             {selectedKik && (
                                 <div className="rounded-lg border bg-gray-50 p-4">
-                                    <h4 className="mb-3 font-medium">Detail Kartu Instruksi Kerja</h4>
+                                    <h4 className="mb-3 font-medium">Detail Surat Perintah Kerja</h4>
                                     <div className="grid grid-cols-1 gap-3 text-sm md:grid-cols-2">
                                         <div>
                                             <span className="font-medium">No. SO:</span> {selectedKik.sales_order?.no_bon_pesanan || '-'}

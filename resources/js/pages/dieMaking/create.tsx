@@ -79,7 +79,7 @@ export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings,
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                {/* Kartu Instruksi Kerja */}
+                                {/* Surat Perintah Kerja */}
                                 <div className="space-y-2">
                                     <Label htmlFor="id_kartu_instruksi_kerja">Surat Perintah Kerja *</Label>
                                     <SearchableSelect

@@ -84,7 +84,7 @@ const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void =
     // Header tabel "DETAIL PESANAN"
     doc.setFontSize(10).setFont('helvetica', 'bold');
     doc.rect(10, 105, pageWidth - 20, 10);
-    doc.text('DETAIL PESANAN', pageWidth / 2, 111, { align: 'center' });
+    doc.text('BILL OF MATERIALS', pageWidth / 2, 111, { align: 'center' });
 
     // Isi tabel detail menggunakan Bill of Materials
     const tableColumns = [

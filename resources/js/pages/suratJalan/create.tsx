@@ -112,7 +112,7 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
         e.preventDefault();
 
         if (!data.id_kartu_instruksi_kerja) {
-            toast.error('Pilih KIK terlebih dahulu');
+            toast.error('Pilih SPK terlebih dahulu');
             return;
         }
 
@@ -139,7 +139,7 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
                             </CardHeader>
                             <CardContent>
                                 <form onSubmit={submit} className="space-y-6">
-                                    {/* Pilih KIK */}
+                                    {/* Pilih SPK */}
                                     <div className="space-y-2">
                                         <Label htmlFor="id_kartu_instruksi_kerja">
                                             Pilih Surat Perintah Kerja <span className="text-red-500">*</span>
@@ -157,7 +157,7 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
                                         {errors.id_kartu_instruksi_kerja && <p className="text-sm text-red-600">{errors.id_kartu_instruksi_kerja}</p>}
                                     </div>
 
-                                    {/* Detail KIK yang dipilih */}
+                                    {/* Detail SPK yang dipilih */}
                                     {selectedKIK && (
                                         <div className="rounded-md border bg-gray-50 p-4 dark:bg-gray-800">
                                             <h3 className="mb-3 font-medium">Detail SPK Terpilih</h3>

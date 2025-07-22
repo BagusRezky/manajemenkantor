@@ -1,17 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Badge } from "@/components/ui/badge";
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
-import { router } from "@inertiajs/react";
-import { ColumnDef } from "@tanstack/react-table";
-import { Download, FileText, MoreHorizontal, CheckCircle } from "lucide-react";
-import { toast } from "sonner";
-import jsPDF from "jspdf";
+import { ImrFinishing } from '@/types/imrFinishing';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
+import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { ImrFinishing } from "@/types/imrFinishing";
-
+import { CheckCircle, Download, FileText, MoreHorizontal } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Function untuk generate PDF IMR
 const generateImrPdf = (imr: ImrFinishing, download = false): void => {
@@ -46,7 +45,7 @@ const generateImrPdf = (imr: ImrFinishing, download = false): void => {
     doc.text(imr.no_imr_finishing || '', 65, 52);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('No. KIK', pageWidth - 85, 52);
+    doc.text('No. SPK', pageWidth - 85, 52);
     doc.text(':', pageWidth - 50, 52);
     doc.setFont('helvetica', 'normal');
     doc.text(imr.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '', pageWidth - 45, 52);
@@ -55,8 +54,7 @@ const generateImrPdf = (imr: ImrFinishing, download = false): void => {
     doc.text('Tgl Request', 15, 59);
     doc.text(':', 60, 59);
     doc.setFont('helvetica', 'normal');
-    const formattedDate = imr.tgl_request ?
-        new Date(imr.tgl_request).toLocaleDateString('id-ID') : '';
+    const formattedDate = imr.tgl_request ? new Date(imr.tgl_request).toLocaleDateString('id-ID') : '';
     doc.text(formattedDate, 65, 59);
 
     doc.setFont('helvetica', 'bold');
@@ -153,14 +151,18 @@ const handleDelete = (id: string) => {
 };
 
 const handleApprove = (id: string) => {
-    router.get(`/imrFinishings/${id}/approve`, {}, {
-        onSuccess: () => {
-            toast.success('Halaman approval berhasil dibuka');
+    router.get(
+        `/imrFinishings/${id}/approve`,
+        {},
+        {
+            onSuccess: () => {
+                toast.success('Halaman approval berhasil dibuka');
+            },
+            onError: () => {
+                toast.error('Gagal membuka halaman approval');
+            },
         },
-        onError: () => {
-            toast.error('Gagal membuka halaman approval');
-        },
-    });
+    );
 };
 
 export const columns = (): ColumnDef<ImrFinishing>[] => [
@@ -216,11 +218,7 @@ export const columns = (): ColumnDef<ImrFinishing>[] => [
                         return 'bg-gray-100 text-gray-800';
                 }
             };
-            return (
-                <Badge className={getStatusColor(status)}>
-                    {status.toUpperCase()}
-                </Badge>
-            );
+            return <Badge className={getStatusColor(status)}>{status.toUpperCase()}</Badge>;
         },
     },
     {

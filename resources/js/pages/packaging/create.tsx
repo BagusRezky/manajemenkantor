@@ -65,7 +65,7 @@ export default function CreatePackaging({ kartuInstruksiKerjas }: Props) {
                         <form onSubmit={submit} className="space-y-6">
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label htmlFor="id_kartu_instruksi_kerja">Kartu Instruksi Kerja *</Label>
+                                    <Label htmlFor="id_kartu_instruksi_kerja">Surat Perintah Kerja *</Label>
                                     <SearchableSelect
                                         items={kartuInstruksiKerjas.map((kartu) => ({
                                             key: String(kartu.id),

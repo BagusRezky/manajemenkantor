@@ -45,7 +45,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <div>
             <div className="flex items-center justify-between py-4">
                 <Input
-                    placeholder="Cari Surat Jalan (No. Surat Jalan, No. KIK, dll)..."
+                    placeholder="Cari Surat Jalan (No. Surat Jalan, No. SPK, dll)..."
                     value={globalFilter ?? ''}
                     onChange={(event) => setGlobalFilter(event.target.value)}
                     className="max-w-sm"

@@ -236,10 +236,10 @@ const handleDelete = (item: string) => {
     if (confirm('Apakah Anda yakin ingin menghapus kartu instruksi kerja ini?')) {
         router.delete(`/kartuInstruksiKerja/${item}`, {
             onSuccess: () => {
-                toast.success('Kartu Instruksi Kerja berhasil dihapus');
+                toast.success('Surat Perintah Kerja berhasil dihapus');
             },
             onError: () => {
-                toast.error('Gagal menghapus Kartu Instruksi Kerja');
+                toast.error('Gagal menghapus Surat Perintah Kerja');
             },
         });
     }

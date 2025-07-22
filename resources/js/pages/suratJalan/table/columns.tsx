@@ -46,7 +46,7 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
     doc.text(suratJalan.no_surat_jalan || '', 70, 52);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('No. KIK', pageWidth - 85, 52);
+    doc.text('No. SPK', pageWidth - 85, 52);
     doc.text(':', pageWidth - 50, 52);
     doc.setFont('helvetica', 'normal');
     doc.text(suratJalan.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '', pageWidth - 45, 52);
@@ -110,7 +110,6 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
 
     // Isi tabel barang
     const finishGoodItem = suratJalan.kartu_instruksi_kerja?.sales_order?.finish_good_item;
-    const salesOrder = suratJalan.kartu_instruksi_kerja?.sales_order;
 
     const tableColumns = [
         { header: 'No', dataKey: 'no' },
@@ -125,7 +124,7 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
             no: '1',
             nama_barang: finishGoodItem?.nama_barang || '-',
             deskripsi: finishGoodItem?.deskripsi || '-',
-            jumlah: salesOrder?.jumlah_pesanan?.toString() || '0',
+            jumlah: suratJalan.qty_pengiriman || '0',
             keterangan: '-',
         },
     ];
@@ -224,6 +223,12 @@ export const columns = (): ColumnDef<SuratJalan>[] => [
             return <span>{data.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '-'}</span>;
         },
     },
+
+    {
+        accessorKey: 'qty_pengiriman',
+        header: 'Qty Pengiriman',
+    },
+
     {
         accessorKey: 'alamat_tujuan',
         header: 'Alamat Tujuan',

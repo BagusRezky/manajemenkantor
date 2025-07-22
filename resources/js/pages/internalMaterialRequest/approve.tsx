@@ -211,7 +211,7 @@ export default function ApprovalInternalMaterialRequest({ internalMaterialReques
                         <CardContent>
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                                 <div>
-                                    <label className="text-sm font-medium text-gray-500">No. KIK</label>
+                                    <label className="text-sm font-medium text-gray-500">No. SPK</label>
                                     <p className="mt-1 text-sm text-gray-900">
                                         {internalMaterialRequest.kartu_instruksi_kerja?.no_kartu_instruksi_kerja}
                                     </p>

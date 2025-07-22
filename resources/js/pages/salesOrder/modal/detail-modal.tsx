@@ -1,7 +1,6 @@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { SalesOrder } from '@/types/salesOrder';
 
-
 interface DetailModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -23,7 +22,7 @@ export const DetailModal = ({ isOpen, onClose, item }: DetailModalProps) => {
                         <span>{item.customer_address?.nama_customer || '-'}</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">No.Bon Pesanan</span>
+                        <span className="text-sm font-medium text-gray-500">No. Sales Order</span>
                         <span>{item.no_bon_pesanan}</span>
                     </div>
                     <div className="flex flex-col">

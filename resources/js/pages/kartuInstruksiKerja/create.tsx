@@ -254,24 +254,24 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
 
             toast.success('Form dikirim, silakan tunggu...');
         } else {
-            toast.error('Harap klik Draft KIK terlebih dahulu');
+            toast.error('Harap klik Draft SPK terlebih dahulu');
         }
     };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Create Kartu Instruksi Kerja" />
+            <Head title="Create Surat Perintah Kerja" />
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="p-2">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Buat Kartu Instruksi Kerja</CardTitle>
+                                <CardTitle>Buat Surat Perintah Kerja</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                        {/* No Kartu Instruksi Kerja */}
+                                        {/* No Surat Perintah Kerja */}
                                         <KartuInstruksiKerjaInput data={data} setData={setData} errors={errors} latestId={latestKikId} />
 
                                         {/* Sales Order */}
@@ -370,7 +370,7 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                                     <dl className="space-y-3">
                                                         <div className="flex flex-col sm:flex-row sm:items-center">
-                                                            <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">No Bon Pesanan:</dt>
+                                                            <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">No Sales Order:</dt>
                                                             <dd className="mt-1 text-gray-900 sm:mt-0 sm:ml-4">
                                                                 {selectedSalesOrder.no_bon_pesanan}
                                                             </dd>

@@ -102,7 +102,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/salesOrders/{id}', [SalesOrderController::class, 'destroy'])->name('salesOrders.destroy');
     Route::get('/salesOrders/{id}/pdf', [SalesOrderController::class, 'generatePdf']);
 
-    // Routes untuk Kartu Instruksi Kerja
+    // Routes untuk Surat Perintah Kerja
     Route::get('/kartuInstruksiKerja', [KartuInstruksiKerjaController::class, 'index'])->name('kartuInstruksiKerja.index');
     Route::get('/kartuInstruksiKerja/create', [KartuInstruksiKerjaController::class, 'create'])->name('kartuInstruksiKerja.create');
     Route::post('/kartuInstruksiKerja', [KartuInstruksiKerjaController::class, 'store'])->name('kartuInstruksiKerja.store');
@@ -236,9 +236,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::put('/packagings/{packaging}', [PackagingController::class, 'update'])->name('packagings.update');
     Route::delete('/packagings/{packaging}', [PackagingController::class, 'destroy'])->name('packagings.destroy');
     Route::get('/packagings/{packaging}/show', [PackagingController::class, 'show'])->name('packagings.show');
+    //Route::get('/packagings/{packaging}/pdf', [PackagingController::class, 'generatePdf'])->name('packagings.pdf');
     Route::get('/packagings/{packaging}/pdf', [PackagingController::class, 'generatePdf'])->name('packagings.pdf');
-    Route::get('/packagings/{packaging}/pdf', [PackagingController::class, 'generatePdf'])->name('packagings.pdf');
-    Route::get('/packagings/label-start-number/{kikId}', [PackagingController::class, 'getLabelStartNumber'])->name('packagings.labelStartNumber');
+    Route::get('/packagings/label-start-number/{kikId}/{packagingId}', [PackagingController::class, 'getLabelStartNumber'])->name('packagings.labelStartNumber');
 
     Route::get('/suratJalans', [SuratJalanController::class, 'index'])->name('suratJalans.index');
     Route::get('/suratJalans/create', [SuratJalanController::class, 'create'])->name('suratJalans.create');

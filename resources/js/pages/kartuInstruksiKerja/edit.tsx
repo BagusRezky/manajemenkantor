@@ -1,20 +1,20 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DatePicker } from "@/components/date-picker";
-import { SearchableSelect } from "@/components/search-select";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
-import { BillOfMaterial } from "@/types/billOfMaterial";
-import { KartuInstruksiKerja } from "@/types/kartuInstruksiKerja";
-import { SalesOrder } from "@/types/salesOrder";
-import { Head, useForm } from "@inertiajs/react";
-import { useEffect, useState } from "react";
-import { toast, Toaster } from "sonner";
+import { DatePicker } from '@/components/date-picker';
+import { SearchableSelect } from '@/components/search-select';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
+import { BillOfMaterial } from '@/types/billOfMaterial';
+import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
+import { SalesOrder } from '@/types/salesOrder';
+import { Head, useForm } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import { toast, Toaster } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -266,7 +266,7 @@ export default function Edit({ kartuInstruksiKerja, salesOrders }: EditProps) {
             // Submit form menggunakan Inertia dengan data yang sudah diupdate
             put(route('kartuInstruksiKerja.update', kartuInstruksiKerja.id), {
                 onSuccess: () => {
-                    toast.success('Kartu Instruksi Kerja berhasil diperbarui!');
+                    toast.success('Surat Perintah Kerja berhasil diperbarui!');
                 },
                 onError: () => {
                     toast.error('Terjadi kesalahan saat memperbarui data');
@@ -276,7 +276,7 @@ export default function Edit({ kartuInstruksiKerja, salesOrders }: EditProps) {
             // Jika tidak ada draft baru, update data dasar saja
             put(route('kartuInstruksiKerja.update', kartuInstruksiKerja.id), {
                 onSuccess: () => {
-                    toast.success('Kartu Instruksi Kerja berhasil diperbarui!');
+                    toast.success('Surat Perintah Kerja berhasil diperbarui!');
                 },
                 onError: () => {
                     toast.error('Terjadi kesalahan saat memperbarui data');
@@ -287,26 +287,25 @@ export default function Edit({ kartuInstruksiKerja, salesOrders }: EditProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Edit Kartu Instruksi Kerja" />
+            <Head title="Edit Surat Perintah Kerja" />
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="p-2">
                         <Card>
                             <CardHeader>
-                                <CardTitle>Edit Kartu Instruksi Kerja</CardTitle>
+                                <CardTitle>Edit Surat Perintah Kerja</CardTitle>
                             </CardHeader>
                             <CardContent>
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                        {/* No Kartu Instruksi Kerja - READONLY */}
+                                        {/* No Surat Perintah Kerja - READONLY */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="no_kartu_instruksi_kerja">No. Kartu Instruksi Kerja</Label>
+                                            <Label htmlFor="no_kartu_instruksi_kerja">No. Surat Perintah Kerja</Label>
                                             <Input
                                                 id="no_kartu_instruksi_kerja"
                                                 name="no_kartu_instruksi_kerja"
                                                 value={data.no_kartu_instruksi_kerja}
                                                 readOnly
-                                                
                                             />
                                         </div>
 
@@ -408,7 +407,7 @@ export default function Edit({ kartuInstruksiKerja, salesOrders }: EditProps) {
                                                 <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                                                     <div>
                                                         <p>
-                                                            <span className="font-medium">No Bon Pesanan:</span> {selectedSalesOrder?.no_bon_pesanan}
+                                                            <span className="font-medium">No Sales Order:</span> {selectedSalesOrder?.no_bon_pesanan}
                                                         </p>
                                                         <p>
                                                             <span className="font-medium">No PO Customer:</span> {selectedSalesOrder?.no_po_customer}

@@ -101,7 +101,7 @@ class KartuInstruksiKerjaController extends Controller
         }
 
         return redirect()->route('kartuInstruksiKerja.index')
-            ->with('success', 'Kartu Instruksi Kerja berhasil dibuat!');
+            ->with('success', 'Surat Perintah Kerja berhasil dibuat!');
     }
 
     /**
@@ -215,7 +215,7 @@ class KartuInstruksiKerjaController extends Controller
         }
 
         return redirect()->route('kartuInstruksiKerja.index')
-            ->with('success', 'Kartu Instruksi Kerja berhasil diperbarui!');
+            ->with('success', 'Surat Perintah Kerja berhasil diperbarui!');
     }
 
     /**
@@ -227,7 +227,7 @@ class KartuInstruksiKerjaController extends Controller
         $kartuInstruksiKerja->delete();
 
         return redirect()->route('kartuInstruksiKerja.index')
-            ->with('success', 'Kartu Instruksi Kerja berhasil dihapus!');
+            ->with('success', 'Surat Perintah Kerja berhasil dihapus!');
     }
 
     /**

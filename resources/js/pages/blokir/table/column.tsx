@@ -3,14 +3,14 @@
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Blokir } from '@/types/blokir';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { Download, FileText, MoreHorizontal } from 'lucide-react';
+import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Function untuk generate PDF blokir
@@ -48,7 +48,7 @@ const generateBlokirPdf = (blokir: Blokir, download = false): void => {
     doc.text(blokir.no_blokir || '', 70, 52);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('No. KIK/SPK', pageWidth - 85, 52);
+    doc.text('No. SPK/SPK', pageWidth - 85, 52);
     doc.text(':', pageWidth - 50, 52);
     doc.setFont('helvetica', 'normal');
     doc.text(blokir.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '', pageWidth - 45, 52);

@@ -6,6 +6,7 @@ use App\Models\Packaging;
 use App\Models\KartuInstruksiKerja;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class PackagingController extends Controller
 {
@@ -126,29 +127,28 @@ class PackagingController extends Controller
         return response()->json($packaging);
     }
 
-    public function getLabelStartNumber($kikId)
-    {
-        // Get all packagings for this KIK ordered by creation date
-        $previousPackagings = Packaging::where('id_kartu_instruksi_kerja', $kikId)
-            ->orderBy('created_at', 'asc')
-            ->get();
+    public function getLabelStartNumber($kikId, $packagingId)
+{
+    // Sekarang packagingId pasti ada
+    $previousPackagings = Packaging::where('id_kartu_instruksi_kerja', $kikId)
+        ->where('id', '<', $packagingId)
+        ->orderBy('id', 'asc')
+        ->get();
 
-        $startNumber = 1;
+    Log::info('KIK ID: ' . $kikId);
+    Log::info('Current packaging ID: ' . $packagingId);
+    Log::info('Previous packagings (ID < current): ' . $previousPackagings->pluck('id'));
 
-        // Calculate total labels from all previous packagings
-        foreach ($previousPackagings as $packaging) {
-            $totalPenuh = $packaging->jumlah_satuan_penuh * $packaging->qty_persatuan_penuh;
-            $totalSisa = $packaging->jumlah_satuan_sisa * $packaging->qty_persatuan_sisa;
-            $totalLabels = $totalPenuh + $totalSisa;
+    $startNumber = 1;
 
-            // If this is not the current packaging being processed, add to start number
-            if ($packaging->id != request()->route('packaging_id')) {
-                $startNumber += $totalLabels;
-            }
-        }
-
-        return response()->json([
-            'startNumber' => $startNumber
-        ]);
+    foreach ($previousPackagings as $packaging) {
+        $totalLabels = $packaging->jumlah_satuan_penuh + $packaging->jumlah_satuan_sisa;
+        Log::info("Packaging ID {$packaging->id}: {$totalLabels} labels");
+        $startNumber += $totalLabels;
     }
+
+    Log::info('Final start number: ' . $startNumber);
+
+    return response()->json(['startNumber' => $startNumber]);
+}
 }

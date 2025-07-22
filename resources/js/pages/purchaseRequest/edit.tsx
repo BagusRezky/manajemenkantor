@@ -193,7 +193,7 @@ const breadcrumbs: BreadcrumbItem[] = [
         referenceInput.type === 'customer' &&
         (!referenceInput.id_customer || !referenceInput.id_kartu_instruksi_kerja)
       ) {
-        toast.error('Mohon pilih customer dan KIK');
+        toast.error('Mohon pilih customer dan SPK');
         return;
       }
 
@@ -548,13 +548,13 @@ const breadcrumbs: BreadcrumbItem[] = [
                                             </Select>
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="id_kartu_instruksi_kerja">Kartu Instruksi Kerja</Label>
+                                            <Label htmlFor="id_kartu_instruksi_kerja">Surat Perintah Kerja</Label>
                                             <Select
                                                 value={referenceInput.id_kartu_instruksi_kerja}
                                                 onValueChange={(value) => setReferenceInput({ ...referenceInput, id_kartu_instruksi_kerja: value })}
                                             >
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Pilih Kartu Instruksi Kerja" />
+                                                    <SelectValue placeholder="Pilih Surat Perintah Kerja" />
                                                 </SelectTrigger>
                                                 <SelectContent>
                                                     {kartuInstruksiKerjas.map((kik) => (

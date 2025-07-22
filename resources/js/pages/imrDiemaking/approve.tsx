@@ -212,10 +212,8 @@ export default function ApprovalInternalMaterialRequest({ imrDiemaking }: Props)
                         <CardContent>
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                                 <div>
-                                    <label className="text-sm font-medium text-gray-500">No. KIK</label>
-                                    <p className="mt-1 text-sm text-gray-900">
-                                        {imrDiemaking.kartu_instruksi_kerja?.no_kartu_instruksi_kerja}
-                                    </p>
+                                    <label className="text-sm font-medium text-gray-500">No. SPK</label>
+                                    <p className="mt-1 text-sm text-gray-900">{imrDiemaking.kartu_instruksi_kerja?.no_kartu_instruksi_kerja}</p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Tgl Request</label>
@@ -233,9 +231,7 @@ export default function ApprovalInternalMaterialRequest({ imrDiemaking }: Props)
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Production Plan</label>
-                                    <p className="mt-1 text-sm text-gray-900">
-                                        {imrDiemaking.kartu_instruksi_kerja?.production_plan || '-'}
-                                    </p>
+                                    <p className="mt-1 text-sm text-gray-900">{imrDiemaking.kartu_instruksi_kerja?.production_plan || '-'}</p>
                                 </div>
                             </div>
                         </CardContent>
@@ -312,8 +308,6 @@ export default function ApprovalInternalMaterialRequest({ imrDiemaking }: Props)
                             </div>
                         </CardContent>
                     </Card>
-
-
 
                     {/* Action Buttons */}
                     <Card>

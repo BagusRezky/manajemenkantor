@@ -42,9 +42,9 @@ const KartuInstruksiKerjaInput = ({ data, setData, errors, latestId = 1 }: Kartu
 
     return (
         <>
-            {/* No Kartu Instruksi Kerja */}
+            {/* No Surat Perintah Kerja */}
             <div className="space-y-2">
-                <Label htmlFor="no_kartu_instruksi_kerja">No. Kartu Instruksi Kerja</Label>
+                <Label htmlFor="no_kartu_instruksi_kerja">No. Surat Perintah Kerja</Label>
                 <Input
                     id="no_kartu_instruksi_kerja"
                     name="no_kartu_instruksi_kerja"

@@ -138,7 +138,7 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
                                     <Label htmlFor="no_kartu_instruksi_kerja">Surat Perintah Kerja *</Label>
                                     <Select onValueChange={handleKikChange}>
                                         <SelectTrigger>
-                                            <SelectValue placeholder="Pilih Kartu Instruksi Kerja" />
+                                            <SelectValue placeholder="Pilih Surat Perintah Kerja" />
                                         </SelectTrigger>
                                         <SelectContent>
                                             {kartuInstruksiKerjas.map((kik) => (
@@ -182,7 +182,7 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
                             {selectedKik && selectedKik.kartu_instruksi_kerja_boms && (
                                 <div className="space-y-4">
                                     <div className="bg-gray-800 text-white p-3 rounded-t-md">
-                                        <h3 className="text-center font-semibold">Kartu Instruksi Kerja Items</h3>
+                                        <h3 className="text-center font-semibold">Surat Perintah Kerja Items</h3>
                                     </div>
                                     <div className="border rounded-b-md overflow-x-auto">
                                         <table className="w-full">

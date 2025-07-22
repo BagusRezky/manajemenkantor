@@ -53,7 +53,7 @@ const generatePrintingPdf = (printing: Printing, download = false): void => {
     doc.text(formattedDate, 70, 59);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('Kartu Instruksi Kerja', 15, 66);
+    doc.text('Surat Perintah Kerja', 15, 66);
     doc.text(':', 65, 66);
     doc.setFont('helvetica', 'normal');
     doc.text(printing.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '', 70, 66);

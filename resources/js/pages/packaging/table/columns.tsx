@@ -15,8 +15,13 @@ import { toast } from 'sonner';
 // Function untuk generate label PDF
 const generateLabelsPdf = async (packaging: Packaging, download = false): Promise<void> => {
     try {
-        // Fetch semua packaging dengan KIK yang sama untuk mendapatkan start number
-        const response = await fetch(`/packagings/label-start-number/${packaging.id_kartu_instruksi_kerja}`);
+        // PASTIKAN packaging.id dikirim dengan benar
+        console.log('Packaging ID:', packaging.id); // Debug log
+        console.log('KIK ID:', packaging.id_kartu_instruksi_kerja); // Debug log
+
+        // Gunakan route parameter (bukan query parameter)
+        const response = await fetch(`/packagings/label-start-number/${packaging.id_kartu_instruksi_kerja}/${packaging.id}`);
+
         if (!response.ok) {
             throw new Error('Failed to fetch label start number');
         }
@@ -40,8 +45,8 @@ const generateLabelsPdf = async (packaging: Packaging, download = false): Promis
         const labelsPerPage = labelsPerRow * labelsPerColumn;
 
         // Hitung total label
-        const totalPenuh = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
-        const totalSisa = packaging.jumlah_satuan_sisa * packaging.qty_persatuan_sisa;
+        const totalPenuh = packaging.jumlah_satuan_penuh;
+        const totalSisa = packaging.jumlah_satuan_sisa;
         const grandTotal = totalPenuh + totalSisa;
 
         let currentLabel = 0;
@@ -83,7 +88,7 @@ const generateLabelsPdf = async (packaging: Packaging, download = false): Promis
             // Barcode area (simulasi dengan text, bisa diganti dengan barcode library)
             doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
-            doc.text(kikNo, x + labelWidth/2, y + 1.2, { align: 'center' });
+            doc.text(kikNo, x + labelWidth / 2, y + 1.2, { align: 'center' });
 
             // Info detail
             doc.setFontSize(6);
@@ -162,7 +167,7 @@ const generatePackagingPdf = (packaging: Packaging, download = false): void => {
     doc.text(packaging.kode_packaging || '', 70, 52);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('Kartu Instruksi Kerja', 15, 59);
+    doc.text('Surat Perintah Kerja', 15, 59);
     doc.text(':', 65, 59);
     doc.setFont('helvetica', 'normal');
     doc.text(packaging.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '', 70, 59);
@@ -295,7 +300,7 @@ export const columns = (): ColumnDef<Packaging>[] => [
     },
     {
         accessorKey: 'kartu_instruksi_kerja.nama_kartu',
-        header: 'Kartu Instruksi Kerja',
+        header: 'Surat Perintah Kerja',
         cell: ({ row }) => {
             const data = row.original;
             return <span>{data.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}</span>;
@@ -331,6 +336,24 @@ export const columns = (): ColumnDef<Packaging>[] => [
         cell: ({ row }) => {
             const data = row.original;
             return <span className="text-right">{data.qty_persatuan_penuh}</span>;
+        },
+    },
+
+    {
+        accessorKey: 'jumlah_satuan_sisa',
+        header: 'Jml Satuan Sisa',
+        cell: ({ row }) => {
+            const data = row.original;
+            return <span className="text-right">{data.jumlah_satuan_sisa}</span>;
+        },
+    },
+
+    {
+        accessorKey: 'qty_persatuan_sisa',
+        header: 'Qty Per Satuan Sisa',
+        cell: ({ row }) => {
+            const data = row.original;
+            return <span className="text-right">{data.qty_persatuan_sisa}</span>;
         },
     },
     {
