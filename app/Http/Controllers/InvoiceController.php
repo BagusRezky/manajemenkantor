@@ -51,7 +51,6 @@ class InvoiceController extends Controller
     {
         $validated = $request->validate([
             'id_surat_jalan' => 'required|exists:surat_jalans,id|unique:invoices,id_surat_jalan',
-            'no_invoice' => 'required|string|max:255|unique:invoices,no_invoice',
             'tgl_invoice' => 'required|date',
             'tgl_jatuh_tempo' => 'required|date|after_or_equal:tgl_invoice',
             'harga' => 'required|integer|min:0',
@@ -59,9 +58,35 @@ class InvoiceController extends Controller
             'ongkos_kirim' => 'nullable|integer|min:0',
             'uang_muka' => 'nullable|integer|min:0',
         ]);
+
         // Set default values untuk field nullable
         $validated['ongkos_kirim'] = $validated['ongkos_kirim'] ?? 0;
         $validated['uang_muka'] = $validated['uang_muka'] ?? 0;
+
+        // Generate the no_invoice
+        $currentMonth = date('m');
+        $currentYear = date('y');
+
+        // Get the latest invoice number for the current year
+        $latestInvoice = Invoice::where('no_invoice', 'like', '%/INV/' . $currentYear)
+            ->orderBy('created_at', 'desc')
+            ->first();
+
+        $sequentialNumber = 1;
+
+        if ($latestInvoice) {
+            // Extract the sequential number from the latest invoice
+            $parts = explode('/', $latestInvoice->no_invoice);
+            if (isset($parts[0])) {
+                $sequentialNumber = (int) $parts[0] + 1;
+            }
+        }
+
+        // Format the sequential number with leading zeros
+        $formattedNumber = str_pad($sequentialNumber, 6, '0', STR_PAD_LEFT);
+
+        // Create the final no_invoice
+        $validated['no_invoice'] = $formattedNumber . '/INV/' . $currentMonth . $currentYear;
 
         DB::transaction(function () use ($validated) {
             Invoice::create($validated);
@@ -76,7 +101,15 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice)
     {
-        //
+        // Load semua relasi yang diperlukan untuk halaman show
+        $invoice->load([
+            'suratJalan.kartuInstruksiKerja.salesOrder.customerAddress',
+            'suratJalan.kartuInstruksiKerja.salesOrder.finishGoodItem'
+        ]);
+
+        return Inertia::render('invoice/show', [
+            'invoice' => $invoice
+        ]);
     }
 
     /**

@@ -1,3 +1,5 @@
+import { SuratJalan } from "./suratJalan";
+
 export interface Invoice {
     id: string;
     id_surat_jalan: string;
@@ -8,4 +10,5 @@ export interface Invoice {
     ppn: number;
     ongkos_kirim: number;
     uang_muka: number;
+    surat_jalan: SuratJalan
 }
