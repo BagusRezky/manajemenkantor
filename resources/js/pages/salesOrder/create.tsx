@@ -173,7 +173,7 @@ export default function Create({ finishGoodItems, customerAddresses, lastId }: C
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label htmlFor="harga_pcs_bp">Harga PCS (BP)</Label>
+                                            <Label htmlFor="harga_pcs_bp">Harga PCS (SO)</Label>
                                             <Input id="harga_pcs_bp" name="harga_pcs_bp" value={data.harga_pcs_bp} onChange={handleChange} />
                                             {errors.harga_pcs_bp && <p className="text-sm text-red-500">{errors.harga_pcs_bp}</p>}
                                         </div>

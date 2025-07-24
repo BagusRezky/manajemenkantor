@@ -1,19 +1,18 @@
-import { DatePicker } from "@/components/date-picker";
-import { SearchableSelect } from "@/components/search-select";
-import { SelectInput } from "@/components/select-input";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
+import { DatePicker } from '@/components/date-picker';
+import { SearchableSelect } from '@/components/search-select';
+import { SelectInput } from '@/components/select-input';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
-import { CustomerAddress } from "@/types/customerAddress";
-import { FinishGoodItem } from "@/types/finishGoodItem";
-import { SalesOrder } from "@/types/salesOrder";
-import { Head, Link, useForm } from "@inertiajs/react";
-import { toast, Toaster } from "sonner";
-
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
+import { CustomerAddress } from '@/types/customerAddress';
+import { FinishGoodItem } from '@/types/finishGoodItem';
+import { SalesOrder } from '@/types/salesOrder';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { toast, Toaster } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -84,7 +83,7 @@ export default function Edit({ salesOrder, finishGoodItems, customerAddresses }:
     ];
 
     // Find the selected finish good item name for display
-    const selectedFinishGoodItem = finishGoodItems.find(item => String(item.id) === data.id_finish_good_item);
+    const selectedFinishGoodItem = finishGoodItems.find((item) => String(item.id) === data.id_finish_good_item);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -107,12 +106,7 @@ export default function Edit({ salesOrder, finishGoodItems, customerAddresses }:
                                                 </span>
                                             </div>
                                             {/* Hidden field to maintain the value */}
-                                            <Input
-                                                type="hidden"
-                                                name="id_finish_good_item"
-                                                value={data.id_finish_good_item}
-                                                readOnly
-                                            />
+                                            <Input type="hidden" name="id_finish_good_item" value={data.id_finish_good_item} readOnly />
                                             {errors.id_finish_good_item && <p className="text-sm text-red-500">{errors.id_finish_good_item}</p>}
                                         </div>
 
@@ -134,70 +128,40 @@ export default function Edit({ salesOrder, finishGoodItems, customerAddresses }:
                                         <div className="space-y-2">
                                             <Label htmlFor="no_bon_pesanan">No. Sales Order</Label>
                                             <div className="flex items-center rounded-md border p-2">
-                                                <span className="font-medium text-muted-foreground">{data.no_bon_pesanan}</span>
+                                                <span className="text-muted-foreground font-medium">{data.no_bon_pesanan}</span>
                                             </div>
                                             {/* Hidden field to maintain the value */}
-                                            <Input
-                                                type="hidden"
-                                                name="no_bon_pesanan"
-                                                value={data.no_bon_pesanan}
-                                                readOnly
-                                            />
+                                            <Input type="hidden" name="no_bon_pesanan" value={data.no_bon_pesanan} readOnly />
                                             {errors.no_bon_pesanan && <p className="text-sm text-red-500">{errors.no_bon_pesanan}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="no_po_customer">No.PO Customer</Label>
-                                            <Input
-                                                id="no_po_customer"
-                                                name="no_po_customer"
-                                                value={data.no_po_customer}
-                                                onChange={handleChange}
-                                            />
+                                            <Input id="no_po_customer" name="no_po_customer" value={data.no_po_customer} onChange={handleChange} />
                                             {errors.no_po_customer && <p className="text-sm text-red-500">{errors.no_po_customer}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="jumlah_pesanan">Jumlah Pesanan</Label>
-                                            <Input
-                                                id="jumlah_pesanan"
-                                                name="jumlah_pesanan"
-                                                value={data.jumlah_pesanan}
-                                                onChange={handleChange}
-                                            />
+                                            <Input id="jumlah_pesanan" name="jumlah_pesanan" value={data.jumlah_pesanan} onChange={handleChange} />
                                             {errors.jumlah_pesanan && <p className="text-sm text-red-500">{errors.jumlah_pesanan}</p>}
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label htmlFor="harga_pcs_bp">Harga PCS (BP)</Label>
-                                            <Input
-                                                id="harga_pcs_bp"
-                                                name="harga_pcs_bp"
-                                                value={data.harga_pcs_bp}
-                                                onChange={handleChange}
-                                            />
+                                            <Label htmlFor="harga_pcs_bp">Harga PCS (SO)</Label>
+                                            <Input id="harga_pcs_bp" name="harga_pcs_bp" value={data.harga_pcs_bp} onChange={handleChange} />
                                             {errors.harga_pcs_bp && <p className="text-sm text-red-500">{errors.harga_pcs_bp}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="harga_pcs_kirim">Harga PCS (Kirim)</Label>
-                                            <Input
-                                                id="harga_pcs_kirim"
-                                                name="harga_pcs_kirim"
-                                                value={data.harga_pcs_kirim}
-                                                onChange={handleChange}
-                                            />
+                                            <Input id="harga_pcs_kirim" name="harga_pcs_kirim" value={data.harga_pcs_kirim} onChange={handleChange} />
                                             {errors.harga_pcs_kirim && <p className="text-sm text-red-500">{errors.harga_pcs_kirim}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="mata_uang">Mata Uang</Label>
-                                            <Input
-                                                id="mata_uang"
-                                                name="mata_uang"
-                                                value={data.mata_uang}
-                                                onChange={handleChange}
-                                            />
+                                            <Input id="mata_uang" name="mata_uang" value={data.mata_uang} onChange={handleChange} />
                                             {errors.mata_uang && <p className="text-sm text-red-500">{errors.mata_uang}</p>}
                                         </div>
 
@@ -248,12 +212,7 @@ export default function Edit({ salesOrder, finishGoodItems, customerAddresses }:
 
                                         <div className="space-y-2">
                                             <Label htmlFor="tipe_pesanan">Tipe Pesanan</Label>
-                                            <Input
-                                                id="tipe_pesanan"
-                                                name="tipe_pesanan"
-                                                value={data.tipe_pesanan}
-                                                onChange={handleChange}
-                                            />
+                                            <Input id="tipe_pesanan" name="tipe_pesanan" value={data.tipe_pesanan} onChange={handleChange} />
                                             {errors.tipe_pesanan && <p className="text-sm text-red-500">{errors.tipe_pesanan}</p>}
                                         </div>
 
@@ -283,12 +242,7 @@ export default function Edit({ salesOrder, finishGoodItems, customerAddresses }:
 
                                         <div className="space-y-2">
                                             <Label htmlFor="catatan">Catatan</Label>
-                                            <Input
-                                                id="catatan"
-                                                name="catatan"
-                                                value={data.catatan}
-                                                onChange={handleChange}
-                                            />
+                                            <Input id="catatan" name="catatan" value={data.catatan} onChange={handleChange} />
                                             {errors.catatan && <p className="text-sm text-red-500">{errors.catatan}</p>}
                                         </div>
                                     </div>

@@ -1,14 +1,14 @@
+import { DatePicker } from '@/components/date-picker';
+import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { SuratJalan } from '@/types/suratJalan';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler } from 'react';
+import { FormEventHandler, useState } from 'react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -27,6 +27,7 @@ interface CreateProps {
 }
 
 export default function Create({ suratJalans }: CreateProps) {
+    const [selectedSuratJalan, setSelectedSuratJalan] = useState<SuratJalan | null>(null);
     const { data, setData, post, processing, errors, reset } = useForm({
         id_surat_jalan: '',
         no_invoice: '',
@@ -37,6 +38,12 @@ export default function Create({ suratJalans }: CreateProps) {
         ongkos_kirim: '',
         uang_muka: '',
     });
+
+    const handleSJChange = (value: string) => {
+        const suratJalan = suratJalans.find((sj) => String(sj.id) === value);
+        setSelectedSuratJalan(suratJalan || null);
+        setData('id_surat_jalan', suratJalan ? suratJalan.id : '');
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -52,35 +59,6 @@ export default function Create({ suratJalans }: CreateProps) {
         });
     };
 
-    // Format date untuk input
-    // const formatDateForInput = (dateString: string) => {
-    //     if (!dateString) return '';
-    //     return new Date(dateString).toISOString().split('T')[0];
-    // };
-
-    // Generate nomor invoice otomatis
-    // const generateInvoiceNumber = () => {
-    //     const now = new Date();
-    //     const year = now.getFullYear();
-    //     const month = String(now.getMonth() + 1).padStart(2, '0');
-    //     const day = String(now.getDate()).padStart(2, '0');
-    //     const timestamp = now.getTime().toString().slice(-4);
-
-    //     const invoiceNumber = `INV-${year}${month}${day}-${timestamp}`;
-    //     setData('no_invoice', invoiceNumber);
-    // };
-
-    // Hitung tanggal jatuh tempo (default 30 hari dari tanggal invoice)
-    const calculateDueDate = (invoiceDate: string) => {
-        if (!invoiceDate) return;
-
-        const date = new Date(invoiceDate);
-        date.setDate(date.getDate() + 30); // 30 hari
-
-        const formattedDate = date.toISOString().split('T')[0];
-        setData('tgl_jatuh_tempo', formattedDate);
-    };
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Tambah Invoice" />
@@ -92,76 +70,70 @@ export default function Create({ suratJalans }: CreateProps) {
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={submit} className="space-y-6">
-                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                    {/* Surat Jalan */}
-                                    <div className="space-y-2">
-                                        <Label htmlFor="id_surat_jalan">
-                                            Surat Jalan <span className="text-red-500">*</span>
-                                        </Label>
-                                        <Select
-                                            value={data.id_surat_jalan}
-                                            onValueChange={(value) => setData('id_surat_jalan', value)}
-                                        >
-                                            <SelectTrigger>
-                                                <SelectValue placeholder="Pilih Surat Jalan" />
-                                            </SelectTrigger>
-                                            <SelectContent>
-                                                {suratJalans.map((suratJalan) => (
-                                                    <SelectItem key={suratJalan.id} value={suratJalan.id}>
-                                                        {suratJalan.no_surat_jalan}
-                                                    </SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
-                                        {errors.id_surat_jalan && (
-                                            <p className="text-sm text-red-600">{errors.id_surat_jalan}</p>
-                                        )}
-                                    </div>
+                                {/* Surat Jalan */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="id_surat_jalan">
+                                        Surat Jalan <span className="text-red-500">*</span>
+                                    </Label>
+                                    <SearchableSelect
+                                        items={suratJalans.map((surat) => ({
+                                            key: String(surat.id),
+                                            value: String(surat.id),
+                                            label: `${surat.no_surat_jalan} || ${surat.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}`,
+                                        }))}
+                                        value={data.id_surat_jalan || ''} // fallback to empty string
+                                        placeholder="Pilih Surat Jalan"
+                                        onChange={handleSJChange}
+                                    />
+                                    {errors.id_surat_jalan && <div className="text-sm text-red-600">{errors.id_surat_jalan}</div>}
+                                </div>
 
-                                    {/* No Invoice
-                                    <div className="space-y-2">
-                                        <Label htmlFor="no_invoice">
-                                            No. Invoice <span className="text-red-500">*</span>
-                                        </Label>
-                                        <div className="flex gap-2">
-                                            <Input
-                                                id="no_invoice"
-                                                type="text"
-                                                value={data.no_invoice}
-                                                onChange={(e) => setData('no_invoice', e.target.value)}
-                                                placeholder="Masukkan nomor invoice"
-                                                className="flex-1"
-                                            />
-                                            <Button
-                                                type="button"
-                                                variant="outline"
-                                                onClick={generateInvoiceNumber}
-                                            >
-                                                Generate
-                                            </Button>
+                                {selectedSuratJalan && (
+                                    <div className="rounded-md border bg-gray-50 p-4 dark:bg-gray-800">
+                                        <h3 className="mb-3 font-medium">Detail Surat Jalan Terpilih</h3>
+                                        <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+                                            <div>
+                                                <p>
+                                                    <span className="font-medium">No. Surat Jalan:</span> {selectedSuratJalan.no_surat_jalan}
+                                                </p>
+                                                <p>
+                                                    <span className="font-medium">Tanggal Surat Jalan:</span>{' '}
+                                                    {selectedSuratJalan.tgl_surat_jalan || '-'}
+                                                </p>
+                                                <p>
+                                                    <span className="font-medium">Qty Pengiriman:</span> {selectedSuratJalan.qty_pengiriman || '-'}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p>
+                                                    <span className="font-medium">No. SPK:</span>{' '}
+                                                    {selectedSuratJalan.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}
+                                                </p>
+                                                <p>
+                                                    <span className="font-medium">No. SO:</span>{' '}
+                                                    {selectedSuratJalan.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}
+                                                </p>
+                                                <p>
+                                                    <span className="font-medium">Toleransi Pengiriman:</span>{' '}
+                                                    {selectedSuratJalan.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || '-'}
+                                                </p>
+                                            </div>
                                         </div>
-                                        {errors.no_invoice && (
-                                            <p className="text-sm text-red-600">{errors.no_invoice}</p>
-                                        )}
-                                    </div> */}
+                                    </div>
+                                )}
 
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     {/* Tanggal Invoice */}
                                     <div className="space-y-2">
                                         <Label htmlFor="tgl_invoice">
                                             Tanggal Invoice <span className="text-red-500">*</span>
                                         </Label>
-                                        <Input
+                                        <DatePicker
                                             id="tgl_invoice"
-                                            type="date"
                                             value={data.tgl_invoice}
-                                            onChange={(e) => {
-                                                setData('tgl_invoice', e.target.value);
-                                                calculateDueDate(e.target.value);
-                                            }}
+                                            onChange={(e) => setData('tgl_invoice', e.target.value ? e.target.value : '')}
                                         />
-                                        {errors.tgl_invoice && (
-                                            <p className="text-sm text-red-600">{errors.tgl_invoice}</p>
-                                        )}
+                                        {errors.tgl_invoice && <p className="text-sm text-red-600">{errors.tgl_invoice}</p>}
                                     </div>
 
                                     {/* Tanggal Jatuh Tempo */}
@@ -169,15 +141,13 @@ export default function Create({ suratJalans }: CreateProps) {
                                         <Label htmlFor="tgl_jatuh_tempo">
                                             Tanggal Jatuh Tempo <span className="text-red-500">*</span>
                                         </Label>
-                                        <Input
+
+                                        <DatePicker
                                             id="tgl_jatuh_tempo"
-                                            type="date"
                                             value={data.tgl_jatuh_tempo}
-                                            onChange={(e) => setData('tgl_jatuh_tempo', e.target.value)}
+                                            onChange={(e) => setData('tgl_jatuh_tempo', e.target.value ? e.target.value : '')}
                                         />
-                                        {errors.tgl_jatuh_tempo && (
-                                            <p className="text-sm text-red-600">{errors.tgl_jatuh_tempo}</p>
-                                        )}
+                                        {errors.tgl_jatuh_tempo && <p className="text-sm text-red-600">{errors.tgl_jatuh_tempo}</p>}
                                     </div>
 
                                     {/* Harga */}
@@ -193,9 +163,7 @@ export default function Create({ suratJalans }: CreateProps) {
                                             onChange={(e) => setData('harga', e.target.value)}
                                             placeholder="0"
                                         />
-                                        {errors.harga && (
-                                            <p className="text-sm text-red-600">{errors.harga}</p>
-                                        )}
+                                        {errors.harga && <p className="text-sm text-red-600">{errors.harga}</p>}
                                     </div>
 
                                     {/* PPN */}
@@ -213,9 +181,7 @@ export default function Create({ suratJalans }: CreateProps) {
                                             onChange={(e) => setData('ppn', e.target.value)}
                                             placeholder="11.00"
                                         />
-                                        {errors.ppn && (
-                                            <p className="text-sm text-red-600">{errors.ppn}</p>
-                                        )}
+                                        {errors.ppn && <p className="text-sm text-red-600">{errors.ppn}</p>}
                                     </div>
 
                                     {/* Ongkos Kirim */}
@@ -229,9 +195,7 @@ export default function Create({ suratJalans }: CreateProps) {
                                             onChange={(e) => setData('ongkos_kirim', e.target.value)}
                                             placeholder="0"
                                         />
-                                        {errors.ongkos_kirim && (
-                                            <p className="text-sm text-red-600">{errors.ongkos_kirim}</p>
-                                        )}
+                                        {errors.ongkos_kirim && <p className="text-sm text-red-600">{errors.ongkos_kirim}</p>}
                                     </div>
 
                                     {/* Uang Muka */}
@@ -245,9 +209,7 @@ export default function Create({ suratJalans }: CreateProps) {
                                             onChange={(e) => setData('uang_muka', e.target.value)}
                                             placeholder="0"
                                         />
-                                        {errors.uang_muka && (
-                                            <p className="text-sm text-red-600">{errors.uang_muka}</p>
-                                        )}
+                                        {errors.uang_muka && <p className="text-sm text-red-600">{errors.uang_muka}</p>}
                                     </div>
                                 </div>
 
@@ -261,11 +223,47 @@ export default function Create({ suratJalans }: CreateProps) {
                                             <div className="space-y-2">
                                                 <div className="flex justify-between">
                                                     <span>Subtotal:</span>
-                                                    <span>Rp {Number(data.harga || 0).toLocaleString('id-ID')}</span>
+                                                    <span>
+                                                        Rp{' '}
+                                                        {(() => {
+                                                            const harga = Number(data.harga || 0);
+                                                            const qtyPengiriman = Number(selectedSuratJalan?.qty_pengiriman || 0);
+                                                            const toleransiPengiriman = Number(
+                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || 0,
+                                                            );
+
+                                                            // Subtotal = harga * qty - (harga * qty * toleransi_pengiriman / 100)
+                                                            const subtotalSebelumToleransi = harga * qtyPengiriman;
+                                                            const potonganToleransi = (subtotalSebelumToleransi * toleransiPengiriman) / 100;
+                                                            const subtotal = subtotalSebelumToleransi - potonganToleransi;
+
+                                                            return subtotal.toLocaleString('id-ID');
+                                                        })()}
+                                                    </span>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span>PPN ({data.ppn}%):</span>
-                                                    <span>Rp {(Number(data.harga || 0) * Number(data.ppn || 0) / 100).toLocaleString('id-ID')}</span>
+                                                    <span>
+                                                        Rp{' '}
+                                                        {(() => {
+                                                            const harga = Number(data.harga || 0);
+                                                            const qtyPengiriman = Number(selectedSuratJalan?.qty_pengiriman || 0);
+                                                            const toleransiPengiriman = Number(
+                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || 0,
+                                                            );
+                                                            const ppnRate = Number(data.ppn || 0);
+
+                                                            // Hitung subtotal terlebih dahulu
+                                                            const subtotalSebelumToleransi = harga * qtyPengiriman;
+                                                            const potonganToleransi = (subtotalSebelumToleransi * toleransiPengiriman) / 100;
+                                                            const subtotal = subtotalSebelumToleransi - potonganToleransi;
+
+                                                            // PPN = subtotal * ppn_rate / 100
+                                                            const ppnAmount = (subtotal * ppnRate) / 100;
+
+                                                            return ppnAmount.toLocaleString('id-ID');
+                                                        })()}
+                                                    </span>
                                                 </div>
                                                 <div className="flex justify-between">
                                                     <span>Ongkos Kirim:</span>
@@ -274,11 +272,29 @@ export default function Create({ suratJalans }: CreateProps) {
                                                 <div className="flex justify-between border-t pt-2">
                                                     <span>Total:</span>
                                                     <span className="font-semibold">
-                                                        Rp {(
-                                                            Number(data.harga || 0) +
-                                                            (Number(data.harga || 0) * Number(data.ppn || 0) / 100) +
-                                                            Number(data.ongkos_kirim || 0)
-                                                        ).toLocaleString('id-ID')}
+                                                        Rp{' '}
+                                                        {(() => {
+                                                            const harga = Number(data.harga || 0);
+                                                            const qtyPengiriman = Number(selectedSuratJalan?.qty_pengiriman || 0);
+                                                            const toleransiPengiriman = Number(
+                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || 0,
+                                                            );
+                                                            const ppnRate = Number(data.ppn || 0);
+                                                            const ongkosKirim = Number(data.ongkos_kirim || 0);
+
+                                                            // Hitung subtotal
+                                                            const subtotalSebelumToleransi = harga * qtyPengiriman;
+                                                            const potonganToleransi = (subtotalSebelumToleransi * toleransiPengiriman) / 100;
+                                                            const subtotal = subtotalSebelumToleransi - potonganToleransi;
+
+                                                            // Hitung PPN
+                                                            const ppnAmount = (subtotal * ppnRate) / 100;
+
+                                                            // Total = subtotal + PPN + ongkos kirim
+                                                            const total = subtotal + ppnAmount + ongkosKirim;
+
+                                                            return total.toLocaleString('id-ID');
+                                                        })()}
                                                     </span>
                                                 </div>
                                                 <div className="flex justify-between">
@@ -288,12 +304,33 @@ export default function Create({ suratJalans }: CreateProps) {
                                                 <div className="flex justify-between border-t pt-2 font-bold">
                                                     <span>Sisa Tagihan:</span>
                                                     <span>
-                                                        Rp {(
-                                                            Number(data.harga || 0) +
-                                                            (Number(data.harga || 0) * Number(data.ppn || 0) / 100) +
-                                                            Number(data.ongkos_kirim || 0) -
-                                                            Number(data.uang_muka || 0)
-                                                        ).toLocaleString('id-ID')}
+                                                        Rp{' '}
+                                                        {(() => {
+                                                            const harga = Number(data.harga || 0);
+                                                            const qtyPengiriman = Number(selectedSuratJalan?.qty_pengiriman || 0);
+                                                            const toleransiPengiriman = Number(
+                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || 0,
+                                                            );
+                                                            const ppnRate = Number(data.ppn || 0);
+                                                            const ongkosKirim = Number(data.ongkos_kirim || 0);
+                                                            const uangMuka = Number(data.uang_muka || 0);
+
+                                                            // Hitung subtotal
+                                                            const subtotalSebelumToleransi = harga * qtyPengiriman;
+                                                            const potonganToleransi = (subtotalSebelumToleransi * toleransiPengiriman) / 100;
+                                                            const subtotal = subtotalSebelumToleransi - potonganToleransi;
+
+                                                            // Hitung PPN
+                                                            const ppnAmount = (subtotal * ppnRate) / 100;
+
+                                                            // Hitung total
+                                                            const total = subtotal + ppnAmount + ongkosKirim;
+
+                                                            // Sisa tagihan = total - uang muka
+                                                            const sisaTagihan = total - uangMuka;
+
+                                                            return sisaTagihan.toLocaleString('id-ID');
+                                                        })()}
                                                     </span>
                                                 </div>
                                             </div>
