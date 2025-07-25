@@ -166,8 +166,6 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/internalMaterialRequests/{id}/pdf', [InternalMaterialRequestController::class, 'generatePdf'])->name('internalMaterialRequests.pdf');
 
     Route::get('/materialStocks', [MaterialStockController::class, 'index'])->name('materialStocks.index');
-    Route::get('/materialStocks/pdf', [MaterialStockController::class, 'generatePdf'])->name('materialStocks.pdf');
-    Route::get('/materialStocks/{id}/details', [MaterialStockController::class, 'getStockDetails'])->name('materialStocks.details');
 
     Route::get('/mesins', [MesinController::class, 'index'])->name('mesins.index');
     Route::post('/mesins', [MesinController::class, 'store'])->name('mesins.store');

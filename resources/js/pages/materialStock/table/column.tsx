@@ -54,7 +54,7 @@ export const columns = (): ColumnDef<MaterialStock>[] => [
         header: 'Outstanding',
         cell: ({ row }) => {
             const value = row.getValue('outstanding_stock') as number;
-            return <span className="text-right font-mono text-blue-600">{value.toFixed(2)}</span>;
+            return <span className="text-right font-mono text-yellow-600">{value.toFixed(2)}</span>;
         },
     },
     {
@@ -62,7 +62,7 @@ export const columns = (): ColumnDef<MaterialStock>[] => [
         header: 'Allocation',
         cell: ({ row }) => {
             const value = row.getValue('allocation_stock') as number;
-            return <span className="text-right font-mono text-orange-600">{value.toFixed(2)}</span>;
+            return <span className="text-right font-mono text-green-600">{value.toFixed(2)}</span>;
         },
     },
 ];
