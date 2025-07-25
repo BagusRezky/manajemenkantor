@@ -694,6 +694,7 @@ export default function Show({ kartuInstruksiKerja }: ShowProps) {
                                                     <TableHeader>
                                                         <TableRow className="bg-gray-50 dark:bg-gray-800">
                                                             <TableHead className="font-medium">Tanggal Surat Jalan</TableHead>
+                                                            <TableHead className="font-medium">No. Surat Jalan</TableHead>
                                                             <TableHead className="font-medium">Pengirim</TableHead>
                                                             <TableHead className="font-medium">Driver</TableHead>
                                                             <TableHead className="text-right font-medium">Pengiriman (pcs)</TableHead>
@@ -706,6 +707,7 @@ export default function Show({ kartuInstruksiKerja }: ShowProps) {
                                                                     <TableCell>
                                                                         {format(new Date(suratJalan.tgl_surat_jalan), 'dd-MM-yyyy')}
                                                                     </TableCell>
+                                                                    <TableCell>{suratJalan.no_surat_jalan}</TableCell>
                                                                     <TableCell>{suratJalan.pengirim}</TableCell>
                                                                     <TableCell>{suratJalan.driver}</TableCell>
                                                                     <TableCell className="text-right">

@@ -31,6 +31,7 @@ interface CreateProps {
 export default function Create({ kartuInstruksiKerjas }: CreateProps) {
     const [selectedKIK, setSelectedKIK] = useState<KartuInstruksiKerja | null>(null);
     const [selectedAlamat, setSelectedAlamat] = useState<string>('');
+    const [onHandStock, setOnHandStock] = useState<number>(0);
 
     const { data, setData, post, processing, errors, reset } = useForm<SuratJalanFormData>({
         id_kartu_instruksi_kerja: '',
@@ -49,10 +50,17 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
         const selectedKartuInstruksiKerja = kartuInstruksiKerjas.find((k) => k.id.toString() === kikId);
         setSelectedKIK(selectedKartuInstruksiKerja || null);
         setSelectedAlamat('');
+
+        // Hitung onhand stock
+        const stock = selectedKartuInstruksiKerja ? calculateOnHandStock(selectedKartuInstruksiKerja) : 0;
+        setOnHandStock(stock);
+
+
         setData((prev) => ({
             ...prev,
             id_kartu_instruksi_kerja: kikId,
             alamat_tujuan: '',
+            qty_pengiriman: '',
         }));
     };
 
@@ -107,6 +115,28 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
             label: `Alamat Ketiga - ${customerAddress.alamat_ketiga}`,
         });
     }
+
+    const calculateOnHandStock = (kik: KartuInstruksiKerja): number => {
+        const packagings = kik.packagings || [];
+        const suratJalans = kik.surat_jalans || [];
+        const blokirs = kik.blokirs || [];
+
+        const totalStokBarangJadi = packagings.reduce((total, packaging) => {
+            const totalPenuh = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
+            const totalSisa = packaging.jumlah_satuan_sisa * packaging.qty_persatuan_sisa;
+            return total + totalPenuh + totalSisa;
+        }, 0);
+
+        const totalPengiriman = suratJalans.reduce((total, suratJalan) => {
+            return total + (suratJalan.qty_pengiriman || 0);
+        }, 0);
+
+        const transferBlokir = blokirs.reduce((total, blokir) => {
+            return total + (blokir.qty_blokir || 0);
+        }, 0);
+
+        return totalStokBarangJadi - transferBlokir - totalPengiriman;
+    };
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
@@ -179,6 +209,14 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
                                                     <p>
                                                         <span className="font-medium">No. PO Customer:</span>{' '}
                                                         {selectedKIK.sales_order?.no_po_customer || '-'}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p>
+                                                        <span className="font-medium">On Hand Stock:</span>{' '}
+                                                        <span className={`font-bold ${onHandStock > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                                                            {onHandStock.toLocaleString()} pcs
+                                                        </span>
                                                     </p>
                                                 </div>
                                             </div>
@@ -272,11 +310,26 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
                                             <Input
                                                 id="qty_pengiriman"
                                                 type="number"
+                                                min="1"
+                                                max={onHandStock}
                                                 value={data.qty_pengiriman}
-                                                onChange={(e) => setData('qty_pengiriman', e.target.value)}
+                                                onChange={(e) => {
+                                                    const value = parseInt(e.target.value) || 0;
+                                                    if (value <= onHandStock) {
+                                                        setData('qty_pengiriman', e.target.value);
+                                                    } else {
+                                                        toast.error(
+                                                            `Qty pengiriman tidak boleh melebihi stok yang tersedia (${onHandStock.toLocaleString()} pcs)`,
+                                                        );
+                                                    }
+                                                }}
                                                 placeholder="Masukkan jumlah pengiriman"
                                                 className={errors.qty_pengiriman ? 'border-red-500' : ''}
+                                                disabled={!selectedKIK || onHandStock <= 0}
                                             />
+                                            {onHandStock <= 0 && selectedKIK && (
+                                                <p className="text-sm text-red-600">Stok tidak tersedia untuk pengiriman</p>
+                                            )}
                                             {errors.qty_pengiriman && <p className="text-sm text-red-600">{errors.qty_pengiriman}</p>}
                                         </div>
 

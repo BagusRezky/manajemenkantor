@@ -14,7 +14,7 @@ class Invoice extends Model
         'no_invoice',
         'tgl_invoice',
         'tgl_jatuh_tempo',
-        'harga',
+        'discount',
         'ppn',
         'ongkos_kirim',
         'uang_muka',

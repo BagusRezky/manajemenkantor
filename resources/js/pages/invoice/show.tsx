@@ -33,17 +33,17 @@ export default function ShowInvoice({ invoice }: Props) {
     };
 
     // Perhitungan invoice
-    const harga = Number(invoice.harga || 0);
+    const discount = Number(invoice.discount || 0);
     const qtyPengiriman = Number(invoice.surat_jalan?.qty_pengiriman || 0);
-    const toleransiPengiriman = Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || 0);
+    const hargaSO = Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
     const ppnRate = Number(invoice.ppn || 0);
     const ongkosKirim = Number(invoice.ongkos_kirim || 0);
     const uangMuka = Number(invoice.uang_muka || 0);
 
     // Hitung subtotal
-    const subtotalSebelumToleransi = harga * qtyPengiriman;
-    const potonganToleransi = (subtotalSebelumToleransi * toleransiPengiriman) / 100;
-    const subtotal = subtotalSebelumToleransi - potonganToleransi;
+    const subtotalSebelumToleransi = hargaSO * qtyPengiriman;
+    const subtotal = subtotalSebelumToleransi - discount;
+
 
     // Hitung PPN dan total
     const ppnAmount = (subtotal * ppnRate) / 100;
@@ -182,13 +182,13 @@ export default function ShowInvoice({ invoice }: Props) {
                                     </p>
                                 </div>
                                 <div>
-                                    <label className="text-sm font-medium text-gray-500">Harga Satuan</label>
-                                    <p className="mt-1 text-sm text-gray-900">{formatCurrency(harga)}</p>
+                                    <label className="text-sm font-medium text-gray-500">Harga</label>
+                                    <p className="mt-1 text-sm text-gray-900">{formatCurrency(hargaSO)}</p>
                                 </div>
                                 <div>
-                                    <label className="text-sm font-medium text-gray-500">Toleransi Pengiriman</label>
+                                    <label className="text-sm font-medium text-gray-500">Discount</label>
                                     <p className="mt-1 text-sm text-gray-900">
-                                        <span className="font-semibold">{toleransiPengiriman}%</span>
+                                        <span className="font-semibold">{discount}</span>
                                     </p>
                                 </div>
                                 <div>
@@ -217,15 +217,15 @@ export default function ShowInvoice({ invoice }: Props) {
                                             <tr>
                                                 <td className="py-3 text-sm text-gray-600">Subtotal Sebelum Toleransi:</td>
                                                 <td className="py-3 text-right text-sm font-medium">
-                                                    {harga.toLocaleString('id-ID')} × {qtyPengiriman.toLocaleString('id-ID')} ={' '}
+                                                    {hargaSO.toLocaleString('id-ID')} × {qtyPengiriman.toLocaleString('id-ID')} ={' '}
                                                     {formatCurrency(subtotalSebelumToleransi)}
                                                 </td>
                                             </tr>
-                                            {toleransiPengiriman > 0 && (
+                                            {discount > 0 && (
                                                 <tr>
-                                                    <td className="py-3 text-sm text-gray-600">Potongan Toleransi ({toleransiPengiriman}%):</td>
+                                                    <td className="py-3 text-sm text-gray-600">Potongan Diskon ({discount}):</td>
                                                     <td className="py-3 text-right text-sm font-medium text-red-600">
-                                                        - {formatCurrency(potonganToleransi)}
+                                                        - {formatCurrency(discount)}
                                                     </td>
                                                 </tr>
                                             )}

@@ -53,7 +53,7 @@ class InvoiceController extends Controller
             'id_surat_jalan' => 'required|exists:surat_jalans,id|unique:invoices,id_surat_jalan',
             'tgl_invoice' => 'required|date',
             'tgl_jatuh_tempo' => 'required|date|after_or_equal:tgl_invoice',
-            'harga' => 'required|integer|min:0',
+            'discount' => 'required|integer|min:0',
             'ppn' => 'required|numeric|min:0|max:100',
             'ongkos_kirim' => 'nullable|integer|min:0',
             'uang_muka' => 'nullable|integer|min:0',

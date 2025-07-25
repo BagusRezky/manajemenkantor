@@ -6,7 +6,7 @@ export interface Invoice {
     no_invoice: string;
     tgl_invoice: string;
     tgl_jatuh_tempo: string;
-    harga: number;
+    discount: number;
     ppn: number;
     ongkos_kirim: number;
     uang_muka: number;

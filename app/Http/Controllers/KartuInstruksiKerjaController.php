@@ -16,7 +16,7 @@ class KartuInstruksiKerjaController extends Controller
      */
     public function index()
     {
-        $kartuInstruksiKerja = KartuInstruksiKerja::with(['salesOrder.finishGoodItem', 'salesOrder.customerAddress', 'kartuInstruksiKerjaBoms', 'kartuInstruksiKerjaBoms.billOfMaterials', 'packagings',
+        $kartuInstruksiKerja = KartuInstruksiKerja::with(['salesOrder.finishGoodItem', 'salesOrder.customerAddress', 'kartuInstruksiKerjaBoms', 'kartuInstruksiKerjaBoms.billOfMaterials', 'packagings', 'blokirs', 'suratJalans',
         'suratJalans'])->get();
 
         return Inertia::render('kartuInstruksiKerja/kartuInstruksiKerja', [

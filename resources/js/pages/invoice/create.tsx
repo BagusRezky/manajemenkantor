@@ -33,7 +33,7 @@ export default function Create({ suratJalans }: CreateProps) {
         no_invoice: '',
         tgl_invoice: '',
         tgl_jatuh_tempo: '',
-        harga: '',
+        discount: '',
         ppn: '',
         ongkos_kirim: '',
         uang_muka: '',
@@ -66,7 +66,7 @@ export default function Create({ suratJalans }: CreateProps) {
                 <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
                     <Card>
                         <CardHeader>
-                            <CardTitle>Tambah Invoice (Masih Maintanance karena salah ngitung)</CardTitle>
+                            <CardTitle>Tambah Invoice </CardTitle>
                         </CardHeader>
                         <CardContent>
                             <form onSubmit={submit} className="space-y-6">
@@ -114,8 +114,8 @@ export default function Create({ suratJalans }: CreateProps) {
                                                     {selectedSuratJalan.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}
                                                 </p>
                                                 <p>
-                                                    <span className="font-medium">Toleransi Pengiriman:</span>{' '}
-                                                    {selectedSuratJalan.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || '-'}
+                                                    <span className="font-medium">Harga:</span>{' '}
+                                                    {selectedSuratJalan.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || '-'}
                                                 </p>
                                             </div>
                                         </div>
@@ -150,20 +150,20 @@ export default function Create({ suratJalans }: CreateProps) {
                                         {errors.tgl_jatuh_tempo && <p className="text-sm text-red-600">{errors.tgl_jatuh_tempo}</p>}
                                     </div>
 
-                                    {/* Harga */}
+                                    {/* Discount */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="harga">
-                                            Harga <span className="text-red-500">*</span>
+                                        <Label htmlFor="discount">
+                                            Discount <span className="text-red-500">*</span>
                                         </Label>
                                         <Input
-                                            id="harga"
+                                            id="discount"
                                             type="number"
                                             min="0"
-                                            value={data.harga}
-                                            onChange={(e) => setData('harga', e.target.value)}
+                                            value={data.discount}
+                                            onChange={(e) => setData('discount', e.target.value)}
                                             placeholder="0"
                                         />
-                                        {errors.harga && <p className="text-sm text-red-600">{errors.harga}</p>}
+                                        {errors.discount && <p className="text-sm text-red-600">{errors.discount}</p>}
                                     </div>
 
                                     {/* PPN */}
@@ -179,7 +179,7 @@ export default function Create({ suratJalans }: CreateProps) {
                                             step="0.01"
                                             value={data.ppn}
                                             onChange={(e) => setData('ppn', e.target.value)}
-                                            placeholder="11.00"
+                                            placeholder="0"
                                         />
                                         {errors.ppn && <p className="text-sm text-red-600">{errors.ppn}</p>}
                                     </div>
@@ -214,7 +214,7 @@ export default function Create({ suratJalans }: CreateProps) {
                                 </div>
 
                                 {/* Summary Card */}
-                                {(data.harga || data.ppn || data.ongkos_kirim || data.uang_muka) && (
+                                {(data.discount || data.ppn || data.ongkos_kirim || data.uang_muka) && (
                                     <Card className="bg-gray-50 dark:bg-gray-800">
                                         <CardHeader>
                                             <CardTitle className="text-lg">Ringkasan Invoice</CardTitle>
@@ -226,16 +226,16 @@ export default function Create({ suratJalans }: CreateProps) {
                                                     <span>
                                                         Rp{' '}
                                                         {(() => {
-                                                            const harga = Number(data.harga || 0);
+                                                            const discount = Number(data.discount || 0);
                                                             const qtyPengiriman = Number(selectedSuratJalan?.qty_pengiriman || 0);
-                                                            const toleransiPengiriman = Number(
-                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || 0,
+                                                            const hargaSO = Number(
+                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0,
                                                             );
 
-                                                            // Subtotal = harga * qty - (harga * qty * toleransi_pengiriman / 100)
-                                                            const subtotalSebelumToleransi = harga * qtyPengiriman;
-                                                            const potonganToleransi = (subtotalSebelumToleransi * toleransiPengiriman) / 100;
-                                                            const subtotal = subtotalSebelumToleransi - potonganToleransi;
+                                                            // Subtotal
+                                                            const subtotalSebelumToleransi = hargaSO * qtyPengiriman;
+
+                                                            const subtotal = subtotalSebelumToleransi - discount;
 
                                                             return subtotal.toLocaleString('id-ID');
                                                         })()}
@@ -246,17 +246,17 @@ export default function Create({ suratJalans }: CreateProps) {
                                                     <span>
                                                         Rp{' '}
                                                         {(() => {
-                                                            const harga = Number(data.harga || 0);
+                                                            const discount = Number(data.discount || 0);
                                                             const qtyPengiriman = Number(selectedSuratJalan?.qty_pengiriman || 0);
-                                                            const toleransiPengiriman = Number(
-                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || 0,
+                                                            const hargaSO = Number(
+                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0,
                                                             );
                                                             const ppnRate = Number(data.ppn || 0);
 
                                                             // Hitung subtotal terlebih dahulu
-                                                            const subtotalSebelumToleransi = harga * qtyPengiriman;
-                                                            const potonganToleransi = (subtotalSebelumToleransi * toleransiPengiriman) / 100;
-                                                            const subtotal = subtotalSebelumToleransi - potonganToleransi;
+                                                            const subtotalSebelumToleransi = hargaSO * qtyPengiriman;
+
+                                                            const subtotal = subtotalSebelumToleransi - discount;
 
                                                             // PPN = subtotal * ppn_rate / 100
                                                             const ppnAmount = (subtotal * ppnRate) / 100;
@@ -274,18 +274,17 @@ export default function Create({ suratJalans }: CreateProps) {
                                                     <span className="font-semibold">
                                                         Rp{' '}
                                                         {(() => {
-                                                            const harga = Number(data.harga || 0);
+                                                            const discount = Number(data.discount || 0);
                                                             const qtyPengiriman = Number(selectedSuratJalan?.qty_pengiriman || 0);
-                                                            const toleransiPengiriman = Number(
-                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || 0,
+                                                            const hargaSO = Number(
+                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0,
                                                             );
                                                             const ppnRate = Number(data.ppn || 0);
                                                             const ongkosKirim = Number(data.ongkos_kirim || 0);
 
                                                             // Hitung subtotal
-                                                            const subtotalSebelumToleransi = harga * qtyPengiriman;
-                                                            const potonganToleransi = (subtotalSebelumToleransi * toleransiPengiriman) / 100;
-                                                            const subtotal = subtotalSebelumToleransi - potonganToleransi;
+                                                            const subtotalSebelumToleransi = hargaSO * qtyPengiriman;
+                                                            const subtotal = subtotalSebelumToleransi - discount;
 
                                                             // Hitung PPN
                                                             const ppnAmount = (subtotal * ppnRate) / 100;
@@ -306,19 +305,18 @@ export default function Create({ suratJalans }: CreateProps) {
                                                     <span>
                                                         Rp{' '}
                                                         {(() => {
-                                                            const harga = Number(data.harga || 0);
+                                                            const discount = Number(data.discount || 0);
                                                             const qtyPengiriman = Number(selectedSuratJalan?.qty_pengiriman || 0);
-                                                            const toleransiPengiriman = Number(
-                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || 0,
+                                                            const hargaSO = Number(
+                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0,
                                                             );
                                                             const ppnRate = Number(data.ppn || 0);
                                                             const ongkosKirim = Number(data.ongkos_kirim || 0);
                                                             const uangMuka = Number(data.uang_muka || 0);
 
                                                             // Hitung subtotal
-                                                            const subtotalSebelumToleransi = harga * qtyPengiriman;
-                                                            const potonganToleransi = (subtotalSebelumToleransi * toleransiPengiriman) / 100;
-                                                            const subtotal = subtotalSebelumToleransi - potonganToleransi;
+                                                            const subtotalSebelumToleransi = hargaSO * qtyPengiriman;
+                                                            const subtotal = subtotalSebelumToleransi - discount;
 
                                                             // Hitung PPN
                                                             const ppnAmount = (subtotal * ppnRate) / 100;

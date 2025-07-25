@@ -33,9 +33,12 @@ class SuratJalanController extends Controller
             'salesOrder.customerAddress', // camelCase version
             'sales_order.customer_address', // snake_case version
             'salesOrder.finishGoodItem',
-            'sales_order.finish_good_item'
+            'sales_order.finish_good_item',
+            'packagings',
+            'blokirs',
+            'suratJalans'
         ])
-            // ->whereDoesntHave('suratJalans')
+
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -58,38 +61,42 @@ class SuratJalanController extends Controller
             'qty_pengiriman' => 'required|integer|min:0',
         ]);
 
-         // Generate the no_surat_jalan
-    $currentMonth = date('m');
-    $currentYear = date('y');
+        // Generate the no_surat_jalan
+        $currentMonth = str_pad(date('m'), 2, '0', STR_PAD_LEFT);
+        $currentYear = date('y');
 
-    // Get the latest surat_jalan number for the current year
-    $latestSuratJalan = SuratJalan::where('no_surat_jalan', 'like', '%/SJ/' . $currentYear)
-        ->orderBy('created_at', 'desc')
-        ->first();
+        // Pattern untuk tahun ini: format ######/SJ/MMYY
+        $yearPattern = '/SJ/' . $currentMonth . $currentYear;
 
-    $sequentialNumber = 1;
+        DB::transaction(function () use ($validated, $yearPattern) {
+            // Get the latest sequential number for this month and year
+            $latestSuratJalan = SuratJalan::where('no_surat_jalan', 'like', '%' . $yearPattern)
+                ->orderByRaw('CAST(SUBSTRING_INDEX(no_surat_jalan, "/", 1) AS UNSIGNED) DESC')
+                ->lockForUpdate()
+                ->first();
 
-    if ($latestSuratJalan) {
-        // Extract the sequential number from the latest surat jalan
-        $parts = explode('/', $latestSuratJalan->no_surat_jalan);
-        if (isset($parts[0])) {
-            $sequentialNumber = (int) $parts[0] + 1;
-        }
+            $sequentialNumber = 1;
+
+            if ($latestSuratJalan) {
+                // Extract the sequential number from the latest surat jalan
+                $parts = explode('/', $latestSuratJalan->no_surat_jalan);
+                if (isset($parts[0]) && is_numeric($parts[0])) {
+                    $sequentialNumber = (int) $parts[0] + 1;
+                }
+            }
+
+            // Format the sequential number with leading zeros (6 digits)
+            $formattedNumber = str_pad($sequentialNumber, 6, '0', STR_PAD_LEFT);
+
+            // Create the final no_surat_jalan
+            $validated['no_surat_jalan'] = $formattedNumber . $yearPattern;
+
+            SuratJalan::create($validated);
+        });
+
+        return redirect()->route('suratJalans.index')
+            ->with('success', 'Surat Jalan berhasil dibuat');
     }
-
-    // Format the sequential number with leading zeros
-    $formattedNumber = str_pad($sequentialNumber, 6, '0', STR_PAD_LEFT);
-
-    // Create the final no_surat_jalan
-    $validated['no_surat_jalan'] = $formattedNumber . '/SJ/' . $currentMonth . $currentYear;
-
-    DB::transaction(function () use ($validated) {
-        SuratJalan::create($validated);
-    });
-
-    return redirect()->route('suratJalans.index')
-        ->with('success', 'Surat Jalan berhasil dibuat');
-}
 
     public function show(SuratJalan $suratJalan)
     {

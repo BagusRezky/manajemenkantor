@@ -104,17 +104,19 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
     doc.text('DETAIL INVOICE', pageWidth / 2, tableStartY + 6, { align: 'center' });
 
     // Hitung nilai-nilai invoice
-    const harga = Number(invoice.harga || 0);
+    const discount = Number(invoice.discount || 0);
     const qtyPengiriman = Number(invoice.surat_jalan?.qty_pengiriman || 0);
-    const toleransiPengiriman = Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || 0);
+    const hargaSO = Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
+
     const ppnRate = Number(invoice.ppn || 0);
     const ongkosKirim = Number(invoice.ongkos_kirim || 0);
     const uangMuka = Number(invoice.uang_muka || 0);
 
     // Hitung subtotal
-    const subtotalSebelumToleransi = harga * qtyPengiriman;
-    const potonganToleransi = (subtotalSebelumToleransi * toleransiPengiriman) / 100;
-    const subtotal = subtotalSebelumToleransi - potonganToleransi;
+     const subtotalSebelumToleransi = hargaSO * qtyPengiriman;
+
+     const subtotal = subtotalSebelumToleransi - discount;
+
 
     // Hitung PPN
     const ppnAmount = (subtotal * ppnRate) / 100;
@@ -138,18 +140,18 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
         {
             deskripsi: `${namaBarang}\n${deskripsiBarang}`,
             qty: qtyPengiriman.toLocaleString('id-ID'),
-            harga_satuan: `Rp ${harga.toLocaleString('id-ID')}`,
+            harga_satuan: `Rp ${hargaSO.toLocaleString('id-ID')}`,
             jumlah: `Rp ${subtotalSebelumToleransi.toLocaleString('id-ID')}`,
         }
     ];
 
-    // Add tolerance deduction row if applicable
-    if (toleransiPengiriman > 0) {
+
+    if (discount > 0) {
         tableRows.push({
-            deskripsi: `Potongan Toleransi (${toleransiPengiriman}%)`,
+            deskripsi: `Diskon`,
             qty: '',
             harga_satuan: '',
-            jumlah: `- Rp ${potonganToleransi.toLocaleString('id-ID')}`,
+            jumlah: `- Rp ${discount.toLocaleString('id-ID')}`,
         });
     }
 
@@ -300,16 +302,16 @@ export const columns = (): ColumnDef<Invoice>[] => [
         header: 'Total Invoice',
         cell: ({ row }) => {
             const data = row.original;
-            const harga = Number(data.harga || 0);
+            const discount = Number(data.discount || 0);
             const qtyPengiriman = Number(data.surat_jalan?.qty_pengiriman || 0);
-            const toleransiPengiriman = Number(data.surat_jalan?.kartu_instruksi_kerja?.sales_order?.toleransi_pengiriman || 0);
+            const hargaSO = Number(data.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
             const ppnRate = Number(data.ppn || 0);
             const ongkosKirim = Number(data.ongkos_kirim || 0);
 
             // Hitung subtotal
-            const subtotalSebelumToleransi = harga * qtyPengiriman;
-            const potonganToleransi = (subtotalSebelumToleransi * toleransiPengiriman) / 100;
-            const subtotal = subtotalSebelumToleransi - potonganToleransi;
+            const subtotalSebelumToleransi = hargaSO * qtyPengiriman;
+
+            const subtotal = subtotalSebelumToleransi - discount;
 
             // Hitung PPN dan total
             const ppnAmount = (subtotal * ppnRate) / 100;

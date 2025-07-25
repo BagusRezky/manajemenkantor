@@ -9,10 +9,10 @@ import autoTable from 'jspdf-autotable';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 
-import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
+import { KartuInstruksiKerja, KartuInstruksiKerjaBom } from '@/types/kartuInstruksiKerja';
+import { formatToInteger } from '@/utils/formatter/decimaltoint';
 import { Download, FileText, MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatToInteger } from '@/utils/formatter/decimaltoint';
 
 export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, download = false): void => {
     const doc = new jsPDF('p', 'mm', 'a4');
@@ -275,24 +275,21 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
         header: 'Jumlah Order',
     },
     {
-
+        accessorKey: 'kartu_instruksi_kerja_boms',
         header: 'Jumlah Produksi',
-        cell: ({ row }) => {
-            const packagings = row.original.packagings || [];
-            const totalStokBarangJadi = packagings.reduce((total, packaging) => {
-                const totalPenuh = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
-                const totalSisa = packaging.jumlah_satuan_sisa * packaging.qty_persatuan_sisa;
-                return total + totalPenuh + totalSisa;
-            }, 0);
-            return totalStokBarangJadi.toLocaleString();
+        cell: ({ getValue }) => {
+            const boms = getValue() as KartuInstruksiKerjaBom[];
+            if (!boms || boms.length === 0) return '-';
+
+            return boms.map((bom) => bom.jumlah_produksi).join(', ');
         },
     },
     {
-        
         header: 'On Hand Stock',
         cell: ({ row }) => {
             const packagings = row.original.packagings || [];
             const suratJalans = row.original.surat_jalans || [];
+            const blokirs = row.original.blokirs || [];
 
             const totalStokBarangJadi = packagings.reduce((total, packaging) => {
                 const totalPenuh = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
@@ -304,8 +301,24 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
                 return total + (suratJalan.qty_pengiriman || 0);
             }, 0);
 
-            const onHandStock = totalStokBarangJadi - totalPengiriman;
+            const transferBlokir = blokirs.reduce((total, blokir) => {
+                return total + (blokir.qty_blokir || 0);
+            }, 0);
+
+            const onHandStock = totalStokBarangJadi - transferBlokir - totalPengiriman;
             return onHandStock.toLocaleString();
+        },
+    },
+
+    {
+        accessorKey: 'surat_jalans',
+        header: 'Total Pengiriman',
+        cell: ({ row }) => {
+            const suratJalans = row.original.surat_jalans || [];
+            const totalPengiriman = suratJalans.reduce((total, suratJalan) => {
+                return total + (suratJalan.qty_pengiriman || 0);
+            }, 0);
+            return totalPengiriman.toLocaleString();
         },
     },
 
