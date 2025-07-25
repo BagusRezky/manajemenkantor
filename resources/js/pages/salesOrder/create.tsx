@@ -142,8 +142,8 @@ export default function Create({ finishGoodItems, customerAddresses, lastId }: C
                                         <div className="space-y-2">
                                             <Label htmlFor="custom_part">No. Sales Order</Label>
                                             <div className="flex flex-col space-y-2">
-                                                <div className="bg-popover flex items-center rounded-md border p-2 shadow-lg">
-                                                    <span className="font-medium text-white">{salesOrderNumber}</span>
+                                                <div className="bg-popover flex items-center rounded-md border p-2 ">
+                                                    <span className="font-medium ">{salesOrderNumber}</span>
                                                 </div>
                                                 {/* Hidden field for the actual form submission */}
                                                 <Input id="no_bon_pesanan" name="no_bon_pesanan" value={salesOrderNumber} type="hidden" />
@@ -249,7 +249,7 @@ export default function Create({ finishGoodItems, customerAddresses, lastId }: C
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label htmlFor="toleransi_pengiriman">Toleransi Pengiriman</Label>
+                                            <Label htmlFor="toleransi_pengiriman">Toleransi Pengiriman %</Label>
                                             <Input
                                                 id="toleransi_pengiriman"
                                                 type="number"
