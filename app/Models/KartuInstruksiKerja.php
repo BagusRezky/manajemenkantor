@@ -85,6 +85,11 @@ class KartuInstruksiKerja extends Model
         return $this->hasMany(Blokir::class, 'id_kartu_instruksi_kerja');
     }
 
+    public function subcountOutItems()
+    {
+        return $this->hasMany(SubcountOutItem::class, 'id_kartu_instruksi_kerja');
+    }
+
 
     public static function generateYearlySequentialId(): int
     {

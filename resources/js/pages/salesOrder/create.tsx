@@ -8,7 +8,7 @@ import { Label } from '@/components/ui/label';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { CustomerAddress } from '@/types/customerAddress';
-import { FinishGoodItem } from '@/types/finishGoodItem';
+import { CombinedItem } from '@/types/salesOrder';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useEffect } from 'react';
 
@@ -26,16 +26,18 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 interface CreateProps {
-    finishGoodItems: FinishGoodItem[];
+    combinedItems: CombinedItem[];
     customerAddresses: CustomerAddress[];
     lastId: number;
 }
 
-export default function Create({ finishGoodItems, customerAddresses, lastId }: CreateProps) {
+export default function Create({ combinedItems, customerAddresses, lastId }: CreateProps) {
     const { data, setData, post, processing, errors } = useForm({
         id_finish_good_item: '',
+        id_master_item: '', // New field for Master Item
         id_customer_address: '',
         no_bon_pesanan: '',
+        selected_item_type: '',
         no_po_customer: '',
         jumlah_pesanan: '',
         harga_pcs_bp: '',
@@ -59,6 +61,27 @@ export default function Create({ finishGoodItems, customerAddresses, lastId }: C
             ...prev,
             [name]: value,
         }));
+    };
+
+    // Handler untuk menangani perubahan selection
+    const handleItemChange = (value: string) => {
+        const selectedItem = combinedItems.find((item) => item.id === value);
+
+        if (selectedItem?.type === 'finish_good') {
+            setData((prev) => ({
+                ...prev,
+                id_finish_good_item: selectedItem.original_id,
+                id_master_item: '', // Reset master item
+                selected_item_type: 'finish_good',
+            }));
+        } else if (selectedItem?.type === 'master_item') {
+            setData((prev) => ({
+                ...prev,
+                id_finish_good_item: '', // Reset finish good
+                id_master_item: selectedItem.original_id,
+                selected_item_type: 'master_item',
+            }));
+        }
     };
 
     const currentDate = new Date();
@@ -112,16 +135,24 @@ export default function Create({ finishGoodItems, customerAddresses, lastId }: C
                                         <div className="space-y-2">
                                             <Label htmlFor="id_finish_good_item">Finish Good Item</Label>
                                             <SearchableSelect
-                                                items={finishGoodItems.map((item) => ({
-                                                    key: String(item.id),
-                                                    value: String(item.id),
-                                                    label: item.nama_barang,
+                                                items={combinedItems.map((item) => ({
+                                                    key: item.id,
+                                                    value: item.id,
+                                                    label: item.label,
                                                 }))}
-                                                value={data.id_finish_good_item || ''} // Add fallback to empty string
-                                                placeholder="Pilih Barang dari Finish Good Item"
-                                                onChange={(value) => setData('id_finish_good_item', value)}
+                                                value={
+                                                    data.selected_item_type === 'finish_good'
+                                                        ? `finish_good_${data.id_finish_good_item}`
+                                                        : data.selected_item_type === 'master_item'
+                                                          ? `master_item_${data.id_master_item}`
+                                                          : ''
+                                                }
+                                                placeholder="Pilih Finish Good Item atau Master Item"
+                                                onChange={handleItemChange}
                                             />
-                                            {errors.id_finish_good_item && <p className="text-sm text-red-500">{errors.id_finish_good_item}</p>}
+                                            {(errors.id_finish_good_item || errors.id_master_item) && (
+                                                <p className="text-sm text-red-500">{errors.id_finish_good_item || errors.id_master_item}</p>
+                                            )}
                                         </div>
 
                                         <div className="space-y-2">
@@ -142,8 +173,8 @@ export default function Create({ finishGoodItems, customerAddresses, lastId }: C
                                         <div className="space-y-2">
                                             <Label htmlFor="custom_part">No. Sales Order</Label>
                                             <div className="flex flex-col space-y-2">
-                                                <div className="bg-popover flex items-center rounded-md border p-2 ">
-                                                    <span className="font-medium ">{salesOrderNumber}</span>
+                                                <div className="bg-popover flex items-center rounded-md border p-2">
+                                                    <span className="font-medium">{salesOrderNumber}</span>
                                                 </div>
                                                 {/* Hidden field for the actual form submission */}
                                                 <Input id="no_bon_pesanan" name="no_bon_pesanan" value={salesOrderNumber} type="hidden" />

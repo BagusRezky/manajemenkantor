@@ -36,7 +36,7 @@ class MaterialStockController extends Controller
                 // Calculate stock metrics
                 $onhandStock = $this->calculateOnhandStock($item->id);
                 $outstandingStock = $this->calculateOutstandingStock($item->id);
-                $allocationStock = $this->calculateAllocationStock($item->id);
+                $allocationStock = $onhandStock - $outstandingStock;
                 $availableStock = $onhandStock - $outstandingStock - $allocationStock;
 
                 return [

@@ -11,6 +11,7 @@ class SalesOrder extends Model
     protected $fillable = [
         'id_finish_good_item',
         'id_customer_address',
+        'id_master_item',
         'no_bon_pesanan',
         'no_po_customer',
         'jumlah_pesanan',
@@ -65,7 +66,12 @@ class SalesOrder extends Model
     {
         return $this->finishGoodItem();
     }
-    
+
+    public function masterItem()
+    {
+        return $this->belongsTo(MasterItem::class, 'id_master_item');
+    }
+
     public function customerAddress()
     {
         return $this->belongsTo(CustomerAddress::class, 'id_customer_address');

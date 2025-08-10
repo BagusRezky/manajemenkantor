@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\customerAddress;
 use App\Models\FinishGoodItem;
 use App\Models\SalesOrder;
+use App\Models\MasterItem;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -15,7 +16,7 @@ class SalesOrderController extends Controller
      */
     public function index()
     {
-        $salesOrders = SalesOrder::with(['customerAddress', 'finishGoodItem', 'finishGoodItem.billOfMaterials'])->get();
+        $salesOrders = SalesOrder::with(['customerAddress', 'finishGoodItem', 'finishGoodItem.billOfMaterials', 'masterItem'])->get();
         return Inertia::render('salesOrder/salesOrders', [
             'salesOrders' => $salesOrders,
         ]);
@@ -31,11 +32,33 @@ class SalesOrderController extends Controller
 
 
         $customerAddresses = customerAddress::select('id', 'nama_customer')->get();
-        $finishGoodItems = FinishGoodItem::select('id', 'nama_barang')->get();
+        // Gabungkan data dari kedua tabel dengan prefix untuk membedakan
+        $finishGoodItems = FinishGoodItem::select('id', 'nama_barang')->get()
+            ->map(function ($item) {
+                return [
+                    'id' => 'finish_good_' . $item->id, // Prefix untuk membedakan
+                    'original_id' => $item->id,
+                    'label' => $item->nama_barang . ' (Finish Good)',
+                    'type' => 'finish_good'
+                ];
+            });
+
+        $masterItems = MasterItem::select('id', 'nama_master_item')->get()
+            ->map(function ($item) {
+                return [
+                    'id' => 'master_item_' . $item->id, // Prefix untuk membedakan
+                    'original_id' => $item->id,
+                    'label' => $item->nama_master_item . ' (Master Item)',
+                    'type' => 'master_item'
+                ];
+            });
+
+        // Gabungkan kedua collection
+        $combinedItems = $finishGoodItems->concat($masterItems);
 
         return Inertia::render('salesOrder/create', [
             'customerAddresses' => $customerAddresses,
-            'finishGoodItems' => $finishGoodItems,
+            'combinedItems' => $combinedItems,
             'lastId' => $lastId
         ]);
     }
@@ -47,7 +70,8 @@ class SalesOrderController extends Controller
     {
         $validated = $request->validate([
             'id_customer_address' => 'required|exists:customer_addresses,id',
-            'id_finish_good_item' => 'required|exists:finish_good_items,id',
+            'id_finish_good_item' => 'nullable|exists:finish_good_items,id',
+            'id_master_item' => 'nullable|exists:master_items,id',
             'no_bon_pesanan' => 'required|string',
             'no_po_customer' => 'required|string',
             'jumlah_pesanan' => 'required|string',
@@ -64,7 +88,17 @@ class SalesOrderController extends Controller
             'catatan' => 'nullable|string',
         ]);
 
-       $salesOrder = SalesOrder::create($validated);
+        // Custom validation: pastikan salah satu terisi
+        if (empty($validated['id_finish_good_item']) && empty($validated['id_master_item'])) {
+            return back()->withErrors(['id_finish_good_item' => 'Pilih salah satu: Finish Good Item atau Master Item']);
+        }
+
+        // Jika keduanya terisi, return error
+        if (!empty($validated['id_finish_good_item']) && !empty($validated['id_master_item'])) {
+            return back()->withErrors(['id_finish_good_item' => 'Pilih hanya satu: Finish Good Item atau Master Item']);
+        }
+
+        $salesOrder = SalesOrder::create($validated);
 
         if (empty($salesOrder->no_bon_pesanan)) {
             $yearMonth = now()->format('ym'); // Format: yymm
@@ -111,7 +145,8 @@ class SalesOrderController extends Controller
 
         $validated = $request->validate([
             'id_customer_address' => 'required|exists:customer_addresses,id',
-            'id_finish_good_item' => 'required|exists:finish_good_items,id',
+            'id_finish_good_item' => 'nullable|exists:finish_good_items,id',
+            'id_master_item' => 'nullable|exists:master_items,id',
             'no_bon_pesanan' => 'required|string',
             'no_po_customer' => 'required|string',
             'jumlah_pesanan' => 'required|string',
@@ -127,6 +162,16 @@ class SalesOrderController extends Controller
             'catatan_colour_range' => 'nullable|string',
             'catatan' => 'nullable|string',
         ]);
+
+        // Custom validation: pastikan salah satu terisi
+        if (empty($validated['id_finish_good_item']) && empty($validated['id_master_item'])) {
+            return back()->withErrors(['id_finish_good_item' => 'Pilih salah satu: Finish Good Item atau Master Item']);
+        }
+
+        // Jika keduanya terisi, return error
+        if (!empty($validated['id_finish_good_item']) && !empty($validated['id_master_item'])) {
+            return back()->withErrors(['id_finish_good_item' => 'Pilih hanya satu: Finish Good Item atau Master Item']);
+        }
 
         $salesOrder->update($validated);
         return redirect()->route('salesOrders.index')->with('success', 'Sales Order updated successfully!');

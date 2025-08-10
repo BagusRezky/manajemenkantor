@@ -17,7 +17,7 @@ class KartuInstruksiKerjaController extends Controller
     public function index()
     {
         $kartuInstruksiKerja = KartuInstruksiKerja::with(['salesOrder.finishGoodItem', 'salesOrder.customerAddress', 'kartuInstruksiKerjaBoms', 'kartuInstruksiKerjaBoms.billOfMaterials', 'packagings', 'blokirs', 'suratJalans',
-        'suratJalans'])->get();
+        'suratJalans', 'salesOrder.masterItem'])->get();
 
         return Inertia::render('kartuInstruksiKerja/kartuInstruksiKerja', [
             'kartuInstruksiKerja' => $kartuInstruksiKerja
@@ -62,10 +62,10 @@ class KartuInstruksiKerjaController extends Controller
             'no_kartu_instruksi_kerja' => 'required|string|unique:kartu_instruksi_kerjas',
             'production_plan' => 'required|string',
             'tgl_estimasi_selesai' => 'required|date',
-            'bill_of_materials' => 'required|array',
-            'bill_of_materials.*.id' => 'required|exists:bill_of_materials,id',
-            'bill_of_materials.*.waste' => 'required',
-            'bill_of_materials.*.total_kebutuhan' => 'required|numeric',
+            'bill_of_materials' => 'nullable|array',
+            'bill_of_materials.*.id' => 'nullable|exists:bill_of_materials,id',
+            'bill_of_materials.*.waste' => 'nullable',
+            'bill_of_materials.*.total_kebutuhan' => 'nullable|numeric',
             'bill_of_materials.*.jumlah_sheet_cetak' => 'nullable|integer',
             'bill_of_materials.*.jumlah_total_sheet_cetak' => 'nullable|integer',
             'bill_of_materials.*.jumlah_produksi' => 'nullable|integer',

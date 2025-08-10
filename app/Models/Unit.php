@@ -38,4 +38,9 @@ class Unit extends Model
     {
         return $this->hasMany(PurchaseOrderItem::class, 'id_satuan_po');
     }
+
+    public function subcountOutItems()
+    {
+        return $this->hasMany(SubcountOutItem::class, 'id_unit');
+    }
 }

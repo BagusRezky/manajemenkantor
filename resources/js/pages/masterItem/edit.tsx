@@ -45,6 +45,7 @@ export default function Edit({ masterItem, units, categoryItems, typeItems: init
         nama_master_item: masterItem.nama_master_item || '',
         min_stock: masterItem.min_stock || '',
         min_order: masterItem.min_order || '',
+        tipe_penjualan: masterItem.tipe_penjualan || '', // Added field for sales type
     });
 
     const [typeItems, setTypeItems] = useState<TypeItem[]>(initialTypeItems || []);
@@ -202,6 +203,25 @@ export default function Edit({ masterItem, units, categoryItems, typeItems: init
                                             </Select>
                                             {errors.id_type_item && <p className="text-sm text-red-500">{errors.id_type_item}</p>}
                                         </div>
+
+                                        { showDimensions && (
+                                            <div className="space-y-2">
+                                                <Label htmlFor="tipe_penjualan">Tipe Penjualan</Label>
+                                                <Select
+                                                    value={data.tipe_penjualan}
+                                                    onValueChange={(value) => setData('tipe_penjualan', value)}
+                                                >
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Pilih Tipe Penjualan" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="For Sale">For Sale</SelectItem>
+                                                        <SelectItem value="Not For Sale">Not For Sale</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                {errors.tipe_penjualan && <p className="text-sm text-red-500">{errors.tipe_penjualan}</p>}
+                                            </div>
+                                        )}
                                     </div>
 
                                     {showDimensions && (

@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { CategoryItem } from '@/types/categoryItem';
@@ -42,6 +43,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
         nama_master_item: '',
         min_stock: '',
         min_order: '',
+        tipe_penjualan: '',
     });
 
     const [typeItems, setTypeItems] = useState<TypeItem[]>([]);
@@ -135,7 +137,7 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                             />
                                             {errors.min_order && <p className="text-sm text-red-500">{errors.min_order}</p>}
                                         </div>
-                                        
+
                                         <div className="space-y-2">
                                             <Label htmlFor="satuan_satu_id">Satuan</Label>
                                             <SearchableSelect
@@ -183,6 +185,22 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                             />
                                             {errors.id_type_item && <p className="text-sm text-red-500">{errors.id_type_item}</p>}
                                         </div>
+
+                                        {showDimensions && (
+                                            <div className="space-y-2">
+                                                <Label htmlFor="tipe_penjualan">Tipe Penjualan</Label>
+                                                <Select value={data.tipe_penjualan} onValueChange={(value) => setData('tipe_penjualan', value)}>
+                                                    <SelectTrigger className={errors.tipe_penjualan ? 'border-red-500' : ''}>
+                                                        <SelectValue placeholder="Pilih Tipe Penjualan" />
+                                                    </SelectTrigger>
+                                                    <SelectContent>
+                                                        <SelectItem value="For Sale">For Sale</SelectItem>
+                                                        <SelectItem value="Not For Sale">Not For Sale</SelectItem>
+                                                    </SelectContent>
+                                                </Select>
+                                                {errors.tipe_penjualan && <p className="text-sm text-red-500">{errors.tipe_penjualan}</p>}
+                                            </div>
+                                        )}
                                     </div>
 
                                     {showDimensions && (

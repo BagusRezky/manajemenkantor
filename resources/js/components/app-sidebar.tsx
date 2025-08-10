@@ -4,9 +4,10 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BaggageClaim, BoxIcon, CandlestickChartIcon, ClipboardList, ContainerIcon, CuboidIcon, LayoutGrid, Mailbox, MailsIcon, PanelTopOpen, Paperclip, Printer, ScrollIcon, StickyNote, StretchHorizontalIcon, Users, Users2Icon, WarehouseIcon } from 'lucide-react';
+import { BaggageClaim, BoxIcon, CandlestickChartIcon, ClipboardList, ContainerIcon, CuboidIcon, ExternalLinkIcon, FolderInputIcon, LayoutGrid, Mailbox, MailsIcon, PanelTopOpen, Paperclip, Printer, ScrollIcon, StickyNote, StretchHorizontalIcon, Users, Users2Icon, WarehouseIcon } from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavDropdown, NavItemWithChildren } from './nav-dropdown';
+
 
 const mainNavItems: NavItem[] = [
     {
@@ -89,6 +90,23 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             },
         ],
     },
+     {
+        title: 'SUBCOUNT',
+        icon: ExternalLinkIcon,
+        children: [
+            {
+                title: 'Subcount Out',
+                icon: ExternalLinkIcon,
+                href: '/subcountOuts',
+            },
+            {
+                title: 'Subcount In',
+                icon: FolderInputIcon,
+                href: '/subcountIns',
+            },
+        ],
+    },
+
     {
         title: 'PPIC',
         icon: Mailbox,

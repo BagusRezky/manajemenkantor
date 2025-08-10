@@ -341,7 +341,7 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
     {
         accessorKey: 'sales_order.finish_good_item.nama_barang',
         header: 'Nama Produk',
-        cell: ({ row }) => row.original.sales_order?.finish_good_item?.nama_barang || '-',
+        cell: ({ row }) => row.original.sales_order?.finish_good_item?.nama_barang || row.original.sales_order?.master_item?.nama_master_item || '-',
     },
     {
         id: 'actions',

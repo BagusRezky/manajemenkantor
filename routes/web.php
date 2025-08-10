@@ -32,6 +32,8 @@ use App\Http\Controllers\ImrDiemakingController;
 use App\Http\Controllers\ImrFinishingController;
 use App\Http\Controllers\BlokirController;
 use App\Http\Controllers\InvoiceController;
+use App\Http\Controllers\SubcountOutController;
+use App\Http\Controllers\SubcountInController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -288,6 +290,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy');
     Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show');
     Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'generatePdf'])->name('invoices.pdf');
+
+    Route::get('/subcountOuts', [SubcountOutController::class, 'index'])->name('subcountOuts.index');
+    Route::get('/subcountOuts/create', [SubcountOutController::class, 'create'])->name('subcountOuts.create');
+    Route::post('/subcountOuts', [SubcountOutController::class, 'store'])->name('subcountOuts.store');
+    Route::get('/subcountOuts/{subcountOut}/edit', [SubcountOutController::class, 'edit'])->name('subcountOuts.edit');
+    Route::put('/subcountOuts/{subcountOut}', [SubcountOutController::class, 'update'])->name('subcountOuts.update');
+    Route::delete('/subcountOuts/{subcountOut}', [SubcountOutController::class, 'destroy'])->name('subcountOuts.destroy');
+    Route::get('/subcountOuts/{subcountOut}', [SubcountOutController::class, 'show'])->name('subcountOuts.show');
+    Route::get('/subcountOuts/{subcountOut}/pdf', [SubcountOutController::class, 'generatePdf'])->name('subcountOuts.pdf');
+
+    Route::get('/subcountIns', [SubcountInController::class, 'index'])->name('subcountIns.index');
+    Route::get('/subcountIns/create', [SubcountInController::class, 'create'])->name('subcountIns.create');
+    Route::post('/subcountIns', [SubcountInController::class, 'store'])->name('subcountIns.store');
+    Route::get('/subcountIns/{subcountIn}/edit', [SubcountInController::class, 'edit'])->name('subcountIns.edit');
+    Route::put('/subcountIns/{subcountIn}', [SubcountInController::class, 'update'])->name('subcountIns.update');
+    Route::delete('/subcountIns/{subcountIn}', [SubcountInController::class, 'destroy'])->name('subcountIns.destroy');
+    Route::get('/subcountIns/{subcountIn}', [SubcountInController::class, 'show'])->name('subcountIns.show');
+    Route::get('/subcountIns/{subcountIn}/pdf', [SubcountInController::class, 'generatePdf'])->name('subcountIns.pdf');
 });
 
 

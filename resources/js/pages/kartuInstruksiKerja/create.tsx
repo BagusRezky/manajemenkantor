@@ -229,12 +229,12 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (isDraft && bomItems.length > 0) {
+        if (isDraft && bomItems.length == 0) {
             // Sederhanakan struktur BOM
             const simpleBomItems = bomItems.map((item) => ({
                 id: item.id,
-                waste: item.waste,
-                total_kebutuhan: item.total_kebutuhan,
+                waste: item.waste || null,
+                total_kebutuhan: item.total_kebutuhan || null,
                 jumlah_sheet_cetak: item.jumlah_sheet_cetak || null,
                 jumlah_total_sheet_cetak: item.jumlah_total_sheet_cetak || null,
                 jumlah_produksi: item.jumlah_produksi || null,
@@ -322,36 +322,36 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                                                 {/* Up Satu */}
                                                 <div className="space-y-2">
                                                     <Label htmlFor="up_satu">Up Satu</Label>
-                                                    <Input value={selectedSalesOrder.finish_good_item.up_satu} readOnly />
+                                                    <Input value={selectedSalesOrder.finish_good_item?.up_satu || '-'} readOnly />
                                                 </div>
 
                                                 {/* Up Dua */}
                                                 <div className="space-y-2">
                                                     <Label htmlFor="up_dua">Up Dua</Label>
-                                                    <Input value={selectedSalesOrder.finish_good_item.up_dua} readOnly />
+                                                    <Input value={selectedSalesOrder.finish_good_item?.up_dua || '-'} readOnly />
                                                 </div>
 
                                                 {/* Up Tiga */}
                                                 <div className="space-y-2">
                                                     <Label htmlFor="up_tiga">Up Tiga</Label>
-                                                    <Input value={selectedSalesOrder.finish_good_item.up_tiga} readOnly />
+                                                    <Input value={selectedSalesOrder.finish_good_item?.up_tiga || '-'} readOnly />
                                                 </div>
 
                                                 {/* Ukuran Potong */}
                                                 <div className="space-y-2">
                                                     <Label htmlFor="ukuran_potong">Ukuran Potong</Label>
-                                                    <Input value={selectedSalesOrder.finish_good_item.ukuran_potong} readOnly />
+                                                    <Input value={selectedSalesOrder.finish_good_item?.ukuran_potong || '-'} readOnly />
                                                 </div>
 
                                                 {/* Ukuran Cetak */}
                                                 <div className="space-y-2">
                                                     <Label htmlFor="ukuran_cetak">Ukuran Cetak</Label>
-                                                    <Input value={selectedSalesOrder.finish_good_item.ukuran_cetak} readOnly />
+                                                    <Input value={selectedSalesOrder.finish_good_item?.ukuran_cetak || '-'} readOnly />
                                                 </div>
 
                                                 <div className="space-y-2">
                                                     <Label htmlFor="spesifikasi_kertas">Spesifikasi Kertas</Label>
-                                                    <Input value={selectedSalesOrder.finish_good_item.spesifikasi_kertas} readOnly />
+                                                    <Input value={selectedSalesOrder.finish_good_item?.spesifikasi_kertas || '-'} readOnly />
                                                 </div>
                                             </div>
                                             <div className="mt-4">
@@ -390,13 +390,13 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                                                         <div className="flex flex-col sm:flex-row sm:items-start">
                                                             <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">Nama Barang:</dt>
                                                             <dd className="mt-1 text-gray-900 sm:mt-0 sm:ml-4">
-                                                                {selectedSalesOrder.finish_good_item.nama_barang}
+                                                                {selectedSalesOrder.finish_good_item?.nama_barang || '-'}
                                                             </dd>
                                                         </div>
                                                         <div className="flex flex-col sm:flex-row sm:items-start">
                                                             <dt className="font-medium text-gray-700 sm:w-1/2 sm:flex-shrink-0">Deskripsi:</dt>
                                                             <dd className="mt-1 text-gray-900 sm:mt-0 sm:ml-4">
-                                                                {selectedSalesOrder.finish_good_item.deskripsi}
+                                                                {selectedSalesOrder.finish_good_item?.deskripsi || '-'}
                                                             </dd>
                                                         </div>
                                                     </dl>

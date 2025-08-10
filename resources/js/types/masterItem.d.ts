@@ -17,6 +17,7 @@ export interface MasterItem {
     nama_master_item: string;
     min_stock: string;
     min_order: string;
+    tipe_penjualan?: string | null; // Added field for sales type
     unit?: Unit;
     category_item?: CategoryItem;
     type_item?: TypeItem;

@@ -23,6 +23,7 @@ class MasterItem extends Model
         'nama_master_item',
         'min_stock',
         'min_order',
+        'tipe_penjualan',
     ];
     public function typeItem()
     {
@@ -47,5 +48,9 @@ class MasterItem extends Model
     public function purchaseOrderItem()
     {
         return $this->hasMany(PurchaseOrderItem::class, 'id_master_item');
+    }
+    public function salesOrder()
+    {
+        return $this->hasMany(SalesOrder::class, 'id_master_item');
     }
 }

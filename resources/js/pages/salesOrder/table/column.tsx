@@ -198,7 +198,7 @@ export const columns = (setSelectedItem: (item: SalesOrder | null) => void, open
     {
         accessorKey: 'id_finish_good_item.nama_barang',
         header: 'Nama Produk',
-        cell: ({ row }) => row.original.finish_good_item?.nama_barang || '-',
+        cell: ({ row }) => row.original.finish_good_item?.nama_barang || row.original.master_item?.nama_master_item || '-',
     },
     {
         id: 'actions',

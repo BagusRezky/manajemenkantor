@@ -18,9 +18,9 @@ export interface FinishGoodItem {
     nama_barang: string;
     deskripsi: string;
     spesifikasi_kertas: string;
-    up_satu: string;
-    up_dua: string;
-    up_tiga: string;
+    up_satu: string | null;
+    up_dua: string | null;
+    up_tiga: string | null;
     ukuran_potong: string;
     ukuran_cetak: string;
     panjang: string;

@@ -65,6 +65,7 @@ class MasterItemController extends Controller
             'nama_master_item' => 'required|string',
             'min_stock' => 'required',
             'min_order' => 'required',
+            'tipe_penjualan' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -78,6 +79,7 @@ class MasterItemController extends Controller
         // If the category is not production or finish good item, set the dimension fields to null
         if (!in_array($categoryName, ['material production'])) {
             $request->merge([
+                'tipe_penjualan' => null,
                 'qty' => null,
                 'panjang' => null,
                 'lebar' => null,
@@ -140,6 +142,7 @@ class MasterItemController extends Controller
             'nama_master_item' => 'required|string',
             'min_stock' => 'required',
             'min_order' => 'required',
+            'tipe_penjualan' => 'nullable|string',
         ]);
 
         if ($validator->fails()) {
@@ -153,6 +156,7 @@ class MasterItemController extends Controller
         // If the category is not production or finish good item, set the dimension fields to null
         if (!in_array($categoryName, ['material production'])) {
             $request->merge([
+                'tipe_penjualan' => null,
                 'qty' => null,
                 'panjang' => null,
                 'lebar' => null,

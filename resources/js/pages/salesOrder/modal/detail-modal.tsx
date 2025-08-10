@@ -30,8 +30,8 @@ export const DetailModal = ({ isOpen, onClose, item }: DetailModalProps) => {
                         <span>{item.no_po_customer}</span>
                     </div>
                     <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">Master Barang</span>
-                        <span>{item.finish_good_item?.nama_barang || item.finish_good_item?.kode_material_produk}</span>
+                        <span className="text-sm font-medium text-gray-500">Produk</span>
+                        <span>{item.finish_good_item?.nama_barang || item.master_item?.nama_master_item || '-'}</span>
                     </div>
                     <div className="flex flex-col">
                         <span className="text-sm font-medium text-gray-500">Jumlah Pesanan</span>
@@ -91,6 +91,11 @@ export const DetailModal = ({ isOpen, onClose, item }: DetailModalProps) => {
                     <div className="flex flex-col">
                         <span className="text-sm font-medium text-gray-500">Catatan</span>
                         <span>{item.catatan}</span>
+                    </div>
+
+                    <div className="flex flex-col">
+                        <span className="text-sm font-medium text-gray-500">Tipe Penjualan</span>
+                        <span>{item.master_item?.tipe_penjualan || '-'}</span>
                     </div>
                 </div>
             </DialogContent>
