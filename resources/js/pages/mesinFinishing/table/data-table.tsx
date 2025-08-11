@@ -12,11 +12,8 @@ import {
 } from '@tanstack/react-table';
 import React from 'react';
 
-
-import { MesinFormModal } from '../modal/add-modal';
 import { MesinFinishing } from '@/types/mesinFinishing';
-
-
+import { MesinFormModal } from '../modal/add-modal';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];

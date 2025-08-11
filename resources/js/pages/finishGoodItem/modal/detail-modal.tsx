@@ -1,6 +1,5 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { FinishGoodItem } from "@/types/finishGoodItem";
-
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { FinishGoodItem } from '@/types/finishGoodItem';
 
 interface DetailModalProps {
     isOpen: boolean;

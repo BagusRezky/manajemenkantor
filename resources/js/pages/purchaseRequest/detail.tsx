@@ -7,7 +7,6 @@ import { BreadcrumbItem } from '@/types';
 import { PurchaseRequest } from '@/types/purchaseRequest';
 import { Head } from '@inertiajs/react';
 
-
 interface DetailProps {
     purchaseRequest: PurchaseRequest;
 }
@@ -41,10 +40,7 @@ export default function Detail({ purchaseRequest }: DetailProps) {
                             </div>
                             <div>
                                 <p className="font-semibold">Tanggal PR:</p>
-                                <p>
-                                    {new Date(purchaseRequest.tgl_pr).toLocaleDateString() ||
-                                purchaseRequest.tgl_pr || '-'
-                                }</p>
+                                <p>{new Date(purchaseRequest.tgl_pr).toLocaleDateString() || purchaseRequest.tgl_pr || '-'}</p>
                             </div>
                             <div>
                                 <p className="font-semibold">Departemen:</p>
@@ -68,7 +64,6 @@ export default function Detail({ purchaseRequest }: DetailProps) {
                         <CardTitle>Daftar Item</CardTitle>
                     </CardHeader>
                     <CardContent>
-
                         {Array.isArray(purchaseRequest.purchase_request_items) && purchaseRequest.purchase_request_items.length > 0 ? (
                             <Table>
                                 <TableHeader>
@@ -90,10 +85,7 @@ export default function Detail({ purchaseRequest }: DetailProps) {
                                             <TableCell>{prItem.master_item?.nama_master_item || '-'}</TableCell>
                                             <TableCell>{prItem.qty}</TableCell>
                                             <TableCell>{prItem.master_item?.unit?.nama_satuan || '-'}</TableCell>
-                                            <TableCell>
-                                                {prItem.eta ? new Date(prItem.eta).toLocaleDateString() :
-                                            prItem.eta || '-'
-                                                }</TableCell>
+                                            <TableCell>{prItem.eta ? new Date(prItem.eta).toLocaleDateString() : prItem.eta || '-'}</TableCell>
                                             <TableCell>{prItem.catatan || '-'}</TableCell>
                                         </TableRow>
                                     ))}
@@ -117,7 +109,7 @@ export default function Detail({ purchaseRequest }: DetailProps) {
                             <Card key={`ref-${prItem.id || itemIndex}`}>
                                 <CardHeader>
                                     <CardTitle>
-                                        Referensi untuk Item {itemIndex + 1}: {prItem.master_item?.nama_master_item|| '-'}
+                                        Referensi untuk Item {itemIndex + 1}: {prItem.master_item?.nama_master_item || '-'}
                                     </CardTitle>
                                 </CardHeader>
                                 <CardContent>

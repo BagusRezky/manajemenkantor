@@ -1,8 +1,8 @@
-import { MasterItem } from "./masterItem";
-import { MasterKonversi } from "./masterKonversi";
-import { PurchaseRequest, PurchaseRequestItem } from "./purchaseRequest";
-import { Supplier } from "./supplier";
-import { Unit } from "./unit";
+import { MasterItem } from './masterItem';
+import { MasterKonversi } from './masterKonversi';
+import { PurchaseRequest, PurchaseRequestItem } from './purchaseRequest';
+import { Supplier } from './supplier';
+import { Unit } from './unit';
 
 export interface PurchaseOrderItem {
     id: string;

@@ -1,11 +1,11 @@
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
+import { CategoryItem } from '@/types/categoryItem';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import EditCategoryItemModal from './modal/edit-modal';
 import { columns } from './table/columns';
 import { DataTable } from './table/data-table';
-import { CategoryItem } from '@/types/categoryItem';
-import EditCategoryItemModal from './modal/edit-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

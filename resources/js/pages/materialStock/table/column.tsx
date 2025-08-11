@@ -8,7 +8,6 @@ export const columns = (): ColumnDef<MaterialStock>[] => [
             const data = row.original;
             return (
                 <div className="flex items-center space-x-2">
-
                     <span className="font-mono text-sm">{data.kode_master_item}</span>
                 </div>
             );

@@ -7,7 +7,6 @@ import { useForm } from '@inertiajs/react';
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
 
-
 interface EditMesinModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -66,21 +65,12 @@ const EditMesinModal: React.FC<EditMesinModalProps> = ({ isOpen, onClose, mesin 
                     <DialogTitle>Edit Mesin</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-2">
-
-
                     {errors.nama_mesin && <div className="text-sm text-red-500">{errors.nama_mesin}</div>}
                     <Input type="text" name="nama_mesin" value={data.nama_mesin} onChange={handleChange} placeholder="Nama Mesin" required />
                     {errors.jenis_mesin && <div className="text-sm text-red-500">{errors.jenis_mesin}</div>}
                     <Input type="text" name="jenis_mesin" value={data.jenis_mesin} onChange={handleChange} placeholder="Jenis Mesin" required />
                     {errors.kapasitas && <div className="text-sm text-red-500">{errors.kapasitas}</div>}
-                    <Input
-                        type="number"
-                        name="kapasitas"
-                        value={data.kapasitas}
-                        onChange={handleChange}
-                        placeholder="Kapasitas"
-                        required
-                    />
+                    <Input type="number" name="kapasitas" value={data.kapasitas} onChange={handleChange} placeholder="Kapasitas" required />
                     {errors.proses && <div className="text-sm text-red-500">{errors.proses}</div>}
                     <Input type="text" name="proses" value={data.proses} onChange={handleChange} placeholder="Proses" required />
                     {errors.status && <div className="text-sm text-red-500">{errors.status}</div>}

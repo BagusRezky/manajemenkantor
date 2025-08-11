@@ -15,7 +15,6 @@ import React from 'react';
 import { Mesin } from '@/types/mesin';
 import { MesinFormModal } from '../modal/add-modal';
 
-
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];

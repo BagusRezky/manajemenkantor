@@ -9,7 +9,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { Download, Edit, Eye, FileText, MoreHorizontal, Tag } from 'lucide-react';
+import { Download, FileText, MoreHorizontal, Tag } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Function untuk generate label PDF

@@ -119,7 +119,7 @@ const EditMasterKonversiModal: React.FC<EditMasterKonversiModalProps> = ({ isOpe
                             </SelectTrigger>
                             <SelectContent>
                                 {units.map((unit) => (
-                                    <SelectItem key={unit.id} value={String(unit.id)} >
+                                    <SelectItem key={unit.id} value={String(unit.id)}>
                                         {unit.nama_satuan}
                                     </SelectItem>
                                 ))}
@@ -130,13 +130,7 @@ const EditMasterKonversiModal: React.FC<EditMasterKonversiModalProps> = ({ isOpe
 
                     <div className="space-y-2">
                         <Label htmlFor="jumlah_satuan_konversi">Jumlah Satuan Konversi</Label>
-                        <Input
-                            type="text"
-                            name="jumlah_satuan_konversi"
-                            value={data.jumlah_satuan_konversi}
-                            onChange={handleChange}
-                            required
-                        />
+                        <Input type="text" name="jumlah_satuan_konversi" value={data.jumlah_satuan_konversi} onChange={handleChange} required />
                         {errors.jumlah_satuan_konversi && <div className="text-sm text-red-500">{errors.jumlah_satuan_konversi}</div>}
                     </div>
                     <DialogFooter>

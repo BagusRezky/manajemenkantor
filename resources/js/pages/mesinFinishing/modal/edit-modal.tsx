@@ -6,7 +6,6 @@ import { useForm } from '@inertiajs/react';
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
 
-
 interface EditMesinModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -65,12 +64,24 @@ const EditMesinFinishingModal: React.FC<EditMesinModalProps> = ({ isOpen, onClos
                     <DialogTitle> Mesin Diemaking</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-2">
-
-
                     {errors.nama_mesin_finishing && <div className="text-sm text-red-500">{errors.nama_mesin_finishing}</div>}
-                    <Input type="text" name="nama_mesin_finishing" value={data.nama_mesin_finishing} onChange={handleChange} placeholder="Nama Mesin" required />
+                    <Input
+                        type="text"
+                        name="nama_mesin_finishing"
+                        value={data.nama_mesin_finishing}
+                        onChange={handleChange}
+                        placeholder="Nama Mesin"
+                        required
+                    />
                     {errors.jenis_mesin_finishing && <div className="text-sm text-red-500">{errors.jenis_mesin_finishing}</div>}
-                    <Input type="text" name="jenis_mesin_finishing" value={data.jenis_mesin_finishing} onChange={handleChange} placeholder="Jenis Mesin" required />
+                    <Input
+                        type="text"
+                        name="jenis_mesin_finishing"
+                        value={data.jenis_mesin_finishing}
+                        onChange={handleChange}
+                        placeholder="Jenis Mesin"
+                        required
+                    />
                     {errors.kapasitas_finishing && <div className="text-sm text-red-500">{errors.kapasitas_finishing}</div>}
                     <Input
                         type="number"

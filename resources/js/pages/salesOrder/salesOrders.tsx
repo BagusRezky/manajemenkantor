@@ -4,11 +4,9 @@ import { SalesOrder } from '@/types/salesOrder';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
-import { DataTable } from './table/data-table';
-import { columns } from './table/column';
 import { DetailModal } from './modal/detail-modal';
-
-
+import { columns } from './table/column';
+import { DataTable } from './table/data-table';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

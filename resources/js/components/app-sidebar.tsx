@@ -4,10 +4,30 @@ import { NavUser } from '@/components/nav-user';
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarMenu, SidebarMenuButton, SidebarMenuItem } from '@/components/ui/sidebar';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
-import { BaggageClaim, BoxIcon, CandlestickChartIcon, ClipboardList, ContainerIcon, CuboidIcon, ExternalLinkIcon, FolderInputIcon, LayoutGrid, Mailbox, MailsIcon, PanelTopOpen, Paperclip, Printer, ScrollIcon, StickyNote, StretchHorizontalIcon, Users, Users2Icon, WarehouseIcon } from 'lucide-react';
+import {
+    BaggageClaim,
+    BoxIcon,
+    CandlestickChartIcon,
+    ClipboardList,
+    ContainerIcon,
+    CuboidIcon,
+    ExternalLinkIcon,
+    FolderInputIcon,
+    LayoutGrid,
+    Mailbox,
+    MailsIcon,
+    PanelTopOpen,
+    Paperclip,
+    Printer,
+    ScrollIcon,
+    StickyNote,
+    StretchHorizontalIcon,
+    Users,
+    Users2Icon,
+    WarehouseIcon,
+} from 'lucide-react';
 import AppLogo from './app-logo';
 import { NavDropdown, NavItemWithChildren } from './nav-dropdown';
-
 
 const mainNavItems: NavItem[] = [
     {
@@ -88,9 +108,14 @@ export const dropdownNavItems: NavItemWithChildren[] = [
                 icon: ContainerIcon,
                 href: '/returEksternals',
             },
+            {
+                title: 'Internal Return',
+                icon: ContainerIcon,
+                href: '/returInternals',
+            },
         ],
     },
-     {
+    {
         title: 'SUBCOUNT',
         icon: ExternalLinkIcon,
         children: [
@@ -258,7 +283,6 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         ],
     },
 ];
-
 
 export function AppSidebar() {
     return (

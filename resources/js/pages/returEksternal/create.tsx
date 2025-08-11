@@ -20,7 +20,6 @@ import { Textarea } from '@headlessui/react';
 import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 
-
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Retur Eksternal', href: '/returEksternals' },
     { title: 'Tambah Retur Eksternal', href: '/returEksternals/create' },
@@ -49,11 +48,11 @@ export default function CreateReturEksternal({ penerimaanBarangs }: Props) {
         tgl_retur_barang: new Date().toISOString().split('T')[0],
         nama_retur: '',
         catatan_retur: '',
-        items: [] as any[]
+        items: [] as any[],
     });
 
     const handlePenerimaanChange = (value: string) => {
-        const penerimaan = penerimaanBarangs.find(p => p.id === value);
+        const penerimaan = penerimaanBarangs.find((p) => p.id === value);
         if (penerimaan) {
             setSelectedPenerimaan(penerimaan);
             setData('id_penerimaan_barang', value);
@@ -66,20 +65,20 @@ export default function CreateReturEksternal({ penerimaanBarangs }: Props) {
         const existingReturn = itemReturns[item.id] || { qty_retur: 0, catatan_retur_item: '' };
         setEditForm({
             qty_retur: existingReturn.qty_retur,
-            catatan_retur_item: existingReturn.catatan_retur_item
+            catatan_retur_item: existingReturn.catatan_retur_item,
         });
         setIsEditModalOpen(true);
     };
 
     const handleSaveEdit = () => {
         if (editingItem && editForm.qty_retur > 0) {
-            setItemReturns(prev => ({
+            setItemReturns((prev) => ({
                 ...prev,
                 [editingItem.id]: {
                     id_penerimaan_barang_item: editingItem.id,
                     qty_retur: editForm.qty_retur,
-                    catatan_retur_item: editForm.catatan_retur_item
-                }
+                    catatan_retur_item: editForm.catatan_retur_item,
+                },
             }));
             setIsEditModalOpen(false);
             setEditingItem(null);
@@ -89,7 +88,7 @@ export default function CreateReturEksternal({ penerimaanBarangs }: Props) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const validItems = Object.values(itemReturns).filter(item => item.qty_retur > 0);
+        const validItems = Object.values(itemReturns).filter((item) => item.qty_retur > 0);
 
         if (validItems.length === 0) {
             toast.error('Pilih minimal satu item untuk diretur');
@@ -116,9 +115,7 @@ export default function CreateReturEksternal({ penerimaanBarangs }: Props) {
     };
 
     const getSatuanName = (item: any) => {
-        return item.purchase_order_item?.master_konversi?.nama_satuan ||
-               item.purchase_order_item?.satuan?.nama_satuan ||
-               'PIECES';
+        return item.purchase_order_item?.master_konversi?.nama_satuan || item.purchase_order_item?.satuan?.nama_satuan || 'PIECES';
     };
 
     return (

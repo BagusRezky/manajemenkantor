@@ -1,6 +1,6 @@
-import { KartuInstruksiKerja } from "./kartuInstruksiKerja";
-import { Supplier } from "./supplier";
-import { Unit } from "./unit";
+import { KartuInstruksiKerja } from './kartuInstruksiKerja';
+import { Supplier } from './supplier';
+import { Unit } from './unit';
 
 export interface SubcountOutItem {
     id: string;

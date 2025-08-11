@@ -4,8 +4,6 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { ImrFinishing } from '@/types/imrFinishing';
 
-
-
 import { Link } from '@inertiajs/react';
 import {
     ColumnDef,

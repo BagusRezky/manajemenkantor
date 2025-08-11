@@ -2,8 +2,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { PurchaseRequest } from '@/types/purchaseRequest';
 import { Head } from '@inertiajs/react';
-import autoTable from 'jspdf-autotable';
 import jsPDF from 'jspdf';
+import autoTable from 'jspdf-autotable';
 import { useEffect, useRef } from 'react';
 
 interface CompanyInfo {

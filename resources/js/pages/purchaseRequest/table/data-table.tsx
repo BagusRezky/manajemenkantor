@@ -1,11 +1,18 @@
-import { TableHeader, TableRow, TableHead, TableBody, TableCell, Table } from "@/components/ui/table";
-import { Input } from "@/components/ui/input";
-import { ColumnDef, ColumnFiltersState, useReactTable, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, flexRender } from "@tanstack/react-table";
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import {
+    ColumnDef,
+    ColumnFiltersState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    useReactTable,
+} from '@tanstack/react-table';
 
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Link } from "@inertiajs/react";
-
+import { Button } from '@/components/ui/button';
+import { Link } from '@inertiajs/react';
+import { useState } from 'react';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];

@@ -1,15 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Invoice } from "@/types/invoice";
-import { router } from "@inertiajs/react";
-import { ColumnDef } from "@tanstack/react-table";
-import { Download, FileText, MoreHorizontal } from "lucide-react";
-import { toast } from "sonner";
-import jsPDF from "jspdf";
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Invoice } from '@/types/invoice';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
+import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { format } from "date-fns";
+import { Download, FileText, MoreHorizontal } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Function untuk generate PDF invoice
 const generateInvoicePdf = (invoice: Invoice, download = false): void => {
@@ -113,10 +113,9 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
     const uangMuka = Number(invoice.uang_muka || 0);
 
     // Hitung subtotal
-     const subtotalSebelumToleransi = hargaSO * qtyPengiriman;
+    const subtotalSebelumToleransi = hargaSO * qtyPengiriman;
 
-     const subtotal = subtotalSebelumToleransi - discount;
-
+    const subtotal = subtotalSebelumToleransi - discount;
 
     // Hitung PPN
     const ppnAmount = (subtotal * ppnRate) / 100;
@@ -142,9 +141,8 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
             qty: qtyPengiriman.toLocaleString('id-ID'),
             harga_satuan: `Rp ${hargaSO.toLocaleString('id-ID')}`,
             jumlah: `Rp ${subtotalSebelumToleransi.toLocaleString('id-ID')}`,
-        }
+        },
     ];
-
 
     if (discount > 0) {
         tableRows.push({

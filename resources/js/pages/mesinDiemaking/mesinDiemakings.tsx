@@ -1,16 +1,13 @@
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
-import { Head } from "@inertiajs/react";
-import { useEffect, useState } from "react";
-import { columns} from "./table/columns";
-import { DataTable } from "./table/data-table";
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import { columns } from './table/columns';
+import { DataTable } from './table/data-table';
 
-import { Toaster } from "sonner";
-import { MesinDiemaking } from "@/types/mesinDiemaking";
-import EditMesinDiemakingModal from "./modal/edit-modal";
-
-
-
+import { MesinDiemaking } from '@/types/mesinDiemaking';
+import { Toaster } from 'sonner';
+import EditMesinDiemakingModal from './modal/edit-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

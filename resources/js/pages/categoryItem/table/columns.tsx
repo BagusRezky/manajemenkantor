@@ -1,13 +1,11 @@
-
-import { Checkbox } from '@/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { CategoryItem } from '@/types/categoryItem';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { router } from '@inertiajs/react';
-import { CategoryItem } from '@/types/categoryItem';
-
 
 const handleDelete = ($categoryItem: string) => {
     // Delete categoryItem with ID `id`

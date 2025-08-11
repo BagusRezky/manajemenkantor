@@ -209,7 +209,7 @@ export default function EditReturEksternal({ penerimaanBarangs, returEksternal }
                                         <Input
                                             value={
                                                 selectedPenerimaan.tgl_terima_barang
-                                                   ? new Date(selectedPenerimaan.tgl_terima_barang).toLocaleDateString('id-ID')
+                                                    ? new Date(selectedPenerimaan.tgl_terima_barang).toLocaleDateString('id-ID')
                                                     : ''
                                             }
                                             disabled
@@ -377,4 +377,3 @@ export default function EditReturEksternal({ penerimaanBarangs, returEksternal }
         </AppLayout>
     );
 }
-

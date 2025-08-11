@@ -1,6 +1,7 @@
 import { DataTablePagination } from '@/components/custom-pagination';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { CustomerAddress } from '@/types/customerAddress';
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -11,11 +12,7 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import React from 'react';
-import {  CustomerAddressFormModal } from '../modal/add-modal';
-import { CustomerAddress } from '@/types/customerAddress';
-
-
-
+import { CustomerAddressFormModal } from '../modal/add-modal';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];

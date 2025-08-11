@@ -1,7 +1,7 @@
-import { CustomerAddress } from "./customerAddress";
-import { FinishGoodItem } from "./finishGoodItem";
-import { KartuInstruksiKerja } from "./kartuInstruksiKerja";
-import { MasterItem } from "./masterItem";
+import { CustomerAddress } from './customerAddress';
+import { FinishGoodItem } from './finishGoodItem';
+import { KartuInstruksiKerja } from './kartuInstruksiKerja';
+import { MasterItem } from './masterItem';
 
 export interface SalesOrder {
     id: string;
@@ -29,7 +29,7 @@ export interface SalesOrder {
 }
 
 interface CombinedItem {
-    id: string; 
+    id: string;
     original_id: string;
     label: string;
     type: 'finish_good' | 'master_item';

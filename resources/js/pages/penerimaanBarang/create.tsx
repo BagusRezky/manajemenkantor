@@ -1,8 +1,8 @@
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
-import { PurchaseOrder } from "@/types/purchaseOrder";
-import { Head } from "@inertiajs/react";
-import { PenerimaanBarangForm } from "./components/penerimaanBarangForm";
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
+import { PurchaseOrder } from '@/types/purchaseOrder';
+import { Head } from '@inertiajs/react';
+import { PenerimaanBarangForm } from './components/penerimaanBarangForm';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

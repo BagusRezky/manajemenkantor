@@ -1,11 +1,11 @@
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 
+import { Invoice } from '@/types/invoice';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { columns } from './table/columns';
 import { DataTable } from './table/data-table';
-import { Invoice } from '@/types/invoice';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

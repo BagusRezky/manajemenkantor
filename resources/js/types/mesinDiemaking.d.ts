@@ -5,4 +5,4 @@ export type MesinDiemaking = {
     kapasitas_diemaking: number;
     proses_diemaking: string;
     status_diemaking: string;
-}
+};

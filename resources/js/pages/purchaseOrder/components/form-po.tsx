@@ -153,7 +153,6 @@ export default function FormPO({ data, setData, errors, purchaseRequests, suppli
                         />
                         {errors.dp && <p className="mt-1 text-sm text-red-500">{errors.dp}</p>}
                     </div>
-
                 </CardContent>
             </Card>
         </div>

@@ -14,7 +14,6 @@ import {
 import React from 'react';
 import { DepartemenFormModal } from '../modal/add-modal';
 
-
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];

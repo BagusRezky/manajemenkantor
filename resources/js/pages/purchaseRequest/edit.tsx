@@ -1,244 +1,232 @@
-
-import { format } from 'date-fns';
-import { BreadcrumbItem } from '@/types';
-import AppLayout from '@/layouts/app-layout';
-import { Head,  useForm } from '@inertiajs/react';
-import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent,  CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import {  PlusCircle, Trash,  } from 'lucide-react';
-import { toast, Toaster } from 'sonner';
-import { SearchableSelect } from '@/components/search-select';
 import { DatePicker } from '@/components/date-picker';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { SearchableSelect } from '@/components/search-select';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
 import { ItemInput, PurchaseRequestEditProps, ReferenceInput } from '@/types/predit';
+import { Head, useForm } from '@inertiajs/react';
+import { format } from 'date-fns';
+import { PlusCircle, Trash } from 'lucide-react';
 import { useState } from 'react';
+import { toast, Toaster } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-      title: 'Purchase Requests',
-      href: '/purchaseRequest',
+        title: 'Purchase Requests',
+        href: '/purchaseRequest',
     },
     {
-      title: 'Edit',
-      href: '/purchaseRequest/edit',
+        title: 'Edit',
+        href: '/purchaseRequest/edit',
     },
-  ];
+];
 
-  export default function Edit({
-    purchaseRequest,
-    departments,
-    masterItems,
-    customerAddresses,
-    kartuInstruksiKerjas
-  }: PurchaseRequestEditProps) {
-
+export default function Edit({ purchaseRequest, departments, masterItems, customerAddresses, kartuInstruksiKerjas }: PurchaseRequestEditProps) {
     // Convert purchase request items to the format expected by the form
-    const formattedItems = purchaseRequest.purchase_request_items.map(item => {
-      const masterItem = masterItems.find(m => m.id === Number(item.id_master_item));
-      return {
-        id: item.id,
-        id_master_item: item.id_master_item.toString(),
-        kode_master_item: masterItem?.kode_item || masterItem?.kode_master_item || '',
-        qty: item.qty.toString(),
-        satuan: masterItem?.unit?.nama_satuan || '',
-        eta: format(new Date(item.eta), 'yyyy-MM-dd'),
-        catatan: item.catatan || '',
-        references: (item.item_references || []).map(ref => ({
-          id: ref.id,
-          type: ref.type as 'department' | 'customer',
-          qty: ref.qty.toString(),
-          id_department: ref.id_department?.toString() || '',
-          id_customer: ref.id_customer_address?.toString() || '',
-          id_customer_address: ref.id_customer_address?.toString() || '',
-          id_kartu_instruksi_kerja: ref.id_kartu_instruksi_kerja?.toString() || '',
-        }))
-      };
+    const formattedItems = purchaseRequest.purchase_request_items.map((item) => {
+        const masterItem = masterItems.find((m) => m.id === Number(item.id_master_item));
+        return {
+            id: item.id,
+            id_master_item: item.id_master_item.toString(),
+            kode_master_item: masterItem?.kode_item || masterItem?.kode_master_item || '',
+            qty: item.qty.toString(),
+            satuan: masterItem?.unit?.nama_satuan || '',
+            eta: format(new Date(item.eta), 'yyyy-MM-dd'),
+            catatan: item.catatan || '',
+            references: (item.item_references || []).map((ref) => ({
+                id: ref.id,
+                type: ref.type as 'department' | 'customer',
+                qty: ref.qty.toString(),
+                id_department: ref.id_department?.toString() || '',
+                id_customer: ref.id_customer_address?.toString() || '',
+                id_customer_address: ref.id_customer_address?.toString() || '',
+                id_kartu_instruksi_kerja: ref.id_kartu_instruksi_kerja?.toString() || '',
+            })),
+        };
     });
 
     const { data, setData, put, errors, processing } = useForm({
-      id_department: purchaseRequest.id_department.toString(),
-      tgl_pr: format(new Date(purchaseRequest.tgl_pr), 'yyyy-MM-dd'),
-      items: formattedItems
+        id_department: purchaseRequest.id_department.toString(),
+        tgl_pr: format(new Date(purchaseRequest.tgl_pr), 'yyyy-MM-dd'),
+        items: formattedItems,
     });
 
     // State for adding new items
     const [itemInput, setItemInput] = useState<ItemInput>({
-      id_master_item: '',
-      qty: '',
-      eta: format(new Date(), 'yyyy-MM-dd'),
-      catatan: '',
-      satuan: '',
-      type_item: '',
-      kode_master_item: ''
-    });
-
-    // State for reference modal
-    const [showReferenceModal, setShowReferenceModal] = useState(false);
-    const [currentItemIndex, setCurrentItemIndex] = useState<number | null>(null);
-    const [referenceInput, setReferenceInput] = useState<ReferenceInput>({
-      type: 'department',
-      id_department: '',
-      id_customer: '',
-      id_kartu_instruksi_kerja: '',
-      qty: ''
-    });
-
-    // Event handlers
-    const handleDepartmentChange = (value: string) => {
-      setData('id_department', value);
-    };
-
-
-    const handleMasterItemChange = (value: string) => {
-      const masterItem = masterItems.find(item => item.id.toString() === value);
-      if (masterItem) {
-        setItemInput({
-          ...itemInput,
-          id_master_item: value,
-          kode_master_item: masterItem.kode_item || masterItem.kode_master_item || '',
-          satuan: masterItem.unit?.nama_satuan || '',
-          type_item: masterItem.type_item?.nama_type_item || masterItem.typeItem?.nama_type_item || ''
-        });
-      }
-    };
-
-    const handleItemInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setItemInput({
-        ...itemInput,
-        [e.target.name]: e.target.value
-      });
-    };
-
-    const addItem = () => {
-      if (!itemInput.id_master_item || !itemInput.qty || !itemInput.eta) {
-        toast.error('Mohon lengkapi item dengan benar');
-        return;
-      }
-
-      const masterItem = masterItems.find(item => item.id.toString() === itemInput.id_master_item);
-
-      setData('items', [
-        ...data.items,
-        {
-          id: undefined, // Add undefined id for new items
-          id_master_item: itemInput.id_master_item,
-          kode_master_item: masterItem?.kode_item || masterItem?.kode_master_item || '',
-          qty: itemInput.qty,
-          satuan: itemInput.satuan,
-          eta: itemInput.eta,
-          catatan: itemInput.catatan,
-          references: []
-        }
-      ]);
-
-      // Reset item input
-      setItemInput({
         id_master_item: '',
         qty: '',
         eta: format(new Date(), 'yyyy-MM-dd'),
         catatan: '',
         satuan: '',
         type_item: '',
-        kode_master_item: ''
-      });
-    };
+        kode_master_item: '',
+    });
 
-    const removeItem = (index: number) => {
-      const updatedItems = [...data.items];
-      updatedItems.splice(index, 1);
-      setData('items', updatedItems);
-    };
-
-    const openReferenceModal = (index: number, e: React.MouseEvent) => {
-      e.preventDefault();
-      setCurrentItemIndex(index);
-      setReferenceInput({
+    // State for reference modal
+    const [showReferenceModal, setShowReferenceModal] = useState(false);
+    const [currentItemIndex, setCurrentItemIndex] = useState<number | null>(null);
+    const [referenceInput, setReferenceInput] = useState<ReferenceInput>({
         type: 'department',
         id_department: '',
         id_customer: '',
         id_kartu_instruksi_kerja: '',
-        qty: ''
-      });
-      setShowReferenceModal(true);
+        qty: '',
+    });
+
+    // Event handlers
+    const handleDepartmentChange = (value: string) => {
+        setData('id_department', value);
+    };
+
+    const handleMasterItemChange = (value: string) => {
+        const masterItem = masterItems.find((item) => item.id.toString() === value);
+        if (masterItem) {
+            setItemInput({
+                ...itemInput,
+                id_master_item: value,
+                kode_master_item: masterItem.kode_item || masterItem.kode_master_item || '',
+                satuan: masterItem.unit?.nama_satuan || '',
+                type_item: masterItem.type_item?.nama_type_item || masterItem.typeItem?.nama_type_item || '',
+            });
+        }
+    };
+
+    const handleItemInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setItemInput({
+            ...itemInput,
+            [e.target.name]: e.target.value,
+        });
+    };
+
+    const addItem = () => {
+        if (!itemInput.id_master_item || !itemInput.qty || !itemInput.eta) {
+            toast.error('Mohon lengkapi item dengan benar');
+            return;
+        }
+
+        const masterItem = masterItems.find((item) => item.id.toString() === itemInput.id_master_item);
+
+        setData('items', [
+            ...data.items,
+            {
+                id: undefined, // Add undefined id for new items
+                id_master_item: itemInput.id_master_item,
+                kode_master_item: masterItem?.kode_item || masterItem?.kode_master_item || '',
+                qty: itemInput.qty,
+                satuan: itemInput.satuan,
+                eta: itemInput.eta,
+                catatan: itemInput.catatan,
+                references: [],
+            },
+        ]);
+
+        // Reset item input
+        setItemInput({
+            id_master_item: '',
+            qty: '',
+            eta: format(new Date(), 'yyyy-MM-dd'),
+            catatan: '',
+            satuan: '',
+            type_item: '',
+            kode_master_item: '',
+        });
+    };
+
+    const removeItem = (index: number) => {
+        const updatedItems = [...data.items];
+        updatedItems.splice(index, 1);
+        setData('items', updatedItems);
+    };
+
+    const openReferenceModal = (index: number, e: React.MouseEvent) => {
+        e.preventDefault();
+        setCurrentItemIndex(index);
+        setReferenceInput({
+            type: 'department',
+            id_department: '',
+            id_customer: '',
+            id_kartu_instruksi_kerja: '',
+            qty: '',
+        });
+        setShowReferenceModal(true);
     };
 
     const handleReferenceTypeChange = (value: 'department' | 'customer') => {
-      setReferenceInput({
-        ...referenceInput,
-        type: value
-      });
+        setReferenceInput({
+            ...referenceInput,
+            type: value,
+        });
     };
 
     const handleReferenceInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-      setReferenceInput({
-        ...referenceInput,
-        [e.target.name]: e.target.value
-      });
+        setReferenceInput({
+            ...referenceInput,
+            [e.target.name]: e.target.value,
+        });
     };
 
     const addReference = () => {
-      if (currentItemIndex === null) return;
+        if (currentItemIndex === null) return;
 
-      if (referenceInput.type === 'department' && !referenceInput.id_department) {
-        toast.error('Mohon pilih departemen');
-        return;
-      }
+        if (referenceInput.type === 'department' && !referenceInput.id_department) {
+            toast.error('Mohon pilih departemen');
+            return;
+        }
 
-      if (
-        referenceInput.type === 'customer' &&
-        (!referenceInput.id_customer || !referenceInput.id_kartu_instruksi_kerja)
-      ) {
-        toast.error('Mohon pilih customer dan SPK');
-        return;
-      }
+        if (referenceInput.type === 'customer' && (!referenceInput.id_customer || !referenceInput.id_kartu_instruksi_kerja)) {
+            toast.error('Mohon pilih customer dan SPK');
+            return;
+        }
 
-      if (!referenceInput.qty) {
-        toast.error('Mohon isi qty');
-        return;
-      }
+        if (!referenceInput.qty) {
+            toast.error('Mohon isi qty');
+            return;
+        }
 
-      const updatedItems = [...data.items];
-      updatedItems[currentItemIndex].references.push({
-        id: undefined, // Add undefined id for new references
-        type: referenceInput.type,
-        id_department: referenceInput.type === 'department' ? referenceInput.id_department : '',
-        id_customer: referenceInput.type === 'customer' ? referenceInput.id_customer : '',
-        id_customer_address: referenceInput.type === 'customer' ? referenceInput.id_customer : '',
-        id_kartu_instruksi_kerja: referenceInput.type === 'customer' ? referenceInput.id_kartu_instruksi_kerja : '',
-        qty: referenceInput.qty
-      });
+        const updatedItems = [...data.items];
+        updatedItems[currentItemIndex].references.push({
+            id: undefined, // Add undefined id for new references
+            type: referenceInput.type,
+            id_department: referenceInput.type === 'department' ? referenceInput.id_department : '',
+            id_customer: referenceInput.type === 'customer' ? referenceInput.id_customer : '',
+            id_customer_address: referenceInput.type === 'customer' ? referenceInput.id_customer : '',
+            id_kartu_instruksi_kerja: referenceInput.type === 'customer' ? referenceInput.id_kartu_instruksi_kerja : '',
+            qty: referenceInput.qty,
+        });
 
-      setData('items', updatedItems);
-      setShowReferenceModal(false);
+        setData('items', updatedItems);
+        setShowReferenceModal(false);
     };
 
     const removeReference = (itemIndex: number, refIndex: number) => {
-      const updatedItems = [...data.items];
-      updatedItems[itemIndex].references.splice(refIndex, 1);
-      setData('items', updatedItems);
+        const updatedItems = [...data.items];
+        updatedItems[itemIndex].references.splice(refIndex, 1);
+        setData('items', updatedItems);
     };
 
     const handleSubmit = (e: React.FormEvent) => {
-      e.preventDefault();
+        e.preventDefault();
 
-      if (data.items.length === 0) {
-        toast.error('Mohon tambahkan minimal satu item');
-        return;
-      }
-
-      put(route('purchaseRequest.update', purchaseRequest.id), {
-        onSuccess: () => {
-          toast.success('Purchase Request berhasil diupdate');
-        },
-        onError: () => {
-          toast.error('Terjadi kesalahan saat mengupdate Purchase Request');
+        if (data.items.length === 0) {
+            toast.error('Mohon tambahkan minimal satu item');
+            return;
         }
-      });
+
+        put(route('purchaseRequest.update', purchaseRequest.id), {
+            onSuccess: () => {
+                toast.success('Purchase Request berhasil diupdate');
+            },
+            onError: () => {
+                toast.error('Terjadi kesalahan saat mengupdate Purchase Request');
+            },
+        });
     };
 
     return (
@@ -597,4 +585,4 @@ const breadcrumbs: BreadcrumbItem[] = [
             </div>
         </AppLayout>
     );
-  }
+}

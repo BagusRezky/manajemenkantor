@@ -1,6 +1,5 @@
-import { Departemen } from "./departemen";
-import { MasterItem } from "./masterItem";
-
+import { Departemen } from './departemen';
+import { MasterItem } from './masterItem';
 
 export interface BillOfMaterial {
     id: string;

@@ -1,4 +1,4 @@
-import { KartuInstruksiKerja } from "./kartuInstruksiKerja";
+import { KartuInstruksiKerja } from './kartuInstruksiKerja';
 
 export interface Packaging {
     id: string;

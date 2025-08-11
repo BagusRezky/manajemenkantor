@@ -1,12 +1,11 @@
-
-import { Checkbox } from '@/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MasterKonversi } from '@/types/masterKonversi';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { router } from '@inertiajs/react';
-import { MasterKonversi } from '@/types/masterKonversi';
 
 const handleDelete = ($masterKonversi: string) => {
     // Delete supplier with ID `id`
@@ -21,7 +20,7 @@ const handleDelete = ($masterKonversi: string) => {
 };
 
 export const columns = (
-    setIsModalOpen:(open:boolean)=>void,
+    setIsModalOpen: (open: boolean) => void,
     setEditModalOpen: (open: boolean) => void,
     setSelectedMasterKonversi: (masterKonversi: MasterKonversi | null) => void,
 ): ColumnDef<MasterKonversi>[] => [

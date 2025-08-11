@@ -5,7 +5,6 @@
  * @returns {string} -
  */
 export const formatRupiah = (amount: number | string | null | undefined, withSymbol: boolean = true): string => {
-
     const numAmount = Number(amount) || 0;
 
     // Format angka dengan pemisah ribuan dan 2 angka desimal

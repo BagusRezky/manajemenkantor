@@ -1,13 +1,12 @@
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
-import { useState, useEffect } from "react";
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
+import { useEffect, useState } from 'react';
 
-import { Toaster } from "sonner";
-import { columns } from "./table/column";
-import { DataTable } from "./table/data-table";
-import { Head } from "@inertiajs/react";
-import { PurchaseRequest } from "@/types/purchaseRequest";
-
+import { PurchaseRequest } from '@/types/purchaseRequest';
+import { Head } from '@inertiajs/react';
+import { Toaster } from 'sonner';
+import { columns } from './table/column';
+import { DataTable } from './table/data-table';
 
 interface IndexProps {
     purchaseRequests: PurchaseRequest[];
@@ -26,7 +25,6 @@ export default function Index({ purchaseRequests }: IndexProps) {
     useEffect(() => {
         setData(purchaseRequests);
     }, [purchaseRequests]);
-
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

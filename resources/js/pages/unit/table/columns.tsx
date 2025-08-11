@@ -1,14 +1,11 @@
-
-import { Checkbox } from '@/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Unit } from '@/types/unit';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { router } from '@inertiajs/react';
-import { Unit } from '@/types/unit';
-
-
 
 const handleDelete = ($unit: string) => {
     // Delete supplier with ID `id`
@@ -22,9 +19,11 @@ const handleDelete = ($unit: string) => {
     });
 };
 
-export const columns = (setIsModalOpen:(open:boolean)=>void,
-setEditModalOpen:(open:boolean)=>void,
-setSelectedUnit:(unit: Unit | null) =>void): ColumnDef<Unit>[]=> [
+export const columns = (
+    setIsModalOpen: (open: boolean) => void,
+    setEditModalOpen: (open: boolean) => void,
+    setSelectedUnit: (unit: Unit | null) => void,
+): ColumnDef<Unit>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -65,9 +64,12 @@ setSelectedUnit:(unit: Unit | null) =>void): ColumnDef<Unit>[]=> [
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(unit.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => {  setSelectedUnit(unit); setEditModalOpen(true);
-
-                        }}>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setSelectedUnit(unit);
+                                setEditModalOpen(true);
+                            }}
+                        >
                             Updated
                         </DropdownMenuItem>
                     </DropdownMenuContent>

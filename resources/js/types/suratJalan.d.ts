@@ -1,5 +1,4 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-import { KartuInstruksiKerja } from "./kartuInstruksiKerja";
+import { KartuInstruksiKerja } from './kartuInstruksiKerja';
 
 export interface SuratJalan {
     id: string;

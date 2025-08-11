@@ -204,13 +204,10 @@ export default function Edit({ masterItem, units, categoryItems, typeItems: init
                                             {errors.id_type_item && <p className="text-sm text-red-500">{errors.id_type_item}</p>}
                                         </div>
 
-                                        { showDimensions && (
+                                        {showDimensions && (
                                             <div className="space-y-2">
                                                 <Label htmlFor="tipe_penjualan">Tipe Penjualan</Label>
-                                                <Select
-                                                    value={data.tipe_penjualan}
-                                                    onValueChange={(value) => setData('tipe_penjualan', value)}
-                                                >
+                                                <Select value={data.tipe_penjualan} onValueChange={(value) => setData('tipe_penjualan', value)}>
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="Pilih Tipe Penjualan" />
                                                     </SelectTrigger>

@@ -189,7 +189,7 @@ export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings,
 
                                 {/* Hasil Rusak */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="hasil_rusak_diemaking">Hasil Rusak  *</Label>
+                                    <Label htmlFor="hasil_rusak_diemaking">Hasil Rusak *</Label>
                                     <Input
                                         id="hasil_rusak_diemaking"
                                         type="number"

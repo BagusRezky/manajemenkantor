@@ -7,7 +7,6 @@ import { useForm } from '@inertiajs/react';
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
 
-
 interface EditCustomerAddressModalProps {
     isOpen: boolean;
     onClose: () => void;

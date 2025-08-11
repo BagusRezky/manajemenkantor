@@ -1,14 +1,14 @@
-import { usePage, Link } from '@inertiajs/react';
+import { Link, usePage } from '@inertiajs/react';
 import { ChevronDown, ChevronRight, LucideIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
-    SidebarMenuItem,
-    SidebarMenuButton,
-    SidebarMenuSub,
-    SidebarMenuSubItem,
-    SidebarMenuSubButton,
     SidebarGroup,
     SidebarMenu,
+    SidebarMenuButton,
+    SidebarMenuItem,
+    SidebarMenuSub,
+    SidebarMenuSubButton,
+    SidebarMenuSubItem,
 } from './ui/sidebar';
 
 export interface NavGrub {
@@ -89,7 +89,7 @@ export function DropdownMenuItem({ item }: { item: NavItemWithChildren }) {
             const updatedOpenItems = { ...getOpenItems(), [itemTitle]: true };
             saveOpenItems(updatedOpenItems);
         }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []); // Empty dependency array means this only runs once
 
     return (

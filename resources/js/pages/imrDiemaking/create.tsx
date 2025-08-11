@@ -1,18 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React, { useState } from 'react';
-import { Head, router, useForm } from '@inertiajs/react';
-import AppLayout from '@/layouts/app-layout';
-import { BreadcrumbItem } from '@/types';
-import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Edit } from 'lucide-react';
-import { toast } from 'sonner';
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
 import { ImrDiemakingFormData } from '@/types/imrDiemaking';
+import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
+import { Head, router, useForm } from '@inertiajs/react';
+import { Edit } from 'lucide-react';
+import React, { useState } from 'react';
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Internal Material Request', href: '/imrDiemakings' },
@@ -59,19 +59,19 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
         setEditingItem(item);
         const existingRequest = itemRequests[item.id] || { qty_request: 0 };
         setEditForm({
-            qty_request: existingRequest.qty_request
+            qty_request: existingRequest.qty_request,
         });
         setIsEditModalOpen(true);
     };
 
     const handleSaveEdit = () => {
         if (editingItem && editForm.qty_request >= 0) {
-            setItemRequests(prev => ({
+            setItemRequests((prev) => ({
                 ...prev,
                 [editingItem.id]: {
                     id_kartu_instruksi_kerja_bom: editingItem.id,
-                    qty_request: editForm.qty_request
-                }
+                    qty_request: editForm.qty_request,
+                },
             }));
             setIsEditModalOpen(false);
             setEditingItem(null);
@@ -133,7 +133,7 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
                     </CardHeader>
                     <CardContent>
                         <div onSubmit={handleSubmit} className="space-y-6">
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="no_kartu_instruksi_kerja">Surat Perintah Kerja *</Label>
                                     <Select onValueChange={handleKikChange}>
@@ -148,9 +148,7 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
                                             ))}
                                         </SelectContent>
                                     </Select>
-                                    {errors.id_kartu_instruksi_kerja && (
-                                        <p className="text-sm text-red-600">{errors.id_kartu_instruksi_kerja}</p>
-                                    )}
+                                    {errors.id_kartu_instruksi_kerja && <p className="text-sm text-red-600">{errors.id_kartu_instruksi_kerja}</p>}
                                 </div>
 
                                 <div className="space-y-2">
@@ -162,61 +160,77 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
                                         onChange={(e) => setData('tgl_request', e.target.value)}
                                         required
                                     />
-                                    {errors.tgl_request && (
-                                        <p className="text-sm text-red-600">{errors.tgl_request}</p>
-                                    )}
+                                    {errors.tgl_request && <p className="text-sm text-red-600">{errors.tgl_request}</p>}
                                 </div>
 
                                 <div className="space-y-2">
                                     <Label htmlFor="no_imr_diemaking">No. IMR</Label>
-                                    <Input
-                                        id="no_imr_diemaking"
-                                        value={nextNoImr}
-                                        disabled
-                                        className="bg-gray-100 font-mono"
-                                    />
+                                    <Input id="no_imr_diemaking" value={nextNoImr} disabled className="bg-gray-100 font-mono" />
                                     <p className="text-xs text-gray-500">Nomor IMR akan di-generate otomatis</p>
                                 </div>
                             </div>
 
                             {selectedKik && selectedKik.kartu_instruksi_kerja_boms && (
                                 <div className="space-y-4">
-                                    <div className="bg-gray-800 text-white p-3 rounded-t-md">
+                                    <div className="rounded-t-md bg-gray-800 p-3 text-white">
                                         <h3 className="text-center font-semibold">Surat Perintah Kerja Items</h3>
                                     </div>
-                                    <div className="border rounded-b-md overflow-x-auto">
+                                    <div className="overflow-x-auto rounded-b-md border">
                                         <table className="w-full">
                                             <thead className="bg-gray-50">
                                                 <tr className="border-b">
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Kode - Nama Item</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Satuan</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Total Pesanan</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty Approved</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty Request</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty Input</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider w-20">Action</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                        Department
+                                                    </th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                        Kode - Nama Item
+                                                    </th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                        Catatan
+                                                    </th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                        Satuan
+                                                    </th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                        Total Pesanan
+                                                    </th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                        Qty Approved
+                                                    </th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                        Qty Request
+                                                    </th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                        Qty Input
+                                                    </th>
+                                                    <th className="w-20 px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                        Action
+                                                    </th>
                                                 </tr>
                                             </thead>
-                                            <tbody className="bg-white divide-y divide-gray-200">
+                                            <tbody className="divide-y divide-gray-200 bg-white">
                                                 {selectedKik.kartu_instruksi_kerja_boms.map((item) => {
                                                     const itemRequest = itemRequests[item.id];
                                                     return (
                                                         <tr key={item.id} className="hover:bg-gray-50">
-                                                            <td className="px-4 py-4 text-sm text-gray-900">{item.bill_of_materials?.departemen?.nama_departemen}</td>
                                                             <td className="px-4 py-4 text-sm text-gray-900">
-                                                                {item.bill_of_materials?.master_item?.kode_master_item} - {item.bill_of_materials?.master_item?.nama_master_item}
+                                                                {item.bill_of_materials?.departemen?.nama_departemen}
+                                                            </td>
+                                                            <td className="px-4 py-4 text-sm text-gray-900">
+                                                                {item.bill_of_materials?.master_item?.kode_master_item} -{' '}
+                                                                {item.bill_of_materials?.master_item?.nama_master_item}
                                                             </td>
                                                             <td className="px-4 py-4 text-sm text-gray-900">-</td>
-                                                            <td className="px-4 py-4 text-sm text-gray-900">{item.bill_of_materials?.master_item?.unit?.nama_satuan}</td>
+                                                            <td className="px-4 py-4 text-sm text-gray-900">
+                                                                {item.bill_of_materials?.master_item?.unit?.nama_satuan}
+                                                            </td>
                                                             <td className="px-4 py-4 text-sm text-gray-900">{item.total_kebutuhan}</td>
                                                             <td className="px-4 py-4 text-sm text-gray-900">0.00</td>
                                                             <td className="px-4 py-4 text-sm text-gray-900">0.00</td>
                                                             <td className="px-4 py-4 text-sm text-gray-900">
                                                                 {itemRequest ? itemRequest.qty_request : 0}
                                                             </td>
-                                                            <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                            <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
                                                                 <Button
                                                                     type="button"
                                                                     variant="outline"
@@ -239,12 +253,7 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
                                 <Button type="button" variant="outline" onClick={() => window.history.back()}>
                                     CANCEL
                                 </Button>
-                                <Button
-                                    type="button"
-                                    onClick={handleSubmit}
-                                    disabled={processing}
-                                    className="bg-green-600 hover:bg-green-700"
-                                >
+                                <Button type="button" onClick={handleSubmit} disabled={processing} className="bg-green-600 hover:bg-green-700">
                                     {processing ? 'PROCESSING...' : 'PROCESS'}
                                 </Button>
                             </div>
@@ -262,31 +271,18 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
                     <div className="space-y-4">
                         <div className="space-y-2">
                             <Label>No.SPK</Label>
-                            <Input
-                                value={selectedKik?.no_kartu_instruksi_kerja || ''}
-                                disabled
-                                className="bg-gray-100"
-                            />
+                            <Input value={selectedKik?.no_kartu_instruksi_kerja || ''} disabled className="bg-gray-100" />
                         </div>
 
                         <div className="space-y-2">
                             <Label>Material Deskripsi</Label>
-                            <Input
-                                value={editingItem?.bill_of_materials?.master_item?.nama_master_item || ''}
-                                disabled
-                                className="bg-gray-100"
-                            />
+                            <Input value={editingItem?.bill_of_materials?.master_item?.nama_master_item || ''} disabled className="bg-gray-100" />
                         </div>
 
                         <div className="space-y-2">
                             <Label>Total Pesanan</Label>
-                            <Input
-                                value={editingItem?.total_kebutuhan || 0}
-                                disabled
-                                className="bg-gray-100"
-                            />
+                            <Input value={editingItem?.total_kebutuhan || 0} disabled className="bg-gray-100" />
                         </div>
-
 
                         <div className="space-y-2">
                             <Label>Input Qty Request *</Label>
@@ -295,7 +291,7 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
                                 step="0.01"
                                 min="0"
                                 value={editForm.qty_request}
-                                onChange={(e) => setEditForm(prev => ({ ...prev, qty_request: parseFloat(e.target.value) || 0 }))}
+                                onChange={(e) => setEditForm((prev) => ({ ...prev, qty_request: parseFloat(e.target.value) || 0 }))}
                                 placeholder="0"
                             />
                         </div>
@@ -305,11 +301,7 @@ export default function CreateInternalMaterialRequest({ kartuInstruksiKerjas, ne
                         <Button type="button" variant="outline" onClick={() => setIsEditModalOpen(false)}>
                             TUTUP
                         </Button>
-                        <Button
-                            type="button"
-                            onClick={handleSaveEdit}
-                            className="bg-blue-600 hover:bg-blue-700"
-                        >
+                        <Button type="button" onClick={handleSaveEdit} className="bg-blue-600 hover:bg-blue-700">
                             EDIT
                         </Button>
                     </DialogFooter>

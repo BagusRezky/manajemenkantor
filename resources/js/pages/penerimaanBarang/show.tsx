@@ -1,20 +1,17 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
-import { PenerimaanBarang } from "@/types/penerimaanBarang";
-import { Head, Link } from "@inertiajs/react";
-import { format } from "date-fns";
-import { ArrowLeftIcon } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
+import { PenerimaanBarang } from '@/types/penerimaanBarang';
+import { Head, Link } from '@inertiajs/react';
+import { format } from 'date-fns';
+import { ArrowLeftIcon } from 'lucide-react';
 
 // Helper function untuk mendapatkan nama satuan
 const getSatuanName = (item: any) => {
-    return item.master_konversi?.nama_satuan ||
-           item.satuan?.nama_satuan ||
-           item.id_satuan_po ||
-           'Satuan tidak tersedia';
+    return item.master_konversi?.nama_satuan || item.satuan?.nama_satuan || item.id_satuan_po || 'Satuan tidak tersedia';
 };
 
 interface ShowProps {
@@ -109,7 +106,8 @@ export default function Show({ penerimaanBarang }: ShowProps) {
                                     <TableRow key={item.id}>
                                         <TableCell>{index + 1}</TableCell>
                                         <TableCell>
-                                            {item.purchase_order_item?.master_item?.kode_master_item} - {item.purchase_order_item?.master_item?.nama_master_item}
+                                            {item.purchase_order_item?.master_item?.kode_master_item} -{' '}
+                                            {item.purchase_order_item?.master_item?.nama_master_item}
                                         </TableCell>
                                         <TableCell>{item.purchase_order_item?.qty_po}</TableCell>
                                         <TableCell>{item.qty_penerimaan}</TableCell>

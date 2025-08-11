@@ -1,13 +1,11 @@
-
-import { Checkbox } from '@/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MesinFinishing } from '@/types/mesinFinishing';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { router } from '@inertiajs/react';
-import { MesinFinishing } from '@/types/mesinFinishing';
-
 
 const handleDelete = ($mesinFinishing: string) => {
     // Delete supplier with ID `id`
@@ -21,9 +19,11 @@ const handleDelete = ($mesinFinishing: string) => {
     });
 };
 
-export const columns = (setIsModalOpen:(open:boolean)=>void,
-setEditModalOpen:(open:boolean)=>void,
-setSelectedMesinFinishing:(mesin: MesinFinishing| null) =>void): ColumnDef<MesinFinishing>[]=> [
+export const columns = (
+    setIsModalOpen: (open: boolean) => void,
+    setEditModalOpen: (open: boolean) => void,
+    setSelectedMesinFinishing: (mesin: MesinFinishing | null) => void,
+): ColumnDef<MesinFinishing>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -77,9 +77,12 @@ setSelectedMesinFinishing:(mesin: MesinFinishing| null) =>void): ColumnDef<Mesin
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(mesin.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => {  setSelectedMesinFinishing(mesin); setEditModalOpen(true);
-
-                        }}>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setSelectedMesinFinishing(mesin);
+                                setEditModalOpen(true);
+                            }}
+                        >
                             Updated
                         </DropdownMenuItem>
                     </DropdownMenuContent>

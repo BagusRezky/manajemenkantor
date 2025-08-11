@@ -60,11 +60,24 @@ const EditCategoryItemModal: React.FC<EditCategoryItemModalProps> = ({ isOpen, o
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-2">
                     {errors.kode_category_item && <div className="text-sm text-red-500">{errors.kode_category_item}</div>}
-                    <Input type="text" name="kode_category_item" value={data.kode_category_item} onChange={handleChange} placeholder="Kode Category Item" required />
+                    <Input
+                        type="text"
+                        name="kode_category_item"
+                        value={data.kode_category_item}
+                        onChange={handleChange}
+                        placeholder="Kode Category Item"
+                        required
+                    />
 
                     {errors.nama_category_item && <div className="text-sm text-red-500">{errors.nama_category_item}</div>}
-                    <Input type="text" name="nama_category_item" value={data.nama_category_item} onChange={handleChange} placeholder="Nama Category" required />
-
+                    <Input
+                        type="text"
+                        name="nama_category_item"
+                        value={data.nama_category_item}
+                        onChange={handleChange}
+                        placeholder="Nama Category"
+                        required
+                    />
 
                     <DialogFooter>
                         <Button variant="outline" type="button" onClick={onClose} disabled={processing}>

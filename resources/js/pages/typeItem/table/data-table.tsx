@@ -1,6 +1,7 @@
 import { DataTablePagination } from '@/components/custom-pagination';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { CategoryItem } from '@/types/categoryItem';
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -12,9 +13,6 @@ import {
 } from '@tanstack/react-table';
 import React from 'react';
 import { TypeItemFormModal } from '../modal/add-modal';
-import { CategoryItem } from '@/types/categoryItem';
-
-
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];

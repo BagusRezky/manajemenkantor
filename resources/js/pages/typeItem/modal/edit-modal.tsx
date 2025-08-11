@@ -94,11 +94,7 @@ const EditTypeItemModal: React.FC<EditTypeItemModalProps> = ({ isOpen, onClose, 
                     {errors.id_category_item && <div className="text-sm text-red-500">{errors.id_category_item}</div>}
                     <div className="grid grid-cols-4 items-center gap-4">
                         <div className="col-span-4">
-                            <Select
-                                value={data.id_category_item}
-                                onValueChange={(value) => handleSelectChange('id_category_item', value)}
-                                required
-                            >
+                            <Select value={data.id_category_item} onValueChange={(value) => handleSelectChange('id_category_item', value)} required>
                                 <SelectTrigger className="w-full">
                                     <SelectValue placeholder="Pilih Category" />
                                 </SelectTrigger>

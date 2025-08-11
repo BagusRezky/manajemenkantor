@@ -1,13 +1,12 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import React from 'react';
-import { Head } from '@inertiajs/react';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/react';
 
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { ArrowLeft } from 'lucide-react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { ReturEksternal } from '@/types/externalReturn';
+import { ArrowLeft } from 'lucide-react';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Retur Eksternal', href: '/returEksternals' },
@@ -20,16 +19,18 @@ interface Props {
 
 export default function ShowReturEksternal({ returEksternal }: Props) {
     const getSatuanName = (item: any) => {
-        return item.penerimaan_barang_item?.purchase_order_item?.master_konversi?.nama_satuan ||
-               item.penerimaan_barang_item?.purchase_order_item?.satuan?.nama_satuan ||
-               'PIECES';
+        return (
+            item.penerimaan_barang_item?.purchase_order_item?.master_konversi?.nama_satuan ||
+            item.penerimaan_barang_item?.purchase_order_item?.satuan?.nama_satuan ||
+            'PIECES'
+        );
     };
 
     const formatDate = (dateString: string) => {
         return new Date(dateString).toLocaleDateString('id-ID', {
             day: '2-digit',
             month: '2-digit',
-            year: 'numeric'
+            year: 'numeric',
         });
     };
 
@@ -38,12 +39,8 @@ export default function ShowReturEksternal({ returEksternal }: Props) {
             <Head title={`Detail Retur Eksternal - ${returEksternal.no_retur}`} />
 
             <div className="mx-5 py-5">
-                <div className="flex items-center gap-4 mb-6">
-                    <Button
-                        variant="outline"
-                        onClick={() => window.history.back()}
-                        className="flex items-center gap-2"
-                    >
+                <div className="mb-6 flex items-center gap-4">
+                    <Button variant="outline" onClick={() => window.history.back()} className="flex items-center gap-2">
                         <ArrowLeft className="h-4 w-4" />
                         Kembali
                     </Button>
@@ -57,10 +54,10 @@ export default function ShowReturEksternal({ returEksternal }: Props) {
                             <CardTitle>Informasi Retur Eksternal</CardTitle>
                         </CardHeader>
                         <CardContent>
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">No. Retur</label>
-                                    <p className="mt-1 text-sm text-gray-900 ">{returEksternal.no_retur}</p>
+                                    <p className="mt-1 text-sm text-gray-900">{returEksternal.no_retur}</p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">No. Laporan Penerimaan Barang</label>
@@ -77,8 +74,9 @@ export default function ShowReturEksternal({ returEksternal }: Props) {
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Tgl Penerimaan Barang</label>
                                     <p className="mt-1 text-sm text-gray-900">
-                                        {returEksternal.penerimaan_barang?.tgl_terima_barang ?
-                                            formatDate(returEksternal.penerimaan_barang.tgl_terima_barang) : '-'}
+                                        {returEksternal.penerimaan_barang?.tgl_terima_barang
+                                            ? formatDate(returEksternal.penerimaan_barang.tgl_terima_barang)
+                                            : '-'}
                                     </p>
                                 </div>
                                 <div>
@@ -109,18 +107,28 @@ export default function ShowReturEksternal({ returEksternal }: Props) {
                                 <table className="w-full border-collapse">
                                     <thead>
                                         <tr className="border-b bg-gray-50">
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">No</th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nama Item</th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty | Satuan Penerimaan</th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan Penerimaan</th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Qty | Satuan Return</th>
-                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Catatan Retur</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">No</th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                Nama Item
+                                            </th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                Qty | Satuan Penerimaan
+                                            </th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                Catatan Penerimaan
+                                            </th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                Qty | Satuan Return
+                                            </th>
+                                            <th className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase">
+                                                Catatan Retur
+                                            </th>
                                         </tr>
                                     </thead>
-                                    <tbody className="bg-white divide-y divide-gray-200">
+                                    <tbody className="divide-y divide-gray-200 bg-white">
                                         {returEksternal.items?.map((item, index) => (
                                             <tr key={item.id} className="hover:bg-gray-50">
-                                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">{index + 1}</td>
+                                                <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">{index + 1}</td>
                                                 <td className="px-4 py-4 text-sm text-gray-900">
                                                     <div>
                                                         <div className="font-medium">
@@ -131,18 +139,16 @@ export default function ShowReturEksternal({ returEksternal }: Props) {
                                                         </div>
                                                     </div>
                                                 </td>
-                                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
                                                     {item.penerimaan_barang_item?.qty_penerimaan} | {getSatuanName(item)}
                                                 </td>
                                                 <td className="px-4 py-4 text-sm text-gray-900">
                                                     {item.penerimaan_barang_item?.catatan_item || '-'}
                                                 </td>
-                                                <td className="px-4 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
                                                     {item.qty_retur} | {getSatuanName(item)}
                                                 </td>
-                                                <td className="px-4 py-4 text-sm text-gray-900">
-                                                    {item.catatan_retur_item || '-'}
-                                                </td>
+                                                <td className="px-4 py-4 text-sm text-gray-900">{item.catatan_retur_item || '-'}</td>
                                             </tr>
                                         ))}
                                         {(!returEksternal.items || returEksternal.items.length === 0) && (

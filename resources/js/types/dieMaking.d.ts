@@ -1,6 +1,6 @@
-import { KartuInstruksiKerja } from "./kartuInstruksiKerja";
-import { MesinDiemaking } from "./mesinDiemaking";
-import { OperatorDiemaking } from "./operatorDiemaking";
+import { KartuInstruksiKerja } from './kartuInstruksiKerja';
+import { MesinDiemaking } from './mesinDiemaking';
+import { OperatorDiemaking } from './operatorDiemaking';
 
 export interface DieMaking {
     id: string;

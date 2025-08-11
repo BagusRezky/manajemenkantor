@@ -1,21 +1,19 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { PenerimaanBarang } from "@/types/penerimaanBarang";
-import { router } from "@inertiajs/react";
-import { ColumnDef } from "@tanstack/react-table";
-import { Download, FileText, MoreHorizontal } from "lucide-react";
-import { toast } from "sonner";
-import jsPDF from "jspdf";
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { PenerimaanBarang } from '@/types/penerimaanBarang';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
+import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { format } from "date-fns";
+import { Download, FileText, MoreHorizontal } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Helper function untuk mendapatkan nama satuan
 const getSatuanName = (item: any) => {
-    return item.purchase_order_item?.master_konversi?.nama_satuan ||
-           item.purchase_order_item?.satuan?.nama_satuan ||
-           'PIECES';
+    return item.purchase_order_item?.master_konversi?.nama_satuan || item.purchase_order_item?.satuan?.nama_satuan || 'PIECES';
 };
 
 // Function untuk generate PDF penerimaan barang
@@ -161,7 +159,6 @@ const handleDelete = (id: string) => {
         });
     }
 };
-
 
 export const columns = (): ColumnDef<PenerimaanBarang>[] => [
     {

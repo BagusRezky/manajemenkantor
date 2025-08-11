@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { SalesOrder } from "@/types/salesOrder";
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { SalesOrder } from '@/types/salesOrder';
 
-
-import { router } from "@inertiajs/react";
-import { ColumnDef } from "@tanstack/react-table";
-import { Download, FileText, MoreHorizontal } from "lucide-react";
-import { toast } from "sonner";
-import { jsPDF } from "jspdf";
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
+import { Download, FileText, MoreHorizontal } from 'lucide-react';
+import { toast } from 'sonner';
 
 const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void => {
     // Inisialisasi dokumen PDF
@@ -134,7 +133,6 @@ const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void =
     // // Informasi tambahan
     let currentY = tableEndY + 15;
 
-
     // Tanda tangan
     currentY += 20;
     doc.setFontSize(10).setFont('helvetica', 'normal');
@@ -152,7 +150,6 @@ const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void =
         window.open(doc.output('bloburl'), '_blank');
     }
 };
-
 
 const handleDelete = (item: string) => {
     router.delete(`/salesOrders/${item}`, {

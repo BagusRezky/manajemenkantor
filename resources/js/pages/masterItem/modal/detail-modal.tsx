@@ -1,5 +1,5 @@
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { MasterItem } from "@/types/masterItem";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { MasterItem } from '@/types/masterItem';
 
 interface DetailModalProps {
     isOpen: boolean;

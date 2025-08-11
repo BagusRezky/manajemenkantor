@@ -1,13 +1,11 @@
-
-import { Checkbox } from '@/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { OperatorDiemaking } from '@/types/operatorDiemaking';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { router } from '@inertiajs/react';
-import { OperatorDiemaking } from '@/types/operatorDiemaking';
-
 
 const handleDelete = ($operatorDiemaking: string) => {
     // Delete supplier with ID `id`
@@ -21,9 +19,11 @@ const handleDelete = ($operatorDiemaking: string) => {
     });
 };
 
-export const columns = (setIsModalOpen:(open:boolean)=>void,
-setEditModalOpen:(open:boolean)=>void,
-setSelectedOperatorDiemaking:(operatorDiemaking: OperatorDiemaking| null) =>void): ColumnDef<OperatorDiemaking>[]=> [
+export const columns = (
+    setIsModalOpen: (open: boolean) => void,
+    setEditModalOpen: (open: boolean) => void,
+    setSelectedOperatorDiemaking: (operatorDiemaking: OperatorDiemaking | null) => void,
+): ColumnDef<OperatorDiemaking>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -60,9 +60,12 @@ setSelectedOperatorDiemaking:(operatorDiemaking: OperatorDiemaking| null) =>void
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(operatorDiemaking.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => {  setSelectedOperatorDiemaking(operatorDiemaking); setEditModalOpen(true);
-
-                        }}>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setSelectedOperatorDiemaking(operatorDiemaking);
+                                setEditModalOpen(true);
+                            }}
+                        >
                             Updated
                         </DropdownMenuItem>
                     </DropdownMenuContent>

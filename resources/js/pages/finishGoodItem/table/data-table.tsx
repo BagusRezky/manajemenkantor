@@ -1,10 +1,18 @@
-import { DataTablePagination } from "@/components/custom-pagination";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Link } from "@inertiajs/react";
-import { ColumnDef, ColumnFiltersState, flexRender, getCoreRowModel, getFilteredRowModel, getPaginationRowModel, useReactTable } from "@tanstack/react-table";
-import React from "react";
+import { DataTablePagination } from '@/components/custom-pagination';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Link } from '@inertiajs/react';
+import {
+    ColumnDef,
+    ColumnFiltersState,
+    flexRender,
+    getCoreRowModel,
+    getFilteredRowModel,
+    getPaginationRowModel,
+    useReactTable,
+} from '@tanstack/react-table';
+import React from 'react';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -45,7 +53,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                     <Button>Add New Finish Good Item</Button>
                 </Link>
             </div>
-            <div className="rounded-md border-2 dark:bg-violet-600 dark:border-0">
+            <div className="rounded-md border-2 dark:border-0 dark:bg-violet-600">
                 <Table>
                     <TableHeader>
                         {table.getHeaderGroups().map((headerGroup) => (

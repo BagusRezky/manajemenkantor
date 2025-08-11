@@ -8,7 +8,6 @@ import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const trashedColumns = (): ColumnDef<FinishGoodItem>[] => {
-
     const handleRestore = (id: string) => {
         router.post(
             `/finishGoodItems/${id}/restore`,

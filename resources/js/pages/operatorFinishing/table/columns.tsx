@@ -1,12 +1,11 @@
-
-import { Checkbox } from '@/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { OperatorFinishing } from '@/types/operatorFinishing';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { router } from '@inertiajs/react';
-import { OperatorFinishing } from '@/types/operatorFinishing';
 
 const handleDelete = ($operatorFinishing: string) => {
     // Delete supplier with ID `id`
@@ -20,9 +19,11 @@ const handleDelete = ($operatorFinishing: string) => {
     });
 };
 
-export const columns = (setIsModalOpen:(open:boolean)=>void,
-setEditModalOpen:(open:boolean)=>void,
-setSelectedOperatorFinishing:(operatorFinishing: OperatorFinishing| null) =>void): ColumnDef<OperatorFinishing>[]=> [
+export const columns = (
+    setIsModalOpen: (open: boolean) => void,
+    setEditModalOpen: (open: boolean) => void,
+    setSelectedOperatorFinishing: (operatorFinishing: OperatorFinishing | null) => void,
+): ColumnDef<OperatorFinishing>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -59,9 +60,12 @@ setSelectedOperatorFinishing:(operatorFinishing: OperatorFinishing| null) =>void
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(operatorFinishing.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => {  setSelectedOperatorFinishing(operatorFinishing); setEditModalOpen(true);
-
-                        }}>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setSelectedOperatorFinishing(operatorFinishing);
+                                setEditModalOpen(true);
+                            }}
+                        >
                             Updated
                         </DropdownMenuItem>
                     </DropdownMenuContent>

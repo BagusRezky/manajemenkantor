@@ -1,4 +1,4 @@
-import { PurchaseOrder } from "./purchaseOrder";
+import { PurchaseOrder } from './purchaseOrder';
 
 export interface PenerimaanBarangItem {
     id: string;

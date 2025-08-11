@@ -5,8 +5,8 @@ import { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
 
 import { FinishGoodItem } from '@/types/finishGoodItem';
-import { DataTable } from './table/data-table';
 import { columns } from './table/column';
+import { DataTable } from './table/data-table';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

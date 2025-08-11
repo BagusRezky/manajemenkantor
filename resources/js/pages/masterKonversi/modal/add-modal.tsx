@@ -1,3 +1,4 @@
+import { SearchableSelect } from '@/components/search-select';
 import { MasterKonversi } from '@/types/masterKonversi';
 import { TypeItem } from '@/types/typeItem';
 import { Unit } from '@/types/unit';
@@ -8,7 +9,6 @@ import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
-import { SearchableSelect } from '@/components/search-select';
 
 type MasterKonversiFormData = Omit<MasterKonversi, 'id'>;
 
@@ -84,7 +84,7 @@ export function MasterKonversiFormModal({ typeItems, units }: MasterKonversiForm
                                     items={typeItems.map((item) => ({
                                         key: String(item.id),
                                         value: String(item.id),
-                                        label: item.nama_type_item
+                                        label: item.nama_type_item,
                                     }))}
                                     value={formData.id_type_item || ''} // Add fallback to empty string
                                     placeholder="Pilih Tipe Barang"
@@ -101,7 +101,7 @@ export function MasterKonversiFormModal({ typeItems, units }: MasterKonversiForm
                                     items={units.map((item) => ({
                                         key: String(item.id),
                                         value: String(item.id),
-                                        label: item.nama_satuan
+                                        label: item.nama_satuan,
                                     }))}
                                     value={formData.satuan_satu_id || ''} // Add fallback to empty string
                                     placeholder="Pilih Satuan Satu"
@@ -118,7 +118,7 @@ export function MasterKonversiFormModal({ typeItems, units }: MasterKonversiForm
                                     items={units.map((item) => ({
                                         key: String(item.id),
                                         value: String(item.id),
-                                        label: item.nama_satuan
+                                        label: item.nama_satuan,
                                     }))}
                                     value={formData.satuan_dua_id || ''} // Add fallback to empty string
                                     placeholder="Pilih Satuan Dua"
@@ -133,7 +133,7 @@ export function MasterKonversiFormModal({ typeItems, units }: MasterKonversiForm
                             <Input
                                 id="jumlah_satuan_konversi"
                                 name="jumlah_satuan_konversi"
-                                type='number'
+                                type="number"
                                 value={formData.jumlah_satuan_konversi}
                                 onChange={handleChange}
                                 className="col-span-3"

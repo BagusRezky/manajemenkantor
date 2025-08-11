@@ -40,7 +40,6 @@ export default function ShowInternalMaterialRequest({ imrFinishing }: Props) {
         }
     };
 
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Detail IMR - ${imrFinishing.no_imr_finishing}`} />
@@ -61,9 +60,7 @@ export default function ShowInternalMaterialRequest({ imrFinishing }: Props) {
                             <CardTitle className="flex items-center justify-between">
                                 <span>Informasi IMR</span>
                                 <div className="flex items-center gap-3">
-                                    <Badge className={getStatusColor(imrFinishing.status)}>
-                                        {imrFinishing.status.toUpperCase()}
-                                    </Badge>
+                                    <Badge className={getStatusColor(imrFinishing.status)}>{imrFinishing.status.toUpperCase()}</Badge>
                                     <span className="rounded bg-gray-100 px-3 py-1 font-mono text-sm">{imrFinishing.no_imr_finishing}</span>
                                 </div>
                             </CardTitle>
@@ -87,9 +84,7 @@ export default function ShowInternalMaterialRequest({ imrFinishing }: Props) {
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Status</label>
                                     <p className="mt-1">
-                                        <Badge className={getStatusColor(imrFinishing.status)}>
-                                            {imrFinishing.status.toUpperCase()}
-                                        </Badge>
+                                        <Badge className={getStatusColor(imrFinishing.status)}>{imrFinishing.status.toUpperCase()}</Badge>
                                     </p>
                                 </div>
                                 <div>
@@ -100,9 +95,7 @@ export default function ShowInternalMaterialRequest({ imrFinishing }: Props) {
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Production Plan</label>
-                                    <p className="mt-1 text-sm text-gray-900">
-                                        {imrFinishing.kartu_instruksi_kerja?.production_plan || '-'}
-                                    </p>
+                                    <p className="mt-1 text-sm text-gray-900">{imrFinishing.kartu_instruksi_kerja?.production_plan || '-'}</p>
                                 </div>
                                 <div>
                                     <label className="text-sm font-medium text-gray-500">Estimasi Selesai</label>
@@ -123,8 +116,6 @@ export default function ShowInternalMaterialRequest({ imrFinishing }: Props) {
                             </div>
                         </CardContent>
                     </Card>
-
-
 
                     {/* Material Items Table */}
                     <Card>
@@ -180,15 +171,21 @@ export default function ShowInternalMaterialRequest({ imrFinishing }: Props) {
                                                     <span className="font-medium">
                                                         {Number(item.kartu_instruksi_kerja_bom?.total_kebutuhan || 0).toFixed(2)}
                                                     </span>
-                                                    <div className="text-xs text-gray-500">{item.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.unit?.nama_satuan}</div>
+                                                    <div className="text-xs text-gray-500">
+                                                        {item.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.unit?.nama_satuan}
+                                                    </div>
                                                 </td>
                                                 <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
                                                     <span className="font-medium text-orange-600">{Number(item.qty_request || 0).toFixed(2)}</span>
-                                                    <div className="text-xs text-gray-500">{item.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.unit?.nama_satuan}</div>
+                                                    <div className="text-xs text-gray-500">
+                                                        {item.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.unit?.nama_satuan}
+                                                    </div>
                                                 </td>
                                                 <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
                                                     <span className="font-medium text-green-600">{Number(item.qty_approved || 0).toFixed(2)}</span>
-                                                    <div className="text-xs text-gray-500">{item.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.unit?.nama_satuan}</div>
+                                                    <div className="text-xs text-gray-500">
+                                                        {item.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.unit?.nama_satuan}
+                                                    </div>
                                                 </td>
                                                 <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
                                                     {item.qty_approved > 0 ? (
@@ -213,8 +210,6 @@ export default function ShowInternalMaterialRequest({ imrFinishing }: Props) {
                             </div>
                         </CardContent>
                     </Card>
-
-
                 </div>
             </div>
         </AppLayout>

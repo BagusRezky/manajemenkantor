@@ -1,12 +1,12 @@
+import { Supplier } from '@/types/supplier';
 import { Textarea } from '@headlessui/react';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
+import { toast } from 'sonner';
 import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
-import { Supplier } from '@/types/supplier';
-import { toast } from 'sonner';
 
 type SupplierFormData = Omit<Supplier, 'id'>;
 
@@ -48,9 +48,7 @@ export function SupplierFormModal() {
                     jenis_suplier: '',
                     keterangan: '',
                     alamat_lengkap: '',
-
                 });
-
             },
             onError: () => {
                 toast.error('Failed to add Supplier');

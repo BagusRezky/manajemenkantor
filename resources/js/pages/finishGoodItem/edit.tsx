@@ -61,80 +61,79 @@ interface FormData {
 }
 
 export default function Edit({ finishGoodItem, units, customerAddresses, typeItems, masterItems, departements }: EditProps) {
-     const initialData: FormData = {
-         id_customer_address: finishGoodItem.id_customer_address?.toString() || '',
-         id_type_item: finishGoodItem.id_type_item?.toString() || '',
-         satuan_satu_id: finishGoodItem.satuan_satu_id?.toString() || '',
-         kode_material_produk: finishGoodItem.kode_material_produk || '',
-         kode_barcode: finishGoodItem.kode_barcode || '',
-         pc_number: finishGoodItem.pc_number || '',
-         nama_barang: finishGoodItem.nama_barang || '',
-         deskripsi: finishGoodItem.deskripsi || '',
-         spesifikasi_kertas: finishGoodItem.spesifikasi_kertas || '',
-         up_satu: finishGoodItem.up_satu || '',
-         up_dua: finishGoodItem.up_dua || '',
-         up_tiga: finishGoodItem.up_tiga || '',
-         ukuran_potong: finishGoodItem.ukuran_potong || '',
-         ukuran_cetak: finishGoodItem.ukuran_cetak || '',
-         panjang: finishGoodItem.panjang || '',
-         lebar: finishGoodItem.lebar || '',
-         tinggi: finishGoodItem.tinggi || '',
-         berat_kotor: finishGoodItem.berat_kotor || '',
-         berat_bersih: finishGoodItem.berat_bersih || '',
-         bill_of_materials: finishGoodItem.bill_of_materials || [],
-     };
+    const initialData: FormData = {
+        id_customer_address: finishGoodItem.id_customer_address?.toString() || '',
+        id_type_item: finishGoodItem.id_type_item?.toString() || '',
+        satuan_satu_id: finishGoodItem.satuan_satu_id?.toString() || '',
+        kode_material_produk: finishGoodItem.kode_material_produk || '',
+        kode_barcode: finishGoodItem.kode_barcode || '',
+        pc_number: finishGoodItem.pc_number || '',
+        nama_barang: finishGoodItem.nama_barang || '',
+        deskripsi: finishGoodItem.deskripsi || '',
+        spesifikasi_kertas: finishGoodItem.spesifikasi_kertas || '',
+        up_satu: finishGoodItem.up_satu || '',
+        up_dua: finishGoodItem.up_dua || '',
+        up_tiga: finishGoodItem.up_tiga || '',
+        ukuran_potong: finishGoodItem.ukuran_potong || '',
+        ukuran_cetak: finishGoodItem.ukuran_cetak || '',
+        panjang: finishGoodItem.panjang || '',
+        lebar: finishGoodItem.lebar || '',
+        tinggi: finishGoodItem.tinggi || '',
+        berat_kotor: finishGoodItem.berat_kotor || '',
+        berat_bersih: finishGoodItem.berat_bersih || '',
+        bill_of_materials: finishGoodItem.bill_of_materials || [],
+    };
 
-     const { data, setData, put, processing, errors } = useForm(initialData);
+    const { data, setData, put, processing, errors } = useForm(initialData);
 
-     const handleSubmit = (e: React.FormEvent) => {
-         e.preventDefault();
-         put(route('finishGoodItems.update', finishGoodItem.id), {
-             onSuccess: () => {
-                 toast.success('Finish Good Item updated successfully');
-             },
-             onError: () => {
-                 toast.error('Failed to update Finish Good Item');
-             },
-         });
-     };
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        put(route('finishGoodItems.update', finishGoodItem.id), {
+            onSuccess: () => {
+                toast.success('Finish Good Item updated successfully');
+            },
+            onError: () => {
+                toast.error('Failed to update Finish Good Item');
+            },
+        });
+    };
 
-     // Add a new BOM item
-     const handleAddBomItem = () => {
-         const newBomItems = Array.isArray(data.bill_of_materials) ? [...data.bill_of_materials] : [];
+    // Add a new BOM item
+    const handleAddBomItem = () => {
+        const newBomItems = Array.isArray(data.bill_of_materials) ? [...data.bill_of_materials] : [];
 
-         newBomItems.push({
-             id: `temp-${Date.now()}`,
-             id_master_item: '',
-             id_departemen: '',
-             waste: '',
-             qty: '',
-             keterangan: '',
-         });
+        newBomItems.push({
+            id: `temp-${Date.now()}`,
+            id_master_item: '',
+            id_departemen: '',
+            waste: '',
+            qty: '',
+            keterangan: '',
+        });
 
-         setData('bill_of_materials', newBomItems);
-     };
+        setData('bill_of_materials', newBomItems);
+    };
 
-     // Remove a BOM item
-     const handleRemoveBomItem = (indexToRemove: number) => {
-         if (!Array.isArray(data.bill_of_materials)) return;
+    // Remove a BOM item
+    const handleRemoveBomItem = (indexToRemove: number) => {
+        if (!Array.isArray(data.bill_of_materials)) return;
 
-         const updatedItems = data.bill_of_materials.filter((_, index) => index !== indexToRemove);
-         setData('bill_of_materials', updatedItems);
-     };
+        const updatedItems = data.bill_of_materials.filter((_, index) => index !== indexToRemove);
+        setData('bill_of_materials', updatedItems);
+    };
 
-     // Update a BOM item field
-     const handleBomItemChange = (index: number, field: string, value: string) => {
-         if (!Array.isArray(data.bill_of_materials) || !data.bill_of_materials[index]) return;
+    // Update a BOM item field
+    const handleBomItemChange = (index: number, field: string, value: string) => {
+        if (!Array.isArray(data.bill_of_materials) || !data.bill_of_materials[index]) return;
 
-         const updatedItems = [...data.bill_of_materials];
-         updatedItems[index] = {
-             ...updatedItems[index],
-             [field]: value,
-         };
+        const updatedItems = [...data.bill_of_materials];
+        updatedItems[index] = {
+            ...updatedItems[index],
+            [field]: value,
+        };
 
-         setData('bill_of_materials', updatedItems);
-     };
-
+        setData('bill_of_materials', updatedItems);
+    };
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
@@ -151,11 +150,7 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                         <div className="space-y-2">
                                             <Label htmlFor="id_customer_address">Customer</Label>
-                                            <Select
-                                                value={data.id_customer_address?.toString() || ''}
-
-
-                                            >
+                                            <Select value={data.id_customer_address?.toString() || ''}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Pilih Customer" />
                                                 </SelectTrigger>
@@ -172,7 +167,7 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
 
                                         <div className="space-y-2">
                                             <Label htmlFor="id_type_item">Type Item</Label>
-                                            <Select value={data.id_type_item} >
+                                            <Select value={data.id_type_item}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Pilih Type Item" />
                                                 </SelectTrigger>
@@ -185,30 +180,18 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
                                                 </SelectContent>
                                             </Select>
 
-
                                             {errors.id_type_item && <p className="text-sm text-red-500">{errors.id_type_item}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="kode_material_produk">Kode Material Produk</Label>
-                                            <Input
-                                                id="kode_material_produk"
-                                                name="kode_material_produk"
-                                                value={data.kode_material_produk}
-
-                                                readOnly
-                                            />
+                                            <Input id="kode_material_produk" name="kode_material_produk" value={data.kode_material_produk} readOnly />
                                             {errors.kode_material_produk && <p className="text-sm text-red-500">{errors.kode_material_produk}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="kode_barcode">Kode Barcode</Label>
-                                            <Input
-                                                id="kode_barcode"
-                                                value={data.kode_barcode}
-
-                                                readOnly
-                                            />
+                                            <Input id="kode_barcode" value={data.kode_barcode} readOnly />
                                             {errors.kode_barcode && <p className="text-sm text-red-500">{errors.kode_barcode}</p>}
                                         </div>
 
@@ -220,12 +203,7 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
 
                                         <div className="space-y-2">
                                             <Label htmlFor="nama_barang">Nama Barang</Label>
-                                            <Input
-                                                id="nama_barang"
-                                                name="nama_barang"
-                                                value={data.nama_barang}
-                                                readOnly
-                                            />
+                                            <Input id="nama_barang" name="nama_barang" value={data.nama_barang} readOnly />
                                             {errors.nama_barang && <p className="text-sm text-red-500">{errors.nama_barang}</p>}
                                         </div>
 
@@ -237,11 +215,7 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
 
                                         <div className="space-y-2">
                                             <Label htmlFor="spesifikasi_kertas">Spesifikasi Kertas</Label>
-                                            <Input
-                                                id="spesifikasi_kertas"
-                                                value={data.spesifikasi_kertas}
-                                                readOnly
-                                            />
+                                            <Input id="spesifikasi_kertas" value={data.spesifikasi_kertas} readOnly />
                                             {errors.spesifikasi_kertas && <p className="text-sm text-red-500">{errors.spesifikasi_kertas}</p>}
                                         </div>
 
@@ -265,87 +239,49 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
 
                                         <div className="space-y-2">
                                             <Label htmlFor="ukuran_potong">Ukuran Potong</Label>
-                                            <Input
-                                                id="ukuran_potong"
-                                                value={data.ukuran_potong}
-                                                readOnly
-                                            />
+                                            <Input id="ukuran_potong" value={data.ukuran_potong} readOnly />
                                             {errors.ukuran_potong && <p className="text-sm text-red-500">{errors.ukuran_potong}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="ukuran_cetak">Ukuran Cetak</Label>
-                                            <Input
-                                                id="ukuran_cetak"
-                                                value={data.ukuran_cetak}
-                                                readOnly
-                                            />
+                                            <Input id="ukuran_cetak" value={data.ukuran_cetak} readOnly />
                                             {errors.ukuran_cetak && <p className="text-sm text-red-500">{errors.ukuran_cetak}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="panjang">Panjang</Label>
-                                            <Input
-                                                id="panjang"
-                                                type="number"
-                                                step="0.01"
-                                                value={data.panjang}
-                                                readOnly
-                                            />
+                                            <Input id="panjang" type="number" step="0.01" value={data.panjang} readOnly />
                                             {errors.panjang && <p className="text-sm text-red-500">{errors.panjang}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="lebar">Lebar</Label>
-                                            <Input
-                                                id="lebar"
-                                                type="number"
-                                                step="0.01"
-                                                value={data.lebar}
-                                                readOnly
-                                            />
+                                            <Input id="lebar" type="number" step="0.01" value={data.lebar} readOnly />
                                             {errors.lebar && <p className="text-sm text-red-500">{errors.lebar}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="tinggi">Tinggi</Label>
-                                            <Input
-                                                id="tinggi"
-                                                type="number"
-                                                step="0.01"
-                                                value={data.tinggi}
-                                                readOnly
-                                            />
+                                            <Input id="tinggi" type="number" step="0.01" value={data.tinggi} readOnly />
                                             {errors.tinggi && <p className="text-sm text-red-500">{errors.tinggi}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="berat_kotor">Berat Kotor</Label>
-                                            <Input
-                                                id="berat_kotor"
-                                                type="number"
-                                                step="0.01"
-                                                value={data.berat_kotor}
-                                                readOnly
-                                            />
+                                            <Input id="berat_kotor" type="number" step="0.01" value={data.berat_kotor} readOnly />
                                             {errors.berat_kotor && <p className="text-sm text-red-500">{errors.berat_kotor}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="berat_bersih">Berat Bersih</Label>
-                                            <Input
-                                                id="berat_bersih"
-                                                type="number"
-                                                step="0.01"
-                                                value={data.berat_bersih}
-                                                readOnly
-                                            />
+                                            <Input id="berat_bersih" type="number" step="0.01" value={data.berat_bersih} readOnly />
                                             {errors.berat_bersih && <p className="text-sm text-red-500">{errors.berat_bersih}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="id_type_item">Satuan</Label>
-                                            <Select value={data.satuan_satu_id} >
+                                            <Select value={data.satuan_satu_id}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Pilih Satuan" />
                                                 </SelectTrigger>
@@ -370,7 +306,7 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
                                         </div>
 
                                         <div className="rounded-md border">
-                                            <table className="w-full divide-y ">
+                                            <table className="w-full divide-y">
                                                 <thead>
                                                     <tr>
                                                         <th
@@ -411,7 +347,7 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
                                                         </th>
                                                     </tr>
                                                 </thead>
-                                                <tbody className="divide-y divide-gray-200 ">
+                                                <tbody className="divide-y divide-gray-200">
                                                     {!Array.isArray(data.bill_of_materials) || data.bill_of_materials.length === 0 ? (
                                                         <tr>
                                                             <td colSpan={6} className="px-4 py-4 text-center text-sm text-gray-500">

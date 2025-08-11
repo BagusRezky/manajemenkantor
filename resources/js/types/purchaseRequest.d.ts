@@ -1,4 +1,4 @@
-import { MasterItem } from "./masterItem";
+import { MasterItem } from './masterItem';
 
 export interface ItemReference {
     id: string;
@@ -22,7 +22,7 @@ export interface PurchaseRequestItem {
     eta: string;
     catatan: string;
     id_master_item: string;
-    master_item?:MasterItem;
+    master_item?: MasterItem;
     item_references: ItemReference[];
 }
 

@@ -14,7 +14,6 @@ import { format } from 'date-fns';
 import { PencilIcon, TrashIcon } from 'lucide-react';
 import { useEffect, useState } from 'react';
 
-
 interface Unit {
     id: string;
     nama_satuan: string;
@@ -89,7 +88,7 @@ interface PenerimaanBarangFormProps {
     previousReceipts: PreviousReceipt[];
 }
 
-export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({purchaseOrders, previousReceipts}) => {
+export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({ purchaseOrders, previousReceipts }) => {
     const [selectedPO, setSelectedPO] = useState<string>('');
     const [poItems, setPoItems] = useState<PenerimaanItem[]>([]);
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -253,8 +252,8 @@ export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({purch
             </CardHeader>
             <CardContent>
                 {/* DEBUG INFO PANEL - Hapus setelah debugging selesai */}
-                <div className="mb-4 p-4 bg-gray-100 rounded">
-                    <h4 className="font-bold mb-2">Debug Info:</h4>
+                <div className="mb-4 rounded bg-gray-100 p-4">
+                    <h4 className="mb-2 font-bold">Debug Info:</h4>
                     <p>Selected PO: {selectedPO}</p>
                     <p>Purchase Orders Count: {purchaseOrders.length}</p>
                     <p>PO Items Count: {poItems.length}</p>

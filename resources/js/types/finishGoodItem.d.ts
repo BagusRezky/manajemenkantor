@@ -1,11 +1,7 @@
-
-
-
-import { BillOfMaterial } from "./billOfMaterial";
-import { CustomerAddress } from "./customerAddress";
-import { TypeItem } from "./typeItem";
-import { Unit } from "./unit";
-
+import { BillOfMaterial } from './billOfMaterial';
+import { CustomerAddress } from './customerAddress';
+import { TypeItem } from './typeItem';
+import { Unit } from './unit';
 
 export interface FinishGoodItem {
     id: string;

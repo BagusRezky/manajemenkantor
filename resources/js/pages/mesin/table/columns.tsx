@@ -1,15 +1,11 @@
-
-import { Checkbox } from '@/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Mesin } from '@/types/mesin';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { router } from '@inertiajs/react';
-import { Mesin } from '@/types/mesin';
-
-
-
 
 const handleDelete = ($mesin: string) => {
     // Delete supplier with ID `id`
@@ -23,9 +19,11 @@ const handleDelete = ($mesin: string) => {
     });
 };
 
-export const columns = (setIsModalOpen:(open:boolean)=>void,
-setEditModalOpen:(open:boolean)=>void,
-setSelectedMesin:(mesin: Mesin| null) =>void): ColumnDef<Mesin>[]=> [
+export const columns = (
+    setIsModalOpen: (open: boolean) => void,
+    setEditModalOpen: (open: boolean) => void,
+    setSelectedMesin: (mesin: Mesin | null) => void,
+): ColumnDef<Mesin>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -79,9 +77,12 @@ setSelectedMesin:(mesin: Mesin| null) =>void): ColumnDef<Mesin>[]=> [
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(mesin.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => {  setSelectedMesin(mesin); setEditModalOpen(true);
-
-                        }}>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setSelectedMesin(mesin);
+                                setEditModalOpen(true);
+                            }}
+                        >
                             Updated
                         </DropdownMenuItem>
                     </DropdownMenuContent>

@@ -55,7 +55,6 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
         const stock = selectedKartuInstruksiKerja ? calculateOnHandStock(selectedKartuInstruksiKerja) : 0;
         setOnHandStock(stock);
 
-
         setData((prev) => ({
             ...prev,
             id_kartu_instruksi_kerja: kikId,

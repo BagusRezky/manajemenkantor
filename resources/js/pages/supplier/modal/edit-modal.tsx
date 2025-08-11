@@ -88,7 +88,7 @@ const EditSupplierModal: React.FC<EditSupplierModalProps> = ({ isOpen, onClose, 
                         name="alamat_lengkap"
                         value={data.alamat_lengkap}
                         onChange={handleChange}
-                        className="col-span-3 rounded-md border border-gray-400 w-full p-2"
+                        className="col-span-3 w-full rounded-md border border-gray-400 p-2"
                         rows={3}
                         required
                     />

@@ -12,7 +12,6 @@ type SearchableSelectProps = {
     placeholder?: string;
     onChange: (value: string) => void;
     disabled?: boolean;
-
 };
 
 export function SearchableSelect({
@@ -53,12 +52,12 @@ export function SearchableSelect({
 
             {/* Dropdown panel */}
             {isOpen && (
-                <div className="absolute z-50 mt-1 w-full rounded-md border shadow-lg bg-popover">
+                <div className="bg-popover absolute z-50 mt-1 w-full rounded-md border shadow-lg">
                     {/* Search box */}
                     <div className="border-b p-2">
                         <input
                             type="text"
-                            className="w-full rounded-md border px-3 py-2 "
+                            className="w-full rounded-md border px-3 py-2"
                             placeholder="Search..."
                             value={searchText}
                             onChange={(e) => setSearchText(e.target.value)}
@@ -75,7 +74,7 @@ export function SearchableSelect({
                                 {filteredItems.map((item) => (
                                     <div
                                         key={item.key || item.value}
-                                        className={`flex cursor-pointer items-center px-3 py-2 hover:bg-accent ${
+                                        className={`hover:bg-accent flex cursor-pointer items-center px-3 py-2 ${
                                             selectedValue === item.value ? 'bg-gray-20' : ''
                                         }`}
                                         onClick={() => handleSelect(item.value)}

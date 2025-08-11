@@ -40,7 +40,6 @@ export default function ShowInternalMaterialRequest({ internalMaterialRequest }:
         }
     };
 
-
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Detail IMR - ${internalMaterialRequest.no_imr}`} />
@@ -124,8 +123,6 @@ export default function ShowInternalMaterialRequest({ internalMaterialRequest }:
                         </CardContent>
                     </Card>
 
-
-
                     {/* Material Items Table */}
                     <Card>
                         <CardHeader>
@@ -180,15 +177,21 @@ export default function ShowInternalMaterialRequest({ internalMaterialRequest }:
                                                     <span className="font-medium">
                                                         {Number(item.kartu_instruksi_kerja_bom?.total_kebutuhan || 0).toFixed(2)}
                                                     </span>
-                                                    <div className="text-xs text-gray-500">{item.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.unit?.nama_satuan}</div>
+                                                    <div className="text-xs text-gray-500">
+                                                        {item.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.unit?.nama_satuan}
+                                                    </div>
                                                 </td>
                                                 <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
                                                     <span className="font-medium text-orange-600">{Number(item.qty_request || 0).toFixed(2)}</span>
-                                                    <div className="text-xs text-gray-500">{item.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.unit?.nama_satuan}</div>
+                                                    <div className="text-xs text-gray-500">
+                                                        {item.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.unit?.nama_satuan}
+                                                    </div>
                                                 </td>
                                                 <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
                                                     <span className="font-medium text-green-600">{Number(item.qty_approved || 0).toFixed(2)}</span>
-                                                    <div className="text-xs text-gray-500">{item.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.unit?.nama_satuan}</div>
+                                                    <div className="text-xs text-gray-500">
+                                                        {item.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.unit?.nama_satuan}
+                                                    </div>
                                                 </td>
                                                 <td className="px-4 py-4 text-sm whitespace-nowrap text-gray-900">
                                                     {item.qty_approved > 0 ? (
@@ -213,8 +216,6 @@ export default function ShowInternalMaterialRequest({ internalMaterialRequest }:
                             </div>
                         </CardContent>
                     </Card>
-
-
                 </div>
             </div>
         </AppLayout>

@@ -1,16 +1,15 @@
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
-import { MasterKonversi } from "@/types/masterKonversi";
-import { TypeItem } from "@/types/typeItem";
-import { Unit } from "@/types/unit";
-import { Head } from "@inertiajs/react";
-import { useEffect, useState } from "react";
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
+import { MasterKonversi } from '@/types/masterKonversi';
+import { TypeItem } from '@/types/typeItem';
+import { Unit } from '@/types/unit';
+import { Head } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
 
-import EditMasterKonversiModal from "./modal/edit-modal";
-import { columns } from "./table/columns";
-import { DataTable } from "./table/data-table";
-import { Toaster } from "sonner";
-
+import { Toaster } from 'sonner';
+import EditMasterKonversiModal from './modal/edit-modal';
+import { columns } from './table/columns';
+import { DataTable } from './table/data-table';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -19,7 +18,7 @@ const breadcrumbs: BreadcrumbItem[] = [
     },
 ];
 
-interface MasterKonversiProps{
+interface MasterKonversiProps {
     konversiList: MasterKonversi[];
     typeItems: TypeItem[];
     units: Unit[];
@@ -38,7 +37,7 @@ export default function MasterKonversis({ konversiList, typeItems, units }: Mast
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Customer" />
             <div className="mx-5 py-5">
-                <DataTable columns={columns(() => {}, setEditModalOpen, setSelectedMasterKonversi)} data={data} typeItems={typeItems} units={units}  />
+                <DataTable columns={columns(() => {}, setEditModalOpen, setSelectedMasterKonversi)} data={data} typeItems={typeItems} units={units} />
             </div>
 
             <EditMasterKonversiModal
@@ -48,7 +47,7 @@ export default function MasterKonversis({ konversiList, typeItems, units }: Mast
                 typeItems={typeItems}
                 units={units}
             />
-            <Toaster/>
+            <Toaster />
         </AppLayout>
     );
 }

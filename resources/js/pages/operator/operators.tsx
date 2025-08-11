@@ -1,14 +1,13 @@
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
-import { Head } from "@inertiajs/react";
-import { useEffect, useState } from "react";
-import { columns} from "./table/columns";
-import { DataTable } from "./table/data-table";
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
+import { Head } from '@inertiajs/react';
+import { useEffect, useState } from 'react';
+import { columns } from './table/columns';
+import { DataTable } from './table/data-table';
 
-import { Toaster } from "sonner";
-import EditMesinModal from "./modal/edit-modal";
-import { Operator } from "@/types/operator";
-
+import { Operator } from '@/types/operator';
+import { Toaster } from 'sonner';
+import EditMesinModal from './modal/edit-modal';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -34,7 +33,7 @@ export default function Mesins({ operators }: { operators: Operator[] }) {
             </div>
 
             <EditMesinModal isOpen={editModelOpen} onClose={() => setEditModalOpen(false)} operator={selectedOperator} />
-        <Toaster/>
+            <Toaster />
         </AppLayout>
     );
 }

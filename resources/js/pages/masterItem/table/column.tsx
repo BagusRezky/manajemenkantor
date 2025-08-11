@@ -1,12 +1,11 @@
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { MasterItem } from "@/types/masterItem";
-import { router } from "@inertiajs/react";
-import { ColumnDef } from "@tanstack/react-table";
-import { MoreHorizontal } from "lucide-react";
-import { toast } from "sonner";
-
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { MasterItem } from '@/types/masterItem';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { MoreHorizontal } from 'lucide-react';
+import { toast } from 'sonner';
 
 const handleDelete = (item: string) => {
     router.delete(`/masterItems/${item}`, {
@@ -42,7 +41,7 @@ export const columns = (setSelectedItem: (item: MasterItem | null) => void, open
 
     {
         accessorKey: 'nama_master_item',
-        header: 'Nama Master Item'
+        header: 'Nama Master Item',
     },
     {
         accessorKey: 'unit.nama_satuan',

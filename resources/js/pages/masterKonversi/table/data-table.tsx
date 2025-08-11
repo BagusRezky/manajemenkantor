@@ -1,6 +1,8 @@
 import { DataTablePagination } from '@/components/custom-pagination';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { TypeItem } from '@/types/typeItem';
+import { Unit } from '@/types/unit';
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -12,9 +14,6 @@ import {
 } from '@tanstack/react-table';
 import React from 'react';
 import { MasterKonversiFormModal } from '../modal/add-modal';
-import { TypeItem } from '@/types/typeItem';
-import { Unit } from '@/types/unit';
-
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];

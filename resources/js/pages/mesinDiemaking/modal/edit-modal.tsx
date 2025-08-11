@@ -3,11 +3,9 @@ import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '
 import { Input } from '@/components/ui/input';
 import { MesinDiemaking } from '@/types/mesinDiemaking';
 
-
 import { useForm } from '@inertiajs/react';
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
-
 
 interface EditMesinModalProps {
     isOpen: boolean;
@@ -67,12 +65,24 @@ const EditMesinDiemakingModal: React.FC<EditMesinModalProps> = ({ isOpen, onClos
                     <DialogTitle> Mesin Diemaking</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-2">
-
-
                     {errors.nama_mesin_diemaking && <div className="text-sm text-red-500">{errors.nama_mesin_diemaking}</div>}
-                    <Input type="text" name="nama_mesin_diemaking" value={data.nama_mesin_diemaking} onChange={handleChange} placeholder="Nama Mesin" required />
+                    <Input
+                        type="text"
+                        name="nama_mesin_diemaking"
+                        value={data.nama_mesin_diemaking}
+                        onChange={handleChange}
+                        placeholder="Nama Mesin"
+                        required
+                    />
                     {errors.jenis_mesin_diemaking && <div className="text-sm text-red-500">{errors.jenis_mesin_diemaking}</div>}
-                    <Input type="text" name="jenis_mesin_diemaking" value={data.jenis_mesin_diemaking} onChange={handleChange} placeholder="Jenis Mesin" required />
+                    <Input
+                        type="text"
+                        name="jenis_mesin_diemaking"
+                        value={data.jenis_mesin_diemaking}
+                        onChange={handleChange}
+                        placeholder="Jenis Mesin"
+                        required
+                    />
                     {errors.kapasitas_diemaking && <div className="text-sm text-red-500">{errors.kapasitas_diemaking}</div>}
                     <Input
                         type="number"

@@ -1,8 +1,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import React, { useState, useEffect } from 'react';
-
+import React, { useEffect, useState } from 'react';
 
 type KartuInstruksiKerjaProps = {
     data: any;
@@ -45,28 +44,14 @@ const KartuInstruksiKerjaInput = ({ data, setData, errors, latestId = 1 }: Kartu
             {/* No Surat Perintah Kerja */}
             <div className="space-y-2">
                 <Label htmlFor="no_kartu_instruksi_kerja">No. Surat Perintah Kerja</Label>
-                <Input
-                    id="no_kartu_instruksi_kerja"
-                    name="no_kartu_instruksi_kerja"
-                    value={data.no_kartu_instruksi_kerja}
-                    readOnly
-
-                />
-                {errors.no_kartu_instruksi_kerja && (
-                    <p className="text-sm text-red-500">{errors.no_kartu_instruksi_kerja}</p>
-                )}
+                <Input id="no_kartu_instruksi_kerja" name="no_kartu_instruksi_kerja" value={data.no_kartu_instruksi_kerja} readOnly />
+                {errors.no_kartu_instruksi_kerja && <p className="text-sm text-red-500">{errors.no_kartu_instruksi_kerja}</p>}
             </div>
 
             {/* IK Code Input */}
             <div className="space-y-2">
                 <Label htmlFor="ik_code">Kode IK</Label>
-                <Input
-                    id="ik_code"
-                    name="ik_code"
-                    value={ikCode}
-                    onChange={handleIkCodeChange}
-                    placeholder="10"
-                />
+                <Input id="ik_code" name="ik_code" value={ikCode} onChange={handleIkCodeChange} placeholder="10" />
                 <p className="text-xs text-gray-500">Masukkan kode untuk format SPK-IK[XX]</p>
             </div>
         </>

@@ -1,16 +1,14 @@
-import { Button } from "@/components/ui/button";
-import { DialogHeader, Dialog, DialogContent, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { MasterKonversi } from "@/types/masterKonversi";
-import { Textarea } from "@headlessui/react";
+import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { MasterKonversi } from '@/types/masterKonversi';
+import { Textarea } from '@headlessui/react';
 
+import { useEffect, useState } from 'react';
 
-
-import { useState, useEffect } from "react";
-
-import { toast } from "sonner";
+import { toast } from 'sonner';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface EditItemModalProps {
@@ -21,13 +19,7 @@ interface EditItemModalProps {
     onSave: (item: any) => void;
 }
 
-export default function EditItemModal({
-    isOpen,
-    setIsOpen,
-    currentItem,
-    setCurrentItem,
-    onSave
-}: EditItemModalProps) {
+export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurrentItem, onSave }: EditItemModalProps) {
     const [availableConversions, setAvailableConversions] = useState<MasterKonversi[]>([]);
     const [selectedConversion, setSelectedConversion] = useState<string | null>(null);
     const [qtyAfterConversion, setQtyAfterConversion] = useState<number>(0);
@@ -36,7 +28,7 @@ export default function EditItemModal({
 
     // Fetch dan setup data saat modal dibuka
     useEffect(() => {
-        console.log("Modal opened with item:", currentItem);
+        console.log('Modal opened with item:', currentItem);
         setErrorMessage(null);
 
         if (isOpen && currentItem) {
@@ -50,14 +42,14 @@ export default function EditItemModal({
                     unitId = currentItem.purchaseRequestItem.master_item.unit.id;
                 }
 
-                console.log("Units for conversion:", { itemId, unitId });
+                console.log('Units for conversion:', { itemId, unitId });
 
                 if (itemId && unitId) {
                     fetchConversions(itemId, unitId);
 
                     // Jika sudah ada id_satuan_po, set selectedConversion
                     if (currentItem.id_satuan_po) {
-                        console.log("Item already has satuan_po:", currentItem.id_satuan_po);
+                        console.log('Item already has satuan_po:', currentItem.id_satuan_po);
 
                         // Akan diset setelah fetch conversions berhasil
                     }
@@ -89,7 +81,7 @@ export default function EditItemModal({
             const response = await fetch(route('purchaseOrders.getUnitConversions', [itemId, unitId]), {
                 headers: {
                     Accept: 'application/json',
-                    'X-Requested-With': 'XMLHttpRequest'
+                    'X-Requested-With': 'XMLHttpRequest',
                 },
             });
 
@@ -98,18 +90,16 @@ export default function EditItemModal({
             }
 
             const data = await response.json();
-            console.log("Conversion data received:", data);
+            console.log('Conversion data received:', data);
 
             setAvailableConversions(data.conversions || []);
 
             // Jika sudah ada satuan yang dipilih sebelumnya, pilih konversi yang sesuai
             if (currentItem.id_satuan_po) {
-                const matchingConversion = data.conversions.find(
-                    (conv: MasterKonversi) => conv.satuan_dua_id === currentItem.id_satuan_po
-                );
+                const matchingConversion = data.conversions.find((conv: MasterKonversi) => conv.satuan_dua_id === currentItem.id_satuan_po);
 
                 if (matchingConversion) {
-                    console.log("Found matching conversion:", matchingConversion);
+                    console.log('Found matching conversion:', matchingConversion);
                     setSelectedConversion(matchingConversion.id);
 
                     // Pre-calculate qty after conversion
@@ -122,7 +112,7 @@ export default function EditItemModal({
                         setCurrentItem({
                             ...currentItem,
                             qty_after_conversion: parseFloat(afterConversion.toFixed(3)),
-                            master_konversi: matchingConversion
+                            master_konversi: matchingConversion,
                         });
                     }
                 }
@@ -137,12 +127,7 @@ export default function EditItemModal({
     };
 
     // Fungsi untuk menghitung qty after conversion dan jumlah
-    const calculateValues = (
-        conversionAmount: number,
-        qtyPO: number,
-        hargaSatuan: number,
-        diskon: number,
-    ) => {
+    const calculateValues = (conversionAmount: number, qtyPO: number, hargaSatuan: number, diskon: number) => {
         // Qty After Conversion = Qty PO / Conversion Amount
         const afterConversion = conversionAmount > 0 ? qtyPO / conversionAmount : 0;
 
@@ -194,7 +179,7 @@ export default function EditItemModal({
                 });
             }
         } catch (error) {
-            console.error("Error in conversion selection:", error);
+            console.error('Error in conversion selection:', error);
             toast.error(`Error saat memilih konversi`);
         }
     };
@@ -236,7 +221,7 @@ export default function EditItemModal({
                 jumlah: jumlah,
             });
         } catch (error) {
-            console.error("Error changing qty:", error);
+            console.error('Error changing qty:', error);
             toast.error(`Error saat mengubah quantity`);
         }
     };
@@ -268,7 +253,7 @@ export default function EditItemModal({
                 jumlah: jumlah,
             });
         } catch (error) {
-            console.error("Error changing price:", error);
+            console.error('Error changing price:', error);
             toast.error(`Error saat mengubah harga`);
         }
     };
@@ -300,7 +285,7 @@ export default function EditItemModal({
                 jumlah: jumlah,
             });
         } catch (error) {
-            console.error("Error changing discount:", error);
+            console.error('Error changing discount:', error);
             toast.error(`Error saat mengubah diskon`);
         }
     };
@@ -355,14 +340,14 @@ export default function EditItemModal({
                 // Pastikan data ini juga terisi
                 id_satuan_po: conversion.satuan_dua_id,
                 satuan: conversion.satuan_dua,
-                master_konversi: conversion
+                master_konversi: conversion,
             };
 
-            console.log("Final item to save:", finalItem);
+            console.log('Final item to save:', finalItem);
             onSave(finalItem);
             setIsOpen(false);
         } catch (error) {
-            console.error("Error saving changes:", error);
+            console.error('Error saving changes:', error);
             toast.error(`Error saat menyimpan perubahan`);
         }
     };
@@ -373,24 +358,23 @@ export default function EditItemModal({
     const maxQtyPO = currentItem?.purchaseRequestItem?.qty || 0;
 
     return (
-        <Dialog open={isOpen} onOpenChange={(open) => {
-            // Konfirmasi jika ada error
-            if (!open && errorMessage) {
-                if (confirm('Terdapat error pada form. Apakah Anda yakin ingin menutup?')) {
-                    setIsOpen(false);
+        <Dialog
+            open={isOpen}
+            onOpenChange={(open) => {
+                // Konfirmasi jika ada error
+                if (!open && errorMessage) {
+                    if (confirm('Terdapat error pada form. Apakah Anda yakin ingin menutup?')) {
+                        setIsOpen(false);
+                    }
+                    return;
                 }
-                return;
-            }
-            setIsOpen(open);
-        }}>
+                setIsOpen(open);
+            }}
+        >
             <DialogContent className="sm:max-w-[900px]">
                 <DialogHeader>
                     <DialogTitle>Edit Purchase Order Item</DialogTitle>
-                    {errorMessage && (
-                        <div className="mt-2 rounded bg-red-100 p-2 text-red-600">
-                            Error: {errorMessage}
-                        </div>
-                    )}
+                    {errorMessage && <div className="mt-2 rounded bg-red-100 p-2 text-red-600">Error: {errorMessage}</div>}
                 </DialogHeader>
 
                 <div className="grid grid-cols-1 gap-6 py-4 md:grid-cols-2">
@@ -542,7 +526,11 @@ export default function EditItemModal({
                                 Remark PO
                             </Label>
                             <div className="col-span-3">
-                                <Textarea id="remark" value={currentItem?.remark_item_po || ''} onChange={(e) => handleRemarkChange(e.target.value)} />
+                                <Textarea
+                                    id="remark"
+                                    value={currentItem?.remark_item_po || ''}
+                                    onChange={(e) => handleRemarkChange(e.target.value)}
+                                />
                             </div>
                         </div>
                     </div>
@@ -552,11 +540,7 @@ export default function EditItemModal({
                     <Button type="button" variant="secondary" onClick={() => setIsOpen(false)}>
                         Cancel
                     </Button>
-                    <Button
-                        type="button"
-                        onClick={handleSaveChanges}
-                        disabled={!currentItem?.qty_po || !currentItem?.id_satuan_po || loading}
-                    >
+                    <Button type="button" onClick={handleSaveChanges} disabled={!currentItem?.qty_po || !currentItem?.id_satuan_po || loading}>
                         Save Changes
                     </Button>
                 </DialogFooter>

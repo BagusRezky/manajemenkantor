@@ -1,22 +1,23 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 
-import { router } from "@inertiajs/react";
-import { ColumnDef } from "@tanstack/react-table";
-import { Download, FileText, MoreHorizontal } from "lucide-react";
-import { toast } from "sonner";
-import jsPDF from "jspdf";
+import { ReturEksternal } from '@/types/externalReturn';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
+import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { ReturEksternal } from "@/types/externalReturn";
-
+import { Download, FileText, MoreHorizontal } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Helper function untuk mendapatkan nama satuan
 const getSatuanName = (item: any) => {
-    return item.penerimaan_barang_item?.purchase_order_item?.master_konversi?.nama_satuan ||
-           item.penerimaan_barang_item?.purchase_order_item?.satuan?.nama_satuan ||
-           'PIECES';
+    return (
+        item.penerimaan_barang_item?.purchase_order_item?.master_konversi?.nama_satuan ||
+        item.penerimaan_barang_item?.purchase_order_item?.satuan?.nama_satuan ||
+        'PIECES'
+    );
 };
 
 // Function untuk generate PDF retur eksternal
@@ -56,8 +57,7 @@ const generateReturEksternalPdf = (returEksternal: ReturEksternal, download = fa
     doc.text('Tgl Retur Barang', pageWidth - 85, 52);
     doc.text(':', pageWidth - 50, 52);
     doc.setFont('helvetica', 'normal');
-    const formattedDate = returEksternal.tgl_retur_barang ?
-        new Date(returEksternal.tgl_retur_barang).toLocaleDateString('id-ID') : '';
+    const formattedDate = returEksternal.tgl_retur_barang ? new Date(returEksternal.tgl_retur_barang).toLocaleDateString('id-ID') : '';
     doc.text(formattedDate, pageWidth - 45, 52);
 
     doc.setFont('helvetica', 'bold');
@@ -76,8 +76,9 @@ const generateReturEksternalPdf = (returEksternal: ReturEksternal, download = fa
     doc.text('Tgl Penerimaan Barang', 15, 73);
     doc.text(':', 75, 73);
     doc.setFont('helvetica', 'normal');
-    const formattedPenerimaanDate = returEksternal.penerimaan_barang?.tgl_terima_barang ?
-        new Date(returEksternal.penerimaan_barang.tgl_terima_barang).toLocaleDateString('id-ID') : '';
+    const formattedPenerimaanDate = returEksternal.penerimaan_barang?.tgl_terima_barang
+        ? new Date(returEksternal.penerimaan_barang.tgl_terima_barang).toLocaleDateString('id-ID')
+        : '';
     doc.text(formattedPenerimaanDate, 80, 73);
 
     doc.setFont('helvetica', 'bold');

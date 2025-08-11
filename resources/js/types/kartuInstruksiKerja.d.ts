@@ -1,12 +1,11 @@
-import { BillOfMaterial } from "./billOfMaterial";
-import { Blokir } from "./blokir";
-import { DieMaking } from "./dieMaking";
-import { Finishing } from "./finishing";
-import { Packaging } from "./packaging";
-import { Printing } from "./printing";
-import { SalesOrder } from "./salesOrder";
-import { SuratJalan } from "./suratJalan";
-
+import { BillOfMaterial } from './billOfMaterial';
+import { Blokir } from './blokir';
+import { DieMaking } from './dieMaking';
+import { Finishing } from './finishing';
+import { Packaging } from './packaging';
+import { Printing } from './printing';
+import { SalesOrder } from './salesOrder';
+import { SuratJalan } from './suratJalan';
 
 export interface KartuInstruksiKerja {
     id: string;
@@ -38,4 +37,3 @@ export interface KartuInstruksiKerjaBom {
     jumlah_produksi: number;
     bill_of_materials?: BillOfMaterial;
 }
-

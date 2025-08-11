@@ -1,21 +1,18 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import AppLayout from "@/layouts/app-layout";
-import { BreadcrumbItem } from "@/types";
-import { PurchaseOrder } from "@/types/purchaseOrder";
-import { formatRupiah } from "@/utils/formatter/currency";
-import { Head, Link } from "@inertiajs/react";
-import { format } from "date-fns";
-import { ArrowLeftIcon } from "lucide-react";
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import AppLayout from '@/layouts/app-layout';
+import { BreadcrumbItem } from '@/types';
+import { PurchaseOrder } from '@/types/purchaseOrder';
+import { formatRupiah } from '@/utils/formatter/currency';
+import { Head, Link } from '@inertiajs/react';
+import { format } from 'date-fns';
+import { ArrowLeftIcon } from 'lucide-react';
 
 // Helper function untuk mendapatkan nama satuan
 const getSatuanName = (item: any) => {
-    return item.master_konversi?.nama_satuan ||
-           item.satuan?.nama_satuan ||
-           item.id_satuan_po ||
-           'Satuan tidak tersedia';
+    return item.master_konversi?.nama_satuan || item.satuan?.nama_satuan || item.id_satuan_po || 'Satuan tidak tersedia';
 };
 
 interface ShowProps {
@@ -26,7 +23,6 @@ const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Purchase Orders',
         href: '/purchaseOrders',
-
     },
     {
         title: 'Detail Purchase Order',

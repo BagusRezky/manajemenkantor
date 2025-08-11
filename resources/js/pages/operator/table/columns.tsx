@@ -1,12 +1,11 @@
-
-import { Checkbox } from '@/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Operator } from '@/types/operator';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { router } from '@inertiajs/react';
-import { Operator } from '@/types/operator';
 
 const handleDelete = ($operator: string) => {
     // Delete supplier with ID `id`
@@ -20,9 +19,11 @@ const handleDelete = ($operator: string) => {
     });
 };
 
-export const columns = (setIsModalOpen:(open:boolean)=>void,
-setEditModalOpen:(open:boolean)=>void,
-setSelectedOperator:(operator: Operator| null) =>void): ColumnDef<Operator>[]=> [
+export const columns = (
+    setIsModalOpen: (open: boolean) => void,
+    setEditModalOpen: (open: boolean) => void,
+    setSelectedOperator: (operator: Operator | null) => void,
+): ColumnDef<Operator>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -59,9 +60,12 @@ setSelectedOperator:(operator: Operator| null) =>void): ColumnDef<Operator>[]=> 
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(operator.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => {  setSelectedOperator(operator); setEditModalOpen(true);
-
-                        }}>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setSelectedOperator(operator);
+                                setEditModalOpen(true);
+                            }}
+                        >
                             Updated
                         </DropdownMenuItem>
                     </DropdownMenuContent>

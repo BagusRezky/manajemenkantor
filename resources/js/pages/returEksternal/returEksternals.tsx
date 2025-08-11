@@ -4,9 +4,9 @@ import { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
-import { DataTable } from './table/data-table';
 import { ReturEksternal } from '@/types/externalReturn';
 import { columns } from './table/column';
+import { DataTable } from './table/data-table';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

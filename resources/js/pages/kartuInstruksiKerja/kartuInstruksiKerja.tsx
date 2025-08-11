@@ -4,10 +4,8 @@ import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
-import { DataTable } from './table/data-table';
 import { columns } from './table/column';
-
-
+import { DataTable } from './table/data-table';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -26,7 +24,6 @@ export default function Index({ kartuInstruksiKerja }: IndexProps) {
     useEffect(() => {
         setData(kartuInstruksiKerja);
     }, [kartuInstruksiKerja]);
-
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

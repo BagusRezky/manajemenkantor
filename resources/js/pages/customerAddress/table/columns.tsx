@@ -1,14 +1,11 @@
-
-import { Checkbox } from '@/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { CustomerAddress } from '@/types/customerAddress';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { router } from '@inertiajs/react';
-import { CustomerAddress } from '@/types/customerAddress';
-
-
 
 const handleDelete = ($customerAddress: string) => {
     // Delete supplier with ID `id`
@@ -22,9 +19,11 @@ const handleDelete = ($customerAddress: string) => {
     });
 };
 
-export const columns = (setIsModalOpen:(open:boolean)=>void,
-setEditModalOpen:(open:boolean)=>void,
-setSelectedCustomerAddress:(customerAddress: CustomerAddress | null) =>void): ColumnDef<CustomerAddress>[]=> [
+export const columns = (
+    setIsModalOpen: (open: boolean) => void,
+    setEditModalOpen: (open: boolean) => void,
+    setSelectedCustomerAddress: (customerAddress: CustomerAddress | null) => void,
+): ColumnDef<CustomerAddress>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -77,9 +76,12 @@ setSelectedCustomerAddress:(customerAddress: CustomerAddress | null) =>void): Co
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(customerAddress.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => {  setSelectedCustomerAddress(customerAddress); setEditModalOpen(true);
-
-                        }}>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setSelectedCustomerAddress(customerAddress);
+                                setEditModalOpen(true);
+                            }}
+                        >
                             Updated
                         </DropdownMenuItem>
                     </DropdownMenuContent>

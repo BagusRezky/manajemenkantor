@@ -44,7 +44,6 @@ export default function ShowInvoice({ invoice }: Props) {
     const subtotalSebelumToleransi = hargaSO * qtyPengiriman;
     const subtotal = subtotalSebelumToleransi - discount;
 
-
     // Hitung PPN dan total
     const ppnAmount = (subtotal * ppnRate) / 100;
     const total = subtotal + ppnAmount + ongkosKirim;
@@ -224,9 +223,7 @@ export default function ShowInvoice({ invoice }: Props) {
                                             {discount > 0 && (
                                                 <tr>
                                                     <td className="py-3 text-sm text-gray-600">Potongan Diskon ({discount}):</td>
-                                                    <td className="py-3 text-right text-sm font-medium text-red-600">
-                                                        - {formatCurrency(discount)}
-                                                    </td>
+                                                    <td className="py-3 text-right text-sm font-medium text-red-600">- {formatCurrency(discount)}</td>
                                                 </tr>
                                             )}
                                             <tr className="border-t-2">

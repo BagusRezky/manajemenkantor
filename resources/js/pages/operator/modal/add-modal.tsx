@@ -1,4 +1,4 @@
-
+import { Operator } from '@/types/operator';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -6,8 +6,6 @@ import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
-import { Operator } from '@/types/operator';
-
 
 type OperatorFormData = Omit<Operator, 'id'>;
 
@@ -15,7 +13,6 @@ export function OperatorFormModal() {
     const [open, setOpen] = useState(false);
     const [formData, setFormData] = useState<OperatorFormData>({
         nama_operator: '',
-
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -72,7 +69,6 @@ export function OperatorFormModal() {
                                 required
                             />
                         </div>
-
                     </div>
                     <DialogFooter>
                         <Button type="button" variant="outline" onClick={() => setOpen(false)}>

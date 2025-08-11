@@ -6,7 +6,6 @@ import { useForm } from '@inertiajs/react';
 import React, { useEffect } from 'react';
 import { toast } from 'sonner';
 
-
 interface EditMesinModalProps {
     isOpen: boolean;
     onClose: () => void;
@@ -24,7 +23,6 @@ const EditOperatorFinishingModal: React.FC<EditMesinModalProps> = ({ isOpen, onC
             setData({
                 id: operatorFinishing.id,
                 nama_operator_finishing: operatorFinishing.nama_operator_finishing,
-
             });
         }
     }, [operatorFinishing, setData]);
@@ -58,10 +56,15 @@ const EditOperatorFinishingModal: React.FC<EditMesinModalProps> = ({ isOpen, onC
                     <DialogTitle>Edit Operator</DialogTitle>
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-2">
-
-
                     {errors.nama_operator_finishing && <div className="text-sm text-red-500">{errors.nama_operator_finishing}</div>}
-                    <Input type="text" name="nama_operator_finishing" value={data.nama_operator_finishing} onChange={handleChange} placeholder="Nama Operator" required />
+                    <Input
+                        type="text"
+                        name="nama_operator_finishing"
+                        value={data.nama_operator_finishing}
+                        onChange={handleChange}
+                        placeholder="Nama Operator"
+                        required
+                    />
                     <DialogFooter>
                         <Button variant="outline" type="button" onClick={onClose} disabled={processing}>
                             Cancel

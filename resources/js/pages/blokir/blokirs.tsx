@@ -3,8 +3,8 @@ import { BreadcrumbItem } from '@/types';
 import { Blokir } from '@/types/blokir';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
-import { DataTable } from './table/data-table';
 import { columns } from './table/column';
+import { DataTable } from './table/data-table';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

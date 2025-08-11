@@ -4,10 +4,8 @@ import { FinishGoodItem } from '@/types/finishGoodItem';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { Toaster } from 'sonner';
-import { DataTable } from './table/trashed-data-table';
 import { trashedColumns } from './table/trashed-column';
-
-
+import { DataTable } from './table/trashed-data-table';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

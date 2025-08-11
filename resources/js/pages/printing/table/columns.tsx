@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Button } from "@/components/ui/button";
-import { Checkbox } from "@/components/ui/checkbox";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
-import { Printing } from "@/types/printing";
-import { router } from "@inertiajs/react";
-import { ColumnDef } from "@tanstack/react-table";
-import { Download, FileText, MoreHorizontal, Edit, Eye, Trash2 } from "lucide-react";
-import { toast } from "sonner";
-import jsPDF from "jspdf";
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Printing } from '@/types/printing';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { format } from 'date-fns';
+import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { format } from "date-fns";
+import { MoreHorizontal, Trash2 } from 'lucide-react';
+import { toast } from 'sonner';
 
 // Function untuk generate PDF laporan printing
 const generatePrintingPdf = (printing: Printing, download = false): void => {
@@ -216,7 +216,7 @@ export const columns = (): ColumnDef<Printing>[] => [
         header: 'Hasil Baik',
         cell: ({ row }) => {
             const data = row.original;
-            return <span className="text-green-600 font-semibold">{data.hasil_baik_printing}</span>;
+            return <span className="font-semibold text-green-600">{data.hasil_baik_printing}</span>;
         },
     },
     {
@@ -224,7 +224,7 @@ export const columns = (): ColumnDef<Printing>[] => [
         header: 'Hasil Rusak',
         cell: ({ row }) => {
             const data = row.original;
-            return <span className="text-red-600 font-semibold">{data.hasil_rusak_printing}</span>;
+            return <span className="font-semibold text-red-600">{data.hasil_rusak_printing}</span>;
         },
     },
     {

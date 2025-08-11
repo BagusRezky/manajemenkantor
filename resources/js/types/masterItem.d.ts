@@ -1,7 +1,6 @@
-import { CategoryItem } from "./categoryItem";
-import { TypeItem } from "./typeItem";
-import { Unit } from "./unit";
-
+import { CategoryItem } from './categoryItem';
+import { TypeItem } from './typeItem';
+import { Unit } from './unit';
 
 export interface MasterItem {
     id: string;

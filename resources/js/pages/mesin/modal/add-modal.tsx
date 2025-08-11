@@ -1,4 +1,4 @@
-
+import { Mesin } from '@/types/mesin';
 import { router } from '@inertiajs/react';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -6,7 +6,6 @@ import { Button } from '../../../components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from '../../../components/ui/dialog';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
-import { Mesin } from '@/types/mesin';
 
 type MesinFormData = Omit<Mesin, 'id'>;
 
@@ -109,27 +108,13 @@ export function MesinFormModal() {
                             <Label htmlFor="proses" className="text-right">
                                 Proses
                             </Label>
-                            <Input
-                                id="proses"
-                                name="proses"
-                                value={formData.proses}
-                                onChange={handleChange}
-                                className="col-span-3"
-                                required
-                            />
+                            <Input id="proses" name="proses" value={formData.proses} onChange={handleChange} className="col-span-3" required />
                         </div>
                         <div className="grid grid-cols-4 items-center gap-4">
                             <Label htmlFor="status" className="text-right">
                                 Status
                             </Label>
-                            <Input
-                                id="status"
-                                name="status"
-                                value={formData.status}
-                                onChange={handleChange}
-                                className="col-span-3"
-                                required
-                            />
+                            <Input id="status" name="status" value={formData.status} onChange={handleChange} className="col-span-3" required />
                         </div>
                     </div>
                     <DialogFooter>

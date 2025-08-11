@@ -1,13 +1,11 @@
-
-import { Checkbox } from '@/components/ui/checkbox';
-import { ColumnDef } from '@tanstack/react-table';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { TypeItem } from '@/types/typeItem';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
 import { MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { router } from '@inertiajs/react';
-import { TypeItem } from '@/types/typeItem';
-
 
 const handleDelete = ($typeItem: string) => {
     // Delete supplier with ID `id`
@@ -21,9 +19,11 @@ const handleDelete = ($typeItem: string) => {
     });
 };
 
-export const columns = (setIsModalOpen:(open:boolean)=>void,
-setEditModalOpen:(open:boolean)=>void,
-setSelectedTypeItem:(typeItem: TypeItem | null) =>void): ColumnDef<TypeItem>[]=> [
+export const columns = (
+    setIsModalOpen: (open: boolean) => void,
+    setEditModalOpen: (open: boolean) => void,
+    setSelectedTypeItem: (typeItem: TypeItem | null) => void,
+): ColumnDef<TypeItem>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -68,9 +68,12 @@ setSelectedTypeItem:(typeItem: TypeItem | null) =>void): ColumnDef<TypeItem>[]=>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(typeItem.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => {  setSelectedTypeItem(typeItem); setEditModalOpen(true);
-
-                        }}>
+                        <DropdownMenuItem
+                            onClick={() => {
+                                setSelectedTypeItem(typeItem);
+                                setEditModalOpen(true);
+                            }}
+                        >
                             Updated
                         </DropdownMenuItem>
                     </DropdownMenuContent>

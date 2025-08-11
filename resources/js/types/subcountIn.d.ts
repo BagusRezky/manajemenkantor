@@ -1,4 +1,4 @@
-import { SubcountOut } from "./subcountOut";
+import { SubcountOut } from './subcountOut';
 
 export interface SubcountInItem {
     id: string;

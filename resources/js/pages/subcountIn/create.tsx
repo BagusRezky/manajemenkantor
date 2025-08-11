@@ -249,7 +249,10 @@ export default function Create({ subcountOuts }: CreateProps) {
                                                 <SelectContent>
                                                     {getAvailableSubcountOuts().map((subcountOut) => (
                                                         <SelectItem key={subcountOut.id} value={subcountOut.id}>
-                                                            {subcountOut.no_subcount_out} - {subcountOut.subcount_out_items?.map(item => item.kartu_instruksi_kerja?.no_kartu_instruksi_kerja).join(', ') }
+                                                            {subcountOut.no_subcount_out} -{' '}
+                                                            {subcountOut.subcount_out_items
+                                                                ?.map((item) => item.kartu_instruksi_kerja?.no_kartu_instruksi_kerja)
+                                                                .join(', ')}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>

@@ -15,7 +15,6 @@ import React from 'react';
 import { Operator } from '@/types/operator';
 import { OperatorFormModal } from '../modal/add-modal';
 
-
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];

@@ -1,16 +1,16 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { Checkbox } from "@/components/ui/checkbox";
-import { router } from "@inertiajs/react";
-import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from "@/components/ui/dropdown-menu";
-import { ColumnDef } from "@tanstack/react-table";
-import { Download, FileText, MoreHorizontal } from "lucide-react";
+import { Checkbox } from '@/components/ui/checkbox';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { router } from '@inertiajs/react';
+import { ColumnDef } from '@tanstack/react-table';
+import { Download, FileText, MoreHorizontal } from 'lucide-react';
 
-import { toast } from "sonner";
-import { Button } from "@/components/ui/button";
-import { PurchaseRequest } from "@/types/purchaseRequest";
-import { jsPDF } from "jspdf";
+import { Button } from '@/components/ui/button';
+import { PurchaseRequest } from '@/types/purchaseRequest';
+import { format } from 'date-fns';
+import { jsPDF } from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { format } from "date-fns";
+import { toast } from 'sonner';
 
 const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download = false): void => {
     // Inisialisasi dokumen PDF

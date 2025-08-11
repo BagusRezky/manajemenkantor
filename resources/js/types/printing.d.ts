@@ -1,4 +1,4 @@
-import { KartuInstruksiKerja } from "./kartuInstruksiKerja";
+import { KartuInstruksiKerja } from './kartuInstruksiKerja';
 
 export interface Mesin {
     id: string;
