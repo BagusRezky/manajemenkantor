@@ -34,6 +34,7 @@ use App\Http\Controllers\BlokirController;
 use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\SubcountOutController;
 use App\Http\Controllers\SubcountInController;
+use App\Http\Controllers\ReturInternalController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -308,6 +309,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/subcountIns/{subcountIn}', [SubcountInController::class, 'destroy'])->name('subcountIns.destroy');
     Route::get('/subcountIns/{subcountIn}', [SubcountInController::class, 'show'])->name('subcountIns.show');
     Route::get('/subcountIns/{subcountIn}/pdf', [SubcountInController::class, 'generatePdf'])->name('subcountIns.pdf');
+
+    Route::get('/returInternals', [ReturInternalController::class, 'index'])->name('returInternals.index');
+    Route::get('/returInternal/create', [ReturInternalController::class, 'create'])->name('returInternals.create');
+    Route::post('/returInternal', [ReturInternalController::class, 'store'])->name('returInternals.store');
+    Route::get('/returInternal/{returInternal}/edit', [ReturInternalController::class, 'edit'])->name('returInternals.edit');
+    Route::put('/returInternal/{returInternal}', [ReturInternalController::class, 'update'])->name('returInternals.update');
+    Route::delete('/returInternal/{returInternal}', [ReturInternalController::class, 'destroy'])->name('returInternals.destroy');
+    Route::get('/returInternal/{returInternal}', [ReturInternalController::class, 'show'])->name('returInternals.show');
+    Route::get('/returInternal/{returInternal}/pdf', [ReturInternalController::class, 'generatePdf'])->name('returInternals.pdf');
+
+    
 });
 
 
