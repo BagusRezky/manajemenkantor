@@ -281,7 +281,7 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
             const boms = getValue() as KartuInstruksiKerjaBom[];
             if (!boms || boms.length === 0) return '-';
 
-            return boms.map((bom) => bom.jumlah_produksi).join(', ');
+            return boms.map((bom) => bom.jumlah_produksi);
         },
     },
     {

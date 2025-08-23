@@ -11,7 +11,8 @@ import { BreadcrumbItem } from '@/types';
 import { ImrDiemakingItem } from '@/types/imrDiemaking';
 import { ImrFinishingItem } from '@/types/imrFinishing';
 import { InternalMaterialRequestItem } from '@/types/internalMaterialRequest';
-import { Head, Link, useForm } from '@inertiajs/react';
+import { ReturInternal } from '@/types/returInternal';
+import { Head, Link, router, useForm } from '@inertiajs/react';
 import { format } from 'date-fns';
 import { Package, Save, X } from 'lucide-react';
 import { useEffect, useState } from 'react';
@@ -20,6 +21,7 @@ import { toast, Toaster } from 'sonner';
 interface CombinedImr {
     id: string;
     label: string;
+    type: 'printing' | 'diemaking' | 'finishing';
 }
 
 interface CreateProps {
@@ -44,7 +46,7 @@ export default function Create({ lastId, combinedImr, imrItems = {} }: CreatePro
     const [imrItemsList, setImrItemsList] = useState<(InternalMaterialRequestItem | ImrDiemakingItem | ImrFinishingItem)[]>([]);
     const [itemQuantities, setItemQuantities] = useState<{ [key: string]: number }>({});
 
-    const { data, setData, post, processing, errors } = useForm({
+    const { data, setData, processing, errors } = useForm({
         id_imr_finishing: null as number | null,
         id_imr_diemaking: null as number | null,
         id_imr: null as number | null,
@@ -62,9 +64,9 @@ export default function Create({ lastId, combinedImr, imrItems = {} }: CreatePro
 
     // Auto generate no retur internal
     const currentDate = new Date();
-    const yearMonth = `${currentDate.getFullYear().toString().slice(-2)}${(currentDate.getMonth() + 1).toString().padStart(2, '0')}`;
+    const yearMonth = `${currentDate.getFullYear().toString()}${(currentDate.getMonth() + 1).toString().padStart(2, '0')}`;
     const nextId = String(lastId + 1).padStart(4, '0');
-    const returInternalNumber = `RI/${nextId}.${yearMonth}`;
+    const returInternalNumber = `RI-${yearMonth}.${nextId}`;
 
     useEffect(() => {
         setData((prevData) => ({
@@ -83,64 +85,60 @@ export default function Create({ lastId, combinedImr, imrItems = {} }: CreatePro
     };
 
     const handleImrChange = (value: string) => {
-        const selectedImr = combinedImr.find((imr) => imr.id === value);
+        const selected = combinedImr.find((imr) => imr.id === value);
 
         setSelectedImr(value);
         setItemQuantities({});
-
-        // Reset form IMR IDs dan items
         setData((prevData) => ({
             ...prevData,
+            id_imr: null,
             id_imr_finishing: null,
             id_imr_diemaking: null,
-            id_imr: null,
             items: [],
         }));
 
-        if (!selectedImr) {
+        if (!selected) {
             setImrItemsList([]);
             return;
         }
 
-        // Set IMR items based on selection
         const items = imrItems[value] || [];
         setImrItemsList(items);
 
-        // Deteksi tipe berdasarkan field yang ada di item pertama
-        if (items.length > 0) {
-            const firstItem = items[0];
-
-            if ('qty_approved_finishing' in firstItem) {
-                setData((prev) => ({
-                    ...prev,
-                    id_imr_finishing: parseInt(value),
-                    id_imr_diemaking: null,
-                    id_imr: null,
-                }));
-            } else if ('qty_approved_diemaking' in firstItem) {
-                setData((prev) => ({
-                    ...prev,
-                    id_imr_diemaking: parseInt(value),
-                    id_imr_finishing: null,
-                    id_imr: null,
-                }));
-            } else {
-                setData((prev) => ({
-                    ...prev,
-                    id_imr: parseInt(value),
-                    id_imr_finishing: null,
-                    id_imr_diemaking: null,
-                }));
-            }
+        if (selected.type === 'finishing') {
+            setData((prev) => ({ ...prev, id_imr_finishing: parseInt(value) }));
+        } else if (selected.type === 'diemaking') {
+            setData((prev) => ({ ...prev, id_imr_diemaking: parseInt(value) }));
+        } else {
+            setData((prev) => ({ ...prev, id_imr: parseInt(value) }));
         }
     };
 
-    //Function untuk get qty berdasarkan tipe item
-    const getQtyAvailable = (item: InternalMaterialRequestItem | ImrDiemakingItem | ImrFinishingItem): string => {
+    // //Function untuk get qty berdasarkan tipe item
+    // const getQtyBeforeApproved = (item: InternalMaterialRequestItem | ImrDiemakingItem | ImrFinishingItem): number => {
+    //     return item.qty_approved || 0;
+    // };
+
+    // // Function untuk get qty berdasarkan tipe item
+    // const getQtyApproved = (item: ReturInternal ): number => {
+    //     return item?.items?.[0]?.qty_approved_retur ?? 0;
+    // };
+
+    const getQtyAvailable = (item: InternalMaterialRequestItem | ImrDiemakingItem | ImrFinishingItem | ReturInternal): number => {
+        let beforeApproved = 0;
+        let approved = 0;
+
         if ('qty_approved' in item) {
-            return item.qty_approved.toString() || '0';
+            beforeApproved = item.qty_approved || 0;
+        } else if ('items' in item) {
+            beforeApproved = item?.items?.[0]?.qty_approved_retur ?? 0;
         }
-        return '0';
+
+        if ('items' in item) {
+            approved = item?.items?.[0]?.qty_approved_retur ?? 0;
+        }
+
+        return beforeApproved - approved;
     };
 
     // Function untuk get master item details
@@ -198,13 +196,46 @@ export default function Create({ lastId, combinedImr, imrItems = {} }: CreatePro
             return;
         }
 
-        post(route('returInternals.store'), {
+        const selected = combinedImr.find((imr) => imr.id === selectedImr);
+
+        const mappedItems = imrItemsList
+            .filter((item) => (itemQuantities[item.id] || 0) > 0)
+            .map((item) => {
+                const qty = itemQuantities[item.id] || 0;
+
+                if (selected?.type === 'finishing') {
+                    return {
+                        id_imr_finishing_item: parseInt(item.id.toString(), 10),
+                        qty_approved_retur: qty,
+                    };
+                } else if (selected?.type === 'diemaking') {
+                    return {
+                        id_imr_diemaking_item: parseInt(item.id.toString(), 10),
+                        qty_approved_retur: qty,
+                    };
+                } else {
+                    return {
+                        id_imr_item: parseInt(item.id.toString(), 10),
+                        qty_approved_retur: qty,
+                    };
+                }
+            });
+
+        // kirim payload langsung via router.post (boleh override data)
+        const payload = {
+            ...data, // id_imr / id_imr_diemaking / id_imr_finishing, nomor, tanggal, dll
+            items: mappedItems, // items terbaru (tidak tergantung setState)
+        };
+
+        router.post(route('returInternals.store'), payload, {
             onSuccess: () => {
                 toast.success('Retur Internal berhasil dibuat');
             },
-            onError: () => {
+            onError: (errs) => {
+                console.error(errs);
                 toast.error('Gagal membuat Retur Internal');
             },
+            preserveScroll: true,
         });
     };
 
@@ -295,8 +326,8 @@ export default function Create({ lastId, combinedImr, imrItems = {} }: CreatePro
                                                             <TableHead>No</TableHead>
                                                             <TableHead>Kode Item</TableHead>
                                                             <TableHead>Nama Item</TableHead>
-                                                            <TableHead className="text-right">Qty Tersedia</TableHead>
-                                                            <TableHead className="text-right">Qty Retur</TableHead>
+                                                            <TableHead>Qty Tersedia</TableHead>
+                                                            <TableHead>Qty Retur</TableHead>
                                                         </TableRow>
                                                     </TableHeader>
                                                     <TableBody>
@@ -311,10 +342,8 @@ export default function Create({ lastId, combinedImr, imrItems = {} }: CreatePro
                                                                         <TableCell className="font-medium">{itemDetails.kode}</TableCell>
                                                                         <TableCell>{itemDetails.nama}</TableCell>
 
-                                                                        <TableCell className="text-right font-medium">
-                                                                            {qtyAvailable.toLocaleString()}
-                                                                        </TableCell>
-                                                                        <TableCell className="text-right">
+                                                                        <TableCell>{qtyAvailable.toLocaleString()}</TableCell>
+                                                                        <TableCell>
                                                                             <Input
                                                                                 type="number"
                                                                                 min="0"

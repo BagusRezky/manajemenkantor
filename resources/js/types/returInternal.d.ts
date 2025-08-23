@@ -13,8 +13,8 @@ export interface ReturInternal {
     catatan_retur_internal: string;
     created_at: string;
     updated_at: string;
-    imrFinishing?: ImrFinishing;
-    imrDiemaking?: ImrDiemaking;
+    imr_finishing?: ImrFinishing;
+    imr_diemaking?: ImrDiemaking;
     imr?: InternalMaterialRequest;
     items?: ReturInternalItem[];
 }

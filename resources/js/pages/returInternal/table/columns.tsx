@@ -184,6 +184,15 @@ export const columns = (): ColumnDef<ReturInternal>[] => [
         header: 'Nama Retur Internal',
     },
     {
+        accessorKey: 'no_imr',
+        header: 'No IMR',
+        cell: ({ row }) => {
+            const data = row.original;
+            console.log('Row data:', data);
+            return <span>{data.imr?.no_imr || data.imr_diemaking?.no_imr_diemaking || data.imr_finishing?.no_imr_finishing || '-'}</span>;
+        },
+    },
+    {
         accessorKey: 'tgl_retur_internal',
         header: 'Tgl Retur Barang',
         cell: ({ row }) => {
@@ -199,6 +208,7 @@ export const columns = (): ColumnDef<ReturInternal>[] => [
             return <span>{data.items?.[0]?.qty_approved_retur ?? 0}</span>;
         },
     },
+
     {
         id: 'actions',
         header: 'Actions',

@@ -47,6 +47,7 @@ class ReturInternalController extends Controller
             return [
                 'id' => $imr->id,
                 'label' => $imr->no_imr,
+                'type' => 'printing',
             ];
         });
 
@@ -57,6 +58,7 @@ class ReturInternalController extends Controller
                 return [
                     'id' => $imr->id,
                     'label' => $imr->no_imr_diemaking,
+                    'type' => 'diemaking',
                 ];
             });
 
@@ -67,6 +69,7 @@ class ReturInternalController extends Controller
                 return [
                     'id' => $imr->id,
                     'label' => $imr->no_imr_finishing,
+                    'type' => 'finishing',
                 ];
             });
 
@@ -121,8 +124,8 @@ class ReturInternalController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'id_imr_finishing' => 'nullable|exists:imr_finishing,id',
-            'id_imr_diemaking' => 'nullable|exists:imr_diemaking,id',
+            'id_imr_finishing' => 'nullable|exists:imr_finishings,id',
+            'id_imr_diemaking' => 'nullable|exists:imr_diemakings,id',
             'id_imr' => 'nullable|exists:imrs,id',
             'no_retur_internal' => 'required|string|max:255',
             'tgl_retur_internal' => 'required|date',
@@ -233,5 +236,20 @@ class ReturInternalController extends Controller
 
         return redirect()->route('returInternals.index')
             ->with('success', 'Retur Internal berhasil dihapus');
+    }
+    /**
+     * Generate PDF for the specified Retur Internal.
+     */
+    public function generatePdf($id)
+    {
+        $returInternal = ReturInternal::with([
+            'imrFinishing',
+            'imrDiemaking',
+            'imr',
+            'items'
+        ])->findOrFail($id);
+
+
+        return response()->json($returInternal);
     }
 }

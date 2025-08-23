@@ -311,15 +311,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/subcountIns/{subcountIn}/pdf', [SubcountInController::class, 'generatePdf'])->name('subcountIns.pdf');
 
     Route::get('/returInternals', [ReturInternalController::class, 'index'])->name('returInternals.index');
-    Route::get('/returInternal/create', [ReturInternalController::class, 'create'])->name('returInternals.create');
-    Route::post('/returInternal', [ReturInternalController::class, 'store'])->name('returInternals.store');
-    Route::get('/returInternal/{returInternal}/edit', [ReturInternalController::class, 'edit'])->name('returInternals.edit');
-    Route::put('/returInternal/{returInternal}', [ReturInternalController::class, 'update'])->name('returInternals.update');
-    Route::delete('/returInternal/{returInternal}', [ReturInternalController::class, 'destroy'])->name('returInternals.destroy');
-    Route::get('/returInternal/{returInternal}', [ReturInternalController::class, 'show'])->name('returInternals.show');
-    Route::get('/returInternal/{returInternal}/pdf', [ReturInternalController::class, 'generatePdf'])->name('returInternals.pdf');
+    Route::get('/returInternals/create', [ReturInternalController::class, 'create'])->name('returInternals.create');
+    Route::post('/returInternals', [ReturInternalController::class, 'store'])->name('returInternals.store');
+    Route::get('/returInternals/{returInternal}/edit', [ReturInternalController::class, 'edit'])->name('returInternals.edit');
+    Route::put('/returInternals/{returInternal}', [ReturInternalController::class, 'update'])->name('returInternals.update');
+    Route::delete('/returInternals/{returInternal}', [ReturInternalController::class, 'destroy'])->name('returInternals.destroy');
+    Route::get('/returInternals/{returInternal}', [ReturInternalController::class, 'show'])->name('returInternals.show');
+    Route::get('/returInternals/{returInternal}/pdf', [ReturInternalController::class, 'generatePdf'])->name('returInternals.pdf');
 
-    
+
 });
 
 
