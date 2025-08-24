@@ -63,27 +63,6 @@ const generateReturInternalPdf = (returInternal: ReturInternal, download = false
     doc.setFont('helvetica', 'normal');
     doc.text(returInternal.nama_retur_internal || '', 80, 66);
 
-    // doc.setFont('helvetica', 'bold');
-    // doc.text('Tgl Penerimaan Barang', 15, 73);
-    // doc.text(':', 75, 73);
-    // doc.setFont('helvetica', 'normal');
-    // const formattedPenerimaanDate = returInternal.penerimaan_barang?.tgl_terima_barang
-    //     ? new Date(returInternal.penerimaan_barang.tgl_terima_barang).toLocaleDateString('id-ID')
-    //     : '';
-    // doc.text(formattedPenerimaanDate, 80, 73);
-
-    // doc.setFont('helvetica', 'bold');
-    // doc.text('No.Surat Jalan Pengiriman', 15, 80);
-    // doc.text(':', 75, 80);
-    // doc.setFont('helvetica', 'normal');
-    // doc.text(returInternal.penerimaan_barang?.no_surat_jalan || '', 80, 80);
-
-    // doc.setFont('helvetica', 'bold');
-    // doc.text('Supplier', 15, 87);
-    // doc.text(':', 75, 87);
-    // doc.setFont('helvetica', 'normal');
-    // doc.text(returInternal.penerimaan_barang?.purchase_order?.supplier?.nama_suplier || '', 80, 87);
-
     // Header tabel "DATA ITEM PENERIMAAN BARANG"
     doc.setFontSize(10).setFont('helvetica', 'bold');
     doc.rect(10, 90, pageWidth - 20, 10);
@@ -101,7 +80,7 @@ const generateReturInternalPdf = (returInternal: ReturInternal, download = false
         returInternal.items?.map((item, index) => {
             return {
                 no: (index + 1).toString(),
-                item: `${item.imrItem?.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.kode_master_item || item.imrDiemakingItem?.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.kode_master_item || item.imrFinishingItem?.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.kode_master_item || '-'} - ${item.imrItem?.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.nama_master_item || item.imrDiemakingItem?.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.nama_master_item || item.imrFinishingItem?.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.nama_master_item || '-'}`,
+                item: `${item.imr_item?.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.kode_master_item || item.imr_diemaking_item?.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.kode_master_item || item.imr_finishing_item?.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.kode_master_item || '-'} - ${item.imr_item?.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.nama_master_item || item.imr_diemaking_item?.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.nama_master_item || item.imr_finishing_item?.kartu_instruksi_kerja_bom?.bill_of_materials?.master_item?.nama_master_item || '-'}`,
                 // qty_penerimaan: `${item.penerimaan_barang_item?.qty_penerimaan || 0} | ${getSatuanName(item)}`,
                 qty_approve: `${item.qty_approved_retur}`,
             };

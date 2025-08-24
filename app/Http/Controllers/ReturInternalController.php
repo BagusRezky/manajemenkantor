@@ -22,7 +22,10 @@ class ReturInternalController extends Controller
             'imrFinishing',
             'imrDiemaking',
             'imr',
-            'items'
+            'items',
+            'items.imrItem.kartuInstruksiKerjaBom.billOfMaterials.masterItem',
+            'items.imrDiemakingItem.kartuInstruksiKerjaBom.billOfMaterials.masterItem',
+            'items.imrFinishingItem.kartuInstruksiKerjaBom.billOfMaterials.masterItem',
         ])
 
             ->orderBy('created_at', 'desc')
@@ -246,7 +249,10 @@ class ReturInternalController extends Controller
             'imrFinishing',
             'imrDiemaking',
             'imr',
-            'items'
+            'items',
+            'items.imrItem.kartuInstruksiKerjaBom.billOfMaterials.masterItem',
+            'items.imrDiemakingItem.kartuInstruksiKerjaBom.billOfMaterials.masterItem',
+            'items.imrFinishingItem.kartuInstruksiKerjaBom.billOfMaterials.masterItem',
         ])->findOrFail($id);
 
 

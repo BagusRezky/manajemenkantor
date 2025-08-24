@@ -26,9 +26,9 @@ export interface ReturInternalItem {
     id_imr_diemaking_item: number;
     id_imr_finishing_item: number;
     qty_approved_retur: number;
-    imrItem?: InternalMaterialRequestItem;
-    imrDiemakingItem?: ImrDiemakingItem;
-    imrFinishingItem?: ImrFinishingItem;
+    imr_item?: InternalMaterialRequestItem;
+    imr_diemaking_item?: ImrDiemakingItem;
+    imr_finishing_item?: ImrFinishingItem;
     created_at: string;
     updated_at: string;
 }
