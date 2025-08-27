@@ -2,7 +2,7 @@ import { DataTablePagination } from '@/components/custom-pagination';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Invoice } from '@/types/invoice';
+import { PaymentEntryGood } from '@/types/paymentEntryGood';
 
 import { Link } from '@inertiajs/react';
 import {
@@ -19,7 +19,7 @@ import React from 'react';
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
-    invoices: Invoice[];
+    paymentEntryGoods: PaymentEntryGood[];
 }
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
@@ -46,13 +46,13 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <div>
             <div className="flex items-center justify-between py-4">
                 <Input
-                    placeholder="Cari No Invoice..."
+                    placeholder="Cari No Payment..."
                     value={globalFilter ?? ''}
                     onChange={(event) => setGlobalFilter(event.target.value)}
                     className="max-w-sm"
                 />
-                <Link href={route('invoices.create')}>
-                    <Button>Tambah Invoice</Button>
+                <Link href={route('paymentEntryGoods.create')}>
+                    <Button>Tambah Payment Entry Good</Button>
                 </Link>
             </div>
             <div className="rounded-md border-2 dark:border-0 dark:bg-violet-600">

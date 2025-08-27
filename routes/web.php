@@ -35,6 +35,7 @@ use App\Http\Controllers\InvoiceController;
 use App\Http\Controllers\SubcountOutController;
 use App\Http\Controllers\SubcountInController;
 use App\Http\Controllers\ReturInternalController;
+use App\Http\Controllers\PaymentEntryGoodController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -319,7 +320,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/returInternals/{returInternal}', [ReturInternalController::class, 'show'])->name('returInternals.show');
     Route::get('/returInternals/{returInternal}/pdf', [ReturInternalController::class, 'generatePdf'])->name('returInternals.pdf');
 
-
+    Route::get('/paymentEntryGoods', [PaymentEntryGoodController::class, 'index'])->name('paymentEntryGoods.index');
+    Route::get('/paymentEntryGoods/create', [PaymentEntryGoodController::class, 'create'])->name('paymentEntryGoods.create');
+    Route::post('/paymentEntryGoods', [PaymentEntryGoodController::class, 'store'])->name('paymentEntryGoods.store');
+    Route::get('/paymentEntryGoods/{paymentEntryGood}/edit', [PaymentEntryGoodController::class, 'edit'])->name('paymentEntryGoods.edit');
+    Route::put('/paymentEntryGoods/{paymentEntryGood}', [PaymentEntryGoodController::class, 'update'])->name('paymentEntryGoods.update');
+    Route::delete('/paymentEntryGoods/{paymentEntryGood}', [PaymentEntryGoodController::class, 'destroy'])->name('paymentEntryGoods.destroy');
+    Route::get('/paymentEntryGoods/{paymentEntryGood}', [PaymentEntryGoodController::class, 'show'])->name('paymentEntryGoods.show');
+    Route::get('/paymentEntryGoods/{paymentEntryGood}/pdf', [PaymentEntryGoodController::class, 'pdf'])->name('paymentEntryGoods.pdf');
 });
 
 

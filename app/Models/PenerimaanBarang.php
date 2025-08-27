@@ -24,7 +24,7 @@ class PenerimaanBarang extends Model
         return $this->belongsTo(PurchaseOrder::class, 'id_purchase_order');
     }
 
-    // Ubah nama method ini dari penerimaanBarangItem menjadi items agar konsisten
+
     public function items()
     {
         return $this->hasMany(PenerimaanBarangItem::class, 'id_penerimaan_barang');
@@ -33,5 +33,10 @@ class PenerimaanBarang extends Model
     public function returEksternals()
     {
         return $this->hasMany(ReturEksternal::class, 'id_penerimaan_barang');
+    }
+
+    public function paymentEntryGood()
+    {
+        return $this->hasMany(PaymentEntryGood::class, 'id_penerimaan_barang');
     }
 }

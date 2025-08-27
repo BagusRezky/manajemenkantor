@@ -6,6 +6,7 @@ import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/react';
 import {
     BaggageClaim,
+    Banknote,
     BoxIcon,
     CandlestickChartIcon,
     ClipboardList,
@@ -268,6 +269,11 @@ export const dropdownNavItems: NavItemWithChildren[] = [
                 title: 'Invoice',
                 icon: StickyNote,
                 href: '/invoices',
+            },
+            {
+                title: 'Payment Entry Good',
+                icon: Banknote,
+                href: '/paymentEntryGoods',
             },
         ],
     },

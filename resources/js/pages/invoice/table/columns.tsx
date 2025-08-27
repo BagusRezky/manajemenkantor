@@ -209,19 +209,6 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
         doc.text(`Rp ${sisaTagihan.toLocaleString('id-ID')}`, pageWidth - 15, summaryY, { align: 'right' });
     }
 
-    // // Payment info
-    // const paymentInfoY = summaryStartY + 70;
-    // doc.setFontSize(10).setFont('helvetica', 'bold');
-    // doc.text('Informasi Pembayaran:', 15, paymentInfoY);
-    // doc.setFont('helvetica', 'normal');
-    // doc.text('Bank BCA: 1234567890', 15, paymentInfoY + 7);
-    // doc.text('a.n. CV. Indigama Khatulistiwa', 15, paymentInfoY + 14);
-
-    // // Terms and conditions
-    // doc.text('Catatan:', 15, paymentInfoY + 28);
-    // doc.text('- Pembayaran harap dilakukan sesuai dengan tanggal jatuh tempo', 15, paymentInfoY + 35);
-    // doc.text('- Invoice ini sah tanpa tanda tangan dan stempel', 15, paymentInfoY + 42);
-
     // Output PDF
     if (download) {
         doc.save(`Invoice_${invoice.no_invoice?.replace(/\//g, '_')}.pdf`);

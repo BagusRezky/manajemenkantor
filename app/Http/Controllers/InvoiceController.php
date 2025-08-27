@@ -29,7 +29,7 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        // Ambil surat jalan yang belum memiliki invoice
+        
         $suratJalans = SuratJalan::with([
             'kartuInstruksiKerja.salesOrder.customerAddress',
             'kartuInstruksiKerja.salesOrder.finishGoodItem'
