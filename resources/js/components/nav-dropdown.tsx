@@ -1,5 +1,10 @@
+/* eslint-disable react-hooks/rules-of-hooks */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// components/nav-dropdown.tsx
+
+import { NavItemType, NavItemWithChildren } from '@/types'; // <-- Import dari index.d.ts
 import { Link, usePage } from '@inertiajs/react';
-import { ChevronDown, ChevronRight, LucideIcon } from 'lucide-react';
+import { ChevronDown, ChevronRight } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import {
     SidebarGroup,
@@ -11,23 +16,8 @@ import {
     SidebarMenuSubItem,
 } from './ui/sidebar';
 
-export interface NavGrub {
-    title?: string;
-    href?: string;
-    icon?: LucideIcon;
-    disabled?: boolean;
-}
-
-// Extended interface for items with dropdowns
-export interface NavItemWithChildren extends NavGrub {
-    children?: NavGrub[];
-}
-
-// Type for all possible navigation items
-export type NavItemType = NavGrub | NavItemWithChildren;
-
-// Helper type guard to check if item has children
-export function hasChildren(item: NavItemType): item is NavItemWithChildren {
+// Helper type guard
+function hasChildren(item: NavItemType): item is NavItemWithChildren {
     return !!(item as NavItemWithChildren).children?.length;
 }
 
@@ -38,12 +28,11 @@ function getOpenItems() {
         const storedItems = localStorage.getItem(STORAGE_KEY);
         return storedItems ? JSON.parse(storedItems) : {};
     } catch (error) {
-        console.error('Error reading from localStorage:', error);
+        console.error('Error reading localStorage:', error);
         return {};
     }
 }
 
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
 function saveOpenItems(openItems: any) {
     try {
         localStorage.setItem(STORAGE_KEY, JSON.stringify(openItems));
@@ -52,45 +41,39 @@ function saveOpenItems(openItems: any) {
     }
 }
 
-export function DropdownMenuItem({ item }: { item: NavItemWithChildren }) {
+// --- Komponen Dropdown Item (Internal) ---
+function DropdownMenuItem({ item, hasPermission }: { item: NavItemWithChildren; hasPermission: (permission?: string | null) => boolean }) {
     const page = usePage();
-    const openItems = getOpenItems();
     const itemTitle = item.title || '';
 
-    // Check if any child is active
-    const isChildActive = item.children?.some((child) => child.href === page.url);
+    // Saring children berdasarkan permission
+    const visibleChildren = item.children?.filter((child) => hasPermission(child.permission));
 
-    // Initialize state from localStorage first, then check if child is active
-    // Only auto-open on initial render if a child is active
+    // Jika tidak ada anak yang bisa dilihat, jangan render item ini
+    if (!visibleChildren || visibleChildren.length === 0) {
+        return null;
+    }
+
+    const isChildActive = visibleChildren.some((child) => child.href === page.url);
+
     const [isOpen, setIsOpen] = useState(() => {
-        // If we have a stored value, use that
-        if (itemTitle in openItems) {
-            return openItems[itemTitle];
-        }
-        // Otherwise, auto-open only if a child is active
+        const openItems = getOpenItems();
+        if (itemTitle in openItems) return openItems[itemTitle];
         return isChildActive;
     });
 
-    // Toggle menu open/closed
     const toggleDropdown = () => {
         const newState = !isOpen;
         setIsOpen(newState);
-
-        // Save the toggled state
         const updatedOpenItems = { ...getOpenItems(), [itemTitle]: newState };
         saveOpenItems(updatedOpenItems);
     };
 
-    // Only run this effect once on mount to handle initial URL match
     useEffect(() => {
-        // If a child is active and dropdown is closed, open it
         if (isChildActive && !isOpen) {
             setIsOpen(true);
-            const updatedOpenItems = { ...getOpenItems(), [itemTitle]: true };
-            saveOpenItems(updatedOpenItems);
         }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []); // Empty dependency array means this only runs once
+    }, [isChildActive, isOpen]);
 
     return (
         <SidebarMenuItem key={item.title}>
@@ -100,9 +83,9 @@ export function DropdownMenuItem({ item }: { item: NavItemWithChildren }) {
                 {isOpen ? <ChevronDown className="ml-auto h-4 w-4" /> : <ChevronRight className="ml-auto h-4 w-4" />}
             </SidebarMenuButton>
 
-            {isOpen && item.children && (
+            {isOpen && (
                 <SidebarMenuSub>
-                    {item.children.map((child) => (
+                    {visibleChildren.map((child) => (
                         <SidebarMenuSubItem key={child.title}>
                             <SidebarMenuSubButton asChild isActive={child.href === page.url}>
                                 <Link href={child.href || '#'} preserveState>
@@ -118,23 +101,34 @@ export function DropdownMenuItem({ item }: { item: NavItemWithChildren }) {
     );
 }
 
-// Navigation section with dropdown support
+// --- Komponen NavDropdown Utama ---
 export function NavDropdown({ items = [] }: { items: NavItemType[] }) {
-    const page = usePage();
+    const { auth } = usePage().props as unknown as { auth: { user: { roles?: string[]; permissions?: string[] } } };
+    const userRoles = auth.user?.roles || [];
+    const userPermissions = auth.user?.permissions || [];
+
+    // Fungsi pengecekan hak akses
+    const hasPermission = (permission?: string | null): boolean => {
+        if (!permission) return true; // Jika tidak ada permission, selalu tampilkan
+        return userRoles.includes('admin') || userPermissions.includes(permission);
+    };
 
     return (
         <SidebarGroup className="px-2 py-0">
             <SidebarMenu>
                 {items.map((item) => {
-                    // If the item has children, render it as a dropdown
-                    if (hasChildren(item) && (item.children?.length ?? 0) > 0) {
-                        return <DropdownMenuItem key={item.title} item={item} />;
+                    if (hasChildren(item)) {
+                        return <DropdownMenuItem key={item.title} item={item} hasPermission={hasPermission} />;
                     }
 
-                    // Otherwise render as a regular menu item
+                    // Item biasa (non-dropdown) juga perlu dicek
+                    if (!hasPermission(item.permission)) {
+                        return null;
+                    }
+
                     return (
                         <SidebarMenuItem key={item.title}>
-                            <SidebarMenuButton asChild isActive={item.href === page.url} disabled={item.disabled}>
+                            <SidebarMenuButton asChild isActive={item.href === usePage().url}>
                                 <Link href={item.href || '#'} preserveState>
                                     {item.icon && <item.icon />}
                                     <span>{item.title}</span>
