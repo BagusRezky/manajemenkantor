@@ -13,15 +13,33 @@ return new class extends Migration
     {
         Schema::create('karyawans', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('user_id')->constrained('users')->onDelete('cascade'); // Foreign key ke tabel users
-            $table->string('nik')->unique();
-            $table->string('npwp')->nullable();
-            $table->date('tanggal_lahir');
-            $table->string('alamat');
-            $table->string('telp');
-            $table->date('tanggal_masuk');
-            $table->date('tanggal_keluar')->nullable();
-            $table->string('status')->default('Aktif');
+            $table->string('pin')->nullable();
+            $table->string('nip')->nullable();
+            $table->string('nama')->nullable();
+            $table->string('jadwal_kerja')->nullable();
+            $table->date('tgl_mulai_jadwal')->nullable();
+            $table->string('tempat_lahir')->nullable();
+            $table->date('tanggal_lahir')->nullable();
+            $table->string('jabatan')->nullable();
+            $table->string('departemen')->nullable();
+            $table->string('kantor')->nullable();
+            $table->string('password')->nullable();
+            $table->string('rfid')->nullable();
+            $table->string('no_telp')->nullable();
+            $table->string('privilege')->nullable();
+            $table->string('status_pegawai')->default('Aktif');
+
+            // biometrik
+            $table->integer('fp_zk')->nullable();
+            $table->integer('fp_neo')->nullable();
+            $table->integer('fp_revo')->nullable();
+            $table->integer('fp_livo')->nullable();
+            $table->integer('fp_uareu')->nullable();
+            $table->integer('wajah')->nullable();
+            $table->integer('telapak_tangan')->nullable();
+            $table->date('tgl_masuk_kerja')->nullable();
+            $table->date('tgl_akhir_kontrak')->nullable();
+            $table->foreignId('user_id')->nullable()->constrained()->onDelete('set null');
             $table->timestamps();
         });
     }

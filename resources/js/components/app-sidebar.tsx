@@ -58,7 +58,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         children: [
             { title: 'Purchase Request', icon: ClipboardList, href: '/purchaseRequest', permission: 'purchaseRequest.index' },
             { title: 'Purchase Order', icon: ClipboardList, href: '/purchaseOrders', permission: 'purchaseOrders.index' },
-            { title: 'Master Item', icon: StretchHorizontalIcon, href: '/masterItems', permission: 'masterItems.index' },
+            { title: 'Master Item', icon: StretchHorizontalIcon, href: '/masterItems', permission: 'master-items.index' },
             { title: 'Master Item Category', icon: ContainerIcon, href: '/categoryItems', permission: 'categoryItems.index' },
             { title: 'Master Suplier', icon: ContainerIcon, href: '/suppliers', permission: 'suppliers.index' },
             { title: 'Master Satuan', icon: ContainerIcon, href: '/units', permission: 'units.index' },
@@ -144,6 +144,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             { title: 'Karyawan', icon: Users, href: '/karyawans', permission: 'karyawans.index' },
             // { title: 'User Management', icon: Users, href: '/users', permission: 'users.index' },
             { title: 'Role Management', icon: Users, href: '/roles', permission: 'roles.index' },
+            { title: 'Absensi', icon: Users, href: '/absens', permission: 'absens.index' },
         ],
     },
 ];

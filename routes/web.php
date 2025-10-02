@@ -38,6 +38,7 @@ use App\Http\Controllers\ReturInternalController;
 use App\Http\Controllers\PaymentEntryGoodController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\RoleController;
+use App\Http\Controllers\AbsenController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -350,12 +351,18 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/karyawans/{karyawan}', [KaryawanController::class, 'destroy'])->name('karyawan.destroy');
         // Rute untuk mengupdate status karyawan
         Route::post('/karyawans/{karyawan}/update-status', [KaryawanController::class, 'updateStatus'])->name('karyawan.updateStatus');
+        Route::post('/karyawans/import', [KaryawanController::class, 'import'])->name('karyawan.import');
+
 
         // Rute untuk Manajemen Roles dan Permissions
         Route::get('/roles', [RoleController::class, 'index'])->name('roles.index');
         Route::post('/roles', [RoleController::class, 'store'])->name('roles.store');
         Route::put('/roles/{role}', [RoleController::class, 'update'])->name('roles.update');
         Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
+
+        Route::get('/absens', [AbsenController::class, 'index'])->name('absens.index')->middleware('permission:absens.index');
+        Route::post('/absens/import', [AbsenController::class, 'import'])->name('absens.import')->middleware('permission:absens.import');
+        Route::get('/absens/reports', [AbsenController::class, 'report'])->name('absens.report')->middleware('permission:absens.report');
     });
 });
 

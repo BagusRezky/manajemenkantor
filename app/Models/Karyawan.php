@@ -10,16 +10,33 @@ class Karyawan extends Model
     use HasFactory;
 
     protected $fillable = [
-        'user_id',
-        'nik',
-        'npwp',
+        'pin',
+        'nip',
+        'nama',
+        'jadwal_kerja',
+        'tgl_mulai_jadwal',
+        'tempat_lahir',
         'tanggal_lahir',
-        'alamat',
-        'telp',
-        'tanggal_masuk',
-        'tanggal_keluar',
-        'status',
+        'jabatan',
+        'departemen',
+        'kantor',
+        'password',
+        'rfid',
+        'no_telp',
+        'privilege',
+        'status_pegawai',
+        'fp_zk',
+        'fp_neo',
+        'fp_revo',
+        'fp_livo',
+        'fp_uareu',
+        'wajah',
+        'telapak_tangan',
+        'tgl_masuk_kerja',
+        'tgl_akhir_kontrak',
+        'user_id',
     ];
+
 
     // Relasi ke model User
     public function user()
