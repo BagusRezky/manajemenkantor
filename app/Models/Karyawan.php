@@ -43,4 +43,22 @@ class Karyawan extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    // Relasi ke model Lembur
+    public function lembur()
+    {
+        return $this->hasMany(Lembur::class, 'id_karyawan');
+    }
+
+    // Relasi ke model Izin
+    public function izin()
+    {
+        return $this->hasMany(Izin::class, 'id_karyawan');
+    }
+
+    // Relasi ke model BonusKaryawan
+    public function bonusKaryawan()
+    {
+        return $this->hasMany(BonusKaryawan::class, 'id_karyawan');
+    }
 }

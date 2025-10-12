@@ -39,6 +39,10 @@ use App\Http\Controllers\PaymentEntryGoodController;
 use App\Http\Controllers\KaryawanController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\AbsenController;
+use App\Http\Controllers\IzinController;
+use App\Http\Controllers\LemburController;
+use App\Http\Controllers\HariLiburController;
+use App\Http\Controllers\BonusKaryawanController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -363,6 +367,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/absens', [AbsenController::class, 'index'])->name('absens.index')->middleware('permission:absens.index');
         Route::post('/absens/import', [AbsenController::class, 'import'])->name('absens.import')->middleware('permission:absens.import');
         Route::get('/absens/reports', [AbsenController::class, 'report'])->name('absens.report')->middleware('permission:absens.report');
+
+        Route::get('/lemburs', [LemburController::class, 'index'])->name('lemburs.index')->middleware('permission:lemburs.index');
+        Route::get('/lemburs/create', [LemburController::class, 'create'])->name('lemburs.create')->middleware('permission:lemburs.create');
+        Route::post('/lemburs', [LemburController::class, 'store'])->name('lemburs.store')->middleware('permission:lemburs.store');
+        Route::get('/lemburs/{lembur}/edit', [LemburController::class, 'edit'])->name('lemburs.edit')->middleware('permission:lemburs.edit');
+        Route::put('/lemburs/{lembur}', [LemburController::class, 'update'])->name('lemburs.update')->middleware('permission:lemburs.update');
+        Route::delete('/lemburs/{lembur}', [LemburController::class, 'destroy'])->name('lemburs.destroy')->middleware('permission:lemburs.destroy');
+
+        Route::get('/izins', [IzinController::class, 'index'])->name('izins.index')->middleware('permission:izins.index');
+        Route::get('/izins/create', [IzinController::class, 'create'])->name('izins.create')->middleware('permission:izins.create');
+        Route::post('/izins', [IzinController::class, 'store'])->name('izins.store')->middleware('permission:izins.store');
+        Route::get('/izins/{izin}/edit', [IzinController::class, 'edit'])->name('izins.edit')->middleware('permission:izins.edit');
+        Route::put('/izins/{izin}', [IzinController::class, 'update'])->name('izins.update')->middleware('permission:izins.update');
+        Route::delete('/izins/{izin}', [IzinController::class, 'destroy'])->name('izins.destroy')->middleware('permission:izins.destroy');
+
+        Route::get('/hariLiburs', [HariLiburController::class, 'index'])->name('hariLiburs.index')->middleware('permission:hariLiburs.index');
+        Route::get('/hariLiburs/create', [HariLiburController::class, 'create'])->name('hariLiburs.create')->middleware('permission:hariLiburs.create');
+        Route::post('/hariLiburs', [HariLiburController::class, 'store'])->name('hariLiburs.store')->middleware('permission:hariLiburs.store');
+        Route::get('/hariLiburs/{hariLibur}/edit', [HariLiburController::class, 'edit'])->name('hariLiburs.edit')->middleware('permission:hariLiburs.edit');
+        Route::put('/hariLiburs/{hariLibur}', [HariLiburController::class, 'update'])->name('hariLiburs.update')->middleware('permission:hariLiburs.update');
+        Route::delete('/hariLiburs/{hariLibur}', [HariLiburController::class, 'destroy'])->name('hariLiburs.destroy')->middleware('permission:hariLiburs.destroy');
+
+        Route::get('/bonusKaryawans', [BonusKaryawanController::class, 'index'])->name('bonusKaryawans.index')->middleware('permission:bonusKaryawans.index');
+        Route::get('/bonusKaryawans/create', [BonusKaryawanController::class, 'create'])->name('bonusKaryawans.create')->middleware('permission:bonusKaryawans.create');
+        Route::post('/bonusKaryawans', [BonusKaryawanController::class, 'store'])->name('bonusKaryawans.store')->middleware('permission:bonusKaryawans.store');
+        Route::get('/bonusKaryawans/{bonusKaryawan}/edit', [BonusKaryawanController::class, 'edit'])->name('bonusKaryawans.edit')->middleware('permission:bonusKaryawans.edit');
+        Route::put('/bonusKaryawans/{bonusKaryawan}', [BonusKaryawanController::class, 'update'])->name('bonusKaryawans.update')->middleware('permission:bonusKaryawans.update');
+        Route::delete('/bonusKaryawans/{bonusKaryawan}', [BonusKaryawanController::class, 'destroy'])->name('bonusKaryawans.destroy')->middleware('permission:bonusKaryawans.destroy');
     });
 });
 

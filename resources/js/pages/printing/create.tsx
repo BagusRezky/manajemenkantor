@@ -130,9 +130,8 @@ export default function CreatePrinting({ kartuInstruksiKerjas, mesins, operators
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_entri">Tanggal Entri *</Label>
                                     <DatePicker
-                                        id="tanggal_entri"
                                         value={data.tanggal_entri}
-                                        onChange={(e) => setData('tanggal_entri', e.target.value ? e.target.value : '')}
+                                        onChange={(date) => setData('tanggal_entri', date.toISOString().split('T')[0])}
                                     />
                                     {errors.tanggal_entri && <p className="text-sm text-red-500">{errors.tanggal_entri}</p>}
                                 </div>

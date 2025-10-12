@@ -129,10 +129,6 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_entri">Tanggal Entri *</Label>
                                     <DatePicker
-                                        id="tanggal_entri"
-                                        value={data.tanggal_entri}
-                                        onChange={(e) => setData('tanggal_entri', e.target.value ? e.target.value : '')}
-                                        className={errors.tanggal_entri ? 'border-red-500' : ''}
                                     />
                                     {errors.tanggal_entri && <p className="text-sm text-red-600">{errors.tanggal_entri}</p>}
                                 </div>

@@ -21,10 +21,6 @@ class PermissionSeeder extends Seeder
 
         // Membuat roles
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
-        // $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
-        // $printingRole = Role::firstOrCreate(['name' => 'printing']);
-        // $ppicRole = Role::firstOrCreate(['name' => 'ppic']);
-
         // Mendapatkan semua rute dengan nama
         $routes = collect(Route::getRoutes())->filter(function ($route) {
             return $route->getName();
@@ -37,33 +33,6 @@ class PermissionSeeder extends Seeder
 
         // Berikan semua permissions kepada role 'admin'
         $adminRole->givePermissionTo(Permission::all());
-
-        // // Contoh: Berikan permission spesifik ke role 'printing'
-        // $printingRole->givePermissionTo([
-        //     'printings.index',
-        //     'printings.create',
-        //     'printings.store',
-        //     'printings.show',
-        //     'mesins.index',
-        //     'mesins.store',
-        //     'mesins.show',
-        //     'operators.index',
-        //     'operators.store',
-        //     'operators.show',
-        // ]);
-
-        // // Tambahkan permissions spesifik untuk role 'ppic'
-        // $ppicRole->givePermissionTo([
-        //     'kartuInstruksiKerja.index',
-        //     'kartuInstruksiKerja.create',
-        //     'kartuInstruksiKerja.store',
-        //     'kartuInstruksiKerja.edit',
-        //     'kartuInstruksiKerja.update',
-        //     'kartuInstruksiKerja.destroy',
-        //     'kartuInstruksiKerja.show',
-        //     'salesOrderData.show',
-        //     'kartuInstruksiKerja.pdf',
-        // ]);
 
          // Cek apakah user admin sudah ada sebelum membuat
         $adminUser = User::firstOrCreate(

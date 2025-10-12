@@ -109,9 +109,7 @@ export default function CreateBlokir({ kartuInstruksiKerjas }: Props) {
                                 <div className="space-y-2">
                                     <Label htmlFor="tgl_blokir">Tanggal Blokir *</Label>
                                     <DatePicker
-                                        id="tgl_blokir"
-                                        value={data.tgl_blokir}
-                                        onChange={(e) => setData('tgl_blokir', e.target.value ? e.target.value : '')}
+
                                     />
                                     {errors.tgl_blokir && <p className="text-sm text-red-500">{errors.tgl_blokir}</p>}
                                 </div>

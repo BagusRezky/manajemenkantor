@@ -142,9 +142,9 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         children: [
             { title: 'Departemen', icon: Users, href: '/departemens', permission: 'departemens.index' },
             { title: 'Karyawan', icon: Users, href: '/karyawans', permission: 'karyawans.index' },
-            // { title: 'User Management', icon: Users, href: '/users', permission: 'users.index' },
             { title: 'Role Management', icon: Users, href: '/roles', permission: 'roles.index' },
             { title: 'Absensi', icon: Users, href: '/absens', permission: 'absens.index' },
+            { title: 'Lembur', icon: Users, href: '/lemburs', permission: 'lemburs.index' },
         ],
     },
 ];
