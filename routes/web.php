@@ -43,6 +43,7 @@ use App\Http\Controllers\IzinController;
 use App\Http\Controllers\LemburController;
 use App\Http\Controllers\HariLiburController;
 use App\Http\Controllers\BonusKaryawanController;
+use App\Http\Controllers\PotonganTunjanganController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -395,6 +396,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/bonusKaryawans/{bonusKaryawan}/edit', [BonusKaryawanController::class, 'edit'])->name('bonusKaryawans.edit')->middleware('permission:bonusKaryawans.edit');
         Route::put('/bonusKaryawans/{bonusKaryawan}', [BonusKaryawanController::class, 'update'])->name('bonusKaryawans.update')->middleware('permission:bonusKaryawans.update');
         Route::delete('/bonusKaryawans/{bonusKaryawan}', [BonusKaryawanController::class, 'destroy'])->name('bonusKaryawans.destroy')->middleware('permission:bonusKaryawans.destroy');
+
+        Route::get('/potonganTunjangans', [PotonganTunjanganController::class, 'index'])->name('potonganTunjangans.index')->middleware('permission:potonganTunjangans.index');
+        Route::get('/potonganTunjangans/create', [PotonganTunjanganController::class, 'create'])->name('potonganTunjangans.create')->middleware('permission:potonganTunjangans.create');
+        Route::post('/potonganTunjangans', [PotonganTunjanganController::class, 'store'])->name('potonganTunjangans.store')->middleware('permission:potonganTunjangans.store');
+        Route::get('/potonganTunjangans/{potonganTunjangan}/edit', [PotonganTunjanganController::class, 'edit'])->name('potonganTunjangans.edit')->middleware('permission:potonganTunjangans.edit');
+        Route::put('/potonganTunjangans/{potonganTunjangan}', [PotonganTunjanganController::class, 'update'])->name('potonganTunjangans.update')->middleware('permission:potonganTunjangans.update');
+        Route::delete('/potonganTunjangans/{potonganTunjangan}', [PotonganTunjanganController::class, 'destroy'])->name('potonganTunjangans.destroy')->middleware('permission:potonganTunjangans.destroy');
     });
 });
 

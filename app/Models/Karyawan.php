@@ -61,4 +61,10 @@ class Karyawan extends Model
     {
         return $this->hasMany(BonusKaryawan::class, 'id_karyawan');
     }
+
+    // Relasi ke model PotonganTunjangan
+    public function potonganTunjangan()
+    {
+        return $this->hasMany(PotonganTunjangan::class, 'id_karyawan');
+    }
 }
