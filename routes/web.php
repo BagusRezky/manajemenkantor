@@ -44,6 +44,7 @@ use App\Http\Controllers\LemburController;
 use App\Http\Controllers\HariLiburController;
 use App\Http\Controllers\BonusKaryawanController;
 use App\Http\Controllers\PotonganTunjanganController;
+use App\Http\Controllers\PengajuanPinjamanController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -403,6 +404,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/potonganTunjangans/{potonganTunjangan}/edit', [PotonganTunjanganController::class, 'edit'])->name('potonganTunjangans.edit')->middleware('permission:potonganTunjangans.edit');
         Route::put('/potonganTunjangans/{potonganTunjangan}', [PotonganTunjanganController::class, 'update'])->name('potonganTunjangans.update')->middleware('permission:potonganTunjangans.update');
         Route::delete('/potonganTunjangans/{potonganTunjangan}', [PotonganTunjanganController::class, 'destroy'])->name('potonganTunjangans.destroy')->middleware('permission:potonganTunjangans.destroy');
+
+        Route::get('/pengajuanPinjamans', [PengajuanPinjamanController::class, 'index'])->name('pengajuanPinjamans.index')->middleware('permission:pengajuanPinjamans.index');
+        Route::get('/pengajuanPinjamans/create', [PengajuanPinjamanController::class, 'create'])->name('pengajuanPinjamans.create')->middleware('permission:pengajuanPinjamans.create');
+        Route::post('/pengajuanPinjamans', [PengajuanPinjamanController::class, 'store'])->name('pengajuanPinjamans.store')->middleware('permission:pengajuanPinjamans.store');
+        Route::get('/pengajuanPinjamans/{pengajuanPinjaman}/edit', [PengajuanPinjamanController::class, 'edit'])->name('pengajuanPinjamans.edit')->middleware('permission:pengajuanPinjamans.edit');
+        Route::put('/pengajuanPinjamans/{pengajuanPinjaman}', [PengajuanPinjamanController::class, 'update'])->name('pengajuanPinjamans.update')->middleware('permission:pengajuanPinjamans.update');
+        Route::delete('/pengajuanPinjamans/{pengajuanPinjaman}', [PengajuanPinjamanController::class, 'destroy'])->name('pengajuanPinjamans.destroy')->middleware('permission:pengajuanPinjamans.destroy');
     });
 });
 

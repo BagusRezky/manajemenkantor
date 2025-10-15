@@ -67,4 +67,10 @@ class Karyawan extends Model
     {
         return $this->hasMany(PotonganTunjangan::class, 'id_karyawan');
     }
+
+    // Relasi ke model PengajuanPinjaman
+    public function pengajuanPinjaman()
+    {
+        return $this->hasMany(PengajuanPinjaman::class, 'id_karyawan');
+    }
 }
