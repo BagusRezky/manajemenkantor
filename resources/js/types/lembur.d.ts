@@ -1,4 +1,4 @@
-import { Karyawan } from "./karyawan";
+import { Karyawan } from './karyawan';
 
 // Untuk data form
 export type Lembur = {

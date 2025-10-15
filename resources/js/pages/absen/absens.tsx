@@ -1,4 +1,3 @@
-
 import { Head, Link, router, usePage } from '@inertiajs/react';
 import { BarChart, Upload } from 'lucide-react';
 import React from 'react';

@@ -38,6 +38,10 @@ export const columns = (): ColumnDef<Lembur>[] => [
     {
         accessorKey: 'id_karyawan',
         header: 'Karyawan',
+        cell: ({ row }) => {
+            const data = row.original;
+            return <span>{data.karyawan?.nama || '-'}</span>;
+        },
     },
     {
         accessorKey: 'tanggal_lembur',

@@ -68,7 +68,6 @@ const RoleForm = ({ role, permissions, onClose }: { role?: Role; permissions: Pe
             <div className="space-y-2">
                 <Label>Permissions</Label>
                 <div className="grid max-h-60 grid-cols-2 gap-2 overflow-y-auto">
-
                     {permissions
                         .filter((permission) => !permission.name.startsWith('generated::'))
                         .map((permission) => (

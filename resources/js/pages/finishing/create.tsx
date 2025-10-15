@@ -128,8 +128,7 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                 {/* Tanggal Entri */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_entri">Tanggal Entri *</Label>
-                                    <DatePicker
-                                    />
+                                    <DatePicker />
                                     {errors.tanggal_entri && <p className="text-sm text-red-600">{errors.tanggal_entri}</p>}
                                 </div>
 

@@ -1,4 +1,4 @@
-
+import { Textarea } from '@/components/ui/textarea';
 import { Head, useForm } from '@inertiajs/react';
 import { DatePicker } from '../../components/date-picker';
 import { SearchableSelect } from '../../components/search-select';
@@ -127,7 +127,7 @@ export default function CreateLembur({ karyawans }: Props) {
                                 {/* Keterangan */}
                                 <div className="space-y-2">
                                     <Label htmlFor="keterangan">Keterangan</Label>
-                                    <Input id="keterangan" value={data.keterangan} onChange={(e) => setData('keterangan', e.target.value)} />
+                                    <Textarea id="keterangan" value={data.keterangan} onChange={(e) => setData('keterangan', e.target.value)} />
                                 </div>
                             </div>
 

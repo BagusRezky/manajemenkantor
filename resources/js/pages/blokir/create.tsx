@@ -108,9 +108,7 @@ export default function CreateBlokir({ kartuInstruksiKerjas }: Props) {
                                 {/* Tanggal Blokir */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tgl_blokir">Tanggal Blokir *</Label>
-                                    <DatePicker
-
-                                    />
+                                    <DatePicker />
                                     {errors.tgl_blokir && <p className="text-sm text-red-500">{errors.tgl_blokir}</p>}
                                 </div>
 

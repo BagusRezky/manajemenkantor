@@ -4,8 +4,8 @@ import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
 import { Lembur } from '@/types/lembur';
-import { DataTable } from './table/data-table';
 import { columns } from './table/columns';
+import { DataTable } from './table/data-table';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Lembur', href: '/lemburs' }];
 

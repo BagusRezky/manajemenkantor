@@ -21,13 +21,7 @@ interface DataTableProps<TData, TValue> {
     addModal: React.ReactNode;
 }
 
-export function DataTable<TData, TValue>({
-    columns,
-    data,
-    filterColumn,
-    filterPlaceholder,
-    addModal,
-}: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data, filterColumn, filterPlaceholder, addModal }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [rowSelection, setRowSelection] = React.useState({});
 
