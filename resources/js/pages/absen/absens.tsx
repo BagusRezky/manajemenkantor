@@ -1,5 +1,5 @@
-import { Head, Link, router, usePage } from '@inertiajs/react';
-import { BarChart, Upload } from 'lucide-react';
+import { Head, router, usePage } from '@inertiajs/react';
+import {  Upload } from 'lucide-react';
 import React from 'react';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../../components/ui/card';
@@ -38,13 +38,13 @@ const AbsensPage = () => {
                         <CardDescription>Kelola data absensi dari mesin fingerprint / excel</CardDescription>
                     </div>
                     <div className="flex gap-2">
-                        <Link
+                        {/* <Link
                             href={route('absens.report')}
                             className="inline-flex items-center gap-2 rounded border bg-gray-100 px-4 py-2 hover:bg-gray-200"
                         >
                             <BarChart className="h-4 w-4" />
                             Laporan Bulanan
-                        </Link>
+                        </Link> */}
                         <Button type="button" variant="outline" onClick={() => document.getElementById('excel-upload')?.click()}>
                             <Upload className="mr-2 h-4 w-4" />
                             Import Excel
