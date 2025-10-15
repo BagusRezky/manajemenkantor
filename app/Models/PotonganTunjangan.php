@@ -9,7 +9,7 @@ class PotonganTunjangan extends Model
 {
     use HasFactory;
 
-    protected $filable = [
+    protected $fillable = [
         'id_karyawan',
         'periode_payroll',
         'potongan_tunjangan_jabatan',

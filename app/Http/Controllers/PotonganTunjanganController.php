@@ -25,7 +25,7 @@ class PotonganTunjanganController extends Controller
      */
     public function create()
     {
-        $karyawans = Karyawan::select('id', 'nama_karyawan')->get();
+        $karyawans = Karyawan::all();
         return Inertia::render('potonganTunjangan/create', [
             'karyawans' => $karyawans,
         ]);
@@ -65,7 +65,7 @@ class PotonganTunjanganController extends Controller
      */
     public function edit(PotonganTunjangan $potonganTunjangan)
     {
-        $karyawans = Karyawan::select('id', 'nama_karyawan')->get();
+        $karyawans = Karyawan::select('id', 'nama')->get();
         return Inertia::render('potonganTunjangan/edit', [
             'potonganTunjangan' => $potonganTunjangan,
             'karyawans' => $karyawans,
