@@ -87,7 +87,7 @@ class LemburController extends Controller
         ]);
 
         $lembur->update($validated);
-        return redirect()->back()->with('success', 'Lembur updated successfully!');
+        return redirect()->route('lemburs.index')->with('success', 'Lembur updated successfully!');
     }
 
     /**
