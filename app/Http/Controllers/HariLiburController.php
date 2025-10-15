@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\HariLibur;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class HariLiburController extends Controller
 {
@@ -13,7 +14,7 @@ class HariLiburController extends Controller
     public function index()
     {
         $hariLiburs = HariLibur::all();
-        return inertia('harilibur/hariliburs', [
+        return Inertia::render('hariLibur/hariLiburs', [
             'hariLiburs' => $hariLiburs,
         ]);
     }
@@ -24,7 +25,7 @@ class HariLiburController extends Controller
     public function create()
     {
         $hariLiburs = HariLibur::all();
-        return inertia('harilibur/create', [
+        return Inertia::render('hariLibur/create', [
             'hariLiburs' => $hariLiburs,
         ]);
     }
@@ -34,12 +35,12 @@ class HariLiburController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
+        $validated = $request->validate([
             'tanggal_libur' => 'required|date',
             'keterangan' => 'nullable|string',
         ]);
-        HariLibur::create($request->validated());
-        return redirect()->route('hariliburs.index')->with('success', 'Hari Libur added successfully!');
+        HariLibur::create($validated);
+        return redirect()->route('hariLiburs.index')->with('success', 'Hari Libur added successfully!');
     }
 
     /**
@@ -55,9 +56,9 @@ class HariLiburController extends Controller
      */
     public function edit($id)
     {
-        $hariLiburs = HariLibur::findOrFail($id);
-        return inertia('harilibur/edit', [
-            'hariLiburs' => $hariLiburs,
+        $hariLibur = HariLibur::findOrFail($id);
+        return Inertia::render('hariLibur/edit', [
+            'hariLibur' => $hariLibur,
         ]);
     }
 
@@ -66,13 +67,13 @@ class HariLiburController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $hariLiburs = HariLibur::findOrFail($id);
-        $request->validate([
+        $hariLibur = HariLibur::findOrFail($id);
+        $validated = $request->validate([
             'tanggal_libur' => 'required|date',
             'keterangan' => 'nullable|string',
         ]);
-        $hariLiburs->update($request->validated());
-        return redirect()->route('hariliburs.index')->with('success', 'Hari Libur updated successfully!');
+        $hariLibur->update($validated);
+        return redirect()->route('hariLiburs.index')->with('success', 'Hari Libur updated successfully!');
     }
 
     /**
@@ -82,6 +83,6 @@ class HariLiburController extends Controller
     {
         $hariLiburs = HariLibur::findOrFail($id);
         $hariLiburs->delete();
-        return redirect()->route('hariliburs.index')->with('success', 'Hari Libur deleted successfully!');
+        return redirect()->route('hariLiburs.index')->with('success', 'Hari Libur deleted successfully!');
     }
 }
