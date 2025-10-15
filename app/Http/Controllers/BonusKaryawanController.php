@@ -25,9 +25,9 @@ class BonusKaryawanController extends Controller
      */
     public function create()
     {
-        $bonusKaryawans = BonusKaryawan::all();
+        $karyawans = Karyawan::select('id', 'nama')->get();
         return Inertia::render('bonusKaryawan/create', [
-            'bonusKaryawans' => $bonusKaryawans,
+            'karyawans' => $karyawans,
         ]);
     }
 
