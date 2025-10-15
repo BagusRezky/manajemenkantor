@@ -25,7 +25,7 @@ class PengajuanPinjamanController extends Controller
      */
     public function create()
     {
-        $karyawans = Karyawan::select('id', 'nama_karyawan')->get();
+        $karyawans = Karyawan::select('id', 'nama')->get();
         return Inertia::render('pengajuanPinjaman/create', [
             'karyawans' => $karyawans,
         ]);
@@ -67,7 +67,7 @@ class PengajuanPinjamanController extends Controller
      */
     public function edit(PengajuanPinjaman $pengajuanPinjaman)
     {
-        $karyawans = Karyawan::select('id', 'nama_karyawan')->get();
+        $karyawans = Karyawan::select('id', 'nama')->get();
         return Inertia::render('pengajuanPinjaman/edit', [
             'pengajuanPinjaman' => $pengajuanPinjaman,
             'karyawans' => $karyawans,
