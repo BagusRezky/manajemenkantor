@@ -71,14 +71,7 @@ export const columns = (): ColumnDef<Lembur>[] => [
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => handleDelete(lembur.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        {/* <DropdownMenuItem
-                            onClick={() => {
-                                setSelectedLembur(lembur);
-                                setEditModalOpen(true);
-                            }}
-                        >
-                            Edit
-                        </DropdownMenuItem> */}
+                        <DropdownMenuItem onClick={() => router.get(`/lemburs/${lembur.id}/edit`)}>Edit</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
             );
