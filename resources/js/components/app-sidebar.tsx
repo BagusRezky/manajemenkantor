@@ -145,6 +145,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             { title: 'Role Management', icon: Users, href: '/roles', permission: 'roles.index' },
             { title: 'Absensi', icon: Users, href: '/absens', permission: 'absens.index' },
             { title: 'Lembur', icon: Users, href: '/lemburs', permission: 'lemburs.index' },
+            { title: 'Izin', icon: Users, href: '/izins', permission: 'izins.index' },
         ],
     },
 ];
