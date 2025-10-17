@@ -48,7 +48,7 @@ class SubcountOutController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'no_subcount_out' => 'required|string|max:255|unique:subcount_outs,no_subcount_out',
+            // 'no_subcount_out' => 'required|string|max:255|unique:subcount_outs,no_subcount_out',
             'tgl_subcount_out' => 'required|date',
             'id_supplier' => 'required|exists:suppliers,id',
             'admin_produksi' => 'required|string|max:255',
@@ -62,17 +62,33 @@ class SubcountOutController extends Controller
             'items.*.keterangan' => 'nullable|string',
         ]);
 
-        DB::transaction(function () use ($validated) {
-            // Create SubcountOut
-            $subcountOut = SubcountOut::create([
-                'no_subcount_out' => $validated['no_subcount_out'],
-                'tgl_subcount_out' => $validated['tgl_subcount_out'],
-                'id_supplier' => $validated['id_supplier'],
-                'admin_produksi' => $validated['admin_produksi'],
-                'supervisor' => $validated['supervisor'],
-                'admin_mainstore' => $validated['admin_mainstore'],
-                'keterangan' => $validated['keterangan'],
+        // --- LOGIKA GENERATE NOMOR OTOMATIS ---
+        $bulanTahun = date('m-Y'); // Format: 10-2025
+        $prefix = "SUB-OUT/{$bulanTahun}/";
+
+        // Cari record terakhir di bulan & tahun ini untuk mendapatkan nomor urut berikutnya
+        $lastSubcountOut = SubcountOut::where('no_subcount_out', 'like', $prefix . '%')
+            ->orderBy('no_subcount_out', 'desc')
+            ->first();
+
+        $nextNumber = 1;
+        if ($lastSubcountOut) {
+            $lastNumber = (int) substr($lastSubcountOut->no_subcount_out, -6);
+            $nextNumber = $lastNumber + 1;
+        }
+
+        $nomorUrut = str_pad($nextNumber, 6, '0', STR_PAD_LEFT); // Format: 000001
+        $generatedNo = $prefix . $nomorUrut;
+        // --- AKHIR LOGIKA GENERATE NOMOR ---
+
+        DB::transaction(function () use ($validated, $generatedNo) {
+            // Gabungkan nomor yang di-generate dengan data yang divalidasi
+            $dataToCreate = array_merge($validated, [
+                'no_subcount_out' => $generatedNo,
             ]);
+
+            // Create SubcountOut
+            $subcountOut = SubcountOut::create($dataToCreate);
 
             // Create SubcountOutItems
             foreach ($validated['items'] as $item) {

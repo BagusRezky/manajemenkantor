@@ -229,7 +229,7 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (isDraft && bomItems.length == 0) {
+        if (isDraft && bomItems.length > 0) {
             // Sederhanakan struktur BOM
             const simpleBomItems = bomItems.map((item) => ({
                 id: item.id,
@@ -303,10 +303,16 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                                             <Label htmlFor="tgl_estimasi_selesai">Tanggal Estimasi Selesai</Label>
 
                                             <DatePicker
-                                                id="tgl_estimasi_selesai"
                                                 value={data.tgl_estimasi_selesai}
                                                 onChange={(date) => {
-                                                    setData('tgl_estimasi_selesai', date.target.value || '');
+                                                    if (date) {
+                                                        const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                            .toISOString()
+                                                            .split('T')[0];
+                                                        setData('tgl_estimasi_selesai', formattedDate);
+                                                    } else {
+                                                        setData('tgl_estimasi_selesai', '');
+                                                    }
                                                 }}
                                             />
                                             {errors.tgl_estimasi_selesai && <p className="text-sm text-red-500">{errors.tgl_estimasi_selesai}</p>}

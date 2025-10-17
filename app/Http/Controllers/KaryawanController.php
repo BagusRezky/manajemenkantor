@@ -54,7 +54,7 @@ class KaryawanController extends Controller
             'status_pegawai' => ['required', Rule::in(['Aktif', 'Nonaktif'])],
             'tgl_masuk_kerja' => ['nullable', 'date'],
             'tgl_akhir_kontrak' => ['nullable', 'date'],
-            'role'           => ['required', 'string', 'exists:roles,name'],
+            'role'           => ['nullable', 'string', 'exists:roles,name'],
         ]);
 
         DB::transaction(function () use ($validated) {

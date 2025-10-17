@@ -14,7 +14,7 @@ class CustomerAddressController extends Controller
     public function index()
     {
         $customerAddresses = customerAddress::all();
-        return inertia::render('customerAddress/customerAddresses', [
+        return Inertia::render('customerAddress/customerAddresses', [
             'customerAddresses' => $customerAddresses,
         ]);
     }
@@ -44,7 +44,7 @@ class CustomerAddressController extends Controller
         $validated['nama_customer'] = strtoupper($validated['nama_customer']);
 
         customerAddress::create($validated);
-        return redirect()->back()->with('success', 'Customer Address added successfully!');
+        return redirect()->route('customerAddresses.index')->with('success', 'Customer Address added successfully!');
     }
 
     /**
@@ -81,7 +81,7 @@ class CustomerAddressController extends Controller
         $validated['nama_customer'] = strtoupper($validated['nama_customer']);
 
         $customerAddress->update($validated);
-        return redirect()->back()->with('success', 'Customer Address updated successfully!');
+        return redirect()->route('customerAddresses.index')->with('success', 'Customer Address updated successfully!');
     }
 
     /**

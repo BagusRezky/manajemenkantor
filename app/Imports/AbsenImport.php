@@ -63,7 +63,7 @@ class AbsenImport implements ToModel, WithHeadingRow
             'departemen'   => $row['departemen'] ?? null,
             'kantor'       => $row['kantor'] ?? null,
             'verifikasi'   => $row['verifikasi'] ?? null,
-            'io'           => $row['i/o'] ?? null,
+            'io'           => $row['io'] ?? null,
             'workcode'     => $row['workcode'] ?? null,
             'sn'           => $row['sn'] ?? null,
             'mesin'        => $row['mesin'] ?? null,

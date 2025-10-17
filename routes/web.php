@@ -64,35 +64,35 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     // Rute-rute yang sudah ada
-    Route::get('/customerAddresses', [CustomerAddressController::class, 'index'])->middleware('permission:customerAddresses.index');
-    Route::post('/customerAddresses', [CustomerAddressController::class, 'store'])->middleware('permission:customerAddresses.store');
-    Route::put('/customerAddresses/{id}', [CustomerAddressController::class, 'update'])->middleware('permission:customerAddresses.update');
-    Route::delete('/customerAddresses/{id}', [CustomerAddressController::class, 'destroy'])->middleware('permission:customerAddresses.destroy');
+    Route::get('/customerAddresses', [CustomerAddressController::class, 'index'])->name('customerAddresses.index')->middleware('permission:customerAddresses.index');
+    Route::post('/customerAddresses', [CustomerAddressController::class, 'store'])->name('customerAddresses.store')->middleware('permission:customerAddresses.store');
+    Route::put('/customerAddresses/{id}', [CustomerAddressController::class, 'update'])->name('customerAddresses.update')->middleware('permission:customerAddresses.update');
+    Route::delete('/customerAddresses/{id}', [CustomerAddressController::class, 'destroy'])->name('customerAddresses.destroy')->middleware('permission:customerAddresses.destroy');
 
-    Route::get('/masterKonversis', [MasterKonversiController::class, 'index'])->middleware('permission:masterKonversis.index');
-    Route::post('/masterKonversis', [MasterKonversiController::class, 'store'])->middleware('permission:masterKonversis.store');
-    Route::put('/masterKonversis/{id}', [MasterKonversiController::class, 'update'])->middleware('permission:masterKonversis.update');
-    Route::delete('/masterKonversis/{id}', [MasterKonversiController::class, 'destroy'])->middleware('permission:masterKonversis.destroy');
+    Route::get('/masterKonversis', [MasterKonversiController::class, 'index'])->name('masterKonversis.index')->middleware('permission:masterKonversis.index');
+    Route::post('/masterKonversis', [MasterKonversiController::class, 'store'])->name('masterKonversis.store')->middleware('permission:masterKonversis.store');
+    Route::put('/masterKonversis/{id}', [MasterKonversiController::class, 'update'])->name('masterKonversis.update')->middleware('permission:masterKonversis.update');
+    Route::delete('/masterKonversis/{id}', [MasterKonversiController::class, 'destroy'])->name('masterKonversis.destroy')->middleware('permission:masterKonversis.destroy');
 
-    Route::get('/suppliers', [SupplierController::class, 'index'])->middleware('permission:suppliers.index');
-    Route::post('/suppliers', [SupplierController::class, 'store'])->middleware('permission:suppliers.store');
-    Route::put('/suppliers/{id}', [SupplierController::class, 'update'])->middleware('permission:suppliers.update');
-    Route::delete('/suppliers/{id}', [SupplierController::class, 'destroy'])->middleware('permission:suppliers.destroy');
+    Route::get('/suppliers', [SupplierController::class, 'index'])->name('suppliers.index')->middleware('permission:suppliers.index');
+    Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store')->middleware('permission:suppliers.store');
+    Route::put('/suppliers/{id}', [SupplierController::class, 'update'])->name('suppliers.update')->middleware('permission:suppliers.update');
+    Route::delete('/suppliers/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy')->middleware('permission:suppliers.destroy');
 
-    Route::get('/units', [UnitController::class, 'index'])->middleware('permission:units.index');
-    Route::post('/units', [UnitController::class, 'store'])->middleware('permission:units.store');
-    Route::put('/units/{id}', [UnitController::class, 'update'])->middleware('permission:units.update');
-    Route::delete('/units/{id}', [UnitController::class, 'destroy'])->middleware('permission:units.destroy');
+    Route::get('/units', [UnitController::class, 'index'])->name('units.index')->middleware('permission:units.index');
+    Route::post('/units', [UnitController::class, 'store'])->name('units.store')->middleware('permission:units.store');
+    Route::put('/units/{id}', [UnitController::class, 'update'])->name('units.update')->middleware('permission:units.update');
+    Route::delete('/units/{id}', [UnitController::class, 'destroy'])->name('units.destroy')->middleware('permission:units.destroy');
 
-    Route::get('/categoryItems', [CategoryItemController::class, 'index'])->middleware('permission:categoryItems.index');
-    Route::post('/categoryItems', [CategoryItemController::class, 'store'])->middleware('permission:categoryItems.store');
-    Route::put('/categoryItems/{id}', [CategoryItemController::class, 'update'])->middleware('permission:categoryItems.update');
-    Route::delete('/categoryItems/{id}', [CategoryItemController::class, 'destroy'])->middleware('permission:categoryItems.destroy');
+    Route::get('/categoryItems', [CategoryItemController::class, 'index'])->name('categoryItems.index')->middleware('permission:categoryItems.index');
+    Route::post('/categoryItems', [CategoryItemController::class, 'store'])->name('categoryItems.store')->middleware('permission:categoryItems.store');
+    Route::put('/categoryItems/{id}', [CategoryItemController::class, 'update'])->name('categoryItems.update')->middleware('permission:categoryItems.update');
+    Route::delete('/categoryItems/{id}', [CategoryItemController::class, 'destroy'])->name('categoryItems.destroy')->middleware('permission:categoryItems.destroy');
 
-    Route::get('/typeItems', [TypeItemController::class, 'index'])->middleware('permission:typeItems.index');
-    Route::post('/typeItems', [TypeItemController::class, 'store'])->middleware('permission:typeItems.store');
-    Route::put('/typeItems/{id}', [TypeItemController::class, 'update'])->middleware('permission:typeItems.update');
-    Route::delete('/typeItems/{id}', [TypeItemController::class, 'destroy'])->middleware('permission:typeItems.destroy');
+    Route::get('/typeItems', [TypeItemController::class, 'index'])->name('typeItems.index')->middleware('permission:typeItems.index');
+    Route::post('/typeItems', [TypeItemController::class, 'store'])->name('typeItems.store')->middleware('permission:typeItems.store');
+    Route::put('/typeItems/{id}', [TypeItemController::class, 'update'])->name('typeItems.update')->middleware('permission:typeItems.update');
+    Route::delete('/typeItems/{id}', [TypeItemController::class, 'destroy'])->name('typeItems.destroy')->middleware('permission:typeItems.destroy');
 
     Route::get('/masterItems', [MasterItemController::class, 'index'])->name('master-items.index')->middleware('permission:master-items.index');
     Route::get('/masterItems/create', [MasterItemController::class, 'create'])->name('master-items.create')->middleware('permission:master-items.create');

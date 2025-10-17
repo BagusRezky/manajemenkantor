@@ -129,9 +129,17 @@ export default function Create({ suratJalans }: CreateProps) {
                                             Tanggal Invoice <span className="text-red-500">*</span>
                                         </Label>
                                         <DatePicker
-                                            id="tgl_invoice"
                                             value={data.tgl_invoice}
-                                            onChange={(e) => setData('tgl_invoice', e.target.value ? e.target.value : '')}
+                                            onChange={(date) => {
+                                                if (date) {
+                                                    const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                        .toISOString()
+                                                        .split('T')[0];
+                                                    setData('tgl_invoice', formattedDate);
+                                                } else {
+                                                    setData('tgl_invoice', '');
+                                                }
+                                            }}
                                         />
                                         {errors.tgl_invoice && <p className="text-sm text-red-600">{errors.tgl_invoice}</p>}
                                     </div>
@@ -143,9 +151,17 @@ export default function Create({ suratJalans }: CreateProps) {
                                         </Label>
 
                                         <DatePicker
-                                            id="tgl_jatuh_tempo"
                                             value={data.tgl_jatuh_tempo}
-                                            onChange={(e) => setData('tgl_jatuh_tempo', e.target.value ? e.target.value : '')}
+                                            onChange={(date) => {
+                                                if (date) {
+                                                    const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                        .toISOString()
+                                                        .split('T')[0];
+                                                    setData('tgl_jatuh_tempo', formattedDate);
+                                                } else {
+                                                    setData('tgl_jatuh_tempo', '');
+                                                }
+                                            }}
                                         />
                                         {errors.tgl_jatuh_tempo && <p className="text-sm text-red-600">{errors.tgl_jatuh_tempo}</p>}
                                     </div>
