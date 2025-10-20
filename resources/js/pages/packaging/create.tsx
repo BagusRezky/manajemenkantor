@@ -113,9 +113,17 @@ export default function CreatePackaging({ kartuInstruksiKerjas }: Props) {
                                 <div className="space-y-2">
                                     <Label htmlFor="tgl_transfer">Tanggal Transfer *</Label>
                                     <DatePicker
-                                        id="tgl_transfer"
                                         value={data.tgl_transfer}
-                                        onChange={(e) => setData('tgl_transfer', e.target.value ? e.target.value : '')}
+                                        onChange={(date) => {
+                                            if (date) {
+                                                const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                    .toISOString()
+                                                    .split('T')[0];
+                                                setData('tgl_transfer', formattedDate);
+                                            } else {
+                                                setData('tgl_transfer', '');
+                                            }
+                                        }}
                                     />
                                     {errors.tgl_transfer && <p className="text-sm text-red-600">{errors.tgl_transfer}</p>}
                                 </div>

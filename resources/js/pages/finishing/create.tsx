@@ -128,7 +128,19 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                 {/* Tanggal Entri */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_entri">Tanggal Entri *</Label>
-                                    <DatePicker />
+                                    <DatePicker
+                                        value={data.tanggal_entri}
+                                        onChange={(date) => {
+                                            if (date) {
+                                                const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                    .toISOString()
+                                                    .split('T')[0];
+                                                setData('tanggal_entri', formattedDate);
+                                            } else {
+                                                setData('tanggal_entri', '');
+                                            }
+                                        }}
+                                    />
                                     {errors.tanggal_entri && <p className="text-sm text-red-600">{errors.tanggal_entri}</p>}
                                 </div>
 

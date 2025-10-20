@@ -108,7 +108,19 @@ export default function CreateBlokir({ kartuInstruksiKerjas }: Props) {
                                 {/* Tanggal Blokir */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tgl_blokir">Tanggal Blokir *</Label>
-                                    <DatePicker />
+                                    <DatePicker
+                                        value={data.tgl_blokir}
+                                        onChange={(date) => {
+                                            if (date) {
+                                                const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                    .toISOString()
+                                                    .split('T')[0];
+                                                setData('tgl_blokir', formattedDate);
+                                            } else {
+                                                setData('tgl_blokir', '');
+                                            }
+                                        }}
+                                    />
                                     {errors.tgl_blokir && <p className="text-sm text-red-500">{errors.tgl_blokir}</p>}
                                 </div>
 

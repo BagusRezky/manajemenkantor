@@ -131,9 +131,17 @@ export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings,
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_entri">Tanggal Entri *</Label>
                                     <DatePicker
-                                        id="tanggal_entri"
                                         value={data.tanggal_entri}
-                                        onChange={(e) => setData('tanggal_entri', e.target.value ? e.target.value : '')}
+                                        onChange={(date) => {
+                                            if (date) {
+                                                const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                    .toISOString()
+                                                    .split('T')[0];
+                                                setData('tanggal_entri', formattedDate);
+                                            } else {
+                                                setData('tanggal_entri', '');
+                                            }
+                                        }}
                                     />
                                     {errors.tanggal_entri && <p className="text-sm text-red-500">{errors.tanggal_entri}</p>}
                                 </div>
