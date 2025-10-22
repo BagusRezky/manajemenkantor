@@ -405,9 +405,9 @@ export default function Create({ departments, masterItems, customerAddresses, ka
                                                         const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
                                                             .toISOString()
                                                             .split('T')[0];
-                                                        setItemInput(prev => ({ ...prev, eta: formattedDate }));
+                                                        setItemInput((prev) => ({ ...prev, eta: formattedDate }));
                                                     } else {
-                                                        setItemInput(prev => ({ ...prev, eta: '' }));
+                                                        setItemInput((prev) => ({ ...prev, eta: '' }));
                                                     }
                                                 }}
                                             />

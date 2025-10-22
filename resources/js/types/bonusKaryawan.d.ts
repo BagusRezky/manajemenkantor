@@ -1,4 +1,3 @@
-
 import { Karyawan } from './karyawan';
 
 export type BonusKaryawan = {
