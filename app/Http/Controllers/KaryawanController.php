@@ -24,12 +24,12 @@ class KaryawanController extends Controller
         $roles = Role::all();
 
         // Ambil semua user yang belum memiliki data karyawan
-        $unassignedUsers = User::whereDoesntHave('karyawan')->get();
+        $users = User::whereDoesntHave('karyawan')->get();
 
         return Inertia::render('karyawan/karyawans', [
             'karyawans' => $karyawans,
             'roles' => $roles,
-            'unassignedUsers' => $unassignedUsers,
+            'users' => $users,
         ]);
     }
 
@@ -69,6 +69,19 @@ class KaryawanController extends Controller
         });
 
         return Redirect::route('karyawan.index')->with('success', 'Karyawan berhasil ditambahkan.');
+    }
+
+    public function edit(Karyawan $karyawan)
+    {
+        $roles = Role::all();
+        $users = User::whereDoesntHave('karyawan')
+                ->orWhere('id', $karyawan->user_id) // biar user lama tetap bisa muncul
+                ->get();
+        return Inertia::render('karyawan/edit', [
+            'karyawan' => $karyawan->load('user.roles'),
+            'roles' => $roles,
+            'users' => $users,
+        ]);
     }
 
     public function update(Request $request, Karyawan $karyawan)

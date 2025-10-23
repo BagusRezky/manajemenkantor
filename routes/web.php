@@ -353,6 +353,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         // Rute untuk Master Karyawan
         Route::get('/karyawans', [KaryawanController::class, 'index'])->name('karyawan.index');
         Route::post('/karyawans', [KaryawanController::class, 'store'])->name('karyawan.store');
+        Route::get('/karyawans/{karyawan}/edit', [KaryawanController::class, 'edit'])->name('karyawan.edit');
         Route::put('/karyawans/{karyawan}', [KaryawanController::class, 'update'])->name('karyawan.update');
         Route::delete('/karyawans/{karyawan}', [KaryawanController::class, 'destroy'])->name('karyawan.destroy');
         // Rute untuk mengupdate status karyawan

@@ -6,21 +6,28 @@ use App\Models\Karyawan;
 use Maatwebsite\Excel\Concerns\ToModel;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 use Carbon\Carbon;
+use Maatwebsite\Excel\Concerns\WithUpserts;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 
 
-class KaryawanImport implements ToModel, WithHeadingRow
+class KaryawanImport implements ToModel, WithHeadingRow, WithUpserts
 {
     /**
     * @param array $row
     *
     * @return \Illuminate\Database\Eloquent\Model|null
     */
+
+    public function uniqueBy()
+    {
+        return 'nip';
+    }
+
     public function model(array $row)
     {
         return new Karyawan([
             'pin'              => $row['pin'] ?? null,
-            'nip'              => $row['nip'] ?? null,
+            'nip'              => $row['nip'],
             'nama'             => $row['nama'] ?? null,
             'jadwal_kerja'     => $row['jadwal_kerja'] ?? null,
 
