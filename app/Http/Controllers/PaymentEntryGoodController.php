@@ -27,7 +27,8 @@ class PaymentEntryGoodController extends Controller
     {
         $penerimaanBarangs = PenerimaanBarang::with([
             'items',
-            'purchaseOrder'
+            'purchaseOrder',
+            'purchaseOrder.items'
         ])
         ->orderBy('created_at', 'desc')
         ->get();
