@@ -61,9 +61,16 @@ class PaymentEntryGoodController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(PaymentEntryGood $paymentEntryGood)
+    public function show($id)
     {
-        $paymentEntryGood->load('penerimaanBarang.purchaseOrder');
+        $paymentEntryGood = PaymentEntryGood::with([
+            'penerimaanBarang',
+            'penerimaanBarang.purchaseOrder',
+            'penerimaanBarang.items',
+            'penerimaanBarang.items.purchaseOrderItem',
+            'penerimaanBarang.items.purchaseOrderItem.masterItem',
+        ]
+        )->findOrFail($id);
 
         return Inertia::render('paymentEntryGood/show', [
             'paymentEntryGood' => $paymentEntryGood
