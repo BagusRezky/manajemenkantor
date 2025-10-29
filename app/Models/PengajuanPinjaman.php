@@ -26,4 +26,9 @@ class PengajuanPinjaman extends Model
     {
         return $this->belongsTo(Karyawan::class, 'id_karyawan');
     }
+
+    public function pembayaranPinjaman()
+    {
+        return $this->hasMany(PembayaranPinjaman::class, 'id_pengajuan_pinjaman');
+    }
 }

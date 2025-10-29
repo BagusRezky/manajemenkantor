@@ -43,6 +43,7 @@ use App\Http\Controllers\IzinController;
 use App\Http\Controllers\LemburController;
 use App\Http\Controllers\HariLiburController;
 use App\Http\Controllers\BonusKaryawanController;
+use App\Http\Controllers\PembayaranPinjamanController;
 use App\Http\Controllers\PotonganTunjanganController;
 use App\Http\Controllers\PengajuanPinjamanController;
 use Illuminate\Support\Facades\Route;
@@ -412,6 +413,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/pengajuanPinjamans/{pengajuanPinjaman}/edit', [PengajuanPinjamanController::class, 'edit'])->name('pengajuanPinjamans.edit')->middleware('permission:pengajuanPinjamans.edit');
         Route::put('/pengajuanPinjamans/{pengajuanPinjaman}', [PengajuanPinjamanController::class, 'update'])->name('pengajuanPinjamans.update')->middleware('permission:pengajuanPinjamans.update');
         Route::delete('/pengajuanPinjamans/{pengajuanPinjaman}', [PengajuanPinjamanController::class, 'destroy'])->name('pengajuanPinjamans.destroy')->middleware('permission:pengajuanPinjamans.destroy');
+
+        Route::get('/pembayaranPinjamans', [PembayaranPinjamanController::class, 'index'])->name('pembayaranPinjamans.index')->middleware('permission:pembayaranPinjamans.index');
+        Route::get('/pembayaranPinjamans/create', [PembayaranPinjamanController::class, 'create'])->name('pembayaranPinjamans.create')->middleware('permission:pembayaranPinjamans.create');
+        Route::post('/pembayaranPinjamans', [PembayaranPinjamanController::class, 'store'])->name('pembayaranPinjamans.store')->middleware('permission:pembayaranPinjamans.store');
+        Route::get('/pembayaranPinjamans/{pembayaranPinjaman}/edit', [PembayaranPinjamanController::class, 'edit'])->name('pembayaranPinjamans.edit')->middleware('permission:pembayaranPinjamans.edit');
+        Route::put('/pembayaranPinjamans/{pembayaranPinjaman}', [PembayaranPinjamanController::class, 'update'])->name('pembayaranPinjamans.update')->middleware('permission:pembayaranPinjamans.update');
+        Route::delete('/pembayaranPinjamans/{pembayaranPinjaman}', [PembayaranPinjamanController::class, 'destroy'])->name('pembayaranPinjamans.destroy')->middleware('permission:pembayaranPinjamans.destroy');
+        Route::get('/pembayaranPinjamans/rekap', [PembayaranPinjamanController::class, 'rekap'])->name('pembayaranPinjamans.rekap')->middleware('permission:pembayaranPinjamans.rekap');
+
     });
 });
 

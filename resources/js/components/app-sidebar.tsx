@@ -149,6 +149,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             { title: 'Pot. Tunjangan', icon: Users, href: '/potonganTunjangans', permission: 'potonganTunjangans.index' },
             { title: 'Bonus Karyawan', icon: Users, href: '/bonusKaryawans', permission: 'bonusKaryawans.index' },
             { title: 'Peng. Pinjaman', icon: Users, href: '/pengajuanPinjamans', permission: 'pengajuanPinjamans.index' },
+            { title: 'Pemb. Pinjaman', icon: Users, href: '/pembayaranPinjamans', permission: 'pembayaranPinjamans.index' },
             { title: 'Hari Libur', icon: Users, href: '/hariLiburs', permission: 'hariLiburs.index' },
         ],
     },

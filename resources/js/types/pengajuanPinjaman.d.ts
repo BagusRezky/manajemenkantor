@@ -10,7 +10,7 @@ export type PengajuanPinjaman = {
     nomor_bukti_pengajuan: string;
     tanggal_pengajuan: string;
     nilai_pinjaman: number;
-    jangka_waktu_pinjaman: number; // dalam bulan
+    jangka_waktu_pinjaman: number;
     cicilan_per_bulan: number;
     keperluan_pinjaman: string;
 };
