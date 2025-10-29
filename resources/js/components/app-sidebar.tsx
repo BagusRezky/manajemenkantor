@@ -146,6 +146,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             { title: 'Absensi', icon: Users, href: '/absens', permission: 'absens.index' },
             { title: 'Lembur', icon: Users, href: '/lemburs', permission: 'lemburs.index' },
             { title: 'Izin', icon: Users, href: '/izins', permission: 'izins.index' },
+            { title: 'Cuti', icon: Users, href: '/cutis', permission: 'cutis.index' },
             { title: 'Pot. Tunjangan', icon: Users, href: '/potonganTunjangans', permission: 'potonganTunjangans.index' },
             { title: 'Bonus Karyawan', icon: Users, href: '/bonusKaryawans', permission: 'bonusKaryawans.index' },
             { title: 'Peng. Pinjaman', icon: Users, href: '/pengajuanPinjamans', permission: 'pengajuanPinjamans.index' },

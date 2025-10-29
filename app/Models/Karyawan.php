@@ -73,4 +73,10 @@ class Karyawan extends Model
     {
         return $this->hasMany(PengajuanPinjaman::class, 'id_karyawan');
     }
+
+    // Relasi ke model Cuti
+    public function cuti()
+    {
+        return $this->hasMany(Cuti::class, 'id_karyawan');
+    }
 }

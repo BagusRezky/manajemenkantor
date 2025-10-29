@@ -46,6 +46,7 @@ use App\Http\Controllers\BonusKaryawanController;
 use App\Http\Controllers\PembayaranPinjamanController;
 use App\Http\Controllers\PotonganTunjanganController;
 use App\Http\Controllers\PengajuanPinjamanController;
+use App\Http\Controllers\CutiController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -422,6 +423,12 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/pembayaranPinjamans/{pembayaranPinjaman}', [PembayaranPinjamanController::class, 'destroy'])->name('pembayaranPinjamans.destroy')->middleware('permission:pembayaranPinjamans.destroy');
         Route::get('/pembayaranPinjamans/rekap', [PembayaranPinjamanController::class, 'rekap'])->name('pembayaranPinjamans.rekap')->middleware('permission:pembayaranPinjamans.rekap');
 
+        Route::get('/cutis', [CutiController::class, 'index'])->name('cutis.index')->middleware('permission:cutis.index');
+        Route::get('/cutis/create', [CutiController::class, 'create'])->name('cutis.create')->middleware('permission:cutis.create');
+        Route::post('/cutis', [CutiController::class, 'store'])->name('cutis.store')->middleware('permission:cutis.store');
+        Route::get('/cutis/{cuti}/edit', [CutiController::class, 'edit'])->name('cutis.edit')->middleware('permission:cutis.edit');
+        Route::put('/cutis/{cuti}', [CutiController::class, 'update'])->name('cutis.update')->middleware('permission:cutis.update');
+        Route::delete('/cutis/{cuti}', [CutiController::class, 'destroy'])->name('cutis.destroy')->middleware('permission:cutis.destroy');
     });
 });
 
