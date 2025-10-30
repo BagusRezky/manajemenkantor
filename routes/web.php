@@ -372,6 +372,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/absens', [AbsenController::class, 'index'])->name('absens.index')->middleware('permission:absens.index');
         Route::post('/absens/import', [AbsenController::class, 'import'])->name('absens.import')->middleware('permission:absens.import');
         Route::get('/absens/reports', [AbsenController::class, 'report'])->name('absens.report')->middleware('permission:absens.report');
+        Route::get('/absens/rekap', [AbsenController::class, 'rekap'])->name('absens.rekap')->middleware('permission:absens.rekap');
 
         Route::get('/lemburs', [LemburController::class, 'index'])->name('lemburs.index')->middleware('permission:lemburs.index');
         Route::get('/lemburs/create', [LemburController::class, 'create'])->name('lemburs.create')->middleware('permission:lemburs.create');
@@ -429,6 +430,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cutis/{cuti}/edit', [CutiController::class, 'edit'])->name('cutis.edit')->middleware('permission:cutis.edit');
         Route::put('/cutis/{cuti}', [CutiController::class, 'update'])->name('cutis.update')->middleware('permission:cutis.update');
         Route::delete('/cutis/{cuti}', [CutiController::class, 'destroy'])->name('cutis.destroy')->middleware('permission:cutis.destroy');
+
     });
 });
 
