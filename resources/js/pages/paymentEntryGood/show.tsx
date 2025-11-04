@@ -68,7 +68,7 @@ export default function Show({ paymentEntryGood }: ShowProps) {
                                 </div>
                                 <div>
                                     <Label>Tanggal Transaksi:</Label>
-                                    <p>{formatDate(paymentEntryGood.tanggal_transaksi )}</p>
+                                    <p>{formatDate(paymentEntryGood.tanggal_transaksi)}</p>
                                 </div>
                                 <div>
                                     <Label>Tanggal Jatuh Tempo:</Label>
@@ -84,23 +84,22 @@ export default function Show({ paymentEntryGood }: ShowProps) {
                             <div className="rounded-md border bg-gray-50 p-4 dark:bg-gray-800">
                                 <h3 className="mb-3 font-medium">Detail Penerimaan Barang</h3>
                                 {penerimaanBarang ? (
-                                    <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
-                                        <div>
-                                            <p>
-                                                <span className="font-medium">No. Penerimaan Barang:</span> {penerimaanBarang.no_laporan_barang}
-                                            </p>
-                                            <p>
-                                                <span className="font-medium">Tanggal Terima Barang:</span>{' '}
-                                                {formatDate(penerimaanBarang.tgl_terima_barang)}
-                                            </p>
+                                    <div className="space-y-2">
+                                        <div className="grid grid-cols-[220px_1fr]">
+                                            <span className="font-medium">No. Penerimaan Barang</span>
+                                            <span>: {penerimaanBarang.no_laporan_barang || '-'}</span>
                                         </div>
-                                        <div>
-                                            <p>
-                                                <span className="font-medium">No. PO:</span> {po?.no_po || '-'}
-                                            </p>
-                                            <p>
-                                                <span className="font-medium">PPN PO:</span> {po?.ppn ? `${po.ppn}%` : '-'}
-                                            </p>
+                                        <div className="grid grid-cols-[220px_1fr]">
+                                            <span className="font-medium">Tanggal Terima Barang</span>
+                                            <span>: {formatDate(penerimaanBarang.tgl_terima_barang)}</span>
+                                        </div>
+                                        <div className="grid grid-cols-[220px_1fr]">
+                                            <span className="font-medium">No. PO</span>
+                                            <span>: {po?.no_po || '-'}</span>
+                                        </div>
+                                        <div className="grid grid-cols-[220px_1fr]">
+                                            <span className="font-medium">PPN PO</span>
+                                            <span>: {po?.ppn ? `${po.ppn}%` : '-'}</span>
                                         </div>
                                     </div>
                                 ) : (
