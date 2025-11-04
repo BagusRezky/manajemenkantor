@@ -142,7 +142,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         children: [
             { title: 'Departemen', icon: Users, href: '/departemens', permission: 'departemens.index' },
             { title: 'Karyawan', icon: Users, href: '/karyawans', permission: 'karyawans.index' },
-            { title: 'Role Management', icon: Users, href: '/roles', permission: 'roles.index' },
+            { title: 'Role', icon: Users, href: '/roles', permission: 'roles.index' },
             { title: 'Absensi', icon: Users, href: '/absens', permission: 'absens.index' },
             { title: 'Lembur', icon: Users, href: '/lemburs', permission: 'lemburs.index' },
             { title: 'Izin', icon: Users, href: '/izins', permission: 'izins.index' },
@@ -152,6 +152,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             { title: 'Peng. Pinjaman', icon: Users, href: '/pengajuanPinjamans', permission: 'pengajuanPinjamans.index' },
             { title: 'Pemb. Pinjaman', icon: Users, href: '/pembayaranPinjamans', permission: 'pembayaranPinjamans.index' },
             { title: 'Hari Libur', icon: Users, href: '/hariLiburs', permission: 'hariLiburs.index' },
+            { title: 'Gaji', icon: Users, href: '/gajis', permission: 'gajis.index' },
         ],
     },
 ];
