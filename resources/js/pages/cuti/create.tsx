@@ -99,6 +99,7 @@ export default function CreateCuti({ karyawans }: Props) {
                                             { label: 'Cuti Opname', value: 'Cuti Opname' },
                                             { label: 'Cuti Keguguran Kandungan', value: 'Cuti Keguguran Kandungan' },
                                             { label: 'Dinas Luar', value: 'Dinas Luar' },
+                                            { label: 'Cuti Tahunan', value: 'Cuti Tahunan' },
                                         ]}
                                         placeholder="Pilih Jenis Cuti"
                                         className={errors.jenis_cuti ? 'border-red-500' : ''}

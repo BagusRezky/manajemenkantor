@@ -102,4 +102,12 @@ class CutiController extends Controller
         $cuti->delete();
         return redirect()->route('cutis.index')->with('success', 'Cuti deleted successfully!');
     }
+
+    public function cutitahunan()
+    {
+        $cutis = Cuti::with('karyawan')->get();
+        return Inertia::render('cuti/cutiTahunan', [
+            'cutis' => $cutis,
+        ]);
+    }
 }
