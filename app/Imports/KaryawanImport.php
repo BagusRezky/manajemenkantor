@@ -13,69 +13,57 @@ use PhpOffice\PhpSpreadsheet\Shared\Date;
 class KaryawanImport implements ToModel, WithHeadingRow, WithUpserts
 {
     /**
-    * @param array $row
-    *
-    * @return \Illuminate\Database\Eloquent\Model|null
-    */
+     * @param array $row
+     *
+     * @return \Illuminate\Database\Eloquent\Model|null
+     */
 
     public function uniqueBy()
     {
-        return 'nip';
+        return ['nip', 'nama'];
     }
 
     public function model(array $row)
     {
-        return new Karyawan([
-            'pin'              => $row['pin'] ?? null,
-            'nip'              => $row['nip'],
-            'nama'             => $row['nama'] ?? null,
-            'jadwal_kerja'     => $row['jadwal_kerja'] ?? null,
+        // cari data lama (kalau ada)
+        $existing = Karyawan::where('nip', $row['nip'])
+            ->where('nama', $row['nama'])
+            ->first();
 
-            // ✅ Tanggal Mulai Jadwal
-            'tgl_mulai_jadwal' => isset($row['tgl_mulai_jadwal'])
-                ? (is_numeric($row['tgl_mulai_jadwal'])
-                    ? Carbon::instance(Date::excelToDateTimeObject($row['tgl_mulai_jadwal']))
-                    : Carbon::parse($row['tgl_mulai_jadwal']))
-                : null,
+        // buat array baru
+        $data = [
+            'pin'            => $row['pin'] ?? $existing?->pin,
+            'nama'           => $row['nama'] ?? $existing?->nama,
+            'jadwal_kerja'   => $row['jadwal_kerja'] ?? $existing?->jadwal_kerja,
+            'tempat_lahir'   => $row['tempat_lahir'] ?? $existing?->tempat_lahir,
+            'jabatan'        => $row['jabatan'] ?? $existing?->jabatan,
+            'departemen'     => $row['departemen'] ?? $existing?->departemen,
+            'kantor'         => $row['kantor'] ?? $existing?->kantor,
+            'rfid'           => $row['rfid'] ?? $existing?->rfid,
+            'no_telp'        => $row['no_telp'] ?? $existing?->no_telp,
+            'privilege'      => $row['privilege'] ?? $existing?->privilege,
+            'status_pegawai' => $row['status_pegawai'] ?? $existing?->status_pegawai,
+            'nip'            => $row['nip'] ?? $existing?->nip,
+        ];
 
-            'tempat_lahir'     => $row['tempat_lahir'] ?? null,
+        // handle tanggal agar tidak menimpa null
+        $tanggalFields = [
+            'tgl_mulai_jadwal',
+            'tanggal_lahir',
+            'tgl_masuk_kerja',
+            'tgl_akhir_kontrak'
+        ];
 
-            // ✅ Tanggal Lahir
-            'tanggal_lahir'    => isset($row['tanggal_lahir'])
-                ? (is_numeric($row['tanggal_lahir'])
-                    ? Carbon::instance(Date::excelToDateTimeObject($row['tanggal_lahir']))
-                    : Carbon::parse($row['tanggal_lahir']))
-                : null,
+        foreach ($tanggalFields as $field) {
+            if (!empty($row[$field])) {
+                $data[$field] = is_numeric($row[$field])
+                    ? Carbon::instance(Date::excelToDateTimeObject($row[$field]))
+                    : Carbon::parse($row[$field]);
+            } else {
+                $data[$field] = $existing?->$field; // pertahankan nilai lama
+            }
+        }
 
-            'jabatan'          => $row['jabatan'] ?? null,
-            'departemen'       => $row['departemen'] ?? null,
-            'kantor'           => $row['kantor'] ?? null,
-            'password'         => $row['password'] ?? null,
-            'rfid'             => $row['rfid'] ?? null,
-            'no_telp'          => $row['no_telp'] ?? null,
-            'privilege'        => $row['privilege'] ?? null,
-            'status_pegawai'   => $row['status_pegawai'] ?? 'Aktif',
-            'fp_zk'            => $row['fp_zk'] ?? null,
-            'fp_neo'           => $row['fp_neo'] ?? null,
-            'fp_revo'          => $row['fp_revo'] ?? null,
-            'fp_livo'          => $row['fp_livo'] ?? null,
-            'fp_uareu'         => $row['fp_uareu'] ?? null,
-            'wajah'            => $row['wajah'] ?? null,
-            'telapak_tangan'   => $row['telapak_tangan'] ?? null,
-
-            // ✅ Tanggal Masuk Kerja
-            'tgl_masuk_kerja'  => isset($row['tgl_masuk_kerja'])
-                ? (is_numeric($row['tgl_masuk_kerja'])
-                    ? Carbon::instance(Date::excelToDateTimeObject($row['tgl_masuk_kerja']))
-                    : Carbon::parse($row['tgl_masuk_kerja']))
-                : null,
-
-            // ✅ Tanggal Akhir Kontrak
-            'tgl_akhir_kontrak'=> isset($row['tgl_akhir_kontrak'])
-                ? (is_numeric($row['tgl_akhir_kontrak'])
-                    ? Carbon::instance(Date::excelToDateTimeObject($row['tgl_akhir_kontrak']))
-                    : Carbon::parse($row['tgl_akhir_kontrak']))
-                : null,
-        ]);
+        return new Karyawan($data);
     }
 }
