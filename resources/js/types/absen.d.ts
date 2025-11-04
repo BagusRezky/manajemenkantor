@@ -1,8 +1,8 @@
 export interface Absen {
     id: number;
     tanggal_scan: string;
-    tanggal: string;
-    jam: string;
+    tanggal?: string;
+    jam?: string;
     pin: string;
     nip: string;
     nama: string;

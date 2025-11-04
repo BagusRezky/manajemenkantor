@@ -15,17 +15,7 @@ use Illuminate\Support\Facades\DB;
 
 class AbsenController extends Controller
 {
-    // Import Excel
-    public function import(Request $request)
-    {
-        $request->validate([
-            'file' => 'required|mimes:xlsx,xls,csv',
-        ]);
 
-        Excel::import(new AbsenImport, $request->file('file'));
-
-        return redirect()->route('absens.index')->with('success', 'Data absen berhasil diimport!');
-    }
 
     // Index
     public function index()
@@ -38,87 +28,199 @@ class AbsenController extends Controller
         ]);
     }
 
-    public function rekap(Request $request)
-{
-    $startDate = $request->input('start_date');
-    $endDate   = $request->input('end_date');
+    public function create()
+    {
+        $karyawans = Karyawan::select('id', 'nama', 'pin', 'nip', 'jabatan', 'departemen', 'kantor')->get();
+        return Inertia::render('absen/create', [
+            'karyawans' => $karyawans
+        ]);
+    }
 
-    // Ambil semua karyawan
-    $karyawans = Karyawan::select('id', 'nama', 'pin')->get();
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'karyawan_id' => 'required|exists:karyawans,id',
+            'tanggal_scan' => 'required|date',
+            'io' => 'required|in:1,2',
+            'verifikasi' => 'required|integer',
+            'workcode' => 'required|integer',
+            'sn' => 'required|string',
+            'mesin' => 'required|string',
+        ]);
 
-    // Ambil semua absensi (optional: filter rentang tanggal)
-    $absens = Absen::select('nama', 'pin', 'tanggal_scan', 'jam', 'io')
-        ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-            $query->whereBetween('tanggal_scan', [
-                $startDate . ' 00:00:00',
-                $endDate . ' 23:59:59'
-            ]);
-        })
-        ->get();
+        // Ambil data karyawan berdasarkan id
+        $karyawan = Karyawan::findOrFail($validated['karyawan_id']);
 
-    // Ambil semua lembur, izin, dan cuti
-    $lemburs = Lembur::with('karyawan')->get();
-    $izins   = Izin::with('karyawan')->get();
-    $cutis   = Cuti::with('karyawan')->get();
+        // Gabungkan data otomatis dari karyawan ke absen
+        Absen::create([
+            'tanggal_scan' => $validated['tanggal_scan'],
+            'tanggal' => date('Y-m-d', strtotime($validated['tanggal_scan'])),
+            'jam' =>  date('H:i:s', strtotime($validated['tanggal_scan'])),
+            'io' => $validated['io'],
+            'pin' => $karyawan->pin,
+            'nip' => $karyawan->nip,
+            'nama' => $karyawan->nama,
+            'jabatan' => $karyawan->jabatan,
+            'departemen' => $karyawan->departemen,
+            'kantor' => $karyawan->kantor,
+        ]);
 
-    // === Rekap per Karyawan ===
-    $rekapAbsens = $karyawans->map(function ($karyawan) use ($absens, $lemburs, $izins, $cutis) {
+        return redirect()->route('absens.index')->with('success', 'Data absen berhasil ditambahkan!');
+    }
 
-        // Ambil absensi berdasarkan nama/pin karyawan
-        $absenKaryawan = $absens->where('nama', $karyawan->nama);
+    public function edit($id)
+    {
+        $absen = Absen::findOrFail($id);
+        $karyawans = Karyawan::select('id', 'nama', 'pin', 'nip', 'jabatan', 'departemen', 'kantor')->get();
 
-        // Hitung jumlah kedatangan & pulang
-        $kedatanganKali = $absenKaryawan->where('io', 1)->count();
-        $pulangKali     = $absenKaryawan->where('io', 2)->count();
+        return Inertia::render('absen/edit', [
+            'absen' => $absen,
+            'karyawans' => $karyawans
+        ]);
+    }
 
-        // Hitung jumlah hari hadir unik (berdasarkan tanggal)
-        $hadir = $absenKaryawan
-            ->where('io', 1)
-            ->groupBy(function ($item) {
-                return date('Y-m-d', strtotime($item->tanggal_scan));
-            })
-            ->count();
+    public function update(Request $request, $id)
+    {
+        $absen = Absen::findOrFail($id);
 
-        // Ambil data lembur, izin, dan cuti milik karyawan ini
-        $lemburKaryawan = $lemburs->where('karyawan.nama', $karyawan->nama);
-        $izinKaryawan   = $izins->where('karyawan.nama', $karyawan->nama);
-        $cutiKaryawan   = $cutis->where('karyawan.nama', $karyawan->nama);
+        $validated = $request->validate([
+            'karyawan_id' => 'nullable|exists:karyawans,id',
+            'tanggal_scan' => 'required|date_format:Y-m-d H:i:s',
+            'io' => 'required|in:1,2',
+            'verifikasi' => 'required|integer',
+            'workcode' => 'required|integer',
+            'sn' => 'required|string',
+            'mesin' => 'required|string',
+        ]);
 
-        // Total jam lembur
-        $totalJamLembur = $lemburKaryawan->reduce(function ($carry, $lembur) {
-            $awal = strtotime($lembur->jam_awal_lembur);
-            $selesai = strtotime($lembur->jam_selesai_lembur);
-            $durasi = ($selesai - $awal) / 3600;
-            return $carry + $durasi;
-        }, 0);
-
-        // Ambil tanggal contoh (untuk bulan/tahun, optional)
-        $tanggalContoh = $absenKaryawan->first()?->tanggal_scan;
-        $bulan = $tanggalContoh ? date('n', strtotime($tanggalContoh)) : null;
-        $tahun = $tanggalContoh ? date('Y', strtotime($tanggalContoh)) : null;
-
-        return [
-            'nama'             => $karyawan->nama,
-            'hadir'            => $hadir,
-            'kedatangan_kali'  => $kedatanganKali,
-            'pulang_kali'      => $pulangKali,
-            'lembur_kali'      => $lemburKaryawan->count(),
-            'total_jam_lembur' => round($totalJamLembur, 2),
-            'izin_kali'        => $izinKaryawan->count(),
-            'cuti_kali'        => $cutiKaryawan->count(),
-            'bulan'            => $bulan,
-            'tahun'            => $tahun,
+        // Siapkan data update dasar
+        $dataUpdate = [
+            'tanggal_scan' => $validated['tanggal_scan'],
+            'tanggal' => date('Y-m-d', strtotime($validated['tanggal_scan'])),
+            'jam' => date('H:i:s', strtotime($validated['tanggal_scan'])),
+            'io' => $validated['io'],
+            'verifikasi' => $validated['verifikasi'],
+            'workcode' => $validated['workcode'],
+            'sn' => $validated['sn'],
+            'mesin' => $validated['mesin'],
         ];
-    });
 
-    return Inertia::render('absen/rekap', [
-        'rekap' => $rekapAbsens,
-        'filters' => [
-            'start_date' => $startDate,
-            'end_date'   => $endDate,
-        ],
-    ]);
-}
+        // Kalau user pilih karyawan dari dropdown baru, update juga info karyawan
+        if (!empty($validated['karyawan_id'])) {
+            $karyawan = Karyawan::findOrFail($validated['karyawan_id']);
+            $dataUpdate = array_merge($dataUpdate, [
+                'pin' => $karyawan->pin,
+                'nip' => $karyawan->nip,
+                'nama' => $karyawan->nama,
+                'jabatan' => $karyawan->jabatan,
+                'departemen' => $karyawan->departemen,
+                'kantor' => $karyawan->kantor,
+            ]);
+        }
 
+        $absen->update($dataUpdate);
 
+        return redirect()->route('absens.index')->with('success', 'Data absen berhasil diperbarui!');
+    }
+
+    public function rekap(Request $request)
+    {
+        $startDate = $request->input('start_date');
+        $endDate   = $request->input('end_date');
+
+        // Ambil semua karyawan
+        $karyawans = Karyawan::select('id', 'nama', 'pin')->get();
+
+        // Ambil semua absensi (optional: filter rentang tanggal)
+        $absens = Absen::select('nama', 'pin', 'tanggal_scan', 'jam', 'io')
+            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
+                $query->whereBetween('tanggal_scan', [
+                    $startDate . ' 00:00:00',
+                    $endDate . ' 23:59:59'
+                ]);
+            })
+            ->get();
+
+        // Ambil semua lembur, izin, dan cuti
+        $lemburs = Lembur::with('karyawan')->get();
+        $izins   = Izin::with('karyawan')->get();
+        $cutis   = Cuti::with('karyawan')->get();
+
+        // === Rekap per Karyawan ===
+        $rekapAbsens = $karyawans->map(function ($karyawan) use ($absens, $lemburs, $izins, $cutis) {
+
+            // Ambil absensi berdasarkan nama/pin karyawan
+            $absenKaryawan = $absens->where('nama', $karyawan->nama);
+
+            // Hitung jumlah kedatangan & pulang
+            $kedatanganKali = $absenKaryawan->where('io', 1)->count();
+            $pulangKali     = $absenKaryawan->where('io', 2)->count();
+
+            // Hitung jumlah hari hadir unik (berdasarkan tanggal)
+            $hadir = $absenKaryawan
+                ->where('io', 1)
+                ->groupBy(function ($item) {
+                    return date('Y-m-d', strtotime($item->tanggal_scan));
+                })
+                ->count();
+
+            // Ambil data lembur, izin, dan cuti milik karyawan ini
+            $lemburKaryawan = $lemburs->where('karyawan.nama', $karyawan->nama);
+            $izinKaryawan   = $izins->where('karyawan.nama', $karyawan->nama);
+            $cutiKaryawan   = $cutis->where('karyawan.nama', $karyawan->nama);
+
+            // Total jam lembur
+            $totalDetikLembur = $lemburKaryawan->reduce(function ($carry, $lembur) {
+                $awal = strtotime($lembur->jam_awal_lembur);
+                $selesai = strtotime($lembur->jam_selesai_lembur);
+                $durasi = $selesai - $awal; // hasilnya dalam detik
+                return $carry + $durasi;
+            }, 0);
+
+            // ubah total detik ke format HH:MM:SS
+            $jam = floor($totalDetikLembur / 3600);
+            $menit = floor(($totalDetikLembur % 3600) / 60);
+            $detik = $totalDetikLembur % 60;
+
+            $totalFormat = sprintf('%02d:%02d:%02d', $jam, $menit, $detik);
+
+            // Ambil tanggal contoh (untuk bulan/tahun, optional)
+            $tanggalContoh = $absenKaryawan->first()?->tanggal_scan;
+            $bulan = $tanggalContoh ? date('n', strtotime($tanggalContoh)) : null;
+            $tahun = $tanggalContoh ? date('Y', strtotime($tanggalContoh)) : null;
+
+            return [
+                'nama'             => $karyawan->nama,
+                'hadir'            => $hadir,
+                'kedatangan_kali'  => $kedatanganKali,
+                'pulang_kali'      => $pulangKali,
+                'lembur_kali'      => $lemburKaryawan->count(),
+                'total_jam_lembur' => $totalFormat,
+                'izin_kali'        => $izinKaryawan->count(),
+                'cuti_kali'        => $cutiKaryawan->count(),
+                'bulan'            => $bulan,
+                'tahun'            => $tahun,
+            ];
+        });
+
+        return Inertia::render('absen/rekap', [
+            'rekap' => $rekapAbsens,
+            'filters' => [
+                'start_date' => $startDate,
+                'end_date'   => $endDate,
+            ],
+        ]);
+    }
+
+    // Import Excel
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv',
+        ]);
+
+        Excel::import(new AbsenImport, $request->file('file'));
+
+        return redirect()->route('absens.index')->with('success', 'Data absen berhasil diimport!');
+    }
 }

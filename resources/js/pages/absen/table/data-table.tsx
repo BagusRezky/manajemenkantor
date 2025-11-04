@@ -66,7 +66,11 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                     <Link href={route('absens.rekap')}>
                         <Button>Rekap Absen</Button>
                     </Link>
-                    
+
+                    <Link href={route('absens.create')}>
+                        <Button>Tambah Absen</Button>
+                    </Link>
+
                     <Button onClick={() => document.getElementById('excel-upload')?.click()}>
                         <Upload className="mr-2 h-4 w-4" />
                         Import Excel

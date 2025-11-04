@@ -47,6 +47,7 @@ use App\Http\Controllers\PembayaranPinjamanController;
 use App\Http\Controllers\PotonganTunjanganController;
 use App\Http\Controllers\PengajuanPinjamanController;
 use App\Http\Controllers\CutiController;
+use App\Http\Controllers\GajiController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -370,6 +371,10 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/roles/{role}', [RoleController::class, 'destroy'])->name('roles.destroy');
 
         Route::get('/absens', [AbsenController::class, 'index'])->name('absens.index')->middleware('permission:absens.index');
+        Route::get('/absens/create', [AbsenController::class, 'create'])->name('absens.create')->middleware('permission:absens.create');
+        Route::post('/absens', [AbsenController::class, 'store'])->name('absens.store')->middleware('permission:absens.store');
+        Route::get('/absens/{absen}/edit', [AbsenController::class, 'edit'])->name('absens.edit')->middleware('permission:absens.edit');
+        Route::put('/absens/{absen}', [AbsenController::class, 'update'])->name('absens.update')->middleware('permission:absens.update');
         Route::post('/absens/import', [AbsenController::class, 'import'])->name('absens.import')->middleware('permission:absens.import');
         Route::get('/absens/reports', [AbsenController::class, 'report'])->name('absens.report')->middleware('permission:absens.report');
         Route::get('/absens/rekap', [AbsenController::class, 'rekap'])->name('absens.rekap')->middleware('permission:absens.rekap');
@@ -431,6 +436,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/cutis/{cuti}', [CutiController::class, 'update'])->name('cutis.update')->middleware('permission:cutis.update');
         Route::delete('/cutis/{cuti}', [CutiController::class, 'destroy'])->name('cutis.destroy')->middleware('permission:cutis.destroy');
 
+        Route::get('/gajis', [GajiController::class, 'index'])->name('gajis.index')->middleware('permission:gajis.index');
     });
 });
 

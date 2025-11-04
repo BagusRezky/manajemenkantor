@@ -58,4 +58,21 @@ export const columns = (): ColumnDef<Absen>[] => [
         accessorKey: 'mesin',
         header: 'Mesin',
     },
+    {
+        id: 'actions',
+        header: 'Actions',
+        cell: ({ row }) => {
+            const absen = row.original;
+            return (
+                <div className="space-x-2">
+                    <a
+                        href={route('absens.edit', absen.id)}
+                        className="text-blue-500 hover:underline"
+                    >
+                        Edit
+                    </a>
+                </div>
+            );
+        }
+    },
 ];
