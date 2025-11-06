@@ -212,6 +212,22 @@ class AbsenController extends Controller
         ]);
     }
 
+    public function deleteByPeriod(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $start = $request->start_date . ' 00:00:00';
+        $end = $request->end_date . ' 23:59:59';
+
+        // Hapus semua absen dalam periode
+        $deleted = Absen::whereBetween('tanggal_scan', [$start, $end])->delete();
+
+        return redirect()->route('absens.index')->with('success', "{$deleted} data absensi berhasil dihapus dari {$request->start_date} sampai {$request->end_date}!");
+    }
+
     // Import Excel
     public function import(Request $request)
     {

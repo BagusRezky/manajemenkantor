@@ -378,6 +378,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::post('/absens/import', [AbsenController::class, 'import'])->name('absens.import')->middleware('permission:absens.import');
         Route::get('/absens/reports', [AbsenController::class, 'report'])->name('absens.report')->middleware('permission:absens.report');
         Route::get('/absens/rekap', [AbsenController::class, 'rekap'])->name('absens.rekap')->middleware('permission:absens.rekap');
+        Route::delete('/absens/delete-periode', [AbsenController::class, 'deleteByPeriod'])->name('absens.deletePeriode')->middleware('permission:absens.deletePeriode');
+
 
         Route::get('/lemburs', [LemburController::class, 'index'])->name('lemburs.index')->middleware('permission:lemburs.index');
         Route::get('/lemburs/create', [LemburController::class, 'create'])->name('lemburs.create')->middleware('permission:lemburs.create');

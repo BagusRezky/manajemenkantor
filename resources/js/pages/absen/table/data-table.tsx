@@ -1,6 +1,8 @@
 import { DataTablePagination } from '@/components/custom-pagination';
 import { Button } from '@/components/ui/button';
+import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Absen } from '@/types/absen';
 import { Link, router } from '@inertiajs/react';
@@ -25,6 +27,9 @@ interface DataTableProps<TData, TValue> {
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+    const [openDeleteModal, setOpenDeleteModal] = React.useState(false);
+    const [startDate, setStartDate] = React.useState('');
+    const [endDate, setEndDate] = React.useState('');
     const table = useReactTable({
         data,
         columns,
@@ -52,6 +57,22 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         });
     };
 
+    const handleDeletePeriode = () => {
+        if (!startDate || !endDate) {
+            toast.error('Isi tanggal mulai dan tanggal akhir terlebih dahulu.');
+            return;
+        }
+
+        router.delete(route('absens.deletePeriode'), {
+            data: { start_date: startDate, end_date: endDate },
+            onSuccess: () => {
+                toast.success(`Data absen dari ${startDate} sampai ${endDate} berhasil dihapus!`);
+                setOpenDeleteModal(false);
+            },
+            onError: () => toast.error('Gagal menghapus data absen.'),
+        });
+    };
+
     return (
         <div>
             <div className="flex justify-between py-4">
@@ -61,7 +82,11 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                     onChange={(e) => table.getColumn('nama')?.setFilterValue(e.target.value)}
                     className="max-w-sm"
                 />
-                <div className="ml-auto flex space-x-6">
+                <div className="ml-auto flex space-x-3">
+                    <Button variant="destructive" onClick={() => setOpenDeleteModal(true)}>
+                        Hapus Periode
+                    </Button>
+
                     {/* Ganti route & teks tombol */}
                     <Link href={route('absens.rekap')}>
                         <Button>Rekap Absen</Button>
@@ -78,6 +103,32 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                     <input id="excel-upload" type="file" name="file" accept=".xlsx,.xls,.csv" className="hidden" onChange={handleImport} />
                 </div>
             </div>
+
+            <Dialog open={openDeleteModal} onOpenChange={setOpenDeleteModal}>
+                <DialogContent>
+                    <DialogHeader>
+                        <DialogTitle>Hapus Absen Berdasarkan Periode</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-3 py-3">
+                        <div>
+                            <Label>Tanggal Mulai</Label>
+                            <Input type="date" value={startDate} onChange={(e) => setStartDate(e.target.value)} />
+                        </div>
+                        <div>
+                            <Label>Tanggal Akhir</Label>
+                            <Input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
+                        </div>
+                    </div>
+                    <DialogFooter>
+                        <Button variant="outline" onClick={() => setOpenDeleteModal(false)}>
+                            Batal
+                        </Button>
+                        <Button variant="destructive" onClick={handleDeletePeriode}>
+                            Hapus
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
 
             <div className="rounded-md border">
                 <Table>
