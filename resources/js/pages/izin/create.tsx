@@ -93,6 +93,7 @@ export default function CreateIzin({ karyawans }: Props) {
                                             { value: 'Izin Meninggalkan Kantor', label: 'Izin Meninggalkan Kantor' },
                                             { value: 'Izin Pulang Awal', label: 'Izin Pulang Awal' },
                                             { value: 'Dinas Luar', label: 'Dinas Luar' },
+                                            { value: 'Alpha', label: 'Alpha' },
                                         ]}
                                         placeholder="Pilih Jenis Izin"
                                         className={errors.jenis_izin ? 'border-red-500' : ''}
