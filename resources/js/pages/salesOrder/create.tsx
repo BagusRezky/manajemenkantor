@@ -85,9 +85,10 @@ export default function Create({ combinedItems, customerAddresses, lastId }: Cre
     };
 
     const currentDate = new Date();
-    const yearMonth = `${currentDate.getFullYear().toString().slice(-2)}${(currentDate.getMonth() + 1).toString().padStart(2, '0')}`;
-    const nextId = String(lastId + 1).padStart(5, '0');
-    const salesOrderNumber = `SO/${nextId}.${yearMonth}`;
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const year = currentDate.getFullYear();
+    const nextId = String(lastId + 1).padStart(3, '0');
+    const salesOrderNumber = `${nextId}/IK-10/${month}${year}`;
 
     useEffect(() => {
         setData((prevData) => ({
