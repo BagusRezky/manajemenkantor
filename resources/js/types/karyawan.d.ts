@@ -69,6 +69,7 @@ export interface Karyawan {
     bpjs_ketenagakerjaan: string | null;
     bpjs_cabang: string | null;
     bpjs_tanggal: string | null;
+    status_lembur: string | null;
 
     created_at: string;
     updated_at: string;

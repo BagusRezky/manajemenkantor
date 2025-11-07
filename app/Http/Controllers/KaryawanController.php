@@ -139,6 +139,7 @@ class KaryawanController extends Controller
             'bpjs_ketenagakerjaan' => ['nullable', 'string', 'max:50'],
             'bpjs_cabang'    => ['nullable', 'string', 'max:100'],
             'bpjs_tanggal'   => ['nullable', 'date'],
+            'status_lembur'  => ['nullable', 'string', 'max:50'],
         ]);
 
         DB::transaction(function () use ($validated, $karyawan) {

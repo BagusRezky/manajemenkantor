@@ -74,6 +74,7 @@ export default function EditKaryawan({ karyawan, roles, users }: Props) {
         bpjs_ketenagakerjaan: karyawan.bpjs_ketenagakerjaan ?? '',
         bpjs_cabang: karyawan.bpjs_cabang ?? '',
         bpjs_tanggal: karyawan.bpjs_tanggal ?? '',
+        status_lembur: karyawan.status_lembur ?? '',
         role: karyawan.user?.roles?.[0]?.name ?? '',
     });
 
@@ -601,7 +602,7 @@ export default function EditKaryawan({ karyawan, roles, users }: Props) {
 
                             <div className="space-y-4">
                                 <h3 className="text-lg font-semibold">Role Karyawan</h3>
-                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                     <div className="space-y-2">
                                         <Label htmlFor="user_id">User</Label>
                                         <SearchableSelect
@@ -630,6 +631,21 @@ export default function EditKaryawan({ karyawan, roles, users }: Props) {
                                             onChange={(value) => setData('role', value)}
                                         />
                                         {errors.role && <p className="text-sm text-red-500">{errors.role}</p>}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="status_lembur">Status Lembur</Label>
+                                        <select
+                                            id="status_lembur"
+                                            value={data.status_lembur}
+                                            onChange={(e) => setData('status_lembur', e.target.value)}
+                                            className="w-full rounded-md border p-2"
+                                        >
+                                            <option value="">Pilih Status Lembur</option>
+                                            <option value="Aktif">Aktif</option>
+                                            <option value="Tidak Aktif">Tidak Aktif</option>
+                                        </select>
+                                        {errors.status_lembur && <p className="text-sm text-red-500">{errors.status_lembur}</p>}
                                     </div>
                                 </div>
                             </div>
