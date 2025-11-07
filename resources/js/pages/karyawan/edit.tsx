@@ -642,8 +642,8 @@ export default function EditKaryawan({ karyawan, roles, users }: Props) {
                                             className="w-full rounded-md border p-2"
                                         >
                                             <option value="">Pilih Status Lembur</option>
-                                            <option value="Aktif">Aktif</option>
-                                            <option value="Tidak Aktif">Tidak Aktif</option>
+                                            <option value="Lembur">Lembur</option>
+                                            <option value="Tanpa Lembur">Tanpa Lembur</option>
                                         </select>
                                         {errors.status_lembur && <p className="text-sm text-red-500">{errors.status_lembur}</p>}
                                     </div>
