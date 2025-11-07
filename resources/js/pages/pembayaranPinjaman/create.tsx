@@ -76,7 +76,7 @@ export default function CreatePembayaranPinjaman({ pengajuanPinjamans }: Props) 
                                             key: String(p.id),
                                             value: String(p.id),
                                             // Buat label yang deskriptif
-                                            label: `${p.karyawan?.nama || 'Nama tidak tersedia'} `,
+                                            label: `${p.karyawan?.nama || 'Nama tidak tersedia'} | No Bukti: ${p.nomor_bukti_pengajuan} | Nilai Pinjaman: ${p.nilai_pinjaman}`,
                                         }))}
                                         value={data.id_pengajuan_pinjaman || ''}
                                         placeholder="Pilih Pinjaman"
