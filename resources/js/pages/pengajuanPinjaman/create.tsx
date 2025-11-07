@@ -31,7 +31,7 @@ export default function CreatePengajuanPinjaman({ karyawans }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         id_karyawan: '',
         kode_gudang: '',
-        nomor_bukti_pengajuan: '',
+
         tanggal_pengajuan: '',
         nilai_pinjaman: 0,
         jangka_waktu_pinjaman: 0,
@@ -76,17 +76,6 @@ export default function CreatePengajuanPinjaman({ karyawans }: Props) {
                                     <Label htmlFor="kode_gudang">Kode Gudang *</Label>
                                     <Input id="kode_gudang" value={data.kode_gudang} onChange={(e) => setData('kode_gudang', e.target.value)} />
                                     {errors.kode_gudang && <p className="text-sm text-red-500">{errors.kode_gudang}</p>}
-                                </div>
-
-                                {/* Nomor Bukti Pengajuan */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="nomor_bukti_pengajuan">Nomor Bukti *</Label>
-                                    <Input
-                                        id="nomor_bukti_pengajuan"
-                                        value={data.nomor_bukti_pengajuan}
-                                        onChange={(e) => setData('nomor_bukti_pengajuan', e.target.value)}
-                                    />
-                                    {errors.nomor_bukti_pengajuan && <p className="text-sm text-red-500">{errors.nomor_bukti_pengajuan}</p>}
                                 </div>
 
                                 {/* Tanggal Pengajuan */}

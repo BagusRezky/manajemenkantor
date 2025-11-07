@@ -39,7 +39,6 @@ class PengajuanPinjamanController extends Controller
         $validated = $request->validate([
             'id_karyawan' => 'required|exists:karyawans,id',
             'kode_gudang' => 'required|string',
-            'nomor_bukti_pengajuan' => 'required|string',
             'tanggal_pengajuan' => 'required|date',
             'nilai_pinjaman' => 'required|integer',
             'jangka_waktu_pinjaman' => 'required|integer',
@@ -47,10 +46,21 @@ class PengajuanPinjamanController extends Controller
             'keperluan_pinjaman' => 'nullable|string',
         ]);
 
+        // === AUTO GENERATE NOMOR BUKTI ===
+        $latest = PengajuanPinjaman::latest('id')->first();
+        $nextNumber = $latest ? str_pad($latest->id + 1, 3, '0', STR_PAD_LEFT) : '001';
+
+        $month = date('m');
+        $year  = date('Y');
+
+        $nomorBukti = "{$nextNumber}/HRD-RMS/BON/{$month}/{$year}";
+
+        $validated['nomor_bukti_pengajuan'] = $nomorBukti;
+
         PengajuanPinjaman::create($validated);
+
         return redirect()->route('pengajuanPinjamans.index')->with('success', 'Pengajuan Pinjaman added successfully!');
     }
-
     /**
      * Display the specified resource.
      */
@@ -82,7 +92,6 @@ class PengajuanPinjamanController extends Controller
         $validated = $request->validate([
             'id_karyawan' => 'required|exists:karyawans,id',
             'kode_gudang' => 'required|string',
-            'nomor_bukti_pengajuan' => 'required|string',
             'tanggal_pengajuan' => 'required|date',
             'nilai_pinjaman' => 'required|integer',
             'jangka_waktu_pinjaman' => 'required|integer',
