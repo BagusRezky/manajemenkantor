@@ -69,6 +69,7 @@ class Karyawan extends Model
         'bpjs_ketenagakerjaan',
         'bpjs_cabang',
         'bpjs_tanggal',
+        'status_lembur',
     ];
 
 
