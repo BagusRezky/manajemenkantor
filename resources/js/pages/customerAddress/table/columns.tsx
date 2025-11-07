@@ -40,6 +40,20 @@ export const columns = (
         enableHiding: false,
     },
     {
+        accessorKey: 'kode_group',
+        header: 'Kode Group',
+        cell: ({ row }) => {
+            return <span className="font-mono">{row.getValue('kode_group') || '-'}</span>;
+        },
+    },
+    {
+        accessorKey: 'nama_group_customer',
+        header: 'Nama Group Customer',
+        cell: ({ row }) => {
+            return <span>{row.getValue('nama_group_customer') || '-'}</span>;
+        },
+    },
+    {
         accessorKey: 'kode_customer',
         header: 'Kode Customer',
     },
@@ -54,10 +68,16 @@ export const columns = (
     {
         accessorKey: 'alamat_kedua',
         header: 'Alamat Kedua',
+        cell: ({ row }) => {
+            return <span>{row.getValue('alamat_kedua') || '-'}</span>;
+        },
     },
     {
         accessorKey: 'alamat_ketiga',
         header: 'Alamat Ketiga',
+        cell: ({ row }) => {
+            return <span>{row.getValue('alamat_ketiga') || '-'}</span>;
+        },
     },
     {
         id: 'actions',

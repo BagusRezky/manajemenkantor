@@ -16,6 +16,8 @@ export function CustomerAddressFormModal() {
         alamat_lengkap: '',
         alamat_kedua: '',
         alamat_ketiga: '',
+        kode_group: '',
+        nama_group_customer: '',
     });
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
@@ -44,6 +46,8 @@ export function CustomerAddressFormModal() {
                     alamat_lengkap: '',
                     alamat_kedua: '',
                     alamat_ketiga: '',
+                    kode_group: '',
+                    nama_group_customer: '',
                 });
             },
         });
@@ -120,6 +124,30 @@ export function CustomerAddressFormModal() {
                                 id="alamat_ketiga"
                                 name="alamat_ketiga"
                                 value={formData.alamat_ketiga}
+                                onChange={handleChange}
+                                className="col-span-3"
+                            />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="kode_group" className="text-right">
+                                Kode Group
+                            </Label>
+                            <Input
+                                id="kode_group"
+                                name="kode_group"
+                                value={formData.kode_group}
+                                onChange={handleChange}
+                                className="col-span-3"
+                            />
+                        </div>
+                        <div className="grid grid-cols-4 items-center gap-4">
+                            <Label htmlFor="nama_group_customer" className="text-right">
+                                Nama Group Customer
+                            </Label>
+                            <Input
+                                id="nama_group_customer"
+                                name="nama_group_customer"
+                                value={formData.nama_group_customer}
                                 onChange={handleChange}
                                 className="col-span-3"
                             />

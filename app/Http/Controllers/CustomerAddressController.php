@@ -38,6 +38,8 @@ class CustomerAddressController extends Controller
             'alamat_lengkap' => 'required',
             'alamat_kedua' => 'nullable|string',
             'alamat_ketiga' => 'nullable|string',
+            'kode_group' => 'nullable|string',
+            'nama_group_customer' => 'nullable|string',
         ]);
 
         $validated['kode_customer'] = strtoupper($validated['kode_customer']);
@@ -75,6 +77,8 @@ class CustomerAddressController extends Controller
             'alamat_lengkap' => 'required',
             'alamat_kedua' => 'nullable|string',
             'alamat_ketiga' => 'nullable|string',
+            'kode_group' => 'nullable|string',
+            'nama_group_customer' => 'nullable|string',
         ]);
 
         $validated['kode_customer'] = strtoupper($validated['kode_customer']);
