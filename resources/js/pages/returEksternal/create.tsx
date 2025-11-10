@@ -9,7 +9,7 @@ import { BreadcrumbItem } from '@/types';
 import { PenerimaanBarang } from '@/types/penerimaanBarang';
 
 import { Head, useForm } from '@inertiajs/react';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Edit } from 'lucide-react';
@@ -51,6 +51,11 @@ export default function CreateReturEksternal({ penerimaanBarangs }: Props) {
         items: [] as any[],
     });
 
+    useEffect(() => {
+        const validItems = Object.values(itemReturns).filter((item) => item.qty_retur > 0);
+        setData('items', validItems);
+    }, [itemReturns]);
+
     const handlePenerimaanChange = (value: string) => {
         const penerimaan = penerimaanBarangs.find((p) => p.id === value);
         if (penerimaan) {
@@ -88,30 +93,29 @@ export default function CreateReturEksternal({ penerimaanBarangs }: Props) {
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        const validItems = Object.values(itemReturns).filter((item) => item.qty_retur > 0);
-
-        if (validItems.length === 0) {
+        // 'data.items' sekarang sudah SELALU up-to-date berkat useEffect.
+        // Kita hanya perlu validasi menggunakan 'data.items' langsung.
+        if (data.items.length === 0) {
             toast.error('Pilih minimal satu item untuk diretur');
             return;
         }
 
-        // ✅ Update data items dulu
-        setData('items', validItems);
+        // Hapus 'setData('items', validItems);'
+        // Hapus 'setTimeout'
 
-        // ✅ Submit after a small delay untuk memastikan state updated
-        setTimeout(() => {
-            post('/returEksternals', {
-                onSuccess: () => {
-                    toast.success('Retur eksternal berhasil disimpan');
-                    reset();
-                    setItemReturns({});
-                },
-                onError: (errors: any) => {
-                    console.error('Form errors:', errors);
-                    toast.error('Gagal menyimpan retur eksternal');
-                },
-            });
-        }, 100);
+        // Langsung panggil post.
+        // 'data' dari useForm hook sudah dijamin memiliki 'items' yang benar.
+        post('/returEksternals', {
+            onSuccess: () => {
+                toast.success('Retur eksternal berhasil disimpan');
+                reset();
+                setItemReturns({}); // Ini sudah benar, me-reset state lokal
+            },
+            onError: (errors: any) => {
+                console.error('Form errors:', errors);
+                toast.error('Gagal menyimpan retur eksternal');
+            },
+        });
     };
 
     const getSatuanName = (item: any) => {
@@ -132,18 +136,6 @@ export default function CreateReturEksternal({ penerimaanBarangs }: Props) {
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label htmlFor="no_laporan_barang">No. Laporan Penerimaan Barang *</Label>
-                                    {/* <Select onValueChange={handlePenerimaanChange}>
-                                        <SelectTrigger>
-                                            <SelectValue placeholder="Pilih No. Laporan Penerimaan Barang" />
-                                        </SelectTrigger>
-                                        <SelectContent>
-                                            {penerimaanBarangs.map((penerimaan) => (
-                                                <SelectItem key={penerimaan.id} value={penerimaan.id}>
-                                                    {penerimaan.no_laporan_barang}
-                                                </SelectItem>
-                                            ))}
-                                        </SelectContent>
-                                    </Select> */}
                                     <SearchableSelect
                                         items={penerimaanBarangs.map((penerimaan) => ({
                                             key: penerimaan.id,
@@ -160,9 +152,17 @@ export default function CreateReturEksternal({ penerimaanBarangs }: Props) {
                                 <div className="space-y-2">
                                     <Label htmlFor="tgl_retur_barang">Tgl Retur Barang *</Label>
                                     <DatePicker
-                                        id="tgl_retur_barang"
                                         value={data.tgl_retur_barang}
-                                        onChange={(e) => setData('tgl_retur_barang', e.target.value || '')}
+                                        onChange={(date) => {
+                                            if (date) {
+                                                const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                    .toISOString()
+                                                    .split('T')[0];
+                                                setData('tgl_retur_barang', formattedDate);
+                                            } else {
+                                                setData('tgl_retur_barang', '');
+                                            }
+                                        }}
                                     />
                                     {errors.tgl_retur_barang && <p className="text-sm text-red-600">{errors.tgl_retur_barang}</p>}
                                 </div>

@@ -1,53 +1,52 @@
+import { ChevronDownIcon } from 'lucide-react';
+import * as React from 'react';
+
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
-import { cn } from '@/lib/utils';
-import { format } from 'date-fns';
-import { CalendarIcon } from 'lucide-react';
 
-type DatePickerProps = {
-    id: string;
-    value: string | Date | undefined;
-    onChange: (event: { target: { id: string; value: string | null } }) => void;
-    placeholder?: string;
-    className?: string;
-    disabled?: boolean;
-};
+interface DatePickerProps {
+    value?: Date | string;
+    onChange?: (date: Date) => void;
+}
 
-export function DatePicker({ id, value, onChange, placeholder = 'Pilih tanggal', className, disabled = false }: DatePickerProps) {
-    // Konversi string tanggal ke objek Date jika ada
-    const date = value ? new Date(value) : undefined;
+export function DatePicker({ value, onChange }: DatePickerProps) {
+    const [open, setOpen] = React.useState(false);
+    const [date, setDate] = React.useState<Date | undefined>(value ? new Date(value) : undefined);
 
-    // Handle perubahan tanggal
+    // 🟢 Tambahkan efek sinkronisasi ini
+    React.useEffect(() => {
+        if (value) {
+            const newDate = new Date(value);
+            if (!isNaN(newDate.getTime())) {
+                setDate(newDate);
+            }
+        } else {
+            setDate(undefined);
+        }
+    }, [value]);
+
     const handleSelect = (selectedDate: Date | undefined) => {
-        // Format tanggal ke YYYY-MM-DD untuk penggunaan di backend
-        const formattedDate = selectedDate ? format(selectedDate, 'yyyy-MM-dd') : null;
-
-        // Panggil fungsi onChange dengan format event-like untuk kompatibilitas
-        onChange({
-            target: {
-                id: id,
-                value: formattedDate,
-            },
-        });
+        if (selectedDate) {
+            setDate(selectedDate);
+            onChange?.(selectedDate);
+            setOpen(false);
+        }
     };
 
     return (
-        <Popover>
-            <PopoverTrigger asChild>
-                <Button
-                    id={id}
-                    variant="outline"
-                    className={cn('w-full justify-start text-left font-normal', !date && 'text-gray-500', className)}
-                    disabled={disabled}
-                >
-                    <CalendarIcon className="mr-2 h-4 w-4" />
-                    {date ? format(date, 'yyyy-MM-dd') : placeholder}
-                </Button>
-            </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
-                <Calendar mode="single" selected={date} onSelect={handleSelect} initialFocus />
-            </PopoverContent>
-        </Popover>
+        <div className="flex flex-col gap-3">
+            <Popover open={open} onOpenChange={setOpen}>
+                <PopoverTrigger asChild>
+                    <Button variant="outline" id="date" className="w-full justify-between font-normal">
+                        {date ? date.toLocaleDateString() : 'Select date'}
+                        <ChevronDownIcon />
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-auto rounded-xl p-3 shadow-md">
+                    <Calendar mode="single" selected={date} captionLayout="dropdown" onSelect={handleSelect} />
+                </PopoverContent>
+            </Popover>
+        </div>
     );
 }

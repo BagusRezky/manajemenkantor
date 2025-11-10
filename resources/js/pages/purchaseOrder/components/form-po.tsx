@@ -61,10 +61,14 @@ export default function FormPO({ data, setData, errors, purchaseRequests, suppli
                     <div className="space-y-2">
                         <Label htmlFor="tanggal_po">PO Date</Label>
                         <DatePicker
-                            id="tanggal_po"
                             value={data.tanggal_po}
                             onChange={(date) => {
-                                setData('tanggal_po', date?.target?.value || '');
+                                if (date) {
+                                    const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+                                    setData('tanggal_po', formattedDate);
+                                } else {
+                                    setData('tanggal_po', '');
+                                }
                             }}
                         />
                         {errors.tanggal_po && <p className="text-sm text-red-500">{errors.tanggal_po}</p>}
@@ -96,10 +100,14 @@ export default function FormPO({ data, setData, errors, purchaseRequests, suppli
                     <div className="space-y-2">
                         <Label htmlFor="eta">ETA</Label>
                         <DatePicker
-                            id="eta"
                             value={data.eta}
                             onChange={(date) => {
-                                setData('eta', date?.target?.value || '');
+                                if (date) {
+                                    const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0];
+                                    setData('eta', formattedDate);
+                                } else {
+                                    setData('eta', '');
+                                }
                             }}
                         />
                         {errors.eta && <p className="text-sm text-red-500">{errors.eta}</p>}

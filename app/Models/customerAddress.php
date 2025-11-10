@@ -15,6 +15,8 @@ class customerAddress extends Model
         'alamat_lengkap',
         'alamat_kedua',
         'alamat_ketiga',
+        'kode_group',
+        'nama_group_customer',
     ];
     protected function casts(): array
     {

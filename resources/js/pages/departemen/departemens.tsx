@@ -9,7 +9,7 @@ import { DataTable } from './table/data-table';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Departemens',
+        title: 'Departemen',
         href: '/departemens',
     },
 ];
@@ -25,7 +25,7 @@ export default function Departemens({ departemens }: { departemens: Departemen[]
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Category Item" />
+            <Head title="Departemen" />
             <div className="mx-5 py-5">
                 <DataTable columns={columns(() => {}, setEditModalOpen, setSelectedDepartemen)} data={data} departemens={departemens} />
             </div>

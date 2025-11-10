@@ -6,6 +6,9 @@ use Illuminate\Foundation\Inspiring;
 use Illuminate\Http\Request;
 use Inertia\Middleware;
 use Tighten\Ziggy\Ziggy;
+use Illuminate\Support\Facades\Auth; // Perbaiki import Auth
+use Spatie\Permission\Traits\HasRoles; // Tambahkan import ini jika dibutuhkan oleh model user
+use App\Models\User;
 
 class HandleInertiaRequests extends Middleware
 {
@@ -35,21 +38,46 @@ class HandleInertiaRequests extends Middleware
      *
      * @return array<string, mixed>
      */
+    // public function share(Request $request): array
+    // {
+    //     [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+
+    //     return [
+    //         ...parent::share($request),
+    //         'name' => config('app.name'),
+    //         'quote' => ['message' => trim($message), 'author' => trim($author)],
+    //         'auth' => [
+    //             'user' => $request->user(),
+    //         ],
+    //         'ziggy' => fn (): array => [
+    //             ...(new Ziggy)->toArray(),
+    //             'location' => $request->url(),
+    //         ]
+    //     ];
+    // }
+
     public function share(Request $request): array
     {
-        [$message, $author] = str(Inspiring::quotes()->random())->explode('-');
+        // $user = Auth::user(); // Gunakan Auth::user() untuk mendapatkan user yang login
+        $user = $request->user();
 
-        return [
-            ...parent::share($request),
+        return array_merge(parent::share($request), [
             'name' => config('app.name'),
-            'quote' => ['message' => trim($message), 'author' => trim($author)],
             'auth' => [
-                'user' => $request->user(),
+                'user' => $user ? [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'roles' => $user->getRoleNames(),
+                    'permissions' => $user->getAllPermissions()->pluck('name'),
+                ] : null,
             ],
             'ziggy' => fn (): array => [
                 ...(new Ziggy)->toArray(),
                 'location' => $request->url(),
-            ]
-        ];
+            ],
+            // Hapus atau ganti quote jika tidak diperlukan
+            'quote' => ['message' => Inspiring::quotes()->random(), 'author' => 'Inspiring'],
+        ]);
     }
 }

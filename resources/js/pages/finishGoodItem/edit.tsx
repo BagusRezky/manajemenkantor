@@ -27,12 +27,12 @@ interface EditProps {
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
-        title: 'Customer Address',
-        href: '/customerAddresses',
+        title: 'Finish Good Items',
+        href: '/finishGoodItems',
     },
     {
         title: 'Edit',
-        href: '/customerAddresses/edit',
+        href: '/finishGoodItems/edit',
     },
 ];
 
@@ -221,19 +221,34 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
 
                                         <div className="space-y-2">
                                             <Label htmlFor="up_satu">UP Satu</Label>
-                                            <Input id="up_satu" value={data.up_satu} readOnly />
+                                            <Input
+                                                id="up_satu"
+                                                value={data.up_satu}
+                                                onChange={(e) => setData('up_satu', e.target.value)}
+                                                className={errors.up_satu ? 'border-red-500' : ''}
+                                            />
                                             {errors.up_satu && <p className="text-sm text-red-500">{errors.up_satu}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="up_dua">UP Dua</Label>
-                                            <Input id="up_dua" value={data.up_dua} readOnly />
+                                            <Input
+                                                id="up_dua"
+                                                value={data.up_dua}
+                                                onChange={(e) => setData('up_dua', e.target.value)}
+                                                className={errors.up_dua ? 'border-red-500' : ''}
+                                            />
                                             {errors.up_dua && <p className="text-sm text-red-500">{errors.up_dua}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="up_tiga">UP Tiga</Label>
-                                            <Input id="up_tiga" value={data.up_tiga} readOnly />
+                                            <Input
+                                                id="up_tiga"
+                                                value={data.up_tiga}
+                                                onChange={(e) => setData('up_tiga', e.target.value)}
+                                                className={errors.up_tiga ? 'border-red-500' : ''}
+                                            />
                                             {errors.up_tiga && <p className="text-sm text-red-500">{errors.up_tiga}</p>}
                                         </div>
 

@@ -45,7 +45,7 @@ class SupplierController extends Controller
         $validated['nama_suplier'] = strtoupper($validated['nama_suplier']);
 
         Supplier::create($validated);
-        return redirect()->back()->with('success', 'Supplier added successfully!');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier added successfully!');
     }
 
     /**
@@ -83,7 +83,7 @@ class SupplierController extends Controller
 
         $supplier->update($validated);
 
-        return redirect()->back()->with('success', 'Supplier updated successfully!');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier updated successfully!');
     }
 
     /**
@@ -93,6 +93,6 @@ class SupplierController extends Controller
     {
         $supplier = Supplier::findOrFail($id);
         $supplier->delete();
-        return redirect()->back()->with('success', 'Supplier deleted successfully!');
+        return redirect()->route('suppliers.index')->with('success', 'Supplier deleted successfully!');
     }
 }

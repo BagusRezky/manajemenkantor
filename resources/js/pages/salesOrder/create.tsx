@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { CustomerAddress } from '@/types/customerAddress';
@@ -85,9 +86,10 @@ export default function Create({ combinedItems, customerAddresses, lastId }: Cre
     };
 
     const currentDate = new Date();
-    const yearMonth = `${currentDate.getFullYear().toString().slice(-2)}${(currentDate.getMonth() + 1).toString().padStart(2, '0')}`;
-    const nextId = String(lastId + 1).padStart(5, '0');
-    const salesOrderNumber = `SO/${nextId}.${yearMonth}`;
+    const month = String(currentDate.getMonth() + 1).padStart(2, '0');
+    const year = currentDate.getFullYear();
+    const nextId = String(lastId + 1).padStart(3, '0');
+    const salesOrderNumber = `${nextId}/IK-10/${month}${year}`;
 
     useEffect(() => {
         setData((prevData) => ({
@@ -238,9 +240,17 @@ export default function Create({ combinedItems, customerAddresses, lastId }: Cre
                                         <div className="space-y-2">
                                             <Label htmlFor="eta_marketing">ETA Marketing</Label>
                                             <DatePicker
-                                                id="eta_marketing"
                                                 value={data.eta_marketing}
-                                                onChange={(e) => setData('eta_marketing', e.target.value ? e.target.value : '')}
+                                                onChange={(date) => {
+                                                    if (date) {
+                                                        const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                            .toISOString()
+                                                            .split('T')[0];
+                                                        setData('eta_marketing', formattedDate);
+                                                    } else {
+                                                        setData('eta_marketing', '');
+                                                    }
+                                                }}
                                             />
                                             {errors.eta_marketing && <p className="text-sm text-red-500">{errors.eta_marketing}</p>}
                                         </div>
@@ -293,7 +303,7 @@ export default function Create({ combinedItems, customerAddresses, lastId }: Cre
 
                                         <div className="space-y-2">
                                             <Label htmlFor="catatan_colour_range">Catatan Colour Range</Label>
-                                            <Input
+                                            <Textarea
                                                 id="catatan_colour_range"
                                                 value={data.catatan_colour_range}
                                                 onChange={(e) => setData('catatan_colour_range', e.target.value)}
@@ -303,7 +313,7 @@ export default function Create({ combinedItems, customerAddresses, lastId }: Cre
 
                                         <div className="space-y-2">
                                             <Label htmlFor="catatan">Catatan</Label>
-                                            <Input id="catatan" value={data.catatan} onChange={(e) => setData('catatan', e.target.value)} />
+                                            <Textarea id="catatan" value={data.catatan} onChange={(e) => setData('catatan', e.target.value)} />
                                             {errors.catatan && <p className="text-sm text-red-500">{errors.catatan}</p>}
                                         </div>
                                     </div>

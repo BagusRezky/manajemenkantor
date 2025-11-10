@@ -268,9 +268,17 @@ export default function Create({ lastId, combinedImr, imrItems = {} }: CreatePro
                                         <div className="space-y-2">
                                             <Label htmlFor="tgl_retur_internal">Tanggal Retur</Label>
                                             <DatePicker
-                                                id="tgl_retur_internal"
                                                 value={data.tgl_retur_internal}
-                                                onChange={(e) => setData('tgl_retur_internal', e.target.value ? e.target.value : '')}
+                                                onChange={(date) => {
+                                                    if (date) {
+                                                        const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                            .toISOString()
+                                                            .split('T')[0];
+                                                        setData('tgl_retur_internal', formattedDate);
+                                                    } else {
+                                                        setData('tgl_retur_internal', '');
+                                                    }
+                                                }}
                                             />
                                             {errors.tgl_retur_internal && <p className="text-sm text-red-500">{errors.tgl_retur_internal}</p>}
                                         </div>

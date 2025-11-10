@@ -342,9 +342,17 @@ export default function Create({ departments, masterItems, customerAddresses, ka
                                         <Label htmlFor="tgl_pr">Tanggal PR</Label>
                                         {/* <Input id="tgl_pr" name="tgl_pr" type="date" value={data.tgl_pr} onChange={handleDateChange} /> */}
                                         <DatePicker
-                                            id="tgl_pr"
                                             value={data.tgl_pr}
-                                            onChange={(e) => setData('tgl_pr', e.target.value ? e.target.value : '')}
+                                            onChange={(date) => {
+                                                if (date) {
+                                                    const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                        .toISOString()
+                                                        .split('T')[0];
+                                                    setData('tgl_pr', formattedDate);
+                                                } else {
+                                                    setData('tgl_pr', '');
+                                                }
+                                            }}
                                         />
                                         {errors.tgl_pr && <p className="text-sm text-red-500">{errors.tgl_pr}</p>}
                                     </div>
@@ -391,9 +399,17 @@ export default function Create({ departments, masterItems, customerAddresses, ka
                                             <Label htmlFor="eta">ETA</Label>
                                             {/* <Input id="eta" name="eta" type="date" value={itemInput.eta} onChange={handleItemInputChange} /> */}
                                             <DatePicker
-                                                id="eta"
                                                 value={itemInput.eta}
-                                                onChange={(e) => setItemInput({ ...itemInput, eta: e.target.value ? e.target.value : '' })}
+                                                onChange={(date) => {
+                                                    if (date) {
+                                                        const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                            .toISOString()
+                                                            .split('T')[0];
+                                                        setItemInput((prev) => ({ ...prev, eta: formattedDate }));
+                                                    } else {
+                                                        setItemInput((prev) => ({ ...prev, eta: '' }));
+                                                    }
+                                                }}
                                             />
                                             {/* {errors. && <p className="text-sm text-red-500">{errors.eta}</p>} */}
                                         </div>

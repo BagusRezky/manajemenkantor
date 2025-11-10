@@ -21,6 +21,8 @@ const EditCustomerAddressModal: React.FC<EditCustomerAddressModalProps> = ({ isO
         alamat_lengkap: '',
         alamat_kedua: '',
         alamat_ketiga: '',
+        kode_group: '',
+        nama_group_customer: '',
     });
 
     useEffect(() => {
@@ -32,6 +34,8 @@ const EditCustomerAddressModal: React.FC<EditCustomerAddressModalProps> = ({ isO
                 alamat_lengkap: customerAddress.alamat_lengkap,
                 alamat_kedua: customerAddress.alamat_kedua,
                 alamat_ketiga: customerAddress.alamat_ketiga,
+                kode_group: customerAddress.kode_group || '',
+                nama_group_customer: customerAddress.nama_group_customer || '',
             });
         }
     }, [customerAddress, setData]);
@@ -84,6 +88,16 @@ const EditCustomerAddressModal: React.FC<EditCustomerAddressModalProps> = ({ isO
                     <Input type="text" name="alamat_kedua" value={data.alamat_kedua} onChange={handleChange} placeholder="Alamat Kedua" />
                     {errors.alamat_ketiga && <div className="text-sm text-red-500">{errors.alamat_ketiga}</div>}
                     <Input type="text" name="alamat_ketiga" value={data.alamat_ketiga} onChange={handleChange} placeholder="Alamat Ketiga" />
+                    {errors.kode_group && <div className="text-sm text-red-500">{errors.kode_group}</div>}
+                    <Input type="text" name="kode_group" value={data.kode_group} onChange={handleChange} placeholder="Kode Group" />
+                    {errors.nama_group_customer && <div className="text-sm text-red-500">{errors.nama_group_customer}</div>}
+                    <Input
+                        type="text"
+                        name="nama_group_customer"
+                        value={data.nama_group_customer}
+                        onChange={handleChange}
+                        placeholder="Nama Group Customer"
+                    />
                     <DialogFooter>
                         <Button variant="outline" type="button" onClick={onClose} disabled={processing}>
                             Cancel

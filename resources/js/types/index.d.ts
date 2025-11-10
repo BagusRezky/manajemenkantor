@@ -1,25 +1,45 @@
+// types/index.d.ts
+
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
-
-export interface Auth {
-    user: User;
-}
+import { Karyawan } from './karyawan';
 
 export interface BreadcrumbItem {
     title: string;
-    href: string;
-}
-
-export interface NavGroup {
-    title: string;
-    items: NavItem[];
+    href?: string;
 }
 
 export interface NavItem {
     title: string;
-    href: string;
+    href?: string;
     icon?: LucideIcon | null;
     isActive?: boolean;
+    disabled?: boolean;
+    permission?: string | null; // <-- DITAMBAHKAN: Untuk hak akses
+}
+
+// Tipe ini akan kita gunakan di nav-dropdown.tsx
+export interface NavItemWithChildren extends NavItem {
+    children?: NavItem[];
+}
+export type NavItemType = NavItem | NavItemWithChildren;
+
+export interface User {
+    id: number;
+    name: string;
+    email: string;
+    avatar?: string;
+    email_verified_at: string | null;
+    created_at: string;
+    updated_at: string;
+    roles?: Role[]; // <-- DITAMBAHKAN: Untuk menampung role user
+    permissions?: Permission[]; // <-- DITAMBAHKAN: Untuk menampung permission user
+    karyawan?: Karyawan;
+    [key: string]: unknown;
+}
+
+export interface Auth {
+    user: User;
 }
 
 export interface SharedData {
@@ -30,13 +50,19 @@ export interface SharedData {
     [key: string]: unknown;
 }
 
-export interface User {
+export interface Role {
     id: number;
     name: string;
-    email: string;
-    avatar?: string;
-    email_verified_at: string | null;
+    guard_name: string;
     created_at: string;
     updated_at: string;
-    [key: string]: unknown; // This allows for additional properties...
+    permissions?: Permission[];
+}
+
+export interface Permission {
+    id: number;
+    name: string;
+    guard_name: string;
+    created_at: string;
+    updated_at: string;
 }

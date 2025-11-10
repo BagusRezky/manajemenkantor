@@ -1,0 +1,133 @@
+// pages/bonusKaryawan/edit.tsx
+
+import { Textarea } from '@/components/ui/textarea';
+import { Head, useForm } from '@inertiajs/react';
+import { DatePicker } from '../../components/date-picker';
+import { SearchableSelect } from '../../components/search-select';
+import { Button } from '../../components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
+import { Input } from '../../components/ui/input';
+import { Label } from '../../components/ui/label';
+import AppLayout from '../../layouts/app-layout';
+import { BreadcrumbItem } from '../../types';
+import { BonusKaryawan } from '../../types/bonusKaryawan';
+import { Karyawan } from '../../types/karyawan';
+
+interface Props {
+    bonusKaryawan: BonusKaryawan;
+    karyawans: Karyawan[];
+}
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Bonus Karyawan', href: route('bonusKaryawans.index') },
+    { title: 'Edit Data', href: '#' },
+];
+
+export default function EditBonusKaryawan({ bonusKaryawan, karyawans }: Props) {
+    const { data, setData, put, processing, errors } = useForm({
+        kode_gudang: bonusKaryawan.kode_gudang || '',
+        id_karyawan: bonusKaryawan.id_karyawan || '',
+        tanggal_bonus: bonusKaryawan.tanggal_bonus || '',
+        nilai_bonus: bonusKaryawan.nilai_bonus || 0,
+        keterangan: bonusKaryawan.keterangan || '',
+    });
+
+    const handleSubmit = (e: React.FormEvent) => {
+        e.preventDefault();
+        put(route('bonusKaryawans.update', bonusKaryawan.id));
+    };
+
+    return (
+        <AppLayout breadcrumbs={breadcrumbs}>
+            <Head title="Edit Data Bonus Karyawan" />
+            <div className="mx-5 py-5">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>Edit Data Bonus Karyawan</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                {/* Kode Gudang */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="kode_gudang">Kode Gudang *</Label>
+                                    <Input
+                                        id="kode_gudang"
+                                        value={data.kode_gudang}
+                                        onChange={(e) => setData('kode_gudang', e.target.value)}
+                                        className={errors.kode_gudang ? 'border-red-500' : ''}
+                                    />
+                                    {errors.kode_gudang && <p className="text-sm text-red-500">{errors.kode_gudang}</p>}
+                                </div>
+
+                                {/* Karyawan */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="id_karyawan">Karyawan *</Label>
+                                    <SearchableSelect
+                                        items={karyawans.map((karyawan) => ({
+                                            key: String(karyawan.id),
+                                            value: String(karyawan.id),
+                                            label: karyawan.nama ?? '',
+                                        }))}
+                                        value={String(data.id_karyawan)}
+                                        placeholder="Pilih Karyawan"
+                                        onChange={(value) => setData('id_karyawan', value)}
+                                    />
+                                    {errors.id_karyawan && <p className="text-sm text-red-500">{errors.id_karyawan}</p>}
+                                </div>
+
+                                {/* Tanggal Bonus */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="tanggal_bonus">Tanggal Bonus *</Label>
+                                    <DatePicker
+                                        value={data.tanggal_bonus}
+                                        onChange={(date) => {
+                                            if (date) {
+                                                const formatted = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                    .toISOString()
+                                                    .split('T')[0];
+                                                setData('tanggal_bonus', formatted);
+                                            } else {
+                                                setData('tanggal_bonus', '');
+                                            }
+                                        }}
+                                    />
+                                    {errors.tanggal_bonus && <p className="text-sm text-red-500">{errors.tanggal_bonus}</p>}
+                                </div>
+
+                                {/* Nilai Bonus */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="nilai_bonus">Nilai Bonus *</Label>
+                                    <Input
+                                        id="nilai_bonus"
+                                        type="number"
+                                        value={data.nilai_bonus}
+                                        onChange={(e) => setData('nilai_bonus', parseInt(e.target.value, 10))}
+                                        className={errors.nilai_bonus ? 'border-red-500' : ''}
+                                    />
+                                    {errors.nilai_bonus && <p className="text-sm text-red-500">{errors.nilai_bonus}</p>}
+                                </div>
+
+                                {/* Keterangan */}
+                                <div className="space-y-2 md:col-span-2">
+                                    <Label htmlFor="keterangan">Keterangan</Label>
+                                    <Textarea id="keterangan" value={data.keterangan} onChange={(e) => setData('keterangan', e.target.value)} />
+                                </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex items-center gap-4">
+                                <Button type="submit" disabled={processing}>
+                                    {processing ? 'Menyimpan...' : 'Simpan Perubahan'}
+                                </Button>
+                                <Button type="button" variant="outline" onClick={() => window.history.back()}>
+                                    Batal
+                                </Button>
+                            </div>
+                        </form>
+                    </CardContent>
+                </Card>
+            </div>
+        </AppLayout>
+    );
+}

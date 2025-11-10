@@ -38,11 +38,16 @@ class SalesOrder extends Model
 
     public static function generateSalesOrderNumber($id)
     {
-        $yearMonth = now()->format('ym'); // Format: yymm
-        $formattedId = str_pad($id, 5, '0', STR_PAD_LEFT);
-        return "SO/{$formattedId}.{$yearMonth}";
-    }
+        // Ambil bulan & tahun sekarang
+        $month = date('m');
+        $year = date('Y');
 
+        // Format urutan jadi 3 digit
+        $orderNumber = str_pad($id, 3, '0', STR_PAD_LEFT);
+
+        // Gabung sesuai format baru
+        return "{$orderNumber}/IK-10/{$month}{$year}";
+    }
     public function setToleransiPengirimanAttribute($value)
     {
         $this->attributes['toleransi_pengiriman'] = $value ?: null;

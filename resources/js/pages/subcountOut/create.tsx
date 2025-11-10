@@ -56,7 +56,7 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
     });
 
     const { data, setData, post, processing, errors } = useForm({
-        no_subcount_out: '',
+        // no_subcount_out: '',
         tgl_subcount_out: '',
         id_supplier: '',
         admin_produksi: '',
@@ -184,7 +184,7 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 {/* Header Information */}
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-                                    {/* No Subcount Out */}
+                                    {/* No Subcount Out
                                     <div className="space-y-2">
                                         <Label htmlFor="no_subcount_out">
                                             No. Surat Jalan Subcont <span className="text-red-500">*</span>
@@ -197,7 +197,7 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
                                             className={errors.no_subcount_out ? 'border-red-500' : ''}
                                         />
                                         {errors.no_subcount_out && <p className="text-sm text-red-500">{errors.no_subcount_out}</p>}
-                                    </div>
+                                    </div> */}
 
                                     {/* Tanggal */}
                                     <div className="space-y-2">

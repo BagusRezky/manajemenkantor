@@ -45,7 +45,31 @@ export default function Create({ penerimaanBarangs }: CreateProps) {
         const penerimaanBarang = penerimaanBarangs.find((sj) => String(sj.id) === value);
         setSelectedPenerimaanBarang(penerimaanBarang || null);
         setData('id_penerimaan_barang', penerimaanBarang ? penerimaanBarang.id : '');
+
+        if (penerimaanBarang) {
+            const firstPOItem = penerimaanBarang.purchase_order?.items?.[0];
+            const po = penerimaanBarang.purchase_order;
+
+            setData((prevData) => ({
+                ...prevData,
+                harga_per_qty: firstPOItem?.harga_satuan?.toString() || '',
+                diskon: firstPOItem?.diskon_satuan?.toString() || '',
+                ppn: po?.ppn?.toString() || '',
+                qty_penerimaan: penerimaanBarang.items?.[0]?.qty_penerimaan?.toString() || '',
+            }));
+        } else {
+            setData((prevData) => ({
+                ...prevData,
+                harga_per_qty: '',
+                diskon: '',
+                ppn: '',
+                qty_penerimaan: '',
+            }));
+
+        }
+
     };
+
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -131,9 +155,17 @@ export default function Create({ penerimaanBarangs }: CreateProps) {
                                             Tanggal Payment Entry Good <span className="text-red-500">*</span>
                                         </Label>
                                         <DatePicker
-                                            id="tanggal_transaksi"
                                             value={data.tanggal_transaksi}
-                                            onChange={(e) => setData('tanggal_transaksi', e.target.value ? e.target.value : '')}
+                                            onChange={(date) => {
+                                                if (date) {
+                                                    const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                        .toISOString()
+                                                        .split('T')[0];
+                                                    setData('tanggal_transaksi', formattedDate);
+                                                } else {
+                                                    setData('tanggal_transaksi', '');
+                                                }
+                                            }}
                                         />
                                         {errors.tanggal_transaksi && <p className="text-sm text-red-600">{errors.tanggal_transaksi}</p>}
                                     </div>
@@ -145,9 +177,17 @@ export default function Create({ penerimaanBarangs }: CreateProps) {
                                         </Label>
 
                                         <DatePicker
-                                            id="tanggal_jatuh_tempo"
                                             value={data.tanggal_jatuh_tempo}
-                                            onChange={(e) => setData('tanggal_jatuh_tempo', e.target.value ? e.target.value : '')}
+                                            onChange={(date) => {
+                                                if (date) {
+                                                    const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
+                                                        .toISOString()
+                                                        .split('T')[0];
+                                                    setData('tanggal_jatuh_tempo', formattedDate);
+                                                } else {
+                                                    setData('tanggal_jatuh_tempo', '');
+                                                }
+                                            }}
                                         />
                                         {errors.tanggal_jatuh_tempo && <p className="text-sm text-red-600">{errors.tanggal_jatuh_tempo}</p>}
                                     </div>
@@ -200,6 +240,21 @@ export default function Create({ penerimaanBarangs }: CreateProps) {
                                             placeholder="0"
                                         />
                                         {errors.ppn && <p className="text-sm text-red-600">{errors.ppn}</p>}
+                                    </div>
+
+                                    <div className="space-y-2">
+                                        <Label htmlFor="qty_penerimaan">Qty Penerimaan</Label>
+                                        <Input
+                                            id="qty_penerimaan"
+                                            type="number"
+                                            min="0"
+                                            value={
+                                                selectedPenerimaanBarang?.items?.[0]?.qty_penerimaan
+                                                    ? selectedPenerimaanBarang.items[0].qty_penerimaan.toString()
+                                                    : ''
+                                            }
+                                            disabled
+                                        />
                                     </div>
                                 </div>
 

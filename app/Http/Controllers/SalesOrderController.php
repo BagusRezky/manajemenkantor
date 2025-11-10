@@ -98,16 +98,12 @@ class SalesOrderController extends Controller
             return back()->withErrors(['id_finish_good_item' => 'Pilih hanya satu: Finish Good Item atau Master Item']);
         }
 
+        // Auto-generate no_bon_pesanan
+        $lastId = SalesOrder::max('id') + 1;
+        $validated['no_bon_pesanan'] = SalesOrder::generateSalesOrderNumber($lastId);
         $salesOrder = SalesOrder::create($validated);
 
-        if (empty($salesOrder->no_bon_pesanan)) {
-            $yearMonth = now()->format('ym'); // Format: yymm
-            $formattedId = str_pad($salesOrder->id, 5, '0', STR_PAD_LEFT);
-            $orderNumber = "SO/{$formattedId}.{$yearMonth}";
 
-            $salesOrder->no_bon_pesanan = $orderNumber;
-            $salesOrder->save();
-        }
 
         return redirect()->route('salesOrders.index')->with('success', 'Sales Order created successfully!');
     }

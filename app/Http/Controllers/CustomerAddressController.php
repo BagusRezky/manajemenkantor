@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\customerAddress;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\CustomerImport;
 use Inertia\Inertia;
 
 class CustomerAddressController extends Controller
@@ -14,7 +16,7 @@ class CustomerAddressController extends Controller
     public function index()
     {
         $customerAddresses = customerAddress::all();
-        return inertia::render('customerAddress/customerAddresses', [
+        return Inertia::render('customerAddress/customerAddresses', [
             'customerAddresses' => $customerAddresses,
         ]);
     }
@@ -38,13 +40,15 @@ class CustomerAddressController extends Controller
             'alamat_lengkap' => 'required',
             'alamat_kedua' => 'nullable|string',
             'alamat_ketiga' => 'nullable|string',
+            'kode_group' => 'nullable|string',
+            'nama_group_customer' => 'nullable|string',
         ]);
 
         $validated['kode_customer'] = strtoupper($validated['kode_customer']);
         $validated['nama_customer'] = strtoupper($validated['nama_customer']);
 
         customerAddress::create($validated);
-        return redirect()->back()->with('success', 'Customer Address added successfully!');
+        return redirect()->route('customerAddresses.index')->with('success', 'Customer Address added successfully!');
     }
 
     /**
@@ -75,13 +79,15 @@ class CustomerAddressController extends Controller
             'alamat_lengkap' => 'required',
             'alamat_kedua' => 'nullable|string',
             'alamat_ketiga' => 'nullable|string',
+            'kode_group' => 'nullable|string',
+            'nama_group_customer' => 'nullable|string',
         ]);
 
         $validated['kode_customer'] = strtoupper($validated['kode_customer']);
         $validated['nama_customer'] = strtoupper($validated['nama_customer']);
 
         $customerAddress->update($validated);
-        return redirect()->back()->with('success', 'Customer Address updated successfully!');
+        return redirect()->route('customerAddresses.index')->with('success', 'Customer Address updated successfully!');
     }
 
     /**
@@ -92,5 +98,16 @@ class CustomerAddressController extends Controller
         $customerAddress = customerAddress::findOrFail($id);
         $customerAddress->delete();
         return redirect()->back()->with('success', 'Customer Address deleted successfully!');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        Excel::import(new CustomerImport, $request->file('file'));
+
+        return redirect()->route('customerAddresses.index')->with('success', 'Data customer addresses berhasil diimport dari Excel.');
     }
 }

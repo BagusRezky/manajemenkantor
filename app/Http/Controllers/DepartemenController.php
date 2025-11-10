@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Departemen;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
+use App\Imports\DepartemenImport;
 use Inertia\Inertia;
 
 class DepartemenController extends Controller
@@ -87,5 +89,16 @@ class DepartemenController extends Controller
         $departemen = Departemen::findOrFail($id);
         $departemen->delete();
         return redirect()->back()->with('success', 'Departemen deleted successfully!');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        Excel::import(new DepartemenImport, $request->file('file'));
+
+        return redirect()->back()->with('success', 'Data departemen berhasil diimport dari Excel.');
     }
 }
