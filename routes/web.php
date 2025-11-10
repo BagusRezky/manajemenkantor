@@ -71,6 +71,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/customerAddresses', [CustomerAddressController::class, 'store'])->name('customerAddresses.store')->middleware('permission:customerAddresses.store');
     Route::put('/customerAddresses/{id}', [CustomerAddressController::class, 'update'])->name('customerAddresses.update')->middleware('permission:customerAddresses.update');
     Route::delete('/customerAddresses/{id}', [CustomerAddressController::class, 'destroy'])->name('customerAddresses.destroy')->middleware('permission:customerAddresses.destroy');
+    Route::post('/customerAddresses/import', [CustomerAddressController::class, 'import'])->name('customerAddresses.import')->middleware('permission:customerAddresses.import');
 
     Route::get('/masterKonversis', [MasterKonversiController::class, 'index'])->name('masterKonversis.index')->middleware('permission:masterKonversis.index');
     Route::post('/masterKonversis', [MasterKonversiController::class, 'store'])->name('masterKonversis.store')->middleware('permission:masterKonversis.store');
@@ -109,6 +110,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/departemens', [DepartemenController::class, 'store'])->middleware('permission:departemens.store');
     Route::put('/departemens/{id}', [DepartemenController::class, 'update'])->middleware('permission:departemens.update');
     Route::delete('/departemens/{id}', [DepartemenController::class, 'destroy'])->middleware('permission:departemens.destroy');
+    Route::post('/departemens/import', [DepartemenController::class, 'import'])->name('departemens.import')->middleware('permission:departemens.import');
 
     Route::get('/finishGoodItems', [FinishGoodItemController::class, 'index'])->name('finishGoodItems.index')->middleware('permission:finishGoodItems.index');
     Route::get('/finishGoodItems/create', [FinishGoodItemController::class, 'create'])->name('finishGoodItems.create')->middleware('permission:finishGoodItems.create');

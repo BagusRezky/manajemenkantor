@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 class Departemen extends Model
 {
     use HasFactory;
+    protected $table = 'departemens';
     protected $fillable = [
         'kode_departemen',
         'nama_departemen',
