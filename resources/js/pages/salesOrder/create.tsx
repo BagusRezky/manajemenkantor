@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { CustomerAddress } from '@/types/customerAddress';
@@ -302,7 +303,7 @@ export default function Create({ combinedItems, customerAddresses, lastId }: Cre
 
                                         <div className="space-y-2">
                                             <Label htmlFor="catatan_colour_range">Catatan Colour Range</Label>
-                                            <Input
+                                            <Textarea
                                                 id="catatan_colour_range"
                                                 value={data.catatan_colour_range}
                                                 onChange={(e) => setData('catatan_colour_range', e.target.value)}
@@ -312,7 +313,7 @@ export default function Create({ combinedItems, customerAddresses, lastId }: Cre
 
                                         <div className="space-y-2">
                                             <Label htmlFor="catatan">Catatan</Label>
-                                            <Input id="catatan" value={data.catatan} onChange={(e) => setData('catatan', e.target.value)} />
+                                            <Textarea id="catatan" value={data.catatan} onChange={(e) => setData('catatan', e.target.value)} />
                                             {errors.catatan && <p className="text-sm text-red-500">{errors.catatan}</p>}
                                         </div>
                                     </div>

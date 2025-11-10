@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
@@ -239,7 +240,7 @@ export default function Edit({ salesOrder, finishGoodItems, customerAddresses }:
 
                                         <div className="space-y-2">
                                             <Label htmlFor="catatan_colour_range">Catatan Colour Range</Label>
-                                            <Input
+                                            <Textarea
                                                 id="catatan_colour_range"
                                                 name="catatan_colour_range"
                                                 value={data.catatan_colour_range}
@@ -250,7 +251,7 @@ export default function Edit({ salesOrder, finishGoodItems, customerAddresses }:
 
                                         <div className="space-y-2">
                                             <Label htmlFor="catatan">Catatan</Label>
-                                            <Input id="catatan" name="catatan" value={data.catatan} onChange={handleChange} />
+                                            <Textarea id="catatan" name="catatan" value={data.catatan} onChange={handleChange} />
                                             {errors.catatan && <p className="text-sm text-red-500">{errors.catatan}</p>}
                                         </div>
                                     </div>
