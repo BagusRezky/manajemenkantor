@@ -13,6 +13,10 @@ import {
 } from '@tanstack/react-table';
 import React from 'react';
 import { CustomerAddressFormModal } from '../modal/add-modal';
+import { router } from '@inertiajs/react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Upload } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -37,15 +41,40 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         },
     });
 
+    const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+            if (!e.target.files?.[0]) return;
+
+            const formData = new FormData();
+            formData.append('file', e.target.files[0]);
+
+            router.post(route('customerAddresses.import'), formData, {
+                onSuccess: () => {
+                    e.target.value = '';
+                    toast.success('File berhasil diimpor!');
+                },
+                onError: () => {
+                    toast.error('Gagal mengimpor file.');
+                },
+            });
+        };
+
     return (
         <div>
-            <div className="flex space-x-190 py-4">
+            <div className="flex justify-between py-4">
                 <Input
                     placeholder="Cari Kode Customer..."
                     value={(table.getColumn('kode_customer')?.getFilterValue() as string) ?? ''}
                     onChange={(event) => table.getColumn('kode_customer')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
+                <div className="ml-auto flex space-x-3">
+                    {/* Upload Excel */}
+                    <Button type="button" variant="outline" onClick={() => document.getElementById('excel-upload')?.click()}>
+                        <Upload className="mr-2 h-4 w-4" />
+                        Import Excel
+                    </Button>
+                    <input type="file" name="file" accept=".xlsx,.xls,.csv" className="hidden" id="excel-upload" onChange={handleImport} />
+                </div>
                 <CustomerAddressFormModal />
             </div>
             <div className="rounded-md border-2 dark:border-0 dark:bg-violet-600">
