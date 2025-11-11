@@ -82,6 +82,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store')->middleware('permission:suppliers.store');
     Route::put('/suppliers/{id}', [SupplierController::class, 'update'])->name('suppliers.update')->middleware('permission:suppliers.update');
     Route::delete('/suppliers/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy')->middleware('permission:suppliers.destroy');
+    Route::post('/suppliers/import', [SupplierController::class, 'import'])->name('suppliers.import')->middleware('permission:suppliers.import');
 
     Route::get('/units', [UnitController::class, 'index'])->name('units.index')->middleware('permission:units.index');
     Route::post('/units', [UnitController::class, 'store'])->name('units.store')->middleware('permission:units.store');
