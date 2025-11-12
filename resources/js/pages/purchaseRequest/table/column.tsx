@@ -75,7 +75,6 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
         { header: 'Qty', dataKey: 'qty' },
         { header: 'Satuan', dataKey: 'satuan' },
         { header: 'ETA', dataKey: 'eta' },
-        { header: 'Catatan', dataKey: 'catatan' },
     ];
 
     const tableRows =
@@ -86,7 +85,6 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
                 qty: item.qty || 0,
                 satuan: item.master_item?.unit?.nama_satuan || '-',
                 eta: item.eta ? format(new Date(item.eta), 'dd-MM-yyyy') : '-',
-                catatan: item.catatan || '-',
             };
         }) || [];
 
@@ -100,16 +98,26 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
         bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.5 },
         columnStyles: {
             no: { cellWidth: 10, halign: 'center' },
-            item: { cellWidth: 65 },
-            qty: { cellWidth: 20, halign: 'center' },
-            satuan: { cellWidth: 25, halign: 'center' },
+            item: { cellWidth: 100 },
+            qty: { cellWidth: 25, halign: 'center' },
+            satuan: { cellWidth: 30, halign: 'center' },
             eta: { cellWidth: 25, halign: 'center' },
-            catatan: { cellWidth: 45 },
         },
     });
 
     // Ambil posisi Y setelah tabel
     const tableEndY = (doc as any).lastAutoTable.finalY;
+
+    // Tambahkan catatan di bawah tabel
+    if (purchaseRequest.purchase_request_items) {
+        const noteY = tableEndY + 10;
+        doc.setFontSize(10).setFont('helvetica', 'bold');
+        doc.text('NOTE:', 10, noteY);
+        doc.setFont('helvetica', 'normal');
+        doc.text(purchaseRequest.purchase_request_items?.map(item => item.catatan).join(', ') || '-', 30, noteY, {
+            maxWidth: pageWidth - 40,
+        });
+    }
 
     // Tanda tangan
     const currentY = tableEndY + 35;
