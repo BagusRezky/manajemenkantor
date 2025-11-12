@@ -1,7 +1,6 @@
 import { Gaji } from '@/types/gaji';
 import { ColumnDef } from '@tanstack/react-table';
 
-
 export const columns: ColumnDef<Gaji>[] = [
     {
         accessorKey: 'nama',
@@ -12,8 +11,16 @@ export const columns: ColumnDef<Gaji>[] = [
         header: 'Hadir (hari)',
     },
     {
-        accessorKey: 'total_lembur_jam',
-        header: 'Total Lembur (jam)',
+        accessorKey: 'total_lembur',
+        header: 'Total Lembur',
+    },
+    {
+        accessorKey: 'total_cuti_semua',
+        header: 'Total Cuti (Semua)',
+    },
+    {
+        accessorKey: 'cuti_tahunan_digunakan',
+        header: 'Cuti Tahunan Digunakan',
     },
     {
         accessorKey: 'gaji_pokok',
@@ -21,9 +28,19 @@ export const columns: ColumnDef<Gaji>[] = [
         cell: ({ row }) => `Rp ${row.original.gaji_pokok.toLocaleString('id-ID')}`,
     },
     {
-        accessorKey: 'tunjangan',
-        header: 'Tunjangan',
-        cell: ({ row }) => `Rp ${row.original.tunjangan.toLocaleString('id-ID')}`,
+        accessorKey: 'tunjangan_kompetensi',
+        header: 'Tunjangan Kompetensi',
+        cell: ({ row }) => `Rp ${row.original.tunjangan_kompetensi.toLocaleString('id-ID')}`,
+    },
+    {
+        accessorKey: 'tunjangan_jabatan',
+        header: 'Tunjangan Jabatan',
+        cell: ({ row }) => `Rp ${row.original.tunjangan_jabatan.toLocaleString('id-ID')}`,
+    },
+    {
+        accessorKey: 'tunjangan_intensif',
+        header: 'Tunjangan Intensif',
+        cell: ({ row }) => `Rp ${row.original.tunjangan_intensif.toLocaleString('id-ID')}`,
     },
     {
         accessorKey: 'bonus',
@@ -31,8 +48,8 @@ export const columns: ColumnDef<Gaji>[] = [
         cell: ({ row }) => `Rp ${row.original.bonus.toLocaleString('id-ID')}`,
     },
     {
-        accessorKey: 'total_akhir',
+        accessorKey: 'total_gaji',
         header: 'Total Gaji',
-        cell: ({ row }) => `Rp ${row.original.total_akhir.toLocaleString('id-ID')}`,
+        cell: ({ row }) => `Rp ${row.original.total_gaji.toLocaleString('id-ID')}`,
     },
 ];
