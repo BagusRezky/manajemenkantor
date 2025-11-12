@@ -231,7 +231,7 @@ export const columns = (): ColumnDef<ReturInternal>[] => [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem onClick={() => router.get(`/returInternals/${item.id}`)}>Detail</DropdownMenuItem>
+                        {/* <DropdownMenuItem onClick={() => router.get(`/returInternals/${item.id}`)}>Detail</DropdownMenuItem> */}
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.get(`/returInternals/${item.id}/edit`)}>Edit</DropdownMenuItem>
                         <DropdownMenuSeparator />
