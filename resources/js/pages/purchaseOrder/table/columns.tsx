@@ -133,15 +133,6 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     // Hitung sisa (total akhir - dp)
     const sisa = Number(totalAkhir) - Number(dp);
 
-    // Log untuk debugging
-    console.log('Total Bruto:', totalBruto);
-    console.log('PPN Rate:', ppnRate, '%');
-    console.log('PPN Amount:', ppnAmount);
-    console.log('ONGKIR:', ongkir);
-    console.log('Total Akhir:', totalAkhir);
-    console.log('DP:', dp);
-    console.log('Sisa:', sisa);
-
     autoTable(doc, {
         columns: tableColumns,
         body: tableRows,
@@ -165,60 +156,88 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     // Ambil posisi Y setelah tabel
     const tableEndY = (doc as any).lastAutoTable.finalY;
 
-    // Tambahkan total section di kanan bawah
+    const noteStartX = 10;
     const totalWidth = 80;
     const totalStartX = pageWidth - 10 - totalWidth;
-    let currentY = tableEndY + 10;
+    const baseY = tableEndY + 10;
+
+    const remarks =
+        purchaseOrder.items
+            ?.map((item, idx) => {
+                const remark =
+                    item.remark_item_po && item.remark_item_po.trim() !== ''
+                        ? item.remark_item_po
+                        : item.purchase_request_items?.catatan && item.purchase_request_items.catatan.trim() !== ''
+                          ? item.purchase_request_items.catatan
+                          : '';
+
+                return remark ? `${idx + 1}. ${remark}` : '';
+            })
+            .filter((r) => r !== '') || [];
+
+    // --- Note Section ---
+    doc.setFontSize(10).setFont('helvetica', 'bold');
+    doc.text('Note:', noteStartX, baseY);
+
+    doc.setFont('helvetica', 'normal');
+    const lineHeight = 6;
+    remarks.forEach((remark, i) => {
+        doc.text(remark, noteStartX + 10, baseY + lineHeight * (i + 1), {
+            maxWidth: pageWidth / 2 - 20,
+        });
+    });
+
+    // --- Total Section ---
+    doc.setFontSize(9).setFont('helvetica', 'bold');
+    let totalY = baseY;
 
     // Total Bruto
-    doc.setFontSize(9).setFont('helvetica', 'bold');
-    doc.text('Total', totalStartX + 5, currentY);
-    doc.text(formatRupiah(totalBruto), pageWidth - 15, currentY, { align: 'right' });
-    doc.setLineWidth(0.1);
-    doc.line(totalStartX, currentY + 2, totalStartX + totalWidth, currentY + 2);
-    currentY += 7;
+    doc.text('Total', totalStartX + 5, totalY);
+    doc.text(formatRupiah(totalBruto), pageWidth - 15, totalY, { align: 'right' });
+    doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
+    totalY += 7;
 
     // PPN
-    doc.text('PPN', totalStartX + 5, currentY);
-    doc.text(formatRupiah(ppnAmount), pageWidth - 15, currentY, { align: 'right' });
-    doc.line(totalStartX, currentY + 2, totalStartX + totalWidth, currentY + 2);
-    currentY += 7;
+    doc.text('PPN', totalStartX + 5, totalY);
+    doc.text(formatRupiah(ppnAmount), pageWidth - 15, totalY, { align: 'right' });
+    doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
+    totalY += 7;
 
     // ONGKIR
-    doc.text('ONGKIR', totalStartX + 5, currentY);
-    doc.text(formatRupiah(ongkir), pageWidth - 15, currentY, { align: 'right' });
-    doc.line(totalStartX, currentY + 2, totalStartX + totalWidth, currentY + 2);
-    currentY += 7;
+    doc.text('ONGKIR', totalStartX + 5, totalY);
+    doc.text(formatRupiah(ongkir), pageWidth - 15, totalY, { align: 'right' });
+    doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
+    totalY += 7;
 
     // Total Akhir
     doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.text('Total Akhir', totalStartX + 5, currentY);
-    doc.text(formatRupiah(totalAkhir), pageWidth - 15, currentY, { align: 'right' });
-    doc.line(totalStartX, currentY + 2, totalStartX + totalWidth, currentY + 2);
-    currentY += 7;
+    doc.text('Total Akhir', totalStartX + 5, totalY);
+    doc.text(formatRupiah(totalAkhir), pageWidth - 15, totalY, { align: 'right' });
+    doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
+    totalY += 7;
 
     // DP
     doc.setFontSize(9).setFont('helvetica', 'bold');
-    doc.text('DP', totalStartX + 5, currentY);
-    doc.text(formatRupiah(dp), pageWidth - 15, currentY, { align: 'right' });
-    doc.line(totalStartX, currentY + 2, totalStartX + totalWidth, currentY + 2);
-    currentY += 7;
+    doc.text('DP', totalStartX + 5, totalY);
+    doc.text(formatRupiah(dp), pageWidth - 15, totalY, { align: 'right' });
+    doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
+    totalY += 7;
 
     // Sisa
     doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.text('Sisa', totalStartX + 5, currentY);
-    doc.text(formatRupiah(sisa), pageWidth - 15, currentY, { align: 'right' });
-    doc.line(totalStartX, currentY + 2, totalStartX + totalWidth, currentY + 2);
+    doc.text('Sisa', totalStartX + 5, totalY);
+    doc.text(formatRupiah(sisa), pageWidth - 15, totalY, { align: 'right' });
+    doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
 
-    // Tanda tangan
-    currentY = tableEndY + 60; // Tambah jarak karena ada lebih banyak baris total
+    // --- Tanda Tangan ---
+    const noteEndY = baseY + lineHeight * (remarks.length + 2);
+    const signY = Math.max(noteEndY, totalY) + 30;
+
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Dibuat Oleh,', 50, currentY, { align: 'center' });
-    doc.text('Disetujui Oleh,', pageWidth - 50, currentY, { align: 'center' });
-
-    // Tempat tanda tangan
-    doc.text('( ..................................... )', 50, currentY + 30, { align: 'center' });
-    doc.text('( ..................................... )', pageWidth - 50, currentY + 30, { align: 'center' });
+    doc.text('Dibuat Oleh,', 50, signY, { align: 'center' });
+    doc.text('Disetujui Oleh,', pageWidth - 50, signY, { align: 'center' });
+    doc.text('( ..................................... )', 50, signY + 30, { align: 'center' });
+    doc.text('( ..................................... )', pageWidth - 50, signY + 30, { align: 'center' });
 
     // Output PDF
     if (download) {
