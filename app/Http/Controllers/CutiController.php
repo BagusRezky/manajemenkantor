@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cuti;
 use App\Models\Karyawan;
+use App\Models\HariLibur;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -103,11 +104,39 @@ class CutiController extends Controller
         return redirect()->route('cutis.index')->with('success', 'Cuti deleted successfully!');
     }
 
-    public function cutitahunan()
+    public function cutiTahunan()
     {
-        $cutis = Cuti::with('karyawan')->get();
+        // Ambil semua karyawan
+        $karyawans = Karyawan::select('id', 'nama')->get();
+
+        // Ambil total hari libur
+        $totalHariLibur = HariLibur::count();
+
+        // Hitung jatah cuti tahunan (maks 12 - hari libur)
+        $jatahCutiTahunan = max(12 - $totalHariLibur, 0);
+
+        // Ambil semua cuti tahunan
+        $cutis = Cuti::where('jenis_cuti', 'Cuti Tahunan')->get();
+
+        // Gabungkan data
+        $cutiPerKaryawan = $karyawans->map(function ($karyawan) use ($cutis, $jatahCutiTahunan) {
+            $cutiTahunanDiambil = $cutis->where('id_karyawan', $karyawan->id)->count();
+
+            $sisaCuti = $jatahCutiTahunan - $cutiTahunanDiambil;
+            if ($sisaCuti < 0) $sisaCuti = 0;
+
+            return [
+                'id_karyawan' => $karyawan->id,
+                'nama_karyawan' => $karyawan->nama,
+                'total_cuti_tahunan' => $jatahCutiTahunan,
+                'cuti_digunakan' => $cutiTahunanDiambil,
+                'sisa_cuti_tahunan' => $sisaCuti,
+            ];
+        });
+
         return Inertia::render('cuti/cutiTahunan', [
-            'cutis' => $cutis,
+            'cutiPerKaryawan' => $cutiPerKaryawan,
+            'totalHariLibur' => $totalHariLibur,
         ]);
     }
 }

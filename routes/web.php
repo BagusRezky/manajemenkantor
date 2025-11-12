@@ -440,6 +440,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cutis/{cuti}/edit', [CutiController::class, 'edit'])->name('cutis.edit')->middleware('permission:cutis.edit');
         Route::put('/cutis/{cuti}', [CutiController::class, 'update'])->name('cutis.update')->middleware('permission:cutis.update');
         Route::delete('/cutis/{cuti}', [CutiController::class, 'destroy'])->name('cutis.destroy')->middleware('permission:cutis.destroy');
+        Route::get('/cutiTahunan', [CutiController::class, 'cutiTahunan'])->name('cutiTahunan.index')->middleware('permission:cutiTahunan.index');
 
         Route::get('/gajis', [GajiController::class, 'index'])->name('gajis.index')->middleware('permission:gajis.index');
     });
