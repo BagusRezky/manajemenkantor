@@ -109,14 +109,30 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
     const tableEndY = (doc as any).lastAutoTable.finalY;
 
     // Tambahkan catatan di bawah tabel
-    if (purchaseRequest.purchase_request_items) {
+    if (purchaseRequest.purchase_request_items && purchaseRequest.purchase_request_items.length > 0) {
         const noteY = tableEndY + 10;
         doc.setFontSize(10).setFont('helvetica', 'bold');
         doc.text('NOTE:', 10, noteY);
+
+        // Catatan dengan penomoran
+        const notes = purchaseRequest.purchase_request_items
+            .map((item, idx) => {
+                const catatan = item.catatan?.trim();
+                return catatan ? `${idx + 1}. ${catatan}` : '';
+            })
+            .filter((n) => n !== '');
+
         doc.setFont('helvetica', 'normal');
-        doc.text(purchaseRequest.purchase_request_items?.map(item => item.catatan).join(', ') || '-', 30, noteY, {
-            maxWidth: pageWidth - 40,
-        });
+        if (notes.length > 0) {
+
+            notes.forEach((note, i) => {
+                doc.text(note, 30, noteY  * (i + 1), {
+                    maxWidth: pageWidth - 40,
+                });
+            });
+        } else {
+            doc.text('-', 30, noteY);
+        }
     }
 
     // Tanda tangan
