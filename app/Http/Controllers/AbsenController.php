@@ -129,9 +129,9 @@ class AbsenController extends Controller
         $endDate   = $request->input('end_date');
 
         // Ambil semua karyawan
-        $karyawans = Karyawan::select('id', 'nama', 'pin', 'status_lembur', 'departemen')->get();
+        $karyawans = Karyawan::select('id', 'nama', 'pin', 'status_lembur')->get();
 
-        // Ambil semua absensi
+        // Ambil semua absensi (optional: filter rentang tanggal)
         $absens = Absen::select('nama', 'pin', 'tanggal_scan', 'jam', 'io', 'departemen')
             ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
                 $query->whereBetween('tanggal_scan', [
@@ -141,7 +141,7 @@ class AbsenController extends Controller
             })
             ->get();
 
-        // Ambil semua lembur, izin, cuti
+        // Ambil semua lembur, izin, dan cuti
         $lemburs = Lembur::with('karyawan')->get();
         $izins   = Izin::with('karyawan')->get();
         $cutis   = Cuti::with('karyawan')->get();
@@ -156,54 +156,35 @@ class AbsenController extends Controller
             $kedatanganKali = $absenKaryawan->where('io', 1)->count();
             $pulangKali     = $absenKaryawan->where('io', 2)->count();
 
-            // Hitung jumlah hari hadir unik
+            // Hitung jumlah hari hadir unik (berdasarkan tanggal)
             $hadir = $absenKaryawan
                 ->where('io', 1)
-                ->groupBy(fn($item) => date('Y-m-d', strtotime($item->tanggal_scan)))
+                ->groupBy(function ($item) {
+                    return date('Y-m-d', strtotime($item->tanggal_scan));
+                })
                 ->count();
 
-            // Data lembur manual
+            // Ambil data lembur, izin, dan cuti milik karyawan ini
             $lemburKaryawan = $lemburs->where('karyawan.nama', $karyawan->nama);
+            $izinKaryawan   = $izins->where('karyawan.nama', $karyawan->nama);
+            $cutiKaryawan   = $cutis->where('karyawan.nama', $karyawan->nama);
 
-            // Hitung total jam lembur manual
-            $totalDetikLemburManual = $lemburKaryawan->reduce(function ($carry, $lembur) {
+            // Total jam lembur
+            $totalDetikLembur = $lemburKaryawan->reduce(function ($carry, $lembur) {
                 $awal = strtotime($lembur->jam_awal_lembur);
                 $selesai = strtotime($lembur->jam_selesai_lembur);
-                return $carry + max(0, $selesai - $awal);
+                $durasi = $selesai - $awal; // hasilnya dalam detik
+                return $carry + $durasi;
             }, 0);
 
-            // --- Lembur otomatis (untuk produksi & status lembur) ---
-            $totalDetikLemburAuto = 0;
-            $lemburKaliAuto = 0;
-
-            if (
-                strtolower($karyawan->departemen ?? '') === 'produksi' &&
-                strtolower($karyawan->status_lembur ?? '') === 'lembur'
-            ) {
-                $absenPulang = $absenKaryawan->where('io', 2);
-
-                foreach ($absenPulang as $absen) {
-                    $jamPulang = strtotime($absen->jam);
-                    $batasLembur = strtotime('17:00:00');
-
-                    if ($jamPulang > $batasLembur) {
-                        $lemburKaliAuto++;
-                        $totalDetikLemburAuto += ($jamPulang - $batasLembur);
-                    }
-                }
-            }
-
-            // Total lembur gabungan (manual + auto)
-            $totalDetikLembur = $totalDetikLemburManual + $totalDetikLemburAuto;
-            $lemburKali = $lemburKaryawan->count() + $lemburKaliAuto;
-
-            // Ubah ke format HH:MM:SS
-            $jam   = floor($totalDetikLembur / 3600);
+            // ubah total detik ke format HH:MM:SS
+            $jam = floor($totalDetikLembur / 3600);
             $menit = floor(($totalDetikLembur % 3600) / 60);
             $detik = $totalDetikLembur % 60;
+
             $totalFormat = sprintf('%02d:%02d:%02d', $jam, $menit, $detik);
 
-            // Ambil contoh tanggal
+            // Ambil tanggal contoh (untuk bulan/tahun, optional)
             $tanggalContoh = $absenKaryawan->first()?->tanggal_scan;
             $bulan = $tanggalContoh ? date('n', strtotime($tanggalContoh)) : null;
             $tahun = $tanggalContoh ? date('Y', strtotime($tanggalContoh)) : null;
@@ -213,10 +194,10 @@ class AbsenController extends Controller
                 'hadir'            => $hadir,
                 'kedatangan_kali'  => $kedatanganKali,
                 'pulang_kali'      => $pulangKali,
-                'lembur_kali'      => $lemburKali,
+                'lembur_kali'      => $lemburKaryawan->count(),
                 'total_jam_lembur' => $totalFormat,
-                'izin_kali'        => $izins->where('karyawan.nama', $karyawan->nama)->count(),
-                'cuti_kali'        => $cutis->where('karyawan.nama', $karyawan->nama)->count(),
+                'izin_kali'        => $izinKaryawan->count(),
+                'cuti_kali'        => $cutiKaryawan->count(),
                 'bulan'            => $bulan,
                 'tahun'            => $tahun,
             ];
