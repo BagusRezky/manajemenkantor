@@ -1,4 +1,3 @@
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { SelectInput } from '@/components/select-input';
 import { Button } from '@/components/ui/button';
@@ -180,7 +179,6 @@ export default function Create({ combinedItems, customerAddresses, lastId }: Cre
                                                 </div>
                                                 {/* Hidden field for the actual form submission */}
                                                 <Input id="no_bon_pesanan" name="no_bon_pesanan" value={salesOrderNumber} type="hidden" />
-                                                {/* We're removing custom_part entirely since it's no longer needed */}
                                             </div>
                                             {errors.no_bon_pesanan && <p className="text-sm text-red-500">{errors.no_bon_pesanan}</p>}
                                         </div>
@@ -188,6 +186,7 @@ export default function Create({ combinedItems, customerAddresses, lastId }: Cre
                                         <div className="space-y-2">
                                             <Label htmlFor="no_po_customer">No.PO Customer</Label>
                                             <Input
+                                                
                                                 id="no_po_customer"
                                                 value={data.no_po_customer}
                                                 onChange={(e) => setData('no_po_customer', e.target.value)}
@@ -199,6 +198,8 @@ export default function Create({ combinedItems, customerAddresses, lastId }: Cre
                                             <Label htmlFor="jumlah_pesanan">Jumlah Pesanan</Label>
                                             <Input
                                                 id="jumlah_pesanan"
+                                                type="number"
+                                                step="0"
                                                 value={data.jumlah_pesanan}
                                                 onChange={(e) => setData('jumlah_pesanan', e.target.value)}
                                             />
@@ -239,18 +240,11 @@ export default function Create({ combinedItems, customerAddresses, lastId }: Cre
 
                                         <div className="space-y-2">
                                             <Label htmlFor="eta_marketing">ETA Marketing</Label>
-                                            <DatePicker
+                                            <Input
+                                                id="eta_marketing"
+                                                type="date"
                                                 value={data.eta_marketing}
-                                                onChange={(date) => {
-                                                    if (date) {
-                                                        const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                            .toISOString()
-                                                            .split('T')[0];
-                                                        setData('eta_marketing', formattedDate);
-                                                    } else {
-                                                        setData('eta_marketing', '');
-                                                    }
-                                                }}
+                                                onChange={(e) => setData('eta_marketing', e.target.value)}
                                             />
                                             {errors.eta_marketing && <p className="text-sm text-red-500">{errors.eta_marketing}</p>}
                                         </div>
