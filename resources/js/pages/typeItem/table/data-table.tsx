@@ -65,9 +65,9 @@ export function DataTable<TData, TValue>({ columns, data, categoryItems }: DataT
         <div>
             <div className="flex justify-between py-4">
                 <Input
-                    placeholder="Cari Kode Type Item..."
-                    value={(table.getColumn('kode_type_item')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) => table.getColumn('kode_type_item')?.setFilterValue(event.target.value)}
+                    placeholder="Cari Nama Type Item..."
+                    value={(table.getColumn('nama_type_item')?.getFilterValue() as string) ?? ''}
+                    onChange={(event) => table.getColumn('nama_type_item')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
                 <div className="ml-auto flex space-x-3">
