@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\CategoryItem;
 use App\Models\TypeItem;
 use Illuminate\Http\Request;
+use App\Imports\TypeItemImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Inertia\Inertia;
 
 class TypeItemController extends Controller
@@ -91,5 +93,18 @@ class TypeItemController extends Controller
         $typeItem = TypeItem::findOrFail($id);
         $typeItem->delete();
         return redirect()->back()->with('success', 'Type Item deleted successfully!');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        // Panggil class TypeItemImport
+        Excel::import(new TypeItemImport, $request->file('file'));
+
+        // Asumsi route index untuk Type Item adalah 'typeitems.index'
+        return redirect()->back()->with('success', 'Type Item added successfully!');
     }
 }
