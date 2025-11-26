@@ -88,6 +88,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/units', [UnitController::class, 'store'])->name('units.store')->middleware('permission:units.store');
     Route::put('/units/{id}', [UnitController::class, 'update'])->name('units.update')->middleware('permission:units.update');
     Route::delete('/units/{id}', [UnitController::class, 'destroy'])->name('units.destroy')->middleware('permission:units.destroy');
+    Route::post('/units/import', [UnitController::class, 'import'])->name('units.import')->middleware('permission:units.import');
 
     Route::get('/categoryItems', [CategoryItemController::class, 'index'])->name('categoryItems.index')->middleware('permission:categoryItems.index');
     Route::post('/categoryItems', [CategoryItemController::class, 'store'])->name('categoryItems.store')->middleware('permission:categoryItems.store');
@@ -98,6 +99,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/typeItems', [TypeItemController::class, 'store'])->name('typeItems.store')->middleware('permission:typeItems.store');
     Route::put('/typeItems/{id}', [TypeItemController::class, 'update'])->name('typeItems.update')->middleware('permission:typeItems.update');
     Route::delete('/typeItems/{id}', [TypeItemController::class, 'destroy'])->name('typeItems.destroy')->middleware('permission:typeItems.destroy');
+    Route::post('/typeItems/import', [TypeItemController::class, 'import'])->name('typeItems.import')->middleware('permission:typeItems.import');
 
     Route::get('/masterItems', [MasterItemController::class, 'index'])->name('master-items.index')->middleware('permission:master-items.index');
     Route::get('/masterItems/create', [MasterItemController::class, 'create'])->name('master-items.create')->middleware('permission:master-items.create');

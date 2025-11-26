@@ -60,16 +60,16 @@ const EditUnitModal: React.FC<EditUnitModalProps> = ({ isOpen, onClose, unit }) 
                 </DialogHeader>
                 <form onSubmit={handleSubmit} className="space-y-2">
                     {errors.kode_satuan && <div className="text-sm text-red-500">{errors.kode_satuan}</div>}
-                    <Input type="text" name="kode_satuan" value={data.kode_satuan} onChange={handleChange} placeholder="Kode Supplier" required />
+                    <Input type="text" name="kode_satuan" value={data.kode_satuan} onChange={handleChange} placeholder="Kode Satuan" required />
 
                     {errors.nama_satuan && <div className="text-sm text-red-500">{errors.nama_satuan}</div>}
-                    <Input type="text" name="nama_satuan" value={data.nama_satuan} onChange={handleChange} placeholder="Nama Supplier" required />
+                    <Input type="text" name="nama_satuan" value={data.nama_satuan} onChange={handleChange} placeholder="Nama Satuan" required />
                     <DialogFooter>
                         <Button variant="outline" type="button" onClick={onClose} disabled={processing}>
                             Cancel
                         </Button>
                         <Button type="submit" disabled={processing}>
-                            {processing ? 'Updating...' : 'Update Supplier'}
+                            {processing ? 'Updating...' : 'Update Satuan'}
                         </Button>
                     </DialogFooter>
                 </form>
