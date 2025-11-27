@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\MasterItemImport;
 use App\Models\MasterItem;
 use App\Models\CategoryItem;
 use App\Models\Unit;
 use App\Models\TypeItem;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Validator;
@@ -181,5 +183,19 @@ class MasterItemController extends Controller
 
         return redirect()->route('master-items.index')
             ->with('success', 'Master Item deleted successfully');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        // Panggil class MasterItemImport
+        Excel::import(new MasterItemImport, $request->file('file'));
+
+        // Asumsi route index untuk Master Item adalah 'master-items.index'
+        return redirect()->route('master-items.index')
+            ->with('success', 'Master Item created successfully');
     }
 }

@@ -107,6 +107,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/masterItems/{id}/edit', [MasterItemController::class, 'edit'])->name('master-items.edit')->middleware('permission:master-items.edit');
     Route::put('/masterItems/{id}', [MasterItemController::class, 'update'])->name('master-items.update')->middleware('permission:master-items.update');
     Route::delete('/masterItems/{id}', [MasterItemController::class, 'destroy'])->middleware('permission:master-items.destroy');
+    Route::post('/masterItems/import', [MasterItemController::class, 'import'])->name('master-items.import')->middleware('permission:master-items.import');
     Route::get('/api/type-items', [MasterItemController::class, 'getTypeItems'])->name('api.type-items');
 
     Route::get('/departemens', [DepartemenController::class, 'index'])->middleware('permission:departemens.index');
