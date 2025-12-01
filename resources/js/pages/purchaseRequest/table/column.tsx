@@ -23,7 +23,7 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('PURCHASE REQUEST', pageWidth - 15, 18, { align: 'right' });
 
-    doc.setFont('helvetica', 'normal');
+    doc.setFont('helvetica', 'bold');
     doc.text(purchaseRequest.no_pr || '', pageWidth - 15, 25, { align: 'right' });
 
     // Tambahkan header dengan border
@@ -35,7 +35,7 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('CV. Indigama Khatulistiwa', 15, 18);
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Jurangpelem Satu, Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
     doc.text('Jawa Timur 67155', 15, 28);
     doc.text('Email: indigama.khatulistiwa01@gmail.com', 15, 33);
     doc.text('Telp: 081703101012', 15, 38);
@@ -124,9 +124,8 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
 
         doc.setFont('helvetica', 'normal');
         if (notes.length > 0) {
-
             notes.forEach((note, i) => {
-                doc.text(note, 30, noteY  * (i + 1), {
+                doc.text(note, 30, noteY * (i + 1), {
                     maxWidth: pageWidth - 40,
                 });
             });

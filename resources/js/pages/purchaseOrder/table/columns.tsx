@@ -23,7 +23,7 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('PURCHASE ORDER', pageWidth - 15, 18, { align: 'right' });
 
-    doc.setFont('helvetica', 'normal');
+    doc.setFont('helvetica', 'bold');
     doc.text(purchaseOrder.no_po || '', pageWidth - 15, 25, { align: 'right' });
 
     // Tambahkan header dengan border
@@ -35,7 +35,7 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('CV. Indigama Khatulistiwa', 15, 18);
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Jurangpelem Satu, Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
     doc.text('Jawa Timur 67155', 15, 28);
     doc.text('Email: indigama.khatulistiwa01@gmail.com', 15, 33);
     doc.text('Telp: 081703101012', 15, 38);
@@ -229,9 +229,38 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     doc.text(formatRupiah(sisa), pageWidth - 15, totalY, { align: 'right' });
     doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
 
+    // --- Syarat dan Ketentuan ---
+    let termsY = totalY + 6;
+
+    doc.setFontSize(10).setFont('helvetica', 'bold');
+    doc.text('Penting !', 10, termsY);
+    termsY += 6;
+
+    doc.setFontSize(9).setFont('helvetica', 'bold');
+    doc.text('Syarat dan Ketentuan Pengiriman Barang:', 10, termsY);
+    termsY += 6;
+
+    doc.setFont('helvetica', 'normal');
+
+    // List poin syarat
+    const termsList = [
+        '1. Seluruh proses pengiriman barang harus disertai dengan surat jalan, nota, atau kwitansi.',
+        '2. Proses pelunasan pembayaran dilakukan selambat-lambatnya 30 hari setelah barang diterima. (Atau sesuai dengan kesepakatan diawal).',
+        '3. Waktu pengiriman dilakukan sesuai kesepakatan oleh Purchasing. (Jika ada perubahan jadwal pengiriman, harus segera menginformasi hal tersebut).',
+        '4. Jika ada ketidakcocokan atau ketidaksesuaian jumlah atau kualitas dengan barang yang dipesan, customer berhak mengembalikan barang tersebut kepada rekanan.',
+    ];
+
+    termsList.forEach((t) => {
+        doc.text(t, 12, termsY, { maxWidth: pageWidth - 25 });
+        termsY += 8;
+    });
+
+    // Geser posisi tanda tangan agar tidak bertabrakan
+    const adjustedSignY = termsY + 15;
+
     // --- Tanda Tangan ---
-    const noteEndY = baseY + lineHeight * (remarks.length + 2);
-    const signY = Math.max(noteEndY, totalY) + 30;
+    // const noteEndY = baseY + lineHeight * (remarks.length + 2);
+    const signY = adjustedSignY;
 
     doc.setFontSize(10).setFont('helvetica', 'normal');
     doc.text('Dibuat Oleh,', 50, signY, { align: 'center' });

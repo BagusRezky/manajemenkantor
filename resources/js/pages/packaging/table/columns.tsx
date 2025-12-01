@@ -147,7 +147,7 @@ const generatePackagingPdf = (packaging: Packaging, download = false): void => {
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('CV. Indigama Khatulistiwa', 15, 18);
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Jurangpelem Satu, Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
     doc.text('Jawa Timur 67155', 15, 28);
     doc.text('Email: indigama.khatulistiwa01@gmail.com', 15, 33);
     doc.text('Telp: 081703101012', 15, 38);
