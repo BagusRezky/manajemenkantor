@@ -59,7 +59,7 @@ export const DetailModal = ({ isOpen, onClose, item }: DetailModalProps) => {
                     </div>
 
                     <div className="flex flex-col">
-                        <span className="text-sm font-medium text-gray-500">ETA Marketing</span>
+                        <span className="text-sm font-medium text-gray-500">Tanggal PO</span>
                         <span>{item.eta_marketing}</span>
                     </div>
 

@@ -23,7 +23,7 @@ const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void =
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('SALES ORDER', pageWidth - 15, 18, { align: 'right' });
 
-    doc.setFont('helvetica', 'normal');
+    doc.setFont('helvetica', 'bold');
     doc.text(salesOrder.no_bon_pesanan || '', pageWidth - 15, 25, { align: 'right' });
 
     // Tambahkan header dengan border
@@ -35,7 +35,7 @@ const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void =
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('CV. Indigama Khatulistiwa', 15, 18);
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Jurangpelem Satu, Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
     doc.text('Jawa Timur 67155', 15, 28);
     doc.text('Email: indigama.khatulistiwa01@gmail.com', 15, 33);
     doc.text('Telp: 081703101012', 15, 38);
@@ -75,7 +75,7 @@ const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void =
     doc.text(salesOrder.syarat_pembayaran || '', 70, 80);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('ETA Marketing', 15, 87);
+    doc.text('Tanggal PO', 15, 87);
     doc.text(':', 65, 87);
     doc.setFont('helvetica', 'normal');
     doc.text(salesOrder.eta_marketing || '', 70, 87);
