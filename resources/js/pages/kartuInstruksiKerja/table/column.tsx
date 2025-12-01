@@ -28,10 +28,6 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
         });
     };
 
-    // Debug logging - remove this after fixing
-    console.log('KIK Data received:', kartuInstruksiKerja);
-    console.log('BOMs Data (camelCase):', kartuInstruksiKerja.kartuInstruksiKerjaBoms);
-    console.log('BOMs Data (snake_case):', kartuInstruksiKerja.kartu_instruksi_kerja_boms);
 
     // Header Border Box
     doc.setDrawColor(0);
@@ -42,14 +38,14 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('CV. Indigama Khatulistiwa', 15, 18);
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Jurangpelem Satu, Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
     doc.text('Jawa Timur 67155', 15, 28);
     doc.text('Email: indigama.khatulistiwa01@gmail.com', 15, 33);
     doc.text('Telp: 081703101012', 15, 38);
 
     // Title (Right)
     doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('KARTU INSTRUKSI KERJA', pageWidth - 15, 18, { align: 'right' });
+    doc.text('Surat Perintah Kerja', pageWidth - 15, 18, { align: 'right' });
 
     // Nomor dan Tanggal
     const kikNumber = kartuInstruksiKerja?.no_kartu_instruksi_kerja || '-';
@@ -58,8 +54,8 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
         month: '2-digit',
         year: 'numeric',
     });
-    doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text(`No: ${kikNumber}`, pageWidth - 15, 25, { align: 'right' });
+    doc.setFontSize(10).setFont('helvetica', 'bold');
+    doc.text(`${kikNumber}`, pageWidth - 15, 25, { align: 'right' });
     doc.text(`Tanggal: ${currentDate}`, pageWidth - 15, 30, { align: 'right' });
 
     let y = 50;
@@ -78,16 +74,16 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
             rightValue: kartuInstruksiKerja.sales_order?.customer_address?.nama_customer || '-',
         },
         {
-            label: 'Tgl Pesanan',
-            value: formatDate(kartuInstruksiKerja.sales_order?.eta_marketing),
-            rightLabel: 'Alamat',
-            rightValue: kartuInstruksiKerja.sales_order?.customer_address?.alamat_lengkap || '-',
-        },
-        {
             label: 'No PO',
             value: kartuInstruksiKerja.sales_order?.no_po_customer || '-',
             rightLabel: '',
             rightValue: '',
+        },
+        {
+            label: 'Tgl PO',
+            value: formatDate(kartuInstruksiKerja.sales_order?.eta_marketing),
+            rightLabel: 'Alamat',
+            rightValue: kartuInstruksiKerja.sales_order?.customer_address?.alamat_lengkap || '-',
         },
     ];
 
@@ -96,7 +92,15 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
         doc.text(`${row.label}`, 15, y);
         doc.text(`: ${row.value}`, 50, y);
         if (row.rightLabel) doc.text(`${row.rightLabel}`, pageWidth / 2 + 5, y);
-        doc.text(`: ${row.rightValue}`, pageWidth / 2 + 30, y);
+        if (row.rightLabel === 'Alamat') {
+            const maxWidth = 60;
+            const wrappedAddress = doc.splitTextToSize(`: ${row.rightValue}`, maxWidth);
+
+            doc.text(wrappedAddress, pageWidth / 2 + 30, y);
+            y += wrappedAddress.length * 9; // 5 = jarak antar baris
+        } else {
+            doc.text(`: ${row.rightValue}`, pageWidth / 2 + 30, y);
+        }
         y += 6;
     });
 
@@ -125,7 +129,7 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
         },
         {
             label: 'Jumlah Pesanan',
-            value: `${kartuInstruksiKerja.sales_order?.jumlah_pesanan || '-'} ${
+            value: `${kartuInstruksiKerja.sales_order?.jumlah_pesanan != null ? new Intl.NumberFormat('id-ID').format(Number(kartuInstruksiKerja.sales_order.jumlah_pesanan)) : '-'} ${
                 kartuInstruksiKerja.sales_order?.finish_good_item?.unit?.nama_satuan || ''
             }`,
             rightLabel: '',
