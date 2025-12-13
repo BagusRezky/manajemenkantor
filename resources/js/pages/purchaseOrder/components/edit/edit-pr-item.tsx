@@ -101,16 +101,12 @@ export default function EditPrItems({ poItems, setPoItems }: EditPrItemsProps) {
                                 <TableRow key={item.id || index}>
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell>
-                                        {/* Pastikan akses master_item aman */}
                                         {item.master_item
                                             ? `${item.master_item.kode_master_item} - ${item.master_item.nama_master_item}`
                                             : item.purchaseRequestItem?.master_item
                                               ? `${item.purchaseRequestItem.master_item.kode_master_item} - ${item.purchaseRequestItem.master_item.nama_master_item}`
                                               : '-'}
                                     </TableCell>
-                                    {/* Gunakan purchaseRequestItem (hasil mapping di edit.tsx)
-                atau purchase_request_items (backup)
-            */}
                                     <TableCell>{item.purchaseRequestItem?.qty || item.purchase_request_items?.qty || '-'}</TableCell>
                                     <TableCell>
                                         {item.purchaseRequestItem?.master_item?.unit?.nama_satuan ||
@@ -131,7 +127,7 @@ export default function EditPrItems({ poItems, setPoItems }: EditPrItemsProps) {
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            type="button" // Eksplisit sebagai button, bukan submit
+                                            type="button" 
                                             onClick={(e) => handleEditItem(item, e)}
                                         >
                                             Edit

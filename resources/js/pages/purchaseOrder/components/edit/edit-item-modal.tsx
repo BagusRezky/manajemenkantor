@@ -26,9 +26,6 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    // Fetch dan setup data saat modal dibuka
-    // PERBAIKAN PENTING: Dependency array hanya melihat isOpen dan ID Item.
-    // Ini MENCEGAH INFINITE LOOP saat mengetik qty/harga.
     useEffect(() => {
         console.log('Modal opened with item:', currentItem);
         setErrorMessage(null);
@@ -38,18 +35,17 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
                 // Item ID untuk konversi
                 const itemId = currentItem.id_master_item;
 
-                // --- PERBAIKAN PENTING: Robust Unit ID Detection ---
                 let unitId = null;
 
-                // Cek path 1: purchaseRequestItem (camelCase dari mapping edit.tsx)
+
                 if (currentItem.purchaseRequestItem?.master_item?.unit?.id) {
                     unitId = currentItem.purchaseRequestItem.master_item.unit.id;
                 }
-                // Cek path 2: purchase_request_items (snake_case bawaan relasi / struktur Create)
+
                 else if (currentItem.purchase_request_items?.master_item?.unit?.id) {
                     unitId = currentItem.purchase_request_items.master_item.unit.id;
                 }
-                // Cek path 3: Langsung dari master_item item itu sendiri (fallback)
+
                 else if (currentItem.master_item?.unit?.id) {
                     unitId = currentItem.master_item.unit.id;
                 }
