@@ -26,6 +26,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [sorting, setSorting] = React.useState<SortingState>([]);
     const [statusFilter, setStatusFilter] = React.useState<string>('all');
+    const [globalFilter, setGlobalFilter] = React.useState('');
 
     const table = useReactTable({
         data,
@@ -36,9 +37,11 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         onSortingChange: setSorting,
         getSortedRowModel: getSortedRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
+        onGlobalFilterChange: setGlobalFilter,
         state: {
             columnFilters,
             sorting,
+            globalFilter,
         },
     });
 
@@ -53,17 +56,13 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
     return (
         <div className="space-y-6">
-
             {/* Filters */}
             <div className="flex items-center justify-between py-4">
                 <div className="flex items-center space-x-2">
                     <Input
                         placeholder="Cari kode atau nama item..."
-                        value={(table.getColumn('kode_master_item')?.getFilterValue() as string) ?? ''}
-                        onChange={(event) => {
-                            table.getColumn('kode_master_item')?.setFilterValue(event.target.value);
-                            table.getColumn('nama_master_item')?.setFilterValue(event.target.value);
-                        }}
+                        value={globalFilter ?? ''}
+                        onChange={(event) => table.setGlobalFilter(event.target.value)}
                         className="max-w-sm"
                     />
                 </div>
