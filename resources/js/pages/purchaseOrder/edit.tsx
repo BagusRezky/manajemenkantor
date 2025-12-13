@@ -28,6 +28,8 @@ interface PurchaseOrderFormData {
     eta: string | Date;
     mata_uang: string;
     ppn: number;
+    ongkir: number;
+    dp: number;
     items: Record<string, any>[];
     [key: string]: any;
 }
@@ -52,6 +54,8 @@ export default function Edit({ purchaseOrder, purchaseRequests = [], suppliers =
         eta: purchaseOrder.eta || new Date().toISOString().split('T')[0],
         mata_uang: purchaseOrder.mata_uang || 'IDR',
         ppn: purchaseOrder.ppn || 0,
+        ongkir: purchaseOrder.ongkir || 0,
+        dp: purchaseOrder.dp || 0,
         items: [],
     });
 
@@ -62,29 +66,37 @@ export default function Edit({ purchaseOrder, purchaseRequests = [], suppliers =
 
     // Initialize data on component mount
     useEffect(() => {
-        console.log('purchaseOrder:', purchaseOrder);
+        console.log('purchaseOrder raw data:', purchaseOrder);
 
         // Format items for the table
         if (purchaseOrder.items && purchaseOrder.items.length > 0) {
             const formattedItems = purchaseOrder.items.map((item: any) => ({
                 ...item,
+                id: item.id, // Penting untuk update
                 id_purchase_order: item.id_purchase_order,
                 id_purchase_request_item: item.id_purchase_request_item,
                 id_master_item: item.id_master_item,
-                qty_po: item.qty_po,
+                qty_po: parseFloat(item.qty_po), // Pastikan number
                 id_satuan_po: item.id_satuan_po,
-                qty_after_conversion: item.qty_after_conversion || 0,
-                harga_satuan: item.harga_satuan || 0,
-                diskon_satuan: item.diskon_satuan || 0,
-                jumlah: item.jumlah || 0,
+                qty_after_conversion: parseFloat(item.qty_after_conversion) || 0,
+                harga_satuan: parseFloat(item.harga_satuan) || 0,
+                diskon_satuan: parseFloat(item.diskon_satuan) || 0,
+                jumlah: parseFloat(item.jumlah) || 0,
                 remark_item_po: item.remark_item_po || '',
-                // Pastikan data untuk komponen sudah lengkap
-                master_item: item.masterItem,
-                satuan: item.satuan,
-                purchaseRequestItem: item.purchaseRequestItem,
+
+                // --- PERBAIKAN DISINI ---
+                // Ambil dari snake_case (bawaan Laravel) jika camelCase tidak ada
+                master_item: item.master_item || item.masterItem,
+                satuan: item.satuan || item.unit, // Kadang relasi dinamakan unit atau satuan
+
+                // Mapping purchaseRequestItem sangat krusial untuk Error no 2
+                // Biasanya relasi di Laravel bernama purchase_request_item
+                purchaseRequestItem: item.purchase_request_item || item.purchaseRequestItem,
+                // Kita tambahkan juga key purchase_request_items agar kompatibel dengan tipe data Create jika perlu
+                purchase_request_items: item.purchase_request_item || item.purchaseRequestItem,
             }));
 
-            console.log('Formatted items:', formattedItems);
+            console.log('Formatted items (Fixed):', formattedItems);
             setPoItems(formattedItems);
             setData('items', formattedItems);
         }
@@ -128,6 +140,8 @@ export default function Edit({ purchaseOrder, purchaseRequests = [], suppliers =
             eta: data.eta,
             mata_uang: data.mata_uang,
             ppn: data.ppn,
+            ongkir: data.ongkir,
+            dp: data.dp,
             items: formattedItems,
         };
 
