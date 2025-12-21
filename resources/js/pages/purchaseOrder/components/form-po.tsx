@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -60,16 +59,11 @@ export default function FormPO({ data, setData, errors, purchaseRequests, suppli
 
                     <div className="space-y-2">
                         <Label htmlFor="tanggal_po">PO Date</Label>
-                        <DatePicker
-                            value={data.tanggal_po}
-                            onChange={(date) => {
-                                if (date) {
-                                    const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0];
-                                    setData('tanggal_po', formattedDate);
-                                } else {
-                                    setData('tanggal_po', '');
-                                }
-                            }}
+                        <Input
+                            id="tanggal_po"
+                            type="date"
+                            value={data.tanggal_po || ''}
+                            onChange={(e) => setData('tanggal_po', e.target.value)}
                         />
                         {errors.tanggal_po && <p className="text-sm text-red-500">{errors.tanggal_po}</p>}
                     </div>
@@ -99,16 +93,11 @@ export default function FormPO({ data, setData, errors, purchaseRequests, suppli
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="eta">ETA</Label>
-                        <DatePicker
-                            value={data.eta}
-                            onChange={(date) => {
-                                if (date) {
-                                    const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0];
-                                    setData('eta', formattedDate);
-                                } else {
-                                    setData('eta', '');
-                                }
-                            }}
+                        <Input
+                            id="eta"
+                            type="date"
+                            value={data.eta ? (typeof data.eta === 'string' ? data.eta : data.eta.toISOString().split('T')[0]) : ''}
+                            onChange={(e) => setData('eta', e.target.value)}
                         />
                         {errors.eta && <p className="text-sm text-red-500">{errors.eta}</p>}
                     </div>

@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DatePicker } from '@/components/date-picker';
+
 import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -129,9 +129,12 @@ export default function CreatePrinting({ kartuInstruksiKerjas, mesins, operators
                                 {/* Tanggal Entri */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_entri">Tanggal Entri *</Label>
-                                    <DatePicker
+                                    <Input
+                                        id="tanggal_entri"
+                                        type="date"
                                         value={data.tanggal_entri}
-                                        onChange={(date) => setData('tanggal_entri', date.toISOString().split('T')[0])}
+                                        onChange={(e) => setData('tanggal_entri', e.target.value)}
+                                        className={errors.tanggal_entri ? 'border-red-500' : ''}
                                     />
                                     {errors.tanggal_entri && <p className="text-sm text-red-500">{errors.tanggal_entri}</p>}
                                 </div>

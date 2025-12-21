@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -108,18 +107,11 @@ export default function CreateBlokir({ kartuInstruksiKerjas }: Props) {
                                 {/* Tanggal Blokir */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tgl_blokir">Tanggal Blokir *</Label>
-                                    <DatePicker
+                                    <Input
+                                        type="date"
+                                        id="tgl_blokir"
                                         value={data.tgl_blokir}
-                                        onChange={(date) => {
-                                            if (date) {
-                                                const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                    .toISOString()
-                                                    .split('T')[0];
-                                                setData('tgl_blokir', formattedDate);
-                                            } else {
-                                                setData('tgl_blokir', '');
-                                            }
-                                        }}
+                                        onChange={(e) => setData('tgl_blokir', e.target.value)}
                                     />
                                     {errors.tgl_blokir && <p className="text-sm text-red-500">{errors.tgl_blokir}</p>}
                                 </div>

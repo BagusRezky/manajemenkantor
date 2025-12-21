@@ -1,4 +1,3 @@
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -228,10 +227,11 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
                                             <Label htmlFor="tgl_surat_jalan">
                                                 Tanggal Surat Jalan <span className="text-red-500">*</span>
                                             </Label>
-                                            <DatePicker
+                                            <Input
                                                 id="tgl_surat_jalan"
+                                                type="date"
                                                 value={data.tgl_surat_jalan}
-                                                onChange={(e) => setData('tgl_surat_jalan', e.target.value ? e.target.value : '')}
+                                                onChange={(e) => setData('tgl_surat_jalan', e.target.value)}
                                                 className={errors.tgl_surat_jalan ? 'border-red-500' : ''}
                                             />
                                             {errors.tgl_surat_jalan && <p className="text-sm text-red-600">{errors.tgl_surat_jalan}</p>}

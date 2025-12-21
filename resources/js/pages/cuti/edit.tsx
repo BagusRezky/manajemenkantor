@@ -1,5 +1,5 @@
 import { Head, useForm } from '@inertiajs/react'; // Import 'router'
-import { DatePicker } from '../../components/date-picker';
+
 import { SearchableSelect } from '../../components/search-select';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
@@ -83,18 +83,11 @@ export default function EditCuti({ cuti, karyawans }: Props) {
                                 {/* Tanggal Cuti */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_cuti">Tanggal Cuti *</Label>
-                                    <DatePicker
+                                    <Input
+                                        type="date"
+                                        id="tanggal_cuti"
                                         value={data.tanggal_cuti}
-                                        onChange={(date) => {
-                                            if (date) {
-                                                const formatted = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                    .toISOString()
-                                                    .split('T')[0];
-                                                setData('tanggal_cuti', formatted);
-                                            } else {
-                                                setData('tanggal_cuti', '');
-                                            }
-                                        }}
+                                        onChange={(e) => setData('tanggal_cuti', e.target.value)}
                                     />
                                     {errors.tanggal_cuti && <p className="text-sm text-red-500">{errors.tanggal_cuti}</p>}
                                 </div>

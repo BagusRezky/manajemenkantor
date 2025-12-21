@@ -1,4 +1,3 @@
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -51,12 +50,11 @@ export default function EditFormPO({ data, setData, errors, purchaseRequests, su
 
                     <div className="space-y-2">
                         <Label htmlFor="tanggal_po">PO Date</Label>
-                        <DatePicker
+                        <Input
                             id="tanggal_po"
-                            value={data.tanggal_po}
-                            onChange={(date) => {
-                                setData('tanggal_po', date?.target?.value || '');
-                            }}
+                            type="date"
+                            value={data.tanggal_po || ''}
+                            onChange={(e) => setData('tanggal_po', e.target.value)}
                         />
                         {errors.tanggal_po && <p className="text-sm text-red-500">{errors.tanggal_po}</p>}
                     </div>
@@ -86,12 +84,11 @@ export default function EditFormPO({ data, setData, errors, purchaseRequests, su
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
                         <Label htmlFor="eta">ETA</Label>
-                        <DatePicker
+                        <Input
                             id="eta"
-                            value={data.eta}
-                            onChange={(date) => {
-                                setData('eta', date?.target?.value || '');
-                            }}
+                            type="date"
+                            value={data.eta ? (typeof data.eta === 'string' ? data.eta : data.eta.toISOString().split('T')[0]) : ''}
+                            onChange={(e) => setData('eta', e.target.value)}
                         />
                         {errors.eta && <p className="text-sm text-red-500">{errors.eta}</p>}
                     </div>

@@ -2,15 +2,14 @@
 
 import { Textarea } from '@/components/ui/textarea';
 import { Head, useForm } from '@inertiajs/react';
-import { DatePicker } from '../../components/date-picker';
 import { SearchableSelect } from '../../components/search-select';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
-import { Input } from '../../components/ui/input';
 import { Label } from '../../components/ui/label';
 import AppLayout from '../../layouts/app-layout';
 import { BreadcrumbItem } from '../../types';
 import { Karyawan } from '../../types/karyawan';
+import { Input } from '@/components/ui/input';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -83,18 +82,11 @@ export default function CreateBonusKaryawan({ karyawans }: Props) {
                                 {/* Tanggal Bonus */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_bonus">Tanggal Bonus *</Label>
-                                    <DatePicker
+                                    <Input
+                                        type="date"
+                                        id="tanggal_bonus"
                                         value={data.tanggal_bonus}
-                                        onChange={(date) => {
-                                            if (date) {
-                                                const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                    .toISOString()
-                                                    .split('T')[0];
-                                                setData('tanggal_bonus', formattedDate);
-                                            } else {
-                                                setData('tanggal_bonus', '');
-                                            }
-                                        }}
+                                        onChange={(e) => setData('tanggal_bonus', e.target.value)}
                                     />
                                     {errors.tanggal_bonus && <p className="text-sm text-red-500">{errors.tanggal_bonus}</p>}
                                 </div>

@@ -1,5 +1,4 @@
 import { Head, useForm } from '@inertiajs/react';
-import { DatePicker } from '../../components/date-picker';
 import { SearchableSelect } from '../../components/search-select';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
@@ -65,16 +64,12 @@ export default function EditIzin({ izin, karyawans }: Props) {
                                 {/* Tanggal Izin */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_izin">Tanggal Izin *</Label>
-                                    <DatePicker
+                                    <Input
+                                        id="tanggal_izin"
+                                        type="date"
                                         value={data.tanggal_izin}
-                                        onChange={(date) => {
-                                            if (date) {
-                                                const formatted = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                    .toISOString()
-                                                    .split('T')[0];
-                                                setData('tanggal_izin', formatted);
-                                            } else setData('tanggal_izin', '');
-                                        }}
+                                        onChange={(e) => setData('tanggal_izin', e.target.value)}
+                                        className={errors.tanggal_izin ? 'border-red-500' : ''}
                                     />
                                     {errors.tanggal_izin && <p className="text-sm text-red-500">{errors.tanggal_izin}</p>}
                                 </div>

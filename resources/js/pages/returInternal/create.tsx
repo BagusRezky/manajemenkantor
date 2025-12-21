@@ -1,4 +1,3 @@
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -267,18 +266,12 @@ export default function Create({ lastId, combinedImr, imrItems = {} }: CreatePro
 
                                         <div className="space-y-2">
                                             <Label htmlFor="tgl_retur_internal">Tanggal Retur</Label>
-                                            <DatePicker
+                                            <Input
+                                                id="tgl_retur_internal"
+                                                name="tgl_retur_internal"
+                                                type="date"
                                                 value={data.tgl_retur_internal}
-                                                onChange={(date) => {
-                                                    if (date) {
-                                                        const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                            .toISOString()
-                                                            .split('T')[0];
-                                                        setData('tgl_retur_internal', formattedDate);
-                                                    } else {
-                                                        setData('tgl_retur_internal', '');
-                                                    }
-                                                }}
+                                                onChange={handleChange}
                                             />
                                             {errors.tgl_retur_internal && <p className="text-sm text-red-500">{errors.tgl_retur_internal}</p>}
                                         </div>

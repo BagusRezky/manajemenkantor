@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -130,18 +129,12 @@ export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings,
                                 {/* Tanggal Entri */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_entri">Tanggal Entri *</Label>
-                                    <DatePicker
+                                    <Input
+                                        id="tanggal_entri"
+                                        type="date"
                                         value={data.tanggal_entri}
-                                        onChange={(date) => {
-                                            if (date) {
-                                                const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                    .toISOString()
-                                                    .split('T')[0];
-                                                setData('tanggal_entri', formattedDate);
-                                            } else {
-                                                setData('tanggal_entri', '');
-                                            }
-                                        }}
+                                        onChange={(e) => setData('tanggal_entri', e.target.value)}
+                                        className={errors.tanggal_entri ? 'border-red-500' : ''}
                                     />
                                     {errors.tanggal_entri && <p className="text-sm text-red-500">{errors.tanggal_entri}</p>}
                                 </div>
@@ -154,10 +147,12 @@ export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings,
                                             <SelectValue placeholder="Pilih Proses Die Making" />
                                         </SelectTrigger>
                                         <SelectContent>
+                                            <SelectItem value="Uv Varnish">Uv Varnish</SelectItem>
                                             <SelectItem value="Hot Print">Hot Print</SelectItem>
                                             <SelectItem value="Uv Spot">Uv Spot</SelectItem>
                                             <SelectItem value="Uv Holo">Uv Holo</SelectItem>
                                             <SelectItem value="Embos">Embos</SelectItem>
+                                            <SelectItem value="Cutting">Cutting</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     {errors.proses_diemaking && <div className="text-sm text-red-600">{errors.proses_diemaking}</div>}
@@ -243,12 +238,6 @@ export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings,
                                     </SelectContent>
                                 </Select>
                                 {errors.keterangan_diemaking && <div className="text-sm text-red-600">{errors.keterangan_diemaking}</div>}
-                            </div>
-
-                            {/* Debug Info */}
-                            <div className="rounded bg-gray-100 p-4 text-sm">
-                                <strong>Debug Info:</strong>
-                                <pre>{JSON.stringify(data, null, 2)}</pre>
                             </div>
 
                             {/* Actions */}
