@@ -10,14 +10,15 @@ import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 
 import { KartuInstruksiKerja, KartuInstruksiKerjaBom } from '@/types/kartuInstruksiKerja';
-import { formatToInteger } from '@/utils/formatter/decimaltoint';
+
 import { Download, FileText, MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
+import { formatToInteger } from '@/utils/formatter/decimaltoint';
 
 export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, download = false): void => {
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
-
+    const topOffset = 10;
     const formatDate = (dateString?: string): string => {
         if (!dateString) return '-';
         const date = new Date(dateString);
@@ -27,214 +28,164 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
             year: 'numeric',
         });
     };
+    const logo = new Image();
+    logo.src = '/images/logo-kantor.png';
+    doc.addImage(logo, 'PNG', 14, 17 + topOffset, 17, 17);
 
-
-    // Header Border Box
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
-    doc.rect(10, 10, pageWidth - 20, 30);
+    doc.rect(10, 10 + topOffset, pageWidth - 20, 30);
 
-    // Company Info (Left)
     doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('CV. Indigama Khatulistiwa', 15, 18);
+    doc.text('CV. Indigama Khatulistiwa', 34, 18 + topOffset);
+
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
-    doc.text('Jawa Timur 67155', 15, 28);
-    doc.text('Email: indigama.khatulistiwa01@gmail.com', 15, 33);
-    doc.text('Telp: 081703101012', 15, 38);
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 34, 23 + topOffset);
+    doc.text('Pasuruan, Jawa Timur 67155', 34, 28 + topOffset);
+    doc.text('Email: indigama.khatulistiwa01@gmail.com', 34, 33 + topOffset);
+    doc.text('Telp: 081703101012', 34, 38 + topOffset);
 
-    // Title (Right)
     doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('Surat Perintah Kerja', pageWidth - 15, 18, { align: 'right' });
-
-    // Nomor dan Tanggal
-    const kikNumber = kartuInstruksiKerja?.no_kartu_instruksi_kerja || '-';
-    const currentDate = new Date().toLocaleDateString('id-ID', {
-        day: '2-digit',
-        month: '2-digit',
-        year: 'numeric',
+    doc.text('SURAT PERINTAH KERJA', pageWidth - 15, 18 + topOffset, {
+        align: 'right',
     });
+
+    const kikNumber = kartuInstruksiKerja?.no_kartu_instruksi_kerja || '-';
+    const currentDate = formatDate(new Date().toISOString());
+
     doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.text(`${kikNumber}`, pageWidth - 15, 25, { align: 'right' });
-    doc.text(`Tanggal: ${currentDate}`, pageWidth - 15, 30, { align: 'right' });
+    doc.text(kikNumber, pageWidth - 15, 25 + topOffset, { align: 'right' });
+    doc.text(`Tanggal: ${currentDate}`, pageWidth - 15, 30 + topOffset, {
+        align: 'right',
+    });
+    let y = 55 + topOffset;
 
-    let y = 50;
-
-    // Info Pesanan dan Pelanggan
     doc.setFontSize(11).setFont('helvetica', 'bold');
     doc.text('Informasi Pesanan', 15, y);
     doc.text('Informasi Pelanggan', pageWidth / 2 + 5, y);
     y += 6;
 
-    const info = [
-        {
-            label: 'No Sales Order',
-            value: kartuInstruksiKerja.sales_order?.no_bon_pesanan || '-',
-            rightLabel: 'Nama',
-            rightValue: kartuInstruksiKerja.sales_order?.customer_address?.nama_customer || '-',
-        },
-        {
-            label: 'No PO',
-            value: kartuInstruksiKerja.sales_order?.no_po_customer || '-',
-            rightLabel: '',
-            rightValue: '',
-        },
-        {
-            label: 'Tgl PO',
-            value: formatDate(kartuInstruksiKerja.sales_order?.eta_marketing),
-            rightLabel: 'Alamat',
-            rightValue: kartuInstruksiKerja.sales_order?.customer_address?.alamat_lengkap || '-',
-        },
-    ];
-
     doc.setFontSize(9).setFont('helvetica', 'normal');
-    info.forEach((row) => {
-        doc.text(`${row.label}`, 15, y);
-        doc.text(`: ${row.value}`, 50, y);
-        if (row.rightLabel) doc.text(`${row.rightLabel}`, pageWidth / 2 + 5, y);
-        if (row.rightLabel === 'Alamat') {
-            const maxWidth = 60;
-            const wrappedAddress = doc.splitTextToSize(`: ${row.rightValue}`, maxWidth);
 
-            doc.text(wrappedAddress, pageWidth / 2 + 30, y);
-            y += wrappedAddress.length * 9; // 5 = jarak antar baris
-        } else {
-            doc.text(`: ${row.rightValue}`, pageWidth / 2 + 30, y);
-        }
-        y += 6;
-    });
+    // No SO
+    doc.text('No Sales Order', 15, y);
+    doc.text(':', 50, y);
+    doc.text(kartuInstruksiKerja.sales_order?.no_bon_pesanan || '-', 55, y);
+
+    doc.text('Nama', pageWidth / 2 + 5, y);
+    doc.text(':', pageWidth / 2 + 28, y);
+    doc.text(kartuInstruksiKerja.sales_order?.customer_address?.nama_customer || '-', pageWidth / 2 + 32, y);
+    y += 6;
+
+    // No PO
+    doc.text('No PO', 15, y);
+    doc.text(':', 50, y);
+    doc.text(kartuInstruksiKerja.sales_order?.no_po_customer || '-', 55, y);
+    y += 6;
+
+    // Tgl PO + Alamat
+    doc.text('Tgl PO', 15, y);
+    doc.text(':', 50, y);
+    doc.text(formatDate(kartuInstruksiKerja.sales_order?.eta_marketing), 55, y);
+
+    doc.text('Alamat', pageWidth / 2 + 5, y);
+    doc.text(':', pageWidth / 2 + 28, y);
+
+    const alamat = kartuInstruksiKerja.sales_order?.customer_address?.alamat_lengkap || '-';
+    const alamatWrap = doc.splitTextToSize(alamat, 65);
+    doc.text(alamatWrap, pageWidth / 2 + 32, y);
+    y += alamatWrap.length * 4;
 
     y += 4;
     doc.line(10, y, pageWidth - 10, y);
-    y += 10;
+    y += 6;
 
-    // Detail Produksi
+    /* ================= DETAIL PRODUKSI ================= */
     doc.setFontSize(11).setFont('helvetica', 'bold');
     doc.text('Detail Produksi', 15, y);
     y += 6;
+
     doc.setFontSize(9).setFont('helvetica', 'normal');
 
-    const produksi = [
-        {
-            label: 'Produk',
-            value: kartuInstruksiKerja.sales_order?.finish_good_item?.nama_barang || '-',
-            rightLabel: 'Tgl Estimasi Selesai',
-            rightValue: formatDate(kartuInstruksiKerja?.tgl_estimasi_selesai),
-        },
-        {
-            label: 'Kode Produk',
-            value: kartuInstruksiKerja.sales_order?.finish_good_item?.kode_material_produk || '-',
-            rightLabel: 'Production Plan',
-            rightValue: kartuInstruksiKerja.production_plan || '-',
-        },
-        {
-            label: 'Jumlah Pesanan',
-            value: `${kartuInstruksiKerja.sales_order?.jumlah_pesanan != null ? new Intl.NumberFormat('id-ID').format(Number(kartuInstruksiKerja.sales_order.jumlah_pesanan)) : '-'} ${
-                kartuInstruksiKerja.sales_order?.finish_good_item?.unit?.nama_satuan || ''
-            }`,
-            rightLabel: '',
-            rightValue: '',
-        },
-    ];
+    // Produk (wrap ke bawah)
+    doc.text('Produk', 15, y);
+    doc.text(':', 50, y);
+    const produkText = kartuInstruksiKerja.sales_order?.finish_good_item?.nama_barang || '-';
+    const produkWrap = doc.splitTextToSize(produkText, 60);
+    doc.text(produkWrap, 55, y);
+    y += produkWrap.length * 4;
 
-    produksi.forEach((row) => {
-        doc.text(`${row.label}`, 15, y);
-        doc.text(`: ${row.value}`, 50, y);
-        if (row.rightLabel) doc.text(`${row.rightLabel}`, pageWidth / 2 + 5, y);
-        doc.text(`: ${row.rightValue}`, pageWidth / 2 + 50, y);
-        y += 6;
-    });
+    // Kode Produk
+    doc.text('Kode Produk', 15, y);
+    doc.text(':', 50, y);
+    doc.text(kartuInstruksiKerja.sales_order?.finish_good_item?.kode_material_produk || '-', 55, y);
+
+    doc.text('Tgl Estimasi Selesai', pageWidth / 2 + 5, y);
+    doc.text(':', pageWidth / 2 + 50, y);
+    doc.text(formatDate(kartuInstruksiKerja.tgl_estimasi_selesai), pageWidth / 2 + 55, y);
+    y += 6;
+
+    // Jumlah
+    doc.text('Jumlah Pesanan', 15, y);
+    doc.text(':', 50, y);
+    doc.text(
+        `${new Intl.NumberFormat('id-ID').format(Number(kartuInstruksiKerja.sales_order?.jumlah_pesanan || 0))} ${
+            kartuInstruksiKerja.sales_order?.finish_good_item?.unit?.nama_satuan || ''
+        }`,
+        55,
+        y,
+    );
+
+    doc.text('Production Plan', pageWidth / 2 + 5, y);
+    doc.text(':', pageWidth / 2 + 50, y);
+    doc.text(kartuInstruksiKerja.production_plan || '-', pageWidth / 2 + 55, y);
+    y += 6;
 
     y += 4;
     doc.line(10, y, pageWidth - 10, y);
-    y += 10;
+    y += 6;
 
-    // Bill of Materials
+    /* ================= BOM TABLE ================= */
     doc.setFontSize(11).setFont('helvetica', 'bold');
     doc.text('Bill of Materials', 15, y);
     y += 5;
 
-    const tableColumn = [
-        { header: 'No', dataKey: 'no' },
-        { header: 'Departemen', dataKey: 'departemen' },
-        { header: 'Kode Item', dataKey: 'kitem' },
-        { header: 'Nama Item', dataKey: 'nitem' },
-        { header: 'Qty', dataKey: 'qty' },
-        { header: 'Satuan', dataKey: 'satuan' },
-        { header: 'Waste', dataKey: 'waste' },
-        { header: 'Total Kebutuhan', dataKey: 'total_kebutuhan' },
-    ];
+    const boms = kartuInstruksiKerja.kartuInstruksiKerjaBoms || kartuInstruksiKerja.kartu_instruksi_kerja_boms || [];
 
-    // Fixed the table rows generation
-    let tableRows: any[] = [];
-
-    // Get BOMs data - try both camelCase and snake_case
-    const bomsData = kartuInstruksiKerja.kartuInstruksiKerjaBoms || kartuInstruksiKerja.kartu_instruksi_kerja_boms;
-
-    // Check if BOMs data exists and has data
-    if (bomsData && Array.isArray(bomsData)) {
-        console.log('Processing BOMs:', bomsData.length, 'items');
-
-        tableRows = bomsData.map((bom, index) => {
-            console.log(`Processing BOM ${index + 1}:`, bom);
-
-            return {
-                no: (index + 1).toString(),
-                departemen: bom.bill_of_materials?.departemen?.nama_departemen || '-',
-                kitem: bom.bill_of_materials?.master_item?.kode_master_item || '-',
-                nitem: bom.bill_of_materials?.master_item?.nama_master_item || '-',
-                qty: bom.bill_of_materials?.qty || 0,
-                satuan: bom.bill_of_materials?.master_item?.unit?.nama_satuan || '-',
-                waste: formatToInteger(bom.waste || '0'),
-                total_kebutuhan: bom.total_kebutuhan || '0',
-            };
-        });
-    } else {
-        console.log('No BOMs data found or data is not an array');
-        // Add a row indicating no data
-        tableRows = [
-            {
-                no: '1',
-                departemen: 'No data available',
-                kitem: '-',
-                nitem: '-',
-                qty: 0,
-                satuan: '-',
-                waste: '0',
-                total_kebutuhan: '0',
-            },
-        ];
-    }
-
-    console.log('Final table rows:', tableRows);
+    const tableRows = boms.map((bom: any, index: number) => ({
+        no: index + 1,
+        departemen: bom.bill_of_materials?.departemen?.nama_departemen || '-',
+        kode: bom.bill_of_materials?.master_item?.kode_master_item || '-',
+        nama: bom.bill_of_materials?.master_item?.nama_master_item || '-',
+        qty: bom.bill_of_materials?.qty || 0,
+        satuan: bom.bill_of_materials?.master_item?.unit?.nama_satuan || '-',
+        waste: formatToInteger(bom.waste || 0),
+        total: bom.total_kebutuhan || 0,
+    }));
 
     autoTable(doc, {
-        columns: tableColumn,
-        body: tableRows,
         startY: y,
+        head: [['No', 'Departemen', 'Kode Item', 'Nama Item', 'Qty', 'Satuan', 'Waste', 'Total']],
+        body: tableRows.map((r: any) => [r.no, r.departemen, r.kode, r.nama, r.qty, r.satuan, r.waste, r.total]),
         styles: {
             fontSize: 8,
+            lineWidth: 0.5,
+            lineColor: [0, 0, 0],
         },
         headStyles: {
-            fillColor: [240, 240, 240],
+            fillColor: [230, 240, 255],
             textColor: [0, 0, 0],
-            lineColor: [0, 0, 0],
-            lineWidth: 0.5,
-        },
-        bodyStyles: {
-            fillColor: [255, 255, 255],
-            textColor: [0, 0, 0],
-            lineColor: [0, 0, 0],
-            lineWidth: 0.5,
         },
     });
 
+    /* ================= OUTPUT ================= */
     if (download) {
-        doc.save(`${kikNumber}.pdf`);
+        doc.save(`SPK_${kikNumber}.pdf`);
     } else {
         window.open(doc.output('bloburl'), '_blank');
     }
 };
+
 
 const handleDelete = (item: string) => {
     if (confirm('Apakah Anda yakin ingin menghapus kartu instruksi kerja ini?')) {
