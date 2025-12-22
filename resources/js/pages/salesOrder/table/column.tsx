@@ -12,80 +12,68 @@ import { Download, FileText, MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
 
 const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void => {
-    // Inisialisasi dokumen PDF
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
-
-    // Background biru muda untuk header SALES ORDER
+    const topOffset = 10;
+    const logo = new Image();
+    logo.src = '/images/logo-kantor.png';
+    doc.addImage(logo, 'PNG', 14, 17 + topOffset, 17, 17);
     doc.setFillColor(230, 240, 255);
-    doc.roundedRect(pageWidth - 70, 12, 57, 20, 2, 2, 'F');
-
+    doc.roundedRect(pageWidth - 70, 12 + topOffset, 57, 20, 2, 2, 'F');
     doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('SALES ORDER', pageWidth - 15, 18, { align: 'right' });
+    doc.text('SALES ORDER', pageWidth - 15, 18 + topOffset, {
+        align: 'right',
+    });
 
-    doc.setFont('helvetica', 'bold');
-    doc.text(salesOrder.no_bon_pesanan || '', pageWidth - 15, 25, { align: 'right' });
-
-    // Tambahkan header dengan border
+    doc.text(salesOrder.no_bon_pesanan || '', pageWidth - 15, 25 + topOffset, { align: 'right' });
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
-    doc.rect(10, 10, pageWidth - 20, 30);
-
-    // Company Info
+    doc.rect(10, 10 + topOffset, pageWidth - 20, 30);
     doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('CV. Indigama Khatulistiwa', 15, 18);
+    doc.text('CV. Indigama Khatulistiwa', 34, 18 + topOffset);
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
-    doc.text('Jawa Timur 67155', 15, 28);
-    doc.text('Email: indigama.khatulistiwa01@gmail.com', 15, 33);
-    doc.text('Telp: 081703101012', 15, 38);
-
-    // Informasi Sales Order
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 34, 23 + topOffset);
+    doc.text('Pasuruan, Jawa Timur 67155', 34, 28 + topOffset);
+    doc.text('Email: indigama.khatulistiwa01@gmail.com', 34, 33 + topOffset);
+    doc.text('Telp: 081703101012', 34, 38 + topOffset);
     doc.setLineWidth(0.5);
-    doc.rect(10, 45, pageWidth - 20, 50);
-
+    doc.rect(10, 45 + topOffset, pageWidth - 20, 50);
     doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.text('Customer', 15, 52);
-    doc.text(':', 65, 52);
+    doc.text('Customer', 15, 52 + topOffset);
+    doc.text(':', 65, 52 + topOffset);
     doc.setFont('helvetica', 'normal');
-    doc.text(salesOrder.customer_address?.nama_customer || '', 70, 52);
+    doc.text(salesOrder.customer_address?.nama_customer || '', 70, 52 + topOffset);
+    doc.setFont('helvetica', 'bold');
+    doc.text('No. PO Customer', 15, 59 + topOffset);
+    doc.text(':', 65, 59 + topOffset);
+    doc.setFont('helvetica', 'normal');
+    doc.text(salesOrder.no_po_customer || '', 70, 59 + topOffset);
+    doc.setFont('helvetica', 'bold');
+    doc.text('Barang', 15, 66 + topOffset);
+    doc.text(':', 65, 66 + topOffset);
+    doc.setFont('helvetica', 'normal');
+    doc.text(salesOrder.finish_good_item?.nama_barang || '', 70, 66 + topOffset);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('No. PO Customer', 15, 59);
-    doc.text(':', 65, 59);
+    doc.text('Mata Uang', 15, 73 + topOffset);
+    doc.text(':', 65, 73 + topOffset);
     doc.setFont('helvetica', 'normal');
-    doc.text(salesOrder.no_po_customer || '', 70, 59);
+    doc.text(salesOrder.mata_uang || '', 70, 73 + topOffset);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('Barang', 15, 66);
-    doc.text(':', 65, 66);
+    doc.text('Syarat Pembayaran', 15, 80 + topOffset);
+    doc.text(':', 65, 80 + topOffset);
     doc.setFont('helvetica', 'normal');
-    doc.text(salesOrder.finish_good_item?.nama_barang || '', 70, 66);
+    doc.text(salesOrder.syarat_pembayaran || '', 70, 80 + topOffset);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('Mata Uang', 15, 73);
-    doc.text(':', 65, 73);
+    doc.text('Tanggal PO', 15, 87 + topOffset);
+    doc.text(':', 65, 87 + topOffset);
     doc.setFont('helvetica', 'normal');
-    doc.text(salesOrder.mata_uang || '', 70, 73);
-
-    doc.setFont('helvetica', 'bold');
-    doc.text('Syarat Pembayaran', 15, 80);
-    doc.text(':', 65, 80);
-    doc.setFont('helvetica', 'normal');
-    doc.text(salesOrder.syarat_pembayaran || '', 70, 80);
-
-    doc.setFont('helvetica', 'bold');
-    doc.text('Tanggal PO', 15, 87);
-    doc.text(':', 65, 87);
-    doc.setFont('helvetica', 'normal');
-    doc.text(salesOrder.eta_marketing || '', 70, 87);
-
-    // Header tabel "DETAIL PESANAN"
+    doc.text(salesOrder.eta_marketing || '', 70, 87 + topOffset);
     doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.rect(10, 105, pageWidth - 20, 10);
-    doc.text('BILL OF MATERIALS', pageWidth / 2, 111, { align: 'center' });
-
-    // Isi tabel detail menggunakan Bill of Materials
+    doc.rect(10, 105 + topOffset, pageWidth - 20, 10);
+    doc.text('BILL OF MATERIALS', pageWidth / 2, 111 + topOffset, { align: 'center' });
     const tableColumns = [
         { header: 'No', dataKey: 'no' },
         { header: 'Material', dataKey: 'material' },
@@ -96,11 +84,10 @@ const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void =
         { header: 'Keterangan', dataKey: 'keterangan' },
     ];
 
-    // Generate table rows dari Bill of Materials
     const tableRows =
         salesOrder.finish_good_item?.bill_of_materials?.map((bom, index) => ({
             no: (index + 1).toString(),
-            material: bom.master_item ? `${bom.master_item.nama_master_item}` : '-',
+            material: bom.master_item?.nama_master_item || '-',
             departemen: bom.departemen?.nama_departemen || '-',
             qty: bom.qty || '0',
             satuan: bom.master_item?.unit?.nama_satuan || '-',
@@ -111,11 +98,19 @@ const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void =
     autoTable(doc, {
         columns: tableColumns,
         body: tableRows,
-        startY: 115,
+        startY: 115 + topOffset,
         margin: { left: 10, right: 10 },
-        styles: { fontSize: 9, cellPadding: 2 },
-        headStyles: { fillColor: [40, 88, 247], textColor: [0, 0, 0], fontStyle: 'bold', lineColor: [0, 0, 0], lineWidth: 0.5 },
-        bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.5 },
+        styles: {
+            fontSize: 9,
+            cellPadding: 2,
+            lineColor: [0, 0, 0],
+            lineWidth: 0.5,
+        },
+        headStyles: {
+            fillColor: [40, 88, 247],
+            textColor: [0, 0, 0],
+            fontStyle: 'bold',
+        },
         columnStyles: {
             no: { cellWidth: 10, halign: 'center' },
             material: { cellWidth: 50 },
@@ -126,30 +121,24 @@ const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void =
             keterangan: { cellWidth: 50 },
         },
     });
-
-    // Ambil posisi Y setelah tabel
     const tableEndY = (doc as any).lastAutoTable.finalY;
+    const currentY = tableEndY + 30;
 
-    // // Informasi tambahan
-    let currentY = tableEndY + 15;
-
-    // Tanda tangan
-    currentY += 20;
     doc.setFontSize(10).setFont('helvetica', 'normal');
     doc.text('Sales,', 50, currentY, { align: 'center' });
     doc.text('Customer,', pageWidth - 50, currentY, { align: 'center' });
 
-    // Tempat tanda tangan
-    doc.text('( ..................................... )', 50, currentY + 30, { align: 'center' });
+    doc.text('( ..................................... )', 50, currentY + 30, {
+        align: 'center',
+    });
     doc.text('( ..................................... )', pageWidth - 50, currentY + 30, { align: 'center' });
-
-    // Output PDF
     if (download) {
         doc.save(`SO_${salesOrder.no_bon_pesanan}.pdf`);
     } else {
         window.open(doc.output('bloburl'), '_blank');
     }
 };
+
 
 const handleDelete = (item: string) => {
     router.delete(`/salesOrders/${item}`, {
