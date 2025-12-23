@@ -236,11 +236,6 @@ export default function CreatePrinting({ kartuInstruksiKerjas, mesins, operators
                                 {errors.keterangan_printing && <div className="text-sm text-red-600">{errors.keterangan_printing}</div>}
                             </div>
 
-                            {/* Debug Info */}
-                            <div className="rounded bg-gray-100 p-4 text-sm">
-                                <strong>Debug Info:</strong>
-                                <pre>{JSON.stringify(data, null, 2)}</pre>
-                            </div>
 
                             {/* Actions */}
                             <div className="flex items-center gap-4">
