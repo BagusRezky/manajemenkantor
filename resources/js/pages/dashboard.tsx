@@ -1,33 +1,72 @@
-import { PlaceholderPattern } from '@/components/ui/placeholder-pattern';
+/* eslint-disable @typescript-eslint/no-explicit-any */
+// resources/js/pages/dashboard.tsx
+
+import OrderChart from '@/components/dashboard/order-chart';
+import StatCard from '@/components/dashboard/stat-card';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { type BreadcrumbItem } from '@/types';
-import { Head } from '@inertiajs/react';
+import { Head, router } from '@inertiajs/react';
+import { ShoppingBag, Truck } from 'lucide-react';
 
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Dashboard',
-        href: '/dashboard',
-    },
-];
+interface DashboardProps {
+    totalOrderValue: number;
+    totalKirimValue: number;
+    chartData: any[];
+    selectedYear: number;
+}
 
-export default function Dashboard() {
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard', href: '/dashboard' }];
+
+export default function Dashboard({ totalOrderValue, totalKirimValue, chartData, selectedYear }: DashboardProps) {
+    const handleYearChange = (value: string) => {
+        router.get('/dashboard', { year: value }, { preserveState: true });
+    };
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
-            <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
-                <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+
+            <div className="flex flex-col gap-8 p-6">
+                <div className="flex items-center justify-between">
+                    <div>
+                        <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">Dashboard</h2>
+
                     </div>
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
-                    <div className="border-sidebar-border/70 dark:border-sidebar-border relative aspect-video overflow-hidden rounded-xl border">
-                        <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
-                    </div>
+
+                    <Select onValueChange={handleYearChange} defaultValue={selectedYear.toString()}>
+                        <SelectTrigger className="w-[140px]">
+                            <SelectValue placeholder="Tahun" />
+                        </SelectTrigger>
+                        <SelectContent>
+                            {[2024, 2025, 2026].map((y) => (
+                                <SelectItem key={y} value={y.toString()}>
+                                    {y}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
                 </div>
-                <div className="border-sidebar-border/70 dark:border-sidebar-border relative min-h-[100vh] flex-1 overflow-hidden rounded-xl border md:min-h-min">
-                    <PlaceholderPattern className="absolute inset-0 size-full stroke-neutral-900/20 dark:stroke-neutral-100/20" />
+
+                {/* Stat Cards - Berdampingan */}
+                <div className="grid gap-4 md:grid-cols-2">
+                    <StatCard
+                        title="Jumlah Total Order"
+                        value={totalOrderValue}
+                        icon={<ShoppingBag className="h-4 w-4" />}
+                        description="Estimasi total dari pesanan masuk"
+                    />
+                    <StatCard
+                        title="Total Kirim"
+                        value={totalKirimValue}
+                        icon={<Truck className="h-4 w-4" />}
+                        description="Total invoice yang terbit"
+                    />
+                </div>
+
+                {/* Grafik Utama */}
+                <div className="w-full">
+                    <OrderChart data={chartData} />
                 </div>
             </div>
         </AppLayout>

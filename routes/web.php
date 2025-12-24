@@ -48,6 +48,7 @@ use App\Http\Controllers\PotonganTunjanganController;
 use App\Http\Controllers\PengajuanPinjamanController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\GajiController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -62,9 +63,7 @@ Route::get('/approval-notice', function () {
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Rute-rute yang sudah ada
     Route::get('/customerAddresses', [CustomerAddressController::class, 'index'])->name('customerAddresses.index')->middleware('permission:customerAddresses.index');
