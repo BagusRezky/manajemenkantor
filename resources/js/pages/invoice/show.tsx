@@ -196,6 +196,10 @@ export default function ShowInvoice({ invoice }: Props) {
                                         <span className="font-semibold">{ppnRate}%</span>
                                     </p>
                                 </div>
+                                <div>
+                                    <label className="text-sm font-medium text-gray-500">Uang Muka</label>
+                                    <p className="mt-1 text-sm text-gray-900">{formatCurrency(uangMuka)}</p>
+                                </div>
                             </div>
                         </CardContent>
                     </Card>

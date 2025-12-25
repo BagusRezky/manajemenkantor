@@ -15,9 +15,6 @@ import { toast } from 'sonner';
 // Function untuk generate label PDF
 const generateLabelsPdf = async (packaging: Packaging, download = false): Promise<void> => {
     try {
-        // PASTIKAN packaging.id dikirim dengan benar
-        console.log('Packaging ID:', packaging.id); // Debug log
-        console.log('KIK ID:', packaging.id_kartu_instruksi_kerja); // Debug log
 
         // Gunakan route parameter (bukan query parameter)
         const response = await fetch(`/packagings/label-start-number/${packaging.id_kartu_instruksi_kerja}/${packaging.id}`);
