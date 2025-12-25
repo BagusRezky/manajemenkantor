@@ -108,13 +108,18 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
     doc.rect(10, 110, pageWidth - 20, 10);
     doc.text('DATA BARANG', pageWidth / 2, 116, { align: 'center' });
 
+    // 1. Hitung Total Box dari data packaging
+    const packagings = suratJalan.kartu_instruksi_kerja?.packagings || [];
+    const totalBox = packagings.reduce((acc, pkg) => {
+        return acc + (Number(pkg.jumlah_satuan_penuh) || 0) + (Number(pkg.jumlah_satuan_sisa) || 0);
+    }, 0);
     // Isi tabel barang
     const finishGoodItem = suratJalan.kartu_instruksi_kerja?.sales_order?.finish_good_item;
 
     const tableColumns = [
         { header: 'No', dataKey: 'no' },
         { header: 'Nama Barang', dataKey: 'nama_barang' },
-        { header: 'Deskripsi', dataKey: 'deskripsi' },
+        { header: 'Box', dataKey: 'box' },
         { header: 'Jumlah', dataKey: 'jumlah' },
         { header: 'Keterangan', dataKey: 'keterangan' },
     ];
@@ -123,7 +128,7 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
         {
             no: '1',
             nama_barang: finishGoodItem?.nama_barang || '-',
-            deskripsi: finishGoodItem?.deskripsi || '-',
+            box: totalBox > 0 ? `${totalBox} BOX` : '-',
             jumlah: suratJalan.qty_pengiriman || '0',
             keterangan: '-',
         },
