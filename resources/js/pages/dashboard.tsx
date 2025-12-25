@@ -31,7 +31,6 @@ export default function Dashboard({ totalOrderValue, totalKirimValue, chartData,
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">Dashboard</h2>
-
                     </div>
 
                     <Select onValueChange={handleYearChange} defaultValue={selectedYear.toString()}>
@@ -48,17 +47,18 @@ export default function Dashboard({ totalOrderValue, totalKirimValue, chartData,
                     </Select>
                 </div>
 
-                {/* Stat Cards - Berdampingan */}
                 <div className="grid gap-4 md:grid-cols-2">
                     <StatCard
                         title="Jumlah Total Order"
                         value={totalOrderValue}
+                        isCurrency={false} // <--- RP akan hilang, hanya angka dengan pemisah ribuan
                         icon={<ShoppingBag className="h-4 w-4" />}
                         description="Estimasi total dari pesanan masuk"
                     />
                     <StatCard
                         title="Total Kirim"
                         value={totalKirimValue}
+                        // isCurrency tidak perlu ditulis karena defaultnya true
                         icon={<Truck className="h-4 w-4" />}
                         description="Total invoice yang terbit"
                     />

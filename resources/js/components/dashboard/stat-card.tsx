@@ -6,14 +6,24 @@ interface StatCardProps {
     value: number;
     icon: ReactNode;
     description?: string;
+    isCurrency?: boolean; // Props baru untuk kontrol format
 }
 
-export default function StatCard({ title, value, icon, description }: StatCardProps) {
-    const formatted = new Intl.NumberFormat('id-ID', {
-        style: 'currency',
-        currency: 'IDR',
-        maximumFractionDigits: 0,
-    }).format(value);
+export default function StatCard({
+    title,
+    value,
+    icon,
+    description,
+    isCurrency = true, // Default tetap pakai format mata uang
+}: StatCardProps) {
+    // Logika pemformatan
+    const formatted = isCurrency
+        ? new Intl.NumberFormat('id-ID', {
+              style: 'currency',
+              currency: 'IDR',
+              maximumFractionDigits: 0,
+          }).format(value)
+        : new Intl.NumberFormat('id-ID').format(value); // Hanya format ribuan (1.000)
 
     return (
         <Card>
