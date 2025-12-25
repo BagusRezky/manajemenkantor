@@ -27,15 +27,19 @@ export default function Dashboard({ totalOrderValue, totalKirimValue, chartData,
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Dashboard" />
 
-            <div className="flex flex-col gap-8 p-6">
+            {/* Tambahkan bg-slate-50/50 untuk memberi tekstur pada background */}
+            <div className="min-h-[calc(100vh-64px)] space-y-6 bg-slate-50/50 p-6 dark:bg-neutral-950">
                 <div className="flex items-center justify-between">
                     <div>
-                        <h2 className="text-3xl font-bold tracking-tight text-neutral-900 dark:text-neutral-100">Dashboard</h2>
+                        <h2 className="text-2xl font-black tracking-tight text-slate-800 dark:text-neutral-100">
+                            Business Overview <span className="text-indigo-600">.</span>
+                        </h2>
+                        <p className="text-muted-foreground text-xs font-medium">Monitoring performa tahun {selectedYear}</p>
                     </div>
 
                     <Select onValueChange={handleYearChange} defaultValue={selectedYear.toString()}>
-                        <SelectTrigger className="w-[140px]">
-                            <SelectValue placeholder="Tahun" />
+                        <SelectTrigger className="w-[120px] border-none bg-white font-bold shadow-md dark:bg-neutral-900">
+                            <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
                             {[2024, 2025, 2026].map((y) => (
@@ -47,26 +51,29 @@ export default function Dashboard({ totalOrderValue, totalKirimValue, chartData,
                     </Select>
                 </div>
 
-                <div className="grid gap-4 md:grid-cols-2">
-                    <StatCard
-                        title="Jumlah Total Order"
-                        value={totalOrderValue}
-                        isCurrency={false}
-                        icon={<ShoppingBag className="h-4 w-4" />}
-                        description="Total Order"
-                    />
-                    <StatCard
-                        title="Total Kirim"
-                        value={totalKirimValue}
-                     
-                        icon={<Truck className="h-4 w-4" />}
-                        description="Total invoice yang terbit"
-                    />
-                </div>
+                <div className="grid grid-cols-1 items-start gap-6 lg:grid-cols-4">
+                    {/* Stat Cards - Dibuat lebih ramping */}
+                    <div className="flex flex-col gap-4 lg:col-span-1">
+                        <StatCard
+                            title="Total Order"
+                            value={totalOrderValue}
+                            colorClass="bg-indigo-600 text-white"
+                            accentColor="border-indigo-500"
+                            icon={<ShoppingBag className="h-5 w-5" />}
+                        />
+                        <StatCard
+                            title="Total Kirim"
+                            value={totalKirimValue}
+                            colorClass="bg-orange-500 text-white"
+                            accentColor="border-orange-500"
+                            icon={<Truck className="h-5 w-5" />}
+                        />
+                    </div>
 
-                {/* Grafik Utama */}
-                <div className="w-full">
-                    <OrderChart data={chartData} />
+                    {/* Grafik dengan area lebih luas */}
+                    <div className="lg:col-span-3">
+                        <OrderChart data={chartData} />
+                    </div>
                 </div>
             </div>
         </AppLayout>
