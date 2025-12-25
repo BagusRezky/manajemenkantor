@@ -131,75 +131,72 @@ class AbsenController extends Controller
         // Ambil semua karyawan
         $karyawans = Karyawan::select('id', 'nama', 'pin', 'status_lembur')->get();
 
-        // Ambil semua absensi (optional: filter rentang tanggal)
-        $absens = Absen::select('nama', 'pin', 'tanggal_scan', 'jam', 'io', 'departemen')
-            ->when($startDate && $endDate, function ($query) use ($startDate, $endDate) {
-                $query->whereBetween('tanggal_scan', [
-                    $startDate . ' 00:00:00',
-                    $endDate . ' 23:59:59'
-                ]);
-            })
-            ->get();
+        // Query dasar dengan filter tanggal
+        $queryAbsens = Absen::select('nama', 'pin', 'tanggal_scan', 'io');
+        $queryLemburs = Lembur::with('karyawan');
+        $queryIzins   = Izin::with('karyawan');
+        $queryCutis   = Cuti::with('karyawan');
 
-        // Ambil semua lembur, izin, dan cuti
-        $lemburs = Lembur::with('karyawan')->get();
-        $izins   = Izin::with('karyawan')->get();
-        $cutis   = Cuti::with('karyawan')->get();
+        if ($startDate && $endDate) {
+            $start = $startDate . ' 00:00:00';
+            $end   = $endDate . ' 23:59:59';
 
-        // === Rekap per Karyawan ===
+            $queryAbsens->whereBetween('tanggal_scan', [$start, $end]);
+            $queryLemburs->whereBetween('tanggal_lembur', [$start, $end]);
+            $queryIzins->whereBetween('tanggal_izin', [$start, $end]);
+            $queryCutis->whereBetween('tanggal_cuti', [$start, $end]);
+        }
+
+        $absens = $queryAbsens->get();
+        $lemburs = $queryLemburs->get();
+        $izins   = $queryIzins->get();
+        $cutis   = $queryCutis->get();
+
         $rekapAbsens = $karyawans->map(function ($karyawan) use ($absens, $lemburs, $izins, $cutis) {
 
-            // Ambil absensi berdasarkan nama/pin karyawan
+            // --- 1. LOGIKA KEHADIRAN FISIK (io 1 & 2) ---
             $absenKaryawan = $absens->where('nama', $karyawan->nama);
+            $tanggalHadirFisik = $absenKaryawan->groupBy(function ($item) {
+                return date('Y-m-d', strtotime($item->tanggal_scan));
+            })->filter(function ($group) {
+                return $group->where('io', 1)->isNotEmpty() && $group->where('io', 2)->isNotEmpty();
+            })->keys()->toArray();
 
-            // Hitung jumlah kedatangan & pulang
-            $kedatanganKali = $absenKaryawan->where('io', 1)->count();
-            $pulangKali     = $absenKaryawan->where('io', 2)->count();
+            // --- 2. LOGIKA IZIN & ALPHA ---
+            $izinKaryawan = $izins->where('id_karyawan', $karyawan->id);
+            $dataIzinNonAlpha = $izinKaryawan->where('jenis_izin', '!=', 'Alpha');
 
-            // Hitung jumlah hari hadir unik (berdasarkan tanggal)
-            $hadir = $absenKaryawan
-                ->where('io', 1)
-                ->groupBy(function ($item) {
-                    return date('Y-m-d', strtotime($item->tanggal_scan));
-                })
-                ->count();
+            $totalIzin = $dataIzinNonAlpha->count();
+            $totalAlpha = $izinKaryawan->where('jenis_izin', 'Alpha')->count();
 
-            // Ambil data lembur, izin, dan cuti milik karyawan ini
-            $lemburKaryawan = $lemburs->where('karyawan.nama', $karyawan->nama);
-            $izinKaryawan   = $izins->where('karyawan.nama', $karyawan->nama);
-            $cutiKaryawan   = $cutis->where('karyawan.nama', $karyawan->nama);
+            $tanggalIzinHadir = $dataIzinNonAlpha->map(fn($i) => date('Y-m-d', strtotime($i->tanggal_izin)))->toArray();
 
-            // Total jam lembur
+            // --- 3. LOGIKA CUTI ---
+            $cutiKaryawan = $cutis->where('karyawan.id', $karyawan->id);
+            $totalCuti = $cutiKaryawan->count();
+            $tanggalCutiHadir = $cutiKaryawan->map(fn($c) => date('Y-m-d', strtotime($c->tanggal_cuti)))->toArray();
+
+            // --- 4. TOTAL HADIR (Sinkron dengan Fitur Gaji) ---
+            $totalHariHadir = count(array_unique(array_merge($tanggalHadirFisik, $tanggalIzinHadir, $tanggalCutiHadir)));
+
+            // --- LEMBUR ---
+            $lemburKaryawan = $lemburs->where('karyawan.id', $karyawan->id);
             $totalDetikLembur = $lemburKaryawan->reduce(function ($carry, $lembur) {
-                $awal = strtotime($lembur->jam_awal_lembur);
-                $selesai = strtotime($lembur->jam_selesai_lembur);
-                $durasi = $selesai - $awal; // hasilnya dalam detik
-                return $carry + $durasi;
+                return $carry + max(0, strtotime($lembur->jam_selesai_lembur) - strtotime($lembur->jam_awal_lembur));
             }, 0);
 
-            // ubah total detik ke format HH:MM:SS
-            $jam = floor($totalDetikLembur / 3600);
-            $menit = floor(($totalDetikLembur % 3600) / 60);
-            $detik = $totalDetikLembur % 60;
-
-            $totalFormat = sprintf('%02d:%02d:%02d', $jam, $menit, $detik);
-
-            // Ambil tanggal contoh (untuk bulan/tahun, optional)
-            $tanggalContoh = $absenKaryawan->first()?->tanggal_scan;
-            $bulan = $tanggalContoh ? date('n', strtotime($tanggalContoh)) : null;
-            $tahun = $tanggalContoh ? date('Y', strtotime($tanggalContoh)) : null;
+            $totalFormat = sprintf('%02d:%02d:%02d', floor($totalDetikLembur / 3600), floor(($totalDetikLembur % 3600) / 60), $totalDetikLembur % 60);
 
             return [
                 'nama'             => $karyawan->nama,
-                'hadir'            => $hadir,
-                'kedatangan_kali'  => $kedatanganKali,
-                'pulang_kali'      => $pulangKali,
+                'hadir'            => $totalHariHadir,
+                'kedatangan_kali'  => $absenKaryawan->where('io', 1)->count(),
+                'pulang_kali'      => $absenKaryawan->where('io', 2)->count(),
                 'lembur_kali'      => $lemburKaryawan->count(),
                 'total_jam_lembur' => $totalFormat,
-                'izin_kali'        => $izinKaryawan->count(),
-                'cuti_kali'        => $cutiKaryawan->count(),
-                'bulan'            => $bulan,
-                'tahun'            => $tahun,
+                'izin_kali'        => $totalIzin,
+                'cuti_kali'        => $totalCuti,
+                'alpha_kali'       => $totalAlpha, // Tambahan Alpha
             ];
         });
 
