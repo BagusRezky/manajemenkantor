@@ -10,6 +10,9 @@ use App\Models\Lembur;
 use App\Models\BonusKaryawan;
 use App\Models\Cuti;
 use App\Models\HariLibur;
+use App\Models\PotonganTunjangan;
+use App\Models\Izin;
+
 use Carbon\Carbon;
 use App\Jobs\SendSlipGajiJob;
 
@@ -23,97 +26,93 @@ class GajiController extends Controller
         $bulan = $request->input('bulan', date('m'));
         $tahun = $request->input('tahun', date('Y'));
 
-        // pakai Carbon untuk start & end of month yang benar
-        $startDate = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay()->toDateTimeString(); // YYYY-MM-DD 00:00:00
-        $endDate = Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth()->endOfDay()->toDateTimeString(); // YYYY-MM-DD 23:59:59
+        $startDate = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay()->toDateTimeString();
+        $endDate = Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth()->endOfDay()->toDateTimeString();
 
-        // Ambil karyawan + fields tunjangan/gaji
-        $karyawans = Karyawan::select(
-            'id',
-            'nama',
-            'gaji_pokok',
-            'tunjangan_kompetensi',
-            'tunjangan_jabatan',
-            'tunjangan_intensif'
-        )->get();
+        $karyawans = Karyawan::all();
 
-        // Ambil absensi/lembur/bonus/cuti di rentang waktu yang benar
-        $absens = Absen::select('nama', 'tanggal_scan', 'io')
-            ->whereBetween('tanggal_scan', [$startDate, $endDate])
-            ->get();
-
-        $lemburs = Lembur::with('karyawan')
-            ->whereBetween('tanggal_lembur', [$startDate, $endDate])
-            ->get();
-
+        $absens = Absen::whereBetween('tanggal_scan', [$startDate, $endDate])->get();
+        $lemburs = Lembur::with('karyawan')->whereBetween('tanggal_lembur', [$startDate, $endDate])->get();
         $bonusList = BonusKaryawan::whereBetween('tanggal_bonus', [$startDate, $endDate])->get();
-
-        $cutis = Cuti::with('karyawan')
-            ->whereBetween('tanggal_cuti', [$startDate, $endDate])
-            ->get();
-
-        // total hari libur untuk jatah cuti tahunan
-        $totalHariLibur = HariLibur::count();
-        $jatahCutiTahunan = max(12 - $totalHariLibur, 0);
+        $cutis = Cuti::with('karyawan')->whereBetween('tanggal_cuti', [$startDate, $endDate])->get();
+        $izins = Izin::whereBetween('tanggal_izin', [$startDate, $endDate])->get();
+        $potonganList = PotonganTunjangan::whereBetween('periode_payroll', [$startDate, $endDate])->get();
 
         $rekap = $karyawans->map(function ($karyawan) use (
             $absens,
             $lemburs,
             $bonusList,
             $cutis,
-            $jatahCutiTahunan
+            $izins,
+            $potonganList
         ) {
-            // --- HADIR : hitung unique date dimana io == 1 ---
+            // --- 1. LOGIKA KEHADIRAN FISIK (Masuk & Keluar) ---
             $absenKaryawan = $absens->where('nama', $karyawan->nama);
-            $hadir = $absenKaryawan
-                ->where('io', 1)
-                ->map(function ($it) {
-                    return date('Y-m-d', strtotime($it->tanggal_scan));
-                })
-                ->unique()
-                ->count();
+            $tanggalHadirFisik = $absenKaryawan->groupBy(function($item) {
+                return date('Y-m-d', strtotime($item->tanggal_scan));
+            })->filter(function($group) {
+                return $group->where('io', 1)->isNotEmpty() && $group->where('io', 2)->isNotEmpty();
+            })->keys()->toArray();
 
-            // --- LEMBUR : total detik kemudian format HH:MM:SS ---
+            // --- 2. LOGIKA IZIN & ALPHA ---
+            $izinKaryawan = $izins->where('id_karyawan', $karyawan->id);
+
+            // Izin (Selain Alpha) -> Dihitung Hadir
+            $dataIzin = $izinKaryawan->where('jenis_izin', '!=', 'Alpha');
+            $totalIzin = $dataIzin->count();
+            $tanggalIzinHadir = $dataIzin->map(fn($i) => date('Y-m-d', strtotime($i->tanggal_izin)))->toArray();
+
+            // Alpha -> Tidak Dihitung Hadir
+            $totalAlpha = $izinKaryawan->where('jenis_izin', 'Alpha')->count();
+
+            // --- 3. LOGIKA CUTI ---
+            $cutiKaryawan = $cutis->where('karyawan.id', $karyawan->id);
+            $tanggalCutiHadir = $cutiKaryawan->map(fn($c) => date('Y-m-d', strtotime($c->tanggal_cuti)))->toArray();
+
+            // --- 4. TOTAL HADIR (Fisik + Izin + Cuti) ---
+            $totalHariHadir = count(array_unique(array_merge($tanggalHadirFisik, $tanggalIzinHadir, $tanggalCutiHadir)));
+
+            // --- 5. PERHITUNGAN GAJI POKOK (Gaji/25 * Hadir) ---
+            $gajiPokokMaster = $karyawan->gaji_pokok ?? 0;
+            $gajiPokokBerjalan = ($gajiPokokMaster / 25) * $totalHariHadir;
+
+            // --- 6. LEMBUR ---
             $lemburKaryawan = $lemburs->where('karyawan.id', $karyawan->id);
             $totalDetikLembur = $lemburKaryawan->reduce(function ($carry, $lembur) {
-                $awal = strtotime($lembur->jam_awal_lembur);
-                $selesai = strtotime($lembur->jam_selesai_lembur);
-                $durasi = max(0, $selesai - $awal); // amanin negatif
-                return $carry + $durasi;
+                return $carry + max(0, strtotime($lembur->jam_selesai_lembur) - strtotime($lembur->jam_awal_lembur));
             }, 0);
+            $totalLemburFormat = sprintf('%02d:%02d:%02d', floor($totalDetikLembur/3600), floor(($totalDetikLembur%3600)/60), $totalDetikLembur%60);
 
-            $jam = floor($totalDetikLembur / 3600);
-            $menit = floor(($totalDetikLembur % 3600) / 60);
-            $detik = $totalDetikLembur % 60;
-            $totalLemburFormat = sprintf('%02d:%02d:%02d', $jam, $menit, $detik);
+            // --- 7. POTONGAN & TUNJANGAN ---
+            $potongan = $potonganList->where('id_karyawan', $karyawan->id)->first();
+            $potKompetensi = $potongan->potongan_tunjangan_kompetensi ?? 0;
+            $potJabatan = $potongan->potongan_tunjangan_jabatan ?? 0;
+            $potIntensif = $potongan->potongan_intensif ?? 0;
 
-            // --- BONUS ---
+            $netKompetensi = ($karyawan->tunjangan_kompetensi ?? 0) - $potKompetensi;
+            $netJabatan = ($karyawan->tunjangan_jabatan ?? 0) - $potJabatan;
+            $netIntensif = ($karyawan->tunjangan_intensif ?? 0) - $potIntensif;
+
             $bonus = $bonusList->where('id_karyawan', $karyawan->id)->sum('nilai_bonus');
+            $totalTunjanganNet = $netKompetensi + $netJabatan + $netIntensif;
 
-            // --- CUTI ---
-            $cutiKaryawan = $cutis->where('karyawan.id', $karyawan->id);
-            $totalCutiSemua = $cutiKaryawan->count();
-            $cutiTahunanDigunakan = $cutiKaryawan->where('jenis_cuti', 'Cuti Tahunan')->count();
-
-            // --- GAJI & TUNJANGAN ---
-            $gajiPokok = $karyawan->gaji_pokok ?? 0;
-            $tunjanganKompetensi = $karyawan->tunjangan_kompetensi ?? 0;
-            $tunjanganJabatan = $karyawan->tunjangan_jabatan ?? 0;
-            $tunjanganIntensif = $karyawan->tunjangan_intensif ?? 0;
-            $totalTunjangan = $tunjanganKompetensi + $tunjanganJabatan + $tunjanganIntensif;
-            $totalGajiAkhir = $gajiPokok + $totalTunjangan + $bonus;
+            $totalGajiAkhir = $gajiPokokBerjalan + $totalTunjanganNet + $bonus;
 
             return [
                 'nama' => $karyawan->nama,
-                'hadir' => $hadir,
+                'hadir' => $totalHariHadir,
+                'total_izin' => $totalIzin,
+                'total_alpha' => $totalAlpha,
                 'total_lembur' => $totalLemburFormat,
-                'total_cuti_semua' => $totalCutiSemua,
-                'cuti_tahunan_digunakan' => $cutiTahunanDigunakan,
-                'gaji_pokok' => $gajiPokok,
-                'tunjangan_kompetensi' => $tunjanganKompetensi,
-                'tunjangan_jabatan' => $tunjanganJabatan,
-                'tunjangan_intensif' => $tunjanganIntensif,
-                'total_tunjangan' => $totalTunjangan,
+                'total_cuti_semua' => $cutiKaryawan->count(),
+                'cuti_tahunan_digunakan' => $cutiKaryawan->where('jenis_cuti', 'Cuti Tahunan')->count(),
+                'gaji_pokok' => $gajiPokokBerjalan,
+                'tunjangan_kompetensi' => $karyawan->tunjangan_kompetensi ?? 0,
+                'potongan_kompetensi' => $potKompetensi,
+                'tunjangan_jabatan' => $karyawan->tunjangan_jabatan ?? 0,
+                'potongan_jabatan' => $potJabatan,
+                'tunjangan_intensif' => $karyawan->tunjangan_intensif ?? 0,
+                'potongan_intensif' => $potIntensif,
                 'bonus' => $bonus,
                 'total_gaji' => $totalGajiAkhir,
             ];
