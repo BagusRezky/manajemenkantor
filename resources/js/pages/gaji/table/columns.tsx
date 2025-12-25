@@ -15,16 +15,16 @@ export const columns: ColumnDef<Gaji>[] = [
         header: 'Total Izin',
     },
     {
+        accessorKey: 'total_cuti_semua',
+        header: 'Total Cuti',
+    },
+    {
         accessorKey: 'total_alpha',
         header: 'Total Alpha',
     },
     {
         accessorKey: 'total_lembur',
         header: 'Total Lembur',
-    },
-    {
-        accessorKey: 'total_cuti_semua',
-        header: 'Total Cuti',
     },
     {
         accessorKey: 'gaji_pokok',
@@ -70,7 +70,7 @@ export const columns: ColumnDef<Gaji>[] = [
     },
     {
         accessorKey: 'total_gaji',
-        header: 'Total Gaji',
+        header: 'Gaji Terima',
         cell: ({ row }) => <span className="font-bold text-green-600">Rp {row.original.total_gaji.toLocaleString('id-ID')}</span>,
     },
 ];

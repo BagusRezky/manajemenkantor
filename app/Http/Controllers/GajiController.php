@@ -48,21 +48,17 @@ class GajiController extends Controller
         ) {
             // --- 1. LOGIKA KEHADIRAN FISIK (Masuk & Keluar) ---
             $absenKaryawan = $absens->where('nama', $karyawan->nama);
-            $tanggalHadirFisik = $absenKaryawan->groupBy(function($item) {
+            $tanggalHadirFisik = $absenKaryawan->groupBy(function ($item) {
                 return date('Y-m-d', strtotime($item->tanggal_scan));
-            })->filter(function($group) {
+            })->filter(function ($group) {
                 return $group->where('io', 1)->isNotEmpty() && $group->where('io', 2)->isNotEmpty();
             })->keys()->toArray();
 
             // --- 2. LOGIKA IZIN & ALPHA ---
             $izinKaryawan = $izins->where('id_karyawan', $karyawan->id);
-
-            // Izin (Selain Alpha) -> Dihitung Hadir
             $dataIzin = $izinKaryawan->where('jenis_izin', '!=', 'Alpha');
             $totalIzin = $dataIzin->count();
             $tanggalIzinHadir = $dataIzin->map(fn($i) => date('Y-m-d', strtotime($i->tanggal_izin)))->toArray();
-
-            // Alpha -> Tidak Dihitung Hadir
             $totalAlpha = $izinKaryawan->where('jenis_izin', 'Alpha')->count();
 
             // --- 3. LOGIKA CUTI ---
@@ -72,18 +68,7 @@ class GajiController extends Controller
             // --- 4. TOTAL HADIR (Fisik + Izin + Cuti) ---
             $totalHariHadir = count(array_unique(array_merge($tanggalHadirFisik, $tanggalIzinHadir, $tanggalCutiHadir)));
 
-            // --- 5. PERHITUNGAN GAJI POKOK (Gaji/25 * Hadir) ---
-            $gajiPokokMaster = $karyawan->gaji_pokok ?? 0;
-            $gajiPokokBerjalan = ($gajiPokokMaster / 25) * $totalHariHadir;
-
-            // --- 6. LEMBUR ---
-            $lemburKaryawan = $lemburs->where('karyawan.id', $karyawan->id);
-            $totalDetikLembur = $lemburKaryawan->reduce(function ($carry, $lembur) {
-                return $carry + max(0, strtotime($lembur->jam_selesai_lembur) - strtotime($lembur->jam_awal_lembur));
-            }, 0);
-            $totalLemburFormat = sprintf('%02d:%02d:%02d', floor($totalDetikLembur/3600), floor(($totalDetikLembur%3600)/60), $totalDetikLembur%60);
-
-            // --- 7. POTONGAN & TUNJANGAN ---
+            // --- 5. POTONGAN & TUNJANGAN ---
             $potongan = $potonganList->where('id_karyawan', $karyawan->id)->first();
             $potKompetensi = $potongan->potongan_tunjangan_kompetensi ?? 0;
             $potJabatan = $potongan->potongan_tunjangan_jabatan ?? 0;
@@ -93,10 +78,24 @@ class GajiController extends Controller
             $netJabatan = ($karyawan->tunjangan_jabatan ?? 0) - $potJabatan;
             $netIntensif = ($karyawan->tunjangan_intensif ?? 0) - $potIntensif;
 
-            $bonus = $bonusList->where('id_karyawan', $karyawan->id)->sum('nilai_bonus');
             $totalTunjanganNet = $netKompetensi + $netJabatan + $netIntensif;
 
-            $totalGajiAkhir = $gajiPokokBerjalan + $totalTunjanganNet + $bonus;
+            // --- 6. PERHITUNGAN TOTAL GAJI (Rumus Baru) ---
+            // (Gaji Pokok + Total Tunjangan Bersih) / 25 * Hadir + Bonus
+            $gajiPokokMaster = $karyawan->gaji_pokok ?? 0;
+            $komponenTetap = $gajiPokokMaster + $totalTunjanganNet;
+
+            $gajiHarian = $komponenTetap / 25;
+            $bonus = $bonusList->where('id_karyawan', $karyawan->id)->sum('nilai_bonus');
+
+            $totalGajiAkhir = ($gajiHarian * $totalHariHadir) + $bonus;
+
+            // --- LEMBUR ---
+            $lemburKaryawan = $lemburs->where('karyawan.id', $karyawan->id);
+            $totalDetikLembur = $lemburKaryawan->reduce(function ($carry, $lembur) {
+                return $carry + max(0, strtotime($lembur->jam_selesai_lembur) - strtotime($lembur->jam_awal_lembur));
+            }, 0);
+            $totalLemburFormat = sprintf('%02d:%02d:%02d', floor($totalDetikLembur / 3600), floor(($totalDetikLembur % 3600) / 60), $totalDetikLembur % 60);
 
             return [
                 'nama' => $karyawan->nama,
@@ -106,7 +105,7 @@ class GajiController extends Controller
                 'total_lembur' => $totalLemburFormat,
                 'total_cuti_semua' => $cutiKaryawan->count(),
                 'cuti_tahunan_digunakan' => $cutiKaryawan->where('jenis_cuti', 'Cuti Tahunan')->count(),
-                'gaji_pokok' => $gajiPokokBerjalan,
+                'gaji_pokok' => $gajiPokokMaster, // Tetap statis sesuai master
                 'tunjangan_kompetensi' => $karyawan->tunjangan_kompetensi ?? 0,
                 'potongan_kompetensi' => $potKompetensi,
                 'tunjangan_jabatan' => $karyawan->tunjangan_jabatan ?? 0,
