@@ -51,14 +51,14 @@ export default function Dashboard({ totalOrderValue, totalKirimValue, chartData,
                     <StatCard
                         title="Jumlah Total Order"
                         value={totalOrderValue}
-                        isCurrency={false} // <--- RP akan hilang, hanya angka dengan pemisah ribuan
+                        isCurrency={false}
                         icon={<ShoppingBag className="h-4 w-4" />}
-                        description="Estimasi total dari pesanan masuk"
+                        description="Total Order"
                     />
                     <StatCard
                         title="Total Kirim"
                         value={totalKirimValue}
-                        // isCurrency tidak perlu ditulis karena defaultnya true
+                     
                         icon={<Truck className="h-4 w-4" />}
                         description="Total invoice yang terbit"
                     />
