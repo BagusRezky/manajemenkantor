@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { SuratJalan } from '@/types/suratJalan';
+import { formatWithThousandSeparator } from '@/utils/formatter/decimaltoint';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
@@ -17,6 +18,10 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
 
+    const logo = new Image();
+    logo.src = '/images/logo-kantor.png';
+    doc.addImage(logo, 'PNG', 15, 14, 18, 18);
+
     // Header dengan border
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
@@ -24,12 +29,12 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
 
     // Company Info
     doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('CV. Indigama Khatulistiwa', 15, 18);
+    doc.text('CV. Indigama Khatulistiwa', 34, 18);
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
-    doc.text('Jawa Timur 67155', 15, 28);
-    doc.text('Email: indigama.khatulistiwa01@gmail.com', 15, 33);
-    doc.text('Telp: 081703101012', 15, 38);
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 34, 23);
+    doc.text('Pasuruan, Jawa Timur 67155', 34, 28);
+    doc.text('Email: indigama.khatulistiwa01@gmail.com', 34, 33);
+    doc.text('Telp: 081703101012', 34, 38);
 
     // Title
     doc.setFontSize(14).setFont('helvetica', 'bold');
@@ -37,82 +42,87 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
 
     // Informasi surat jalan
     doc.setLineWidth(0.5);
-    doc.rect(10, 45, pageWidth - 20, 60);
+    doc.rect(10, 45, pageWidth - 20, 45);
 
-    doc.setFontSize(10).setFont('helvetica', 'bold');
+    // ===== Informasi Surat Jalan  =====
+    const rightLabelX = pageWidth - 95;
+    const rightColonX = pageWidth - 60;
+    const rightValueX = pageWidth - 55;
+    doc.setFontSize(10);
+
+    // Row 1
+    doc.setFont('helvetica', 'bold');
     doc.text('No. Surat Jalan', 15, 52);
     doc.text(':', 65, 52);
     doc.setFont('helvetica', 'normal');
     doc.text(suratJalan.no_surat_jalan || '', 70, 52);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('No. SPK', pageWidth - 85, 52);
-    doc.text(':', pageWidth - 50, 52);
+    doc.text('Transportasi', rightLabelX, 52);
+    doc.text(':', rightColonX, 52);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '', pageWidth - 45, 52);
+    doc.text(suratJalan.transportasi || '', rightValueX, 52);
 
+    // Row 2
     doc.setFont('helvetica', 'bold');
-    doc.text('Tanggal', 15, 59);
+    doc.text('No. PO Customer', 15, 59);
     doc.text(':', 65, 59);
     doc.setFont('helvetica', 'normal');
-    const formattedDate = suratJalan.tgl_surat_jalan ? format(new Date(suratJalan.tgl_surat_jalan), 'dd-MM-yyyy') : '';
-    doc.text(formattedDate, 70, 59);
+    doc.text(suratJalan.kartu_instruksi_kerja?.sales_order?.no_po_customer || '', 70, 59);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('No. PO Customer', pageWidth - 85, 59);
-    doc.text(':', pageWidth - 50, 59);
+    doc.text('No. Polisi', rightLabelX, 59);
+    doc.text(':', rightColonX, 59);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.kartu_instruksi_kerja?.sales_order?.no_po_customer || '', pageWidth - 45, 59);
+    doc.text(suratJalan.no_polisi || '', rightValueX, 59);
 
+    // Row 3
     doc.setFont('helvetica', 'bold');
-    doc.text('Transportasi', 15, 66);
+    doc.text('Kepada Yth', 15, 66);
     doc.text(':', 65, 66);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.transportasi || '', 70, 66);
+    doc.text(suratJalan.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '', 70, 66);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('Driver', pageWidth - 85, 66);
-    doc.text(':', pageWidth - 50, 66);
+    doc.text('Driver', rightLabelX, 66);
+    doc.text(':', rightColonX, 66);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.driver || '', pageWidth - 45, 66);
+    doc.text(suratJalan.driver || '', rightValueX, 66);
 
+    // Row 4
     doc.setFont('helvetica', 'bold');
-    doc.text('No. Polisi', 15, 73);
+    doc.text('Tanggal', 15, 73);
     doc.text(':', 65, 73);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.no_polisi || '', 70, 73);
+    const formattedDate = suratJalan.tgl_surat_jalan ? format(new Date(suratJalan.tgl_surat_jalan), 'dd-MM-yyyy') : '';
+    doc.text(formattedDate, 70, 73);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('Pengirim', pageWidth - 85, 73);
-    doc.text(':', pageWidth - 50, 73);
+    doc.text('Keterangan', rightLabelX, 73);
+    doc.text(':', rightColonX, 73);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.pengirim || '', pageWidth - 45, 73);
+    doc.text(suratJalan.keterangan || '-', rightValueX, 73);
 
-    // Customer Info
-    const customerAddress = suratJalan.kartu_instruksi_kerja?.sales_order?.customer_address;
+    // Alamat tujuan (di bawah customer)
     doc.setFont('helvetica', 'bold');
-    doc.text('Kepada Yth:', 15, 85);
-    doc.setFont('helvetica', 'normal');
-    doc.text(customerAddress?.nama_customer || '', 15, 90);
-    // Gunakan alamat tujuan yang dipilih, bukan alamat lengkap
-    doc.text(suratJalan.alamat_tujuan || '', 15, 95);
-
-    doc.setFont('helvetica', 'bold');
-    doc.text('Keterangan', 15, 80);
+    doc.text('Alamat Tujuan', 15, 80);
     doc.text(':', 65, 80);
+
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.keterangan || '-', 70, 80);
+    doc.text(suratJalan.alamat_tujuan || '', 70, 80);
 
     // Header tabel "DATA BARANG"
+    const tableHeaderY = 95;
     doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.rect(10, 110, pageWidth - 20, 10);
-    doc.text('DATA BARANG', pageWidth / 2, 116, { align: 'center' });
+    doc.rect(10, tableHeaderY, pageWidth - 20, 10);
+    doc.text('DATA BARANG', pageWidth / 2, tableHeaderY + 6, { align: 'center' });
 
     // 1. Hitung Total Box dari data packaging
     const packagings = suratJalan.kartu_instruksi_kerja?.packagings || [];
     const totalBox = packagings.reduce((acc, pkg) => {
         return acc + (Number(pkg.jumlah_satuan_penuh) || 0) + (Number(pkg.jumlah_satuan_sisa) || 0);
     }, 0);
+
     // Isi tabel barang
     const finishGoodItem = suratJalan.kartu_instruksi_kerja?.sales_order?.finish_good_item;
 
@@ -129,7 +139,7 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
             no: '1',
             nama_barang: finishGoodItem?.nama_barang || '-',
             box: totalBox > 0 ? `${totalBox} BOX` : '-',
-            jumlah: suratJalan.qty_pengiriman || '0',
+            jumlah: formatWithThousandSeparator(suratJalan.qty_pengiriman) || '0',
             keterangan: '-',
         },
     ];
@@ -137,7 +147,7 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
     autoTable(doc, {
         columns: tableColumns,
         body: tableRows,
-        startY: 120,
+        startY: tableHeaderY + 10, 
         margin: { left: 10, right: 10 },
         styles: { fontSize: 9 },
         headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontStyle: 'bold', lineColor: [0, 0, 0], lineWidth: 0.5 },
@@ -156,12 +166,15 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
 
     // Tanda tangan
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Pengirim,', 50, tableEndY, { align: 'center' });
-    doc.text('Penerima,', pageWidth - 50, tableEndY, { align: 'center' });
 
-    // Tempat tanda tangan
-    doc.text('( ..................................... )', 50, tableEndY + 30, { align: 'center' });
-    doc.text('( ..................................... )', pageWidth - 50, tableEndY + 30, { align: 'center' });
+    doc.text('Pengirim,', 40, tableEndY, { align: 'center' });
+    doc.text('Mengetahui,', pageWidth / 2, tableEndY, { align: 'center' });
+    doc.text('Penerima,', pageWidth - 40, tableEndY, { align: 'center' });
+
+    // Garis tanda tangan
+    doc.text('( ..................................... )', 40, tableEndY + 30, { align: 'center' });
+    doc.text('( ..................................... )', pageWidth / 2, tableEndY + 30, { align: 'center' });
+    doc.text('( ..................................... )', pageWidth - 40, tableEndY + 30, { align: 'center' });
 
     // Output PDF
     if (download) {
