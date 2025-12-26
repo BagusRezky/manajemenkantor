@@ -44,18 +44,23 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
     doc.setLineWidth(0.5);
     doc.rect(10, 45, pageWidth - 20, 45);
 
-    // ===== Informasi Surat Jalan  =====
+    // ===== Informasi Surat Jalan =====
+    const leftLabelX = 15;
+    const leftColonX = 45; // Diperpendek dari 65 ke 45 agar lebih rapat
+    const leftValueX = 48; // Nilai dimulai tepat setelah titik dua
+
     const rightLabelX = pageWidth - 95;
-    const rightColonX = pageWidth - 60;
-    const rightValueX = pageWidth - 55;
+    const rightColonX = pageWidth - 70; // Diperpendek juga untuk sisi kanan
+    const rightValueX = pageWidth - 67;
+
     doc.setFontSize(10);
 
     // Row 1
     doc.setFont('helvetica', 'bold');
-    doc.text('No. Surat Jalan', 15, 52);
-    doc.text(':', 65, 52);
+    doc.text('No. Surat Jalan', leftLabelX, 52);
+    doc.text(':', leftColonX, 52);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.no_surat_jalan || '', 70, 52);
+    doc.text(suratJalan.no_surat_jalan || '', leftValueX, 52);
 
     doc.setFont('helvetica', 'bold');
     doc.text('Transportasi', rightLabelX, 52);
@@ -65,10 +70,10 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
 
     // Row 2
     doc.setFont('helvetica', 'bold');
-    doc.text('No. PO Customer', 15, 59);
-    doc.text(':', 65, 59);
+    doc.text('No. PO Customer', leftLabelX, 59);
+    doc.text(':', leftColonX, 59);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.kartu_instruksi_kerja?.sales_order?.no_po_customer || '', 70, 59);
+    doc.text(suratJalan.kartu_instruksi_kerja?.sales_order?.no_po_customer || '', leftValueX, 59);
 
     doc.setFont('helvetica', 'bold');
     doc.text('No. Polisi', rightLabelX, 59);
@@ -78,10 +83,10 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
 
     // Row 3
     doc.setFont('helvetica', 'bold');
-    doc.text('Kepada Yth', 15, 66);
-    doc.text(':', 65, 66);
+    doc.text('Customer', leftLabelX, 66);
+    doc.text(':', leftColonX, 66);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '', 70, 66);
+    doc.text(suratJalan.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '', leftValueX, 66);
 
     doc.setFont('helvetica', 'bold');
     doc.text('Driver', rightLabelX, 66);
@@ -91,11 +96,11 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
 
     // Row 4
     doc.setFont('helvetica', 'bold');
-    doc.text('Tanggal', 15, 73);
-    doc.text(':', 65, 73);
+    doc.text('Tanggal', leftLabelX, 73);
+    doc.text(':', leftColonX, 73);
     doc.setFont('helvetica', 'normal');
     const formattedDate = suratJalan.tgl_surat_jalan ? format(new Date(suratJalan.tgl_surat_jalan), 'dd-MM-yyyy') : '';
-    doc.text(formattedDate, 70, 73);
+    doc.text(formattedDate, leftValueX, 73);
 
     doc.setFont('helvetica', 'bold');
     doc.text('Keterangan', rightLabelX, 73);
@@ -103,16 +108,20 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
     doc.setFont('helvetica', 'normal');
     doc.text(suratJalan.keterangan || '-', rightValueX, 73);
 
-    // Alamat tujuan (di bawah customer)
+    // --- Alamat Tujuan dengan Wrap Text ---
     doc.setFont('helvetica', 'bold');
-    doc.text('Alamat Tujuan', 15, 80);
-    doc.text(':', 65, 80);
+    doc.text('Alamat Tujuan', leftLabelX, 80);
+    doc.text(':', leftColonX, 80);
 
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.alamat_tujuan || '', 70, 80);
+    const alamat = suratJalan.alamat_tujuan || '';
+    // Membatasi lebar teks alamat (misal: 120mm) agar pindah baris jika kepanjangan
+    const splitAlamat = doc.splitTextToSize(alamat, 120);
+    doc.text(splitAlamat, leftValueX, 80);
 
     // Header tabel "DATA BARANG"
-    const tableHeaderY = 95;
+    // Posisi Y disesuaikan sedikit ke bawah jika alamat sangat panjang
+    const tableHeaderY = 100;
     doc.setFontSize(10).setFont('helvetica', 'bold');
     doc.rect(10, tableHeaderY, pageWidth - 20, 10);
     doc.text('DATA BARANG', pageWidth / 2, tableHeaderY + 6, { align: 'center' });
@@ -147,7 +156,7 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
     autoTable(doc, {
         columns: tableColumns,
         body: tableRows,
-        startY: tableHeaderY + 10, 
+        startY: tableHeaderY + 10,
         margin: { left: 10, right: 10 },
         styles: { fontSize: 9 },
         headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontStyle: 'bold', lineColor: [0, 0, 0], lineWidth: 0.5 },
