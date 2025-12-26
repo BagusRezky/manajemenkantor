@@ -32,7 +32,7 @@ export default function Dashboard({ totalOrderValue, totalKirimValue, chartData,
                 <div className="flex items-center justify-between">
                     <div>
                         <h2 className="text-2xl font-black tracking-tight text-slate-800 dark:text-neutral-100">
-                            Business Overview <span className="text-indigo-600">.</span>
+                            Dashboard<span className="text-indigo-600">.</span>
                         </h2>
                         <p className="text-muted-foreground text-xs font-medium">Monitoring performa tahun {selectedYear}</p>
                     </div>
