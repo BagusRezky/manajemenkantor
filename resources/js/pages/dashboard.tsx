@@ -45,7 +45,7 @@ export default function Dashboard({ totalOrderValue, totalKirimValue, totalPOQty
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
                         <h2 className="text-2xl font-black tracking-tight text-slate-800 dark:text-neutral-100">
-                            Dashboard<span className="text-indigo-600">.</span>
+                            Dashboard
                         </h2>
                         <p className="text-muted-foreground text-xs font-medium">Monitoring performa operasional tahun {selectedYear}</p>
                     </div>
