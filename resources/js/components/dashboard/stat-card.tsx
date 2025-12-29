@@ -5,8 +5,8 @@ interface StatCardProps {
     title: string;
     value: number;
     icon: ReactNode;
-    colorClass: string; // Background ikon
-    accentColor: string; // Warna border samping
+    colorClass: string; 
+    accentColor: string;
 }
 
 export default function StatCard({ title, value, icon, colorClass, accentColor }: StatCardProps) {
