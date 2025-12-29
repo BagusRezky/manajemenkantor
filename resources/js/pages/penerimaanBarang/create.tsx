@@ -7,11 +7,11 @@ import { PenerimaanBarangForm } from './components/penerimaanBarangForm';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Penerimaan Barang',
-        href: '/penerimaanBarang',
+        href: '/penerimaanBarangs',
     },
     {
         title: 'Tambah Penerimaan Barang',
-        href: '/penerimaanBarang/create',
+        href: '/penerimaanBarangs/create',
     },
 ];
 
