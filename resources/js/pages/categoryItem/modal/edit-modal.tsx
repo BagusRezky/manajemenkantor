@@ -84,7 +84,7 @@ const EditCategoryItemModal: React.FC<EditCategoryItemModalProps> = ({ isOpen, o
                             Cancel
                         </Button>
                         <Button type="submit" disabled={processing}>
-                            {processing ? 'Updating...' : 'Update Supplier'}
+                            {processing ? 'Updating...' : 'Update Category'}
                         </Button>
                     </DialogFooter>
                 </form>
