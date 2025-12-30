@@ -40,16 +40,16 @@ export default function Detail({ finishGoodItem }: DetailProps) {
                                 <p>{finishGoodItem.kode_material_produk || '-'}</p>
                             </div>
                             <div>
-                                <p className="font-semibold">Barcode:</p>
-                                <p>{finishGoodItem.kode_barcode || '-'}</p>
+                                <p className="font-semibold">Spesifikasi Kertas:</p>
+                                <p>{finishGoodItem.spesifikasi_kertas || '-'}</p>
                             </div>
                             <div>
                                 <p className="font-semibold">Nama Barang:</p>
                                 <p>{finishGoodItem.nama_barang || '-'}</p>
                             </div>
                             <div>
-                                <p className="font-semibold">Deskripsi:</p>
-                                <p>{finishGoodItem.deskripsi || '-'}</p>
+                                <p className="font-semibold">UP 1:</p>
+                                <p>{finishGoodItem.up_satu || '-'}</p>
                             </div>
                             <div>
                                 <p className="font-semibold">Customer:</p>
