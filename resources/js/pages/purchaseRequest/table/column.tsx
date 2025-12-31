@@ -16,6 +16,9 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
     // Inisialisasi dokumen PDF
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
+    const logo = new Image();
+    logo.src = '/images/logo-kantor.png';
+    doc.addImage(logo, 'PNG', 14, 17, 17, 17);
 
     doc.setFillColor(230, 240, 255);
     doc.roundedRect(pageWidth - 73, 12, 61, 16, 2, 2, 'F');
@@ -23,7 +26,7 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('PURCHASE REQUEST', pageWidth - 15, 18, { align: 'right' });
 
-    doc.setFont('helvetica', 'normal');
+    doc.setFont('helvetica', 'bold');
     doc.text(purchaseRequest.no_pr || '', pageWidth - 15, 25, { align: 'right' });
 
     // Tambahkan header dengan border
@@ -33,12 +36,13 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
 
     // Company Info
     doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('CV. Indigama Khatulistiwa', 15, 18);
+    doc.text('CV. Indigama Khatulistiwa', 34, 18);
+
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Jurangpelem Satu, Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
-    doc.text('Jawa Timur 67155', 15, 28);
-    doc.text('Email: indigama.khatulistiwa01@gmail.com', 15, 33);
-    doc.text('Telp: 081703101012', 15, 38);
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 34, 23);
+    doc.text('Pasuruan, Jawa Timur 67155', 34, 28);
+    doc.text('Email: indigama.khatulistiwa01@gmail.com', 34, 33);
+    doc.text('Telp: 081703101012', 34, 38);
 
     // Informasi Purchase Request
     doc.setLineWidth(0.5);
@@ -75,7 +79,6 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
         { header: 'Qty', dataKey: 'qty' },
         { header: 'Satuan', dataKey: 'satuan' },
         { header: 'ETA', dataKey: 'eta' },
-        { header: 'Catatan', dataKey: 'catatan' },
     ];
 
     const tableRows =
@@ -86,7 +89,6 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
                 qty: item.qty || 0,
                 satuan: item.master_item?.unit?.nama_satuan || '-',
                 eta: item.eta ? format(new Date(item.eta), 'dd-MM-yyyy') : '-',
-                catatan: item.catatan || '-',
             };
         }) || [];
 
@@ -100,16 +102,41 @@ const generatePurchaseRequestPdf = (purchaseRequest: PurchaseRequest, download =
         bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.5 },
         columnStyles: {
             no: { cellWidth: 10, halign: 'center' },
-            item: { cellWidth: 65 },
-            qty: { cellWidth: 20, halign: 'center' },
-            satuan: { cellWidth: 25, halign: 'center' },
+            item: { cellWidth: 100 },
+            qty: { cellWidth: 25, halign: 'center' },
+            satuan: { cellWidth: 30, halign: 'center' },
             eta: { cellWidth: 25, halign: 'center' },
-            catatan: { cellWidth: 45 },
         },
     });
 
     // Ambil posisi Y setelah tabel
     const tableEndY = (doc as any).lastAutoTable.finalY;
+
+    // Tambahkan catatan di bawah tabel
+    if (purchaseRequest.purchase_request_items && purchaseRequest.purchase_request_items.length > 0) {
+        const noteY = tableEndY + 10;
+        doc.setFontSize(10).setFont('helvetica', 'bold');
+        doc.text('NOTE:', 10, noteY);
+
+        // Catatan dengan penomoran
+        const notes = purchaseRequest.purchase_request_items
+            .map((item, idx) => {
+                const catatan = item.catatan?.trim();
+                return catatan ? `${idx + 1}. ${catatan}` : '';
+            })
+            .filter((n) => n !== '');
+
+        doc.setFont('helvetica', 'normal');
+        if (notes.length > 0) {
+            notes.forEach((note, i) => {
+                doc.text(note, 30, noteY * (i + 1), {
+                    maxWidth: pageWidth - 40,
+                });
+            });
+        } else {
+            doc.text('-', 30, noteY);
+        }
+    }
 
     // Tanda tangan
     const currentY = tableEndY + 35;

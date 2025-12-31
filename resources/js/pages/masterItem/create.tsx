@@ -194,8 +194,8 @@ export default function Create({ units, categoryItems }: CreateProps) {
                                                         <SelectValue placeholder="Pilih Tipe Penjualan" />
                                                     </SelectTrigger>
                                                     <SelectContent>
-                                                        <SelectItem value="For Sale">For Sale</SelectItem>
-                                                        <SelectItem value="Not For Sale">Not For Sale</SelectItem>
+                                                        <SelectItem value="JUAL">JUAL</SelectItem>
+                                                        <SelectItem value="TIDAK DIJUAL">TIDAK DIJUAL</SelectItem>
                                                     </SelectContent>
                                                 </Select>
                                                 {errors.tipe_penjualan && <p className="text-sm text-red-500">{errors.tipe_penjualan}</p>}

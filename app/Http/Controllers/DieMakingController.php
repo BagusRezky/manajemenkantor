@@ -46,7 +46,7 @@ class DieMakingController extends Controller
             'id_mesin_diemaking' => 'required|exists:mesin_diemakings,id',
             'id_operator_diemaking' => 'required|exists:operator_diemakings,id',
             'tanggal_entri' => 'required|date',
-            'proses_diemaking' => 'required|in:Hot Print,Uv Spot,Uv Holo,Embos',
+            'proses_diemaking' => 'required|in:Hot Print,Uv Spot,Uv Holo,Embos,Cutting,Uv Varnish',
             'tahap_diemaking' => 'required|in:Proses Die Making 1,Proses Die Making 2',
             'hasil_baik_diemaking' => 'required|numeric|min:0',
             'hasil_rusak_diemaking' => 'required|numeric|min:0',

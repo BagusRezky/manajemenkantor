@@ -1,4 +1,3 @@
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -141,14 +140,12 @@ export default function EditKaryawan({ karyawan, roles, users }: Props) {
                                 {/* Tanggal Mulai Jadwal */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tgl_mulai_jadwal">Tanggal Mulai Jadwal</Label>
-                                    <DatePicker
+                                    <Input
+                                        id="tgl_mulai_jadwal"
+                                        type="date"
                                         value={data.tgl_mulai_jadwal}
-                                        onChange={(date) =>
-                                            setData(
-                                                'tgl_mulai_jadwal',
-                                                date ? new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0] : '',
-                                            )
-                                        }
+                                        onChange={(e) => setData('tgl_mulai_jadwal', e.target.value)}
+                                        className={errors.tgl_mulai_jadwal ? 'border-red-500' : ''}
                                     />
                                 </div>
 
@@ -161,14 +158,12 @@ export default function EditKaryawan({ karyawan, roles, users }: Props) {
                                 {/* Tanggal Lahir */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_lahir">Tanggal Lahir</Label>
-                                    <DatePicker
+                                    <Input
+                                        id="tanggal_lahir"
+                                        type="date"
                                         value={data.tanggal_lahir}
-                                        onChange={(date) =>
-                                            setData(
-                                                'tanggal_lahir',
-                                                date ? new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0] : '',
-                                            )
-                                        }
+                                        onChange={(e) => setData('tanggal_lahir', e.target.value)}
+                                        className={errors.tanggal_lahir ? 'border-red-500' : ''}
                                     />
                                 </div>
 
@@ -208,28 +203,24 @@ export default function EditKaryawan({ karyawan, roles, users }: Props) {
                                 {/* Tanggal Masuk Kerja */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tgl_masuk_kerja">Tanggal Masuk Kerja</Label>
-                                    <DatePicker
+                                    <Input
+                                        id="tgl_masuk_kerja"
+                                        type="date"
                                         value={data.tgl_masuk_kerja}
-                                        onChange={(date) =>
-                                            setData(
-                                                'tgl_masuk_kerja',
-                                                date ? new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0] : '',
-                                            )
-                                        }
+                                        onChange={(e) => setData('tgl_masuk_kerja', e.target.value)}
+                                        className={errors.tgl_masuk_kerja ? 'border-red-500' : ''}
                                     />
                                 </div>
 
                                 {/* Tanggal Akhir Kontrak */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tgl_akhir_kontrak">Tanggal Akhir Kontrak</Label>
-                                    <DatePicker
+                                    <Input
+                                        id="tgl_akhir_kontrak"
+                                        type="date"
                                         value={data.tgl_akhir_kontrak}
-                                        onChange={(date) =>
-                                            setData(
-                                                'tgl_akhir_kontrak',
-                                                date ? new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0] : '',
-                                            )
-                                        }
+                                        onChange={(e) => setData('tgl_akhir_kontrak', e.target.value)}
+                                        className={errors.tgl_akhir_kontrak ? 'border-red-500' : ''}
                                     />
                                 </div>
 
@@ -490,16 +481,11 @@ export default function EditKaryawan({ karyawan, roles, users }: Props) {
 
                                     <div className="space-y-2">
                                         <Label htmlFor="tanggal_npwp">Tanggal NPWP</Label>
-                                        <DatePicker
+                                        <Input
+                                            id="tanggal_npwp"
+                                            type="date"
                                             value={data.tanggal_npwp}
-                                            onChange={(date) =>
-                                                setData(
-                                                    'tanggal_npwp',
-                                                    date
-                                                        ? new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0]
-                                                        : '',
-                                                )
-                                            }
+                                            onChange={(e) => setData('tanggal_npwp', e.target.value)}
                                         />
                                         {errors.tanggal_npwp && <p className="text-sm text-red-500">{errors.tanggal_npwp}</p>}
                                     </div>
@@ -584,16 +570,11 @@ export default function EditKaryawan({ karyawan, roles, users }: Props) {
 
                                     <div className="space-y-2">
                                         <Label htmlFor="bpjs_tanggal">Tanggal BPJS</Label>
-                                        <DatePicker
+                                        <Input
+                                            id="bpjs_tanggal"
+                                            type="date"
                                             value={data.bpjs_tanggal}
-                                            onChange={(date) =>
-                                                setData(
-                                                    'bpjs_tanggal',
-                                                    date
-                                                        ? new Date(date.getTime() - date.getTimezoneOffset() * 60000).toISOString().split('T')[0]
-                                                        : '',
-                                                )
-                                            }
+                                            onChange={(e) => setData('bpjs_tanggal', e.target.value)}
                                         />
                                         {errors.bpjs_tanggal && <p className="text-sm text-red-500">{errors.bpjs_tanggal}</p>}
                                     </div>

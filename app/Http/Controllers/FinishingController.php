@@ -49,15 +49,13 @@ class FinishingController extends Controller
      */
     public function store(Request $request)
     {
-        // Debug: Lihat data yang diterima
-        Log::info('Finishing Request data:', $request->all());
 
         $validated = $request->validate([
             'id_kartu_instruksi_kerja' => 'required|exists:kartu_instruksi_kerjas,id',
             'id_mesin_finishing' => 'required|exists:mesin_finishings,id',
             'id_operator_finishing' => 'required|exists:operator_finishings,id',
             'tanggal_entri' => 'required|date',
-            'proses_finishing' => 'required|in:Protol,Sorter',
+            'proses_finishing' => 'required|in:Protol,Sorter,Lem',
             'tahap_finishing' => 'required|in:Reguler,Semi Waste,Blokir,Retur',
             'hasil_baik_finishing' => 'required|numeric|min:0',
             'hasil_rusak_finishing' => 'required|numeric|min:0',
@@ -76,13 +74,7 @@ class FinishingController extends Controller
         // Generate kode_finishing
         $validated['kode_finishing'] = 'FIN-' . date('Ymd') ;
 
-        // Debug: Lihat data final sebelum create
-        Log::info('Finishing Final data before create:', $validated);
-
         $finishing = Finishing::create($validated);
-
-        // Debug: Lihat data setelah create
-        Log::info('Created finishing:', $finishing->toArray());
 
         return redirect()->route('finishings.index')
             ->with('success', 'Data finishing berhasil ditambahkan');
@@ -131,7 +123,7 @@ class FinishingController extends Controller
             'id_mesin_finishing' => 'required|exists:mesin_finishings,id',
             'id_operator_finishing' => 'required|exists:operator_finishings,id',
             'tanggal_entri' => 'required|date',
-            'proses_finishing' => 'required|in:Protol,Sorter',
+            'proses_finishing' => 'required|in:Protol,Sorter,Lem',
             'tahap_finishing' => 'required|in:Reguler,Semi Waste,Blokir,Retur',
             'hasil_baik_finishing' => 'required|numeric|min:0',
             'hasil_rusak_finishing' => 'required|numeric|min:0',

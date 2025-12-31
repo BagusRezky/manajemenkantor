@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use App\Models\Unit;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use App\Imports\UnitImport;
+use Maatwebsite\Excel\Facades\Excel;
 
 class UnitController extends Controller
 {
@@ -87,5 +89,18 @@ class UnitController extends Controller
         $unit = Unit::findOrFail($id);
         $unit->delete();
         return redirect()->back()->with('success', 'Unit deleted successfully!');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        // Panggil class UnitImport yang sudah kita buat
+        Excel::import(new UnitImport, $request->file('file'));
+
+        // Asumsi route index untuk satuan adalah 'units.index'
+        return redirect()->route('units.index')->with('success', 'Data satuan berhasil diimport dari Excel.');
     }
 }

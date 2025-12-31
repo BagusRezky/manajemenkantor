@@ -26,7 +26,6 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
     const [loading, setLoading] = useState(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    // Fetch dan setup data saat modal dibuka
     useEffect(() => {
         console.log('Modal opened with item:', currentItem);
         setErrorMessage(null);
@@ -36,31 +35,32 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
                 // Item ID untuk konversi
                 const itemId = currentItem.id_master_item;
 
-                // Unit ID harus dari purchase request item
                 let unitId = null;
+
+
                 if (currentItem.purchaseRequestItem?.master_item?.unit?.id) {
                     unitId = currentItem.purchaseRequestItem.master_item.unit.id;
                 }
 
-                console.log('Units for conversion:', { itemId, unitId });
+                else if (currentItem.purchase_request_items?.master_item?.unit?.id) {
+                    unitId = currentItem.purchase_request_items.master_item.unit.id;
+                }
+
+                else if (currentItem.master_item?.unit?.id) {
+                    unitId = currentItem.master_item.unit.id;
+                }
+
+                console.log('Units for conversion detected:', { itemId, unitId });
 
                 if (itemId && unitId) {
                     fetchConversions(itemId, unitId);
-
-                    // Jika sudah ada id_satuan_po, set selectedConversion
-                    if (currentItem.id_satuan_po) {
-                        console.log('Item already has satuan_po:', currentItem.id_satuan_po);
-
-                        // Akan diset setelah fetch conversions berhasil
-                    }
                 } else {
                     console.error('Data tidak lengkap:', { itemId, unitId, currentItem });
-                    setErrorMessage('Data tidak lengkap untuk mengambil konversi');
-                    toast.error('Data tidak lengkap untuk mengambil konversi');
+                    setErrorMessage(`Data unit master item tidak ditemukan (ItemID: ${itemId})`);
+                    toast.error('Data master item atau satuan asal (PR) tidak ditemukan');
                 }
             } catch (error) {
                 console.error('Error in useEffect:', error);
-
                 toast.error('Terjadi kesalahan saat memuat data');
             }
         }
@@ -70,7 +70,8 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
             setQtyAfterConversion(0);
             setAvailableConversions([]);
         }
-    }, [isOpen, currentItem]);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isOpen, currentItem?.id_master_item, currentItem?.id_purchase_request_item]); // <-- HANYA ID, BUKAN OBJECT UTUH
 
     // Fetch data konversi dari API
     const fetchConversions = async (itemId: string, unitId: string) => {
@@ -94,7 +95,7 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
 
             setAvailableConversions(data.conversions || []);
 
-            // Jika sudah ada satuan yang dipilih sebelumnya, pilih konversi yang sesuai
+            // Jika sudah ada satuan yang dipilih sebelumnya (saat edit), pilih konversi yang sesuai
             if (currentItem.id_satuan_po) {
                 const matchingConversion = data.conversions.find((conv: MasterKonversi) => conv.satuan_dua_id === currentItem.id_satuan_po);
 
@@ -102,16 +103,15 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
                     console.log('Found matching conversion:', matchingConversion);
                     setSelectedConversion(matchingConversion.id);
 
-                    // Pre-calculate qty after conversion
+                    // Pre-calculate qty after conversion untuk tampilan awal
                     if (currentItem.qty_po) {
                         const convAmount = parseFloat(matchingConversion.jumlah_satuan_konversi) || 0;
                         const afterConversion = convAmount > 0 ? currentItem.qty_po / convAmount : 0;
                         setQtyAfterConversion(parseFloat(afterConversion.toFixed(3)));
 
-                        // Update current item dengan conversion
+                        // Kita update reference konversi di current item, tapi hati-hati agar tidak trigger loop (karena useEffect kita sudah aman)
                         setCurrentItem({
                             ...currentItem,
-                            qty_after_conversion: parseFloat(afterConversion.toFixed(3)),
                             master_konversi: matchingConversion,
                         });
                     }
@@ -119,7 +119,6 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
             }
         } catch (error) {
             console.error('Error fetching conversions:', error);
-
             toast.error('Gagal memuat data konversi');
         } finally {
             setLoading(false);
@@ -188,7 +187,8 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
     const handleQtyPoChange = (qty: string) => {
         try {
             const qtyPO = parseFloat(qty) || 0;
-            const qtyPR = currentItem.purchaseRequestItem?.qty || 0;
+            // Ambil Qty PR dari path yang tersedia (Create/Edit compatibility)
+            const qtyPR = currentItem.purchaseRequestItem?.qty || currentItem.purchase_request_items?.qty || 0;
 
             // Validasi: Qty PO tidak boleh lebih dari Qty PR
             if (qtyPO > qtyPR) {
@@ -308,24 +308,26 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
                 return;
             }
 
-            const qtyPR = currentItem.purchaseRequestItem?.qty || 0;
+            const qtyPR = currentItem.purchaseRequestItem?.qty || currentItem.purchase_request_items?.qty || 0;
             if (currentItem.qty_po > qtyPR) {
                 toast.error(`Qty PO tidak boleh melebihi Qty PR (${qtyPR})`);
                 return;
             }
 
-            if (!currentItem.harga_satuan) {
+            if (currentItem.harga_satuan === undefined || currentItem.harga_satuan === null) {
                 toast.error('Harap masukkan harga satuan');
                 return;
             }
 
             const conversion = availableConversions.find((c) => c.id === selectedConversion);
             if (!conversion) {
-                toast.error('Data konversi tidak valid');
+                // Jika tidak ada konversi tapi user mencoba save (mungkin kasus jarang), block atau allow dengan warning
+                // Untuk amannya kita block jika satuan sudah dipilih tapi konversi data hilang
+                toast.error('Data konversi tidak valid, silakan pilih ulang satuan');
                 return;
             }
 
-            // Hitung ulang jumlah untuk memastikan nilai terbaru
+            // Hitung ulang jumlah untuk memastikan nilai terbaru sebelum save
             const qtyPO = currentItem.qty_po || 0;
             const conversionAmount = parseFloat(conversion.jumlah_satuan_konversi) || 0;
             const hargaSatuan = currentItem.harga_satuan || 0;
@@ -352,16 +354,18 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
         }
     };
 
-    // Data untuk tampilan
+    // Data untuk tampilan (Helpers)
     const selectedConversionData = availableConversions.find((c) => c.id === selectedConversion);
     const conversionAmount = selectedConversionData ? parseFloat(selectedConversionData.jumlah_satuan_konversi) || 0 : 0;
-    const maxQtyPO = currentItem?.purchaseRequestItem?.qty || 0;
+    const maxQtyPO = currentItem?.purchaseRequestItem?.qty || currentItem?.purchase_request_items?.qty || 0;
+    const unitName =
+        currentItem?.purchaseRequestItem?.master_item?.unit?.nama_satuan || currentItem?.purchase_request_items?.master_item?.unit?.nama_satuan || '';
 
     return (
         <Dialog
             open={isOpen}
             onOpenChange={(open) => {
-                // Konfirmasi jika ada error
+                // Konfirmasi jika ada error dan user mencoba menutup
                 if (!open && errorMessage) {
                     if (confirm('Terdapat error pada form. Apakah Anda yakin ingin menutup?')) {
                         setIsOpen(false);
@@ -450,8 +454,7 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
                             <div className="col-span-3">
                                 <Input id="qty-after-conversion" value={qtyAfterConversion || 0} disabled />
                                 <p className="mt-1 text-xs text-gray-500">
-                                    {currentItem?.purchaseRequestItem?.qty || 0} {availableConversions[0]?.satuan_satu?.nama_satuan || ''} =
-                                    {qtyAfterConversion} {selectedConversionData?.satuan_dua?.nama_satuan || ''}
+                                    {maxQtyPO} {unitName} = {qtyAfterConversion} {selectedConversionData?.satuan_dua?.nama_satuan || ''}
                                 </p>
                             </div>
                         </div>
@@ -466,8 +469,7 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
                             </Label>
                             <div className="col-span-3">
                                 <p className="text-sm">
-                                    {currentItem?.purchaseRequestItem?.qty || 0}{' '}
-                                    {currentItem?.purchaseRequestItem?.master_item?.unit?.nama_satuan || ''}
+                                    {maxQtyPO} {unitName}
                                 </p>
                             </div>
                         </div>
@@ -530,6 +532,7 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
                                     id="remark"
                                     value={currentItem?.remark_item_po || ''}
                                     onChange={(e) => handleRemarkChange(e.target.value)}
+                                    className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                                 />
                             </div>
                         </div>

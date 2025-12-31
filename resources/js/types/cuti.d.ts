@@ -11,3 +11,12 @@ export type Cuti = {
     updated_at?: string;
     karyawan?: Karyawan; // Berdasarkan 'with' di controller
 };
+
+
+export type CutiTahunan = {
+  id_karyawan: number
+  nama_karyawan: string
+  total_cuti_tahunan: number
+  cuti_digunakan: number
+  sisa_cuti_tahunan: number
+}

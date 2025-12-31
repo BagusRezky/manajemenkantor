@@ -1,4 +1,3 @@
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { SelectInput } from '@/components/select-input';
 import { Button } from '@/components/ui/button';
@@ -178,20 +177,8 @@ export default function Edit({ salesOrder, finishGoodItems, customerAddresses }:
                                         </div>
 
                                         <div className="space-y-2">
-                                            <Label htmlFor="eta_marketing">ETA Marketing</Label>
-                                            <DatePicker
-                                                value={data.eta_marketing}
-                                                onChange={(date) => {
-                                                    if (date) {
-                                                        const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                            .toISOString()
-                                                            .split('T')[0];
-                                                        setData('eta_marketing', formattedDate);
-                                                    } else {
-                                                        setData('eta_marketing', '');
-                                                    }
-                                                }}
-                                            />
+                                            <Label htmlFor="eta_marketing">Tanggal PO</Label>
+                                            <Input id="eta_marketing" type='date' name="eta_marketing" value={data.eta_marketing} onChange={handleChange} />
                                             {errors.eta_marketing && <p className="text-sm text-red-500">{errors.eta_marketing}</p>}
                                         </div>
 

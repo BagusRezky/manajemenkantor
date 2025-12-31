@@ -87,7 +87,7 @@ export default function EditPrItems({ poItems, setPoItems }: EditPrItemsProps) {
                                 <TableHead>Satuan PR</TableHead>
                                 <TableHead>Qty PO</TableHead>
                                 <TableHead>Satuan PO</TableHead>
-                                <TableHead>Qty After Conversion</TableHead>
+                                {/* <TableHead>Qty After Conversion</TableHead> */}
                                 <TableHead>Harga Satuan</TableHead>
                                 <TableHead>Diskon</TableHead>
                                 <TableHead>Jumlah</TableHead>
@@ -101,23 +101,33 @@ export default function EditPrItems({ poItems, setPoItems }: EditPrItemsProps) {
                                 <TableRow key={item.id || index}>
                                     <TableCell>{index + 1}</TableCell>
                                     <TableCell>
-                                        {item.master_item ? `${item.master_item.kode_master_item} - ${item.master_item.nama_master_item}` : '-'}
+                                        {item.master_item
+                                            ? `${item.master_item.kode_master_item} - ${item.master_item.nama_master_item}`
+                                            : item.purchaseRequestItem?.master_item
+                                              ? `${item.purchaseRequestItem.master_item.kode_master_item} - ${item.purchaseRequestItem.master_item.nama_master_item}`
+                                              : '-'}
                                     </TableCell>
-                                    <TableCell>{item.purchaseRequestItem?.qty || '-'}</TableCell>
-                                    <TableCell>{item.purchaseRequestItem?.master_item?.unit?.nama_satuan || '-'}</TableCell>
+                                    <TableCell>{item.purchaseRequestItem?.qty || item.purchase_request_items?.qty || '-'}</TableCell>
+                                    <TableCell>
+                                        {item.purchaseRequestItem?.master_item?.unit?.nama_satuan ||
+                                            item.purchase_request_items?.master_item?.unit?.nama_satuan ||
+                                            '-'}
+                                    </TableCell>
+
                                     <TableCell>{item.qty_po || 0}</TableCell>
                                     <TableCell>{item.satuan?.nama_satuan || '-'}</TableCell>
-                                    <TableCell>{item.qty_after_conversion || 0}</TableCell>
+                                    {/* <TableCell>{item.qty_after_conversion || 0}</TableCell> */}
                                     <TableCell>{formatRupiah(item.harga_satuan || 0)}</TableCell>
                                     <TableCell>{item.diskon_satuan || 0}%</TableCell>
                                     <TableCell>{formatRupiah(item.jumlah || 0)}</TableCell>
-                                    <TableCell>{item.purchaseRequestItem?.catatan || '-'}</TableCell>
+
+                                    <TableCell>{item.purchaseRequestItem?.catatan || item.purchase_request_items?.catatan || '-'}</TableCell>
                                     <TableCell>{item.remark_item_po || '-'}</TableCell>
                                     <TableCell>
                                         <Button
                                             variant="outline"
                                             size="sm"
-                                            type="button" // Eksplisit sebagai button, bukan submit
+                                            type="button" 
                                             onClick={(e) => handleEditItem(item, e)}
                                         >
                                             Edit

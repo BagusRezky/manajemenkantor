@@ -148,16 +148,21 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
                             <CardContent>
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
+
+                                        {/* Customer Select */}
                                         <div className="space-y-2">
                                             <Label htmlFor="id_customer_address">Customer</Label>
-                                            <Select value={data.id_customer_address?.toString() || ''}>
+                                            <Select
+                                                value={data.id_customer_address}
+                                                onValueChange={(val) => setData('id_customer_address', val)}
+                                            >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Pilih Customer" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {customerAddresses.map((customerAddress) => (
-                                                        <SelectItem key={customerAddress.id} value={customerAddress.id.toString()}>
-                                                            {customerAddress.nama_customer}
+                                                    {customerAddresses.map((customer) => (
+                                                        <SelectItem key={customer.id} value={customer.id.toString()}>
+                                                            {customer.nama_customer}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
@@ -165,138 +170,134 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
                                             {errors.id_customer_address && <p className="text-sm text-red-500">{errors.id_customer_address}</p>}
                                         </div>
 
+                                        {/* Type Item Select */}
                                         <div className="space-y-2">
                                             <Label htmlFor="id_type_item">Type Item</Label>
-                                            <Select value={data.id_type_item}>
+                                            <Select
+                                                value={data.id_type_item}
+                                                onValueChange={(val) => setData('id_type_item', val)}
+                                            >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Pilih Type Item" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {typeItems.map((typeItem) => (
-                                                        <SelectItem key={typeItem.id} value={typeItem.id.toString()}>
-                                                            {typeItem.nama_type_item}
+                                                    {typeItems.map((type) => (
+                                                        <SelectItem key={type.id} value={type.id.toString()}>
+                                                            {type.nama_type_item}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
-
                                             {errors.id_type_item && <p className="text-sm text-red-500">{errors.id_type_item}</p>}
                                         </div>
 
+                                        {/* Inputs dengan onChange */}
                                         <div className="space-y-2">
                                             <Label htmlFor="kode_material_produk">Kode Material Produk</Label>
-                                            <Input id="kode_material_produk" name="kode_material_produk" value={data.kode_material_produk} readOnly />
+                                            <Input
+                                                id="kode_material_produk"
+                                                value={data.kode_material_produk}
+                                                onChange={(e) => setData('kode_material_produk', e.target.value)}
+                                            />
                                             {errors.kode_material_produk && <p className="text-sm text-red-500">{errors.kode_material_produk}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="kode_barcode">Kode Barcode</Label>
-                                            <Input id="kode_barcode" value={data.kode_barcode} readOnly />
-                                            {errors.kode_barcode && <p className="text-sm text-red-500">{errors.kode_barcode}</p>}
+                                            <Input
+                                                id="kode_barcode"
+                                                value={data.kode_barcode}
+                                                onChange={(e) => setData('kode_barcode', e.target.value)}
+                                            />
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="pc_number">PC Number</Label>
-                                            <Input id="pc_number" value={data.pc_number} readOnly />
-                                            {errors.pc_number && <p className="text-sm text-red-500">{errors.pc_number}</p>}
+                                            <Input
+                                                id="pc_number"
+                                                value={data.pc_number}
+                                                onChange={(e) => setData('pc_number', e.target.value)}
+                                            />
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="nama_barang">Nama Barang</Label>
-                                            <Input id="nama_barang" name="nama_barang" value={data.nama_barang} readOnly />
-                                            {errors.nama_barang && <p className="text-sm text-red-500">{errors.nama_barang}</p>}
+                                            <Input
+                                                id="nama_barang"
+                                                value={data.nama_barang}
+                                                onChange={(e) => setData('nama_barang', e.target.value)}
+                                            />
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="deskripsi">Deskripsi</Label>
-                                            <Input id="deskripsi" value={data.deskripsi} readOnly />
-                                            {errors.deskripsi && <p className="text-sm text-red-500">{errors.deskripsi}</p>}
+                                            <Input
+                                                id="deskripsi"
+                                                value={data.deskripsi}
+                                                onChange={(e) => setData('deskripsi', e.target.value)}
+                                            />
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="spesifikasi_kertas">Spesifikasi Kertas</Label>
-                                            <Input id="spesifikasi_kertas" value={data.spesifikasi_kertas} readOnly />
-                                            {errors.spesifikasi_kertas && <p className="text-sm text-red-500">{errors.spesifikasi_kertas}</p>}
+                                            <Input
+                                                id="spesifikasi_kertas"
+                                                value={data.spesifikasi_kertas}
+                                                onChange={(e) => setData('spesifikasi_kertas', e.target.value)}
+                                            />
                                         </div>
 
+                                        {/* UP Fields */}
                                         <div className="space-y-2">
                                             <Label htmlFor="up_satu">UP Satu</Label>
-                                            <Input
-                                                id="up_satu"
-                                                value={data.up_satu}
-                                                onChange={(e) => setData('up_satu', e.target.value)}
-                                                className={errors.up_satu ? 'border-red-500' : ''}
-                                            />
-                                            {errors.up_satu && <p className="text-sm text-red-500">{errors.up_satu}</p>}
+                                            <Input id="up_satu" value={data.up_satu} onChange={(e) => setData('up_satu', e.target.value)} />
                                         </div>
-
                                         <div className="space-y-2">
                                             <Label htmlFor="up_dua">UP Dua</Label>
-                                            <Input
-                                                id="up_dua"
-                                                value={data.up_dua}
-                                                onChange={(e) => setData('up_dua', e.target.value)}
-                                                className={errors.up_dua ? 'border-red-500' : ''}
-                                            />
-                                            {errors.up_dua && <p className="text-sm text-red-500">{errors.up_dua}</p>}
+                                            <Input id="up_dua" value={data.up_dua} onChange={(e) => setData('up_dua', e.target.value)} />
                                         </div>
-
                                         <div className="space-y-2">
                                             <Label htmlFor="up_tiga">UP Tiga</Label>
-                                            <Input
-                                                id="up_tiga"
-                                                value={data.up_tiga}
-                                                onChange={(e) => setData('up_tiga', e.target.value)}
-                                                className={errors.up_tiga ? 'border-red-500' : ''}
-                                            />
-                                            {errors.up_tiga && <p className="text-sm text-red-500">{errors.up_tiga}</p>}
+                                            <Input id="up_tiga" value={data.up_tiga} onChange={(e) => setData('up_tiga', e.target.value)} />
                                         </div>
 
+                                        {/* Ukuran & Berat */}
                                         <div className="space-y-2">
                                             <Label htmlFor="ukuran_potong">Ukuran Potong</Label>
-                                            <Input id="ukuran_potong" value={data.ukuran_potong} readOnly />
-                                            {errors.ukuran_potong && <p className="text-sm text-red-500">{errors.ukuran_potong}</p>}
+                                            <Input id="ukuran_potong" value={data.ukuran_potong} onChange={(e) => setData('ukuran_potong', e.target.value)} />
                                         </div>
-
                                         <div className="space-y-2">
                                             <Label htmlFor="ukuran_cetak">Ukuran Cetak</Label>
-                                            <Input id="ukuran_cetak" value={data.ukuran_cetak} readOnly />
-                                            {errors.ukuran_cetak && <p className="text-sm text-red-500">{errors.ukuran_cetak}</p>}
+                                            <Input id="ukuran_cetak" value={data.ukuran_cetak} onChange={(e) => setData('ukuran_cetak', e.target.value)} />
                                         </div>
-
                                         <div className="space-y-2">
                                             <Label htmlFor="panjang">Panjang</Label>
-                                            <Input id="panjang" type="number" step="0.01" value={data.panjang} readOnly />
-                                            {errors.panjang && <p className="text-sm text-red-500">{errors.panjang}</p>}
+                                            <Input id="panjang" type="number" step="0.01" value={data.panjang} onChange={(e) => setData('panjang', e.target.value)} />
                                         </div>
-
                                         <div className="space-y-2">
                                             <Label htmlFor="lebar">Lebar</Label>
-                                            <Input id="lebar" type="number" step="0.01" value={data.lebar} readOnly />
-                                            {errors.lebar && <p className="text-sm text-red-500">{errors.lebar}</p>}
+                                            <Input id="lebar" type="number" step="0.01" value={data.lebar} onChange={(e) => setData('lebar', e.target.value)} />
                                         </div>
-
                                         <div className="space-y-2">
                                             <Label htmlFor="tinggi">Tinggi</Label>
-                                            <Input id="tinggi" type="number" step="0.01" value={data.tinggi} readOnly />
-                                            {errors.tinggi && <p className="text-sm text-red-500">{errors.tinggi}</p>}
+                                            <Input id="tinggi" type="number" step="0.01" value={data.tinggi} onChange={(e) => setData('tinggi', e.target.value)} />
                                         </div>
-
                                         <div className="space-y-2">
                                             <Label htmlFor="berat_kotor">Berat Kotor</Label>
-                                            <Input id="berat_kotor" type="number" step="0.01" value={data.berat_kotor} readOnly />
-                                            {errors.berat_kotor && <p className="text-sm text-red-500">{errors.berat_kotor}</p>}
+                                            <Input id="berat_kotor" type="number" step="0.01" value={data.berat_kotor} onChange={(e) => setData('berat_kotor', e.target.value)} />
                                         </div>
-
                                         <div className="space-y-2">
                                             <Label htmlFor="berat_bersih">Berat Bersih</Label>
-                                            <Input id="berat_bersih" type="number" step="0.01" value={data.berat_bersih} readOnly />
-                                            {errors.berat_bersih && <p className="text-sm text-red-500">{errors.berat_bersih}</p>}
+                                            <Input id="berat_bersih" type="number" step="0.01" value={data.berat_bersih} onChange={(e) => setData('berat_bersih', e.target.value)} />
                                         </div>
 
+                                        {/* Satuan Select */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="id_type_item">Satuan</Label>
-                                            <Select value={data.satuan_satu_id}>
+                                            <Label>Satuan</Label>
+                                            <Select
+                                                value={data.satuan_satu_id}
+                                                onValueChange={(val) => setData('satuan_satu_id', val)}
+                                            >
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Pilih Satuan" />
                                                 </SelectTrigger>
@@ -308,175 +309,70 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
                                                     ))}
                                                 </SelectContent>
                                             </Select>
-                                            {errors.satuan_satu_id && <p className="text-sm text-red-500">{errors.satuan_satu_id}</p>}
                                         </div>
                                     </div>
 
+                                    {/* BOM Section - Sudah Benar handleBomItemChange-nya */}
                                     <div className="mt-8">
                                         <div className="mb-4 flex items-center justify-between">
                                             <h3 className="text-lg font-semibold">Bill of Materials</h3>
-                                            <Button type="button" variant="outline" onClick={handleAddBomItem}>
-                                                Add Item
-                                            </Button>
+                                            <Button type="button" variant="outline" onClick={handleAddBomItem}>Add Item</Button>
                                         </div>
-
-                                        <div className="rounded-md border">
+                                        <div className="rounded-md border overflow-x-auto">
                                             <table className="w-full divide-y">
                                                 <thead>
                                                     <tr>
-                                                        <th
-                                                            scope="col"
-                                                            className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                                        >
-                                                            Master Item
-                                                        </th>
-                                                        <th
-                                                            scope="col"
-                                                            className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                                        >
-                                                            Departemen
-                                                        </th>
-                                                        <th
-                                                            scope="col"
-                                                            className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                                        >
-                                                            Waste
-                                                        </th>
-                                                        <th
-                                                            scope="col"
-                                                            className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                                        >
-                                                            Qty
-                                                        </th>
-                                                        <th
-                                                            scope="col"
-                                                            className="px-4 py-3 text-left text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                                        >
-                                                            Keterangan
-                                                        </th>
-                                                        <th
-                                                            scope="col"
-                                                            className="px-4 py-3 text-right text-xs font-medium tracking-wider text-gray-500 uppercase"
-                                                        >
-                                                            Actions
-                                                        </th>
+                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Master Item</th>
+                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Departemen</th>
+                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Waste</th>
+                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qty</th>
+                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Keterangan</th>
+                                                        <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                                                     </tr>
                                                 </thead>
                                                 <tbody className="divide-y divide-gray-200">
-                                                    {!Array.isArray(data.bill_of_materials) || data.bill_of_materials.length === 0 ? (
-                                                        <tr>
-                                                            <td colSpan={6} className="px-4 py-4 text-center text-sm text-gray-500">
-                                                                No items in bill of materials
+                                                    {data.bill_of_materials.map((item, index) => (
+                                                        <tr key={item.id?.toString() || index}>
+                                                            <td className="px-4 py-2">
+                                                                <Select value={item.id_master_item?.toString()} onValueChange={(v) => handleBomItemChange(index, 'id_master_item', v)}>
+                                                                    <SelectTrigger><SelectValue placeholder="Select Item" /></SelectTrigger>
+                                                                    <SelectContent>
+                                                                        {masterItems.map((m) => <SelectItem key={m.id} value={m.id.toString()}>{m.nama_master_item}</SelectItem>)}
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </td>
+                                                            <td className="px-4 py-2">
+                                                                <Select value={item.id_departemen?.toString()} onValueChange={(v) => handleBomItemChange(index, 'id_departemen', v)}>
+                                                                    <SelectTrigger><SelectValue placeholder="Select Dept" /></SelectTrigger>
+                                                                    <SelectContent>
+                                                                        {departements.map((d) => <SelectItem key={d.id} value={d.id.toString()}>{d.nama_departemen}</SelectItem>)}
+                                                                    </SelectContent>
+                                                                </Select>
+                                                            </td>
+                                                            <td className="px-4 py-2">
+                                                                <Input value={item.waste} onChange={(e) => handleBomItemChange(index, 'waste', e.target.value)} />
+                                                            </td>
+                                                            <td className="px-4 py-2">
+                                                                <Input value={item.qty} onChange={(e) => handleBomItemChange(index, 'qty', e.target.value)} />
+                                                            </td>
+                                                            <td className="px-4 py-2">
+                                                                <Input value={item.keterangan} onChange={(e) => handleBomItemChange(index, 'keterangan', e.target.value)} />
+                                                            </td>
+                                                            <td className="px-4 py-2 text-right">
+                                                                <Button type="button" variant="destructive" size="sm" onClick={() => handleRemoveBomItem(index)}>Remove</Button>
                                                             </td>
                                                         </tr>
-                                                    ) : (
-                                                        data.bill_of_materials.map((item, index) => (
-                                                            <tr key={item.id?.toString() || `row-${index}`}>
-                                                                <td className="px-4 py-2">
-                                                                    <Select
-                                                                        value={item.id_master_item?.toString() || ''}
-                                                                        onValueChange={(value) => handleBomItemChange(index, 'id_master_item', value)}
-                                                                    >
-                                                                        <SelectTrigger className="w-full">
-                                                                            <SelectValue placeholder="Select Item" />
-                                                                        </SelectTrigger>
-                                                                        <SelectContent>
-                                                                            {masterItems.map((masterItem) => (
-                                                                                <SelectItem key={masterItem.id} value={masterItem.id.toString()}>
-                                                                                    {masterItem.nama_master_item}
-                                                                                </SelectItem>
-                                                                            ))}
-                                                                        </SelectContent>
-                                                                    </Select>
-                                                                    {errors[`bill_of_materials.${index}.id_master_item`] && (
-                                                                        <p className="mt-1 text-xs text-red-500">
-                                                                            {errors[`bill_of_materials.${index}.id_master_item`]}
-                                                                        </p>
-                                                                    )}
-                                                                </td>
-                                                                <td className="px-4 py-2">
-                                                                    <Select
-                                                                        value={item.id_departemen?.toString() || ''}
-                                                                        onValueChange={(value) => handleBomItemChange(index, 'id_departemen', value)}
-                                                                    >
-                                                                        <SelectTrigger className="w-full">
-                                                                            <SelectValue placeholder="Select Departemen" />
-                                                                        </SelectTrigger>
-                                                                        <SelectContent>
-                                                                            {departements.map((departemen) => (
-                                                                                <SelectItem key={departemen.id} value={departemen.id.toString()}>
-                                                                                    {departemen.nama_departemen}
-                                                                                </SelectItem>
-                                                                            ))}
-                                                                        </SelectContent>
-                                                                    </Select>
-                                                                    {errors[`bill_of_materials.${index}.id_departemen`] && (
-                                                                        <p className="mt-1 text-xs text-red-500">
-                                                                            {errors[`bill_of_materials.${index}.id_departemen`]}
-                                                                        </p>
-                                                                    )}
-                                                                </td>
-                                                                <td className="px-4 py-2">
-                                                                    <Input
-                                                                        value={item.waste?.toString() || ''}
-                                                                        onChange={(e) => handleBomItemChange(index, 'waste', e.target.value)}
-                                                                    />
-                                                                    {errors[`bill_of_materials.${index}.waste`] && (
-                                                                        <p className="mt-1 text-xs text-red-500">
-                                                                            {errors[`bill_of_materials.${index}.waste`]}
-                                                                        </p>
-                                                                    )}
-                                                                </td>
-                                                                <td className="px-4 py-2">
-                                                                    <Input
-                                                                        value={item.qty?.toString() || ''}
-                                                                        onChange={(e) => handleBomItemChange(index, 'qty', e.target.value)}
-                                                                    />
-                                                                    {errors[`bill_of_materials.${index}.qty`] && (
-                                                                        <p className="mt-1 text-xs text-red-500">
-                                                                            {errors[`bill_of_materials.${index}.qty`]}
-                                                                        </p>
-                                                                    )}
-                                                                </td>
-                                                                <td className="px-4 py-2">
-                                                                    <Input
-                                                                        value={item.keterangan?.toString() || ''}
-                                                                        onChange={(e) => handleBomItemChange(index, 'keterangan', e.target.value)}
-                                                                    />
-                                                                    {errors[`bill_of_materials.${index}.keterangan`] && (
-                                                                        <p className="mt-1 text-xs text-red-500">
-                                                                            {errors[`bill_of_materials.${index}.keterangan`]}
-                                                                        </p>
-                                                                    )}
-                                                                </td>
-                                                                <td className="px-4 py-2 text-right">
-                                                                    <Button
-                                                                        type="button"
-                                                                        variant="destructive"
-                                                                        size="sm"
-                                                                        onClick={() => handleRemoveBomItem(index)}
-                                                                    >
-                                                                        Remove
-                                                                    </Button>
-                                                                </td>
-                                                            </tr>
-                                                        ))
-                                                    )}
+                                                    ))}
                                                 </tbody>
                                             </table>
                                         </div>
-                                        {errors.bill_of_materials && <p className="mt-2 text-sm text-red-500">{errors.bill_of_materials}</p>}
                                     </div>
 
                                     <div className="flex justify-end space-x-4">
                                         <Link href={route('finishGoodItems.index')}>
-                                            <Button variant="outline" type="button">
-                                                Cancel
-                                            </Button>
+                                            <Button variant="outline" type="button">Cancel</Button>
                                         </Link>
-                                        <Button type="submit" disabled={processing}>
-                                            Update
-                                        </Button>
+                                        <Button type="submit" disabled={processing}>Update</Button>
                                     </div>
                                 </form>
                             </CardContent>

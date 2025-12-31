@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -301,24 +300,11 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                                         {/* Tanggal Estimasi Selesai */}
                                         <div className="space-y-2">
                                             <Label htmlFor="tgl_estimasi_selesai">Tanggal Estimasi Selesai</Label>
-
-                                            <DatePicker
-                                                value={data.tgl_estimasi_selesai}
-                                                onChange={(date) => {
-                                                    if (date) {
-                                                        const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                            .toISOString()
-                                                            .split('T')[0];
-                                                        setData('tgl_estimasi_selesai', formattedDate);
-                                                    } else {
-                                                        setData('tgl_estimasi_selesai', '');
-                                                    }
-                                                }}
-                                            />
+                                            <Input id="tgl_estimasi_selesai" name="tgl_estimasi_selesai" type="date" value={data.tgl_estimasi_selesai} onChange={handleChange} />
                                             {errors.tgl_estimasi_selesai && <p className="text-sm text-red-500">{errors.tgl_estimasi_selesai}</p>}
                                         </div>
                                         <div className="space-y-2">
-                                            <Label htmlFor="production_plan">ETA Marketing</Label>
+                                            <Label htmlFor="production_plan">Tanggal PO</Label>
                                             <Input value={selectedSalesOrder?.eta_marketing || ''} readOnly />
                                         </div>
                                     </div>

@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -128,18 +127,11 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                 {/* Tanggal Entri */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_entri">Tanggal Entri *</Label>
-                                    <DatePicker
+                                    <Input
+                                        type="date"
+                                        id="tanggal_entri"
                                         value={data.tanggal_entri}
-                                        onChange={(date) => {
-                                            if (date) {
-                                                const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                    .toISOString()
-                                                    .split('T')[0];
-                                                setData('tanggal_entri', formattedDate);
-                                            } else {
-                                                setData('tanggal_entri', '');
-                                            }
-                                        }}
+                                        onChange={(e) => setData('tanggal_entri', e.target.value)}
                                     />
                                     {errors.tanggal_entri && <p className="text-sm text-red-600">{errors.tanggal_entri}</p>}
                                 </div>
@@ -154,6 +146,7 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                         <SelectContent>
                                             <SelectItem value="Protol">Protol</SelectItem>
                                             <SelectItem value="Sorter">Sorter</SelectItem>
+                                            <SelectItem value="Lem">Lem</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     {errors.proses_finishing && <div className="text-sm text-red-600">{errors.proses_finishing}</div>}
@@ -190,7 +183,7 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                         className={errors.hasil_baik_finishing ? 'border-red-500' : ''}
                                     />
                                     {errors.hasil_baik_finishing && <div className="text-sm text-red-600">{errors.hasil_baik_finishing}</div>}
-                                    <div className="text-xs text-gray-500">Current value: {data.hasil_baik_finishing || '0'}</div>
+
                                 </div>
 
                                 {/* Hasil Rusak */}
@@ -207,7 +200,7 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                         className={errors.hasil_rusak_finishing ? 'border-red-500' : ''}
                                     />
                                     {errors.hasil_rusak_finishing && <div className="text-sm text-red-600">{errors.hasil_rusak_finishing}</div>}
-                                    <div className="text-xs text-gray-500">Current value: {data.hasil_rusak_finishing || '0'}</div>
+
                                 </div>
 
                                 {/* Semi Waste */}
@@ -224,7 +217,7 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                         className={errors.semi_waste_finishing ? 'border-red-500' : ''}
                                     />
                                     {errors.semi_waste_finishing && <div className="text-sm text-red-600">{errors.semi_waste_finishing}</div>}
-                                    <div className="text-xs text-gray-500">Current value: {data.semi_waste_finishing || '0'}</div>
+                                    
                                 </div>
                             </div>
 
@@ -241,12 +234,6 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                     </SelectContent>
                                 </Select>
                                 {errors.keterangan_finishing && <div className="text-sm text-red-600">{errors.keterangan_finishing}</div>}
-                            </div>
-
-                            {/* Debug Info */}
-                            <div className="rounded bg-gray-100 p-4 text-sm">
-                                <strong>Debug Info:</strong>
-                                <pre>{JSON.stringify(data, null, 2)}</pre>
                             </div>
 
                             {/* Actions */}

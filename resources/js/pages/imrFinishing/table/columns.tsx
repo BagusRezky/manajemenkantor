@@ -17,6 +17,10 @@ const generateImrPdf = (imr: ImrFinishing, download = false): void => {
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
 
+    const logo = new Image();
+    logo.src = '/images/logo-kantor.png';
+    doc.addImage(logo, 'PNG', 14, 17, 17, 17);
+
     // Header dengan border
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
@@ -24,15 +28,16 @@ const generateImrPdf = (imr: ImrFinishing, download = false): void => {
 
     // Company Info
     doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('CV. Indigama Khatulistiwa', 15, 18);
+    doc.text('CV. Indigama Khatulistiwa', 34, 18);
+
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Jurangpelem Satu, Bulusari, Kec. Gempol, Pasuruan,', 15, 23);
-    doc.text('Jawa Timur 67155', 15, 28);
-    doc.text('Email: indigama.khatulistiwa01@gmail.com', 15, 33);
-    doc.text('Telp: 081703101012', 15, 38);
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 34, 23);
+    doc.text('Pasuruan, Jawa Timur 67155', 34, 28);
+    doc.text('Email: indigama.khatulistiwa01@gmail.com', 34, 33);
+    doc.text('Telp: 081703101012', 34, 38);
 
     doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('INTERNAL MATERIAL REQUEST', pageWidth - 15, 18, { align: 'right' });
+    doc.text('IMR FINISH', pageWidth - 15, 18, { align: 'right' });
 
     // Informasi IMR
     doc.setLineWidth(0.5);

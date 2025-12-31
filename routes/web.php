@@ -48,6 +48,7 @@ use App\Http\Controllers\PotonganTunjanganController;
 use App\Http\Controllers\PengajuanPinjamanController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\GajiController;
+use App\Http\Controllers\DashboardController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -62,9 +63,7 @@ Route::get('/approval-notice', function () {
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', function () {
-        return Inertia::render('dashboard');
-    })->name('dashboard');
+    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
     // Rute-rute yang sudah ada
     Route::get('/customerAddresses', [CustomerAddressController::class, 'index'])->name('customerAddresses.index')->middleware('permission:customerAddresses.index');
@@ -82,11 +81,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/suppliers', [SupplierController::class, 'store'])->name('suppliers.store')->middleware('permission:suppliers.store');
     Route::put('/suppliers/{id}', [SupplierController::class, 'update'])->name('suppliers.update')->middleware('permission:suppliers.update');
     Route::delete('/suppliers/{id}', [SupplierController::class, 'destroy'])->name('suppliers.destroy')->middleware('permission:suppliers.destroy');
+    Route::post('/suppliers/import', [SupplierController::class, 'import'])->name('suppliers.import')->middleware('permission:suppliers.import');
 
     Route::get('/units', [UnitController::class, 'index'])->name('units.index')->middleware('permission:units.index');
     Route::post('/units', [UnitController::class, 'store'])->name('units.store')->middleware('permission:units.store');
     Route::put('/units/{id}', [UnitController::class, 'update'])->name('units.update')->middleware('permission:units.update');
     Route::delete('/units/{id}', [UnitController::class, 'destroy'])->name('units.destroy')->middleware('permission:units.destroy');
+    Route::post('/units/import', [UnitController::class, 'import'])->name('units.import')->middleware('permission:units.import');
 
     Route::get('/categoryItems', [CategoryItemController::class, 'index'])->name('categoryItems.index')->middleware('permission:categoryItems.index');
     Route::post('/categoryItems', [CategoryItemController::class, 'store'])->name('categoryItems.store')->middleware('permission:categoryItems.store');
@@ -97,6 +98,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/typeItems', [TypeItemController::class, 'store'])->name('typeItems.store')->middleware('permission:typeItems.store');
     Route::put('/typeItems/{id}', [TypeItemController::class, 'update'])->name('typeItems.update')->middleware('permission:typeItems.update');
     Route::delete('/typeItems/{id}', [TypeItemController::class, 'destroy'])->name('typeItems.destroy')->middleware('permission:typeItems.destroy');
+    Route::post('/typeItems/import', [TypeItemController::class, 'import'])->name('typeItems.import')->middleware('permission:typeItems.import');
 
     Route::get('/masterItems', [MasterItemController::class, 'index'])->name('master-items.index')->middleware('permission:master-items.index');
     Route::get('/masterItems/create', [MasterItemController::class, 'create'])->name('master-items.create')->middleware('permission:master-items.create');
@@ -104,6 +106,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/masterItems/{id}/edit', [MasterItemController::class, 'edit'])->name('master-items.edit')->middleware('permission:master-items.edit');
     Route::put('/masterItems/{id}', [MasterItemController::class, 'update'])->name('master-items.update')->middleware('permission:master-items.update');
     Route::delete('/masterItems/{id}', [MasterItemController::class, 'destroy'])->middleware('permission:master-items.destroy');
+    Route::post('/masterItems/import', [MasterItemController::class, 'import'])->name('master-items.import')->middleware('permission:master-items.import');
     Route::get('/api/type-items', [MasterItemController::class, 'getTypeItems'])->name('api.type-items');
 
     Route::get('/departemens', [DepartemenController::class, 'index'])->middleware('permission:departemens.index');
@@ -439,6 +442,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cutis/{cuti}/edit', [CutiController::class, 'edit'])->name('cutis.edit')->middleware('permission:cutis.edit');
         Route::put('/cutis/{cuti}', [CutiController::class, 'update'])->name('cutis.update')->middleware('permission:cutis.update');
         Route::delete('/cutis/{cuti}', [CutiController::class, 'destroy'])->name('cutis.destroy')->middleware('permission:cutis.destroy');
+        Route::get('/cutiTahunan', [CutiController::class, 'cutiTahunan'])->name('cutiTahunan.index')->middleware('permission:cutiTahunan.index');
 
         Route::get('/gajis', [GajiController::class, 'index'])->name('gajis.index')->middleware('permission:gajis.index');
     });

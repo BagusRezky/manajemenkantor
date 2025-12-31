@@ -1,8 +1,6 @@
-// pages/hariLibur/create.tsx
-
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Head, useForm } from '@inertiajs/react';
-import { DatePicker } from '../../components/date-picker';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Label } from '../../components/ui/label';
@@ -45,18 +43,11 @@ export default function CreateHariLibur() {
                                 {/* Tanggal Libur */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_libur">Tanggal Libur *</Label>
-                                    <DatePicker
+                                    <Input
+                                        type="date"
+                                        id="tanggal_libur"
                                         value={data.tanggal_libur}
-                                        onChange={(date) => {
-                                            if (date) {
-                                                const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                    .toISOString()
-                                                    .split('T')[0];
-                                                setData('tanggal_libur', formattedDate);
-                                            } else {
-                                                setData('tanggal_libur', '');
-                                            }
-                                        }}
+                                        onChange={(e) => setData('tanggal_libur', e.target.value)}
                                     />
                                     {errors.tanggal_libur && <p className="text-sm text-red-500">{errors.tanggal_libur}</p>}
                                 </div>

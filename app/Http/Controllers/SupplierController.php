@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\SupplierImport;
 use App\Models\Supplier;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -94,5 +96,16 @@ class SupplierController extends Controller
         $supplier = Supplier::findOrFail($id);
         $supplier->delete();
         return redirect()->route('suppliers.index')->with('success', 'Supplier deleted successfully!');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        Excel::import(new SupplierImport, $request->file('file'));
+
+        return redirect()->route('suppliers.index')->with('success', 'Data suppliers berhasil diimport dari Excel.');
     }
 }

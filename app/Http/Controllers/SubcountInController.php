@@ -41,7 +41,6 @@ class SubcountInController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'no_subcount_in' => 'required|string|max:255|unique:subcount_ins,no_subcount_in',
             'tgl_subcount_in' => 'required|date',
             'no_surat_jalan_pengiriman' => 'required|string|max:255',
             'admin_produksi' => 'required|string|max:255',
@@ -55,24 +54,43 @@ class SubcountInController extends Controller
         ]);
 
         DB::transaction(function () use ($validated) {
-            // Create SubcountIn
+            // === Generate Nomor Otomatis ===
+            $monthYear = date('m-Y');
+            $prefix = "SUB-IN/{$monthYear}/";
+
+            // Ambil nomor terakhir di bulan ini
+            $lastSubcount = SubcountIn::where('no_subcount_in', 'like', $prefix . '%')
+                ->orderBy('no_subcount_in', 'desc')
+                ->first();
+
+            if ($lastSubcount) {
+                // Ambil 6 digit terakhir dari nomor terakhir
+                $lastNumber = (int)substr($lastSubcount->no_subcount_in, -6);
+                $nextNumber = str_pad($lastNumber + 1, 6, '0', STR_PAD_LEFT);
+            } else {
+                $nextNumber = '000001';
+            }
+
+            $noSubcountIn = $prefix . $nextNumber;
+
+            // === Simpan ke DB ===
             $subcountIn = SubcountIn::create([
-                'no_subcount_in' => $validated['no_subcount_in'],
+                'no_subcount_in' => $noSubcountIn,
                 'tgl_subcount_in' => $validated['tgl_subcount_in'],
                 'no_surat_jalan_pengiriman' => $validated['no_surat_jalan_pengiriman'],
                 'admin_produksi' => $validated['admin_produksi'],
                 'supervisor' => $validated['supervisor'],
                 'admin_mainstore' => $validated['admin_mainstore'],
-                'keterangan' => $validated['keterangan'],
+                'keterangan' => $validated['keterangan'] ?? null,
             ]);
 
-            // Create SubcountInItems
+            // === Insert items ===
             foreach ($validated['items'] as $item) {
                 SubcountInItem::create([
                     'id_subcount_in' => $subcountIn->id,
                     'id_subcount_out' => $item['id_subcount_out'],
                     'qty' => $item['qty'],
-                    'keterangan' => $item['keterangan'],
+                    'keterangan' => $item['keterangan'] ?? null,
                 ]);
             }
         });

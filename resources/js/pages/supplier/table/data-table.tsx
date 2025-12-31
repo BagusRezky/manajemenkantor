@@ -1,7 +1,9 @@
 import { DataTablePagination } from '@/components/custom-pagination';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Supplier } from '@/types/supplier';
+import { router } from '@inertiajs/react';
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -11,7 +13,9 @@ import {
     getPaginationRowModel,
     useReactTable,
 } from '@tanstack/react-table';
+import { Upload } from 'lucide-react';
 import React from 'react';
+import { toast } from 'sonner';
 import { SupplierFormModal } from '../modal/add-modal';
 
 interface DataTableProps<TData, TValue> {
@@ -19,6 +23,23 @@ interface DataTableProps<TData, TValue> {
     data: TData[];
     suppliers: Supplier[];
 }
+
+const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0]) return;
+
+    const formData = new FormData();
+    formData.append('file', e.target.files[0]);
+
+    router.post(route('suppliers.import'), formData, {
+        onSuccess: () => {
+            e.target.value = '';
+            toast.success('File berhasil diimpor!');
+        },
+        onError: () => {
+            toast.error('Gagal mengimpor file.');
+        },
+    });
+};
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -39,13 +60,21 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
     return (
         <div>
-            <div className="flex space-x-190 py-4">
+            <div className="flex justify-between py-4">
                 <Input
                     placeholder="Cari Kode Suplier..."
                     value={(table.getColumn('kode_suplier')?.getFilterValue() as string) ?? ''}
                     onChange={(event) => table.getColumn('kode_suplier')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
+                <div className="ml-auto flex space-x-3">
+                    {/* Upload Excel */}
+                    <Button type="button" variant="outline" onClick={() => document.getElementById('excel-upload')?.click()}>
+                        <Upload className="mr-2 h-4 w-4" />
+                        Import Excel
+                    </Button>
+                    <input type="file" name="file" accept=".xlsx,.xls,.csv" className="hidden" id="excel-upload" onChange={handleImport} />
+                </div>
                 <SupplierFormModal />
             </div>
             <div className="rounded-md border-2 dark:border-0 dark:bg-violet-600">

@@ -183,6 +183,7 @@ class SuratJalanController extends Controller
         $suratJalan->load([
             'kartuInstruksiKerja.salesOrder.customerAddress',
             'kartuInstruksiKerja.salesOrder.finishGoodItem',
+            'kartuInstruksiKerja.packagings',
             'kartuInstruksiKerja.kartuInstruksiKerjaBoms.billOfMaterials.masterItem.unit'
         ]);
 

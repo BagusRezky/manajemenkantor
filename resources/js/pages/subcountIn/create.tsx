@@ -42,7 +42,6 @@ export default function Create({ subcountOuts }: CreateProps) {
     const [items, setItems] = useState<SubcountInItem[]>([]);
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        no_subcount_in: '',
         tgl_subcount_in: '',
         no_surat_jalan_pengiriman: '',
         admin_produksi: '',
@@ -157,16 +156,7 @@ export default function Create({ subcountOuts }: CreateProps) {
                                 <div className="space-y-6">
                                     {/* Form Header */}
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                        <div className="space-y-2">
-                                            <Label htmlFor="no_subcount_in">No. Subcount In *</Label>
-                                            <Input
-                                                id="no_subcount_in"
-                                                value={data.no_subcount_in}
-                                                onChange={(e) => setData('no_subcount_in', e.target.value)}
-                                                className={errors.no_subcount_in ? 'border-red-500' : ''}
-                                            />
-                                            {errors.no_subcount_in && <p className="text-sm text-red-500">{errors.no_subcount_in}</p>}
-                                        </div>
+
 
                                         <div className="space-y-2">
                                             <Label htmlFor="tgl_subcount_in">Tanggal Subcount In *</Label>

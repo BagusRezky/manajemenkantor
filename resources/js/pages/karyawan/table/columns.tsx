@@ -11,7 +11,7 @@ import { toast } from 'sonner';
 // Fungsi delete seperti contoh lembur
 const handleDelete = (id: number) => {
     // Sesuaikan route-nya dengan route delete karyawan Anda
-    router.delete(route('karyawans.destroy', id), {
+    router.delete(route('karyawan.destroy', id), {
         onSuccess: () => toast.success('Karyawan deleted successfully'),
         onError: () => toast.error('Failed to delete karyawan'),
     });

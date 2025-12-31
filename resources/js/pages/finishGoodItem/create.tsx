@@ -17,6 +17,7 @@ import { Departemen } from '@/types/departemen';
 import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
 import BillOfMaterialForm from './billoffmaterial/bill-of-material-form';
+import { Textarea } from '@/components/ui/textarea';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -77,7 +78,7 @@ export default function Create({ units, customerAddresses, typeItems, masterItem
 
     // Handle changes to the kode_material_produk field specifically
     const handleKodeMaterialChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const inputValue = e.target.value.toUpperCase(); // Apply uppercase as per your requirement
+        const inputValue = e.target.value.toUpperCase();
 
         if (selectedTypeItemCode) {
             // Check if the input already has the type item code prefix
@@ -255,7 +256,7 @@ export default function Create({ units, customerAddresses, typeItems, masterItem
 
                                         <div className="space-y-2">
                                             <Label htmlFor="spesifikasi_kertas">Spesifikasi Kertas</Label>
-                                            <Input
+                                            <Textarea
                                                 id="spesifikasi_kertas"
                                                 value={data.spesifikasi_kertas}
                                                 onChange={(e) => setData('spesifikasi_kertas', e.target.value)}
@@ -265,19 +266,25 @@ export default function Create({ units, customerAddresses, typeItems, masterItem
 
                                         <div className="space-y-2">
                                             <Label htmlFor="up_satu">UP Satu</Label>
-                                            <Input id="up_satu" value={data.up_satu} onChange={(e) => setData('up_satu', e.target.value)} />
+                                            <Input id="up_satu" type='number' step="0" value={data.up_satu} onChange={(e) => setData('up_satu', e.target.value)} />
                                             {errors.up_satu && <p className="text-sm text-red-500">{errors.up_satu}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="up_dua">UP Dua</Label>
-                                            <Input id="up_dua" value={data.up_dua} onChange={(e) => setData('up_dua', e.target.value)} />
+                                            <Input
+                                                id="up_dua"
+                                                type="number"
+                                                step="0"
+                                                value={data.up_dua}
+                                                onChange={(e) => setData('up_dua', e.target.value)}
+                                            />
                                             {errors.up_dua && <p className="text-sm text-red-500">{errors.up_dua}</p>}
                                         </div>
 
                                         <div className="space-y-2">
                                             <Label htmlFor="up_tiga">UP Tiga</Label>
-                                            <Input id="up_tiga" value={data.up_tiga} onChange={(e) => setData('up_tiga', e.target.value)} />
+                                            <Input id="up_tiga" type='number' step="0" value={data.up_tiga} onChange={(e) => setData('up_tiga', e.target.value)} />
                                             {errors.up_tiga && <p className="text-sm text-red-500">{errors.up_tiga}</p>}
                                         </div>
 
@@ -285,6 +292,8 @@ export default function Create({ units, customerAddresses, typeItems, masterItem
                                             <Label htmlFor="ukuran_potong">Ukuran Potong</Label>
                                             <Input
                                                 id="ukuran_potong"
+                                                type="number"
+                                                step="0"
                                                 value={data.ukuran_potong}
                                                 onChange={(e) => setData('ukuran_potong', e.target.value)}
                                             />
@@ -295,6 +304,8 @@ export default function Create({ units, customerAddresses, typeItems, masterItem
                                             <Label htmlFor="ukuran_cetak">Ukuran Cetak</Label>
                                             <Input
                                                 id="ukuran_cetak"
+                                                type="number"
+                                                step="0"
                                                 value={data.ukuran_cetak}
                                                 onChange={(e) => setData('ukuran_cetak', e.target.value)}
                                             />

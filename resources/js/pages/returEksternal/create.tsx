@@ -14,10 +14,7 @@ import React, { useEffect, useState } from 'react';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Edit } from 'lucide-react';
 import { toast } from 'sonner';
-
 import { Textarea } from '@headlessui/react';
-
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -151,18 +148,12 @@ export default function CreateReturEksternal({ penerimaanBarangs }: Props) {
 
                                 <div className="space-y-2">
                                     <Label htmlFor="tgl_retur_barang">Tgl Retur Barang *</Label>
-                                    <DatePicker
+                                    <Input
+                                        id="tgl_retur_barang"
+                                        type="date"
                                         value={data.tgl_retur_barang}
-                                        onChange={(date) => {
-                                            if (date) {
-                                                const formattedDate = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                    .toISOString()
-                                                    .split('T')[0];
-                                                setData('tgl_retur_barang', formattedDate);
-                                            } else {
-                                                setData('tgl_retur_barang', '');
-                                            }
-                                        }}
+                                        onChange={(e) => setData('tgl_retur_barang', e.target.value)}
+                                        required
                                     />
                                     {errors.tgl_retur_barang && <p className="text-sm text-red-600">{errors.tgl_retur_barang}</p>}
                                 </div>

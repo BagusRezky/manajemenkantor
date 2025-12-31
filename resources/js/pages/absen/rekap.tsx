@@ -35,6 +35,7 @@ export default function RekapAbsenPage({ rekap = [], filters }: RekapAbsenProps)
     const totalHadir = data.reduce((a, b) => a + (b.hadir || 0), 0);
     const totalIzin = data.reduce((a, b) => a + (b.izin_kali || 0), 0);
     const totalCuti = data.reduce((a, b) => a + (b.cuti_kali || 0), 0);
+    const totalAlpha = data.reduce((a, b) => a + (b.alpha_kali || 0), 0);
 
     const applyDateFilter = () => {
         if (!startDate || !endDate) {
@@ -76,7 +77,7 @@ export default function RekapAbsenPage({ rekap = [], filters }: RekapAbsenProps)
                     </CardContent>
                 </Card>
 
-                <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
+                <div className="grid grid-cols-2 gap-4 md:grid-cols-4">
                     <Card className="text-center">
                         <CardHeader>
                             <CardTitle>Hadir</CardTitle>
@@ -94,6 +95,12 @@ export default function RekapAbsenPage({ rekap = [], filters }: RekapAbsenProps)
                             <CardTitle>Cuti</CardTitle>
                         </CardHeader>
                         <CardContent className="text-2xl font-bold">{totalCuti}</CardContent>
+                    </Card>
+                    <Card className="border-red-200 text-center">
+                        <CardHeader>
+                            <CardTitle className="text-red-600">Alpha</CardTitle>
+                        </CardHeader>
+                        <CardContent className="text-2xl font-bold">{totalAlpha}</CardContent>
                     </Card>
                 </div>
 

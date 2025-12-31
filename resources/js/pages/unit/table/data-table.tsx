@@ -13,12 +13,37 @@ import {
 } from '@tanstack/react-table';
 import React from 'react';
 import { UnitFormModal } from '../modal/add-modal';
+import { router } from '@inertiajs/react';
+import { toast } from 'sonner';
+import { Button } from '@/components/ui/button';
+import { Upload } from 'lucide-react';
+
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
     data: TData[];
     units: Unit[];
 }
+
+const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files?.[0]) return;
+
+    const formData = new FormData();
+    formData.append('file', e.target.files[0]);
+
+    // Asumsi route untuk impor unit adalah 'units.import'
+    router.post(route('units.import'), formData, {
+        onSuccess: () => {
+            e.target.value = ''; // Reset input file
+            toast.success('File satuan berhasil diimpor!');
+        },
+        onError: (errors) => {
+            e.target.value = ''; // Reset input file
+            const errorMessage = errors.file ? `Gagal mengimpor file: ${errors.file}` : 'Gagal mengimpor file. Periksa format dan isi file.';
+            toast.error(errorMessage);
+        },
+    });
+};
 
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
@@ -39,14 +64,23 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
 
     return (
         <div>
-            <div className="flex space-x-190 py-4">
+            <div className="flex justify-between py-4">
                 <Input
                     placeholder="Cari Kode Unit..."
                     value={(table.getColumn('kode_satuan')?.getFilterValue() as string) ?? ''}
                     onChange={(event) => table.getColumn('kode_satuan')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
-                <UnitFormModal />
+                {/* TAMBAHKAN: Bagian Import Excel dan Form Modal */}
+                <div className="ml-auto flex space-x-3">
+                    {/* Upload Excel Button */}
+                    <Button type="button" variant="outline" onClick={() => document.getElementById('excel-upload-unit')?.click()}>
+                        <Upload className="mr-2 h-4 w-4" />
+                        Import Excel
+                    </Button>
+                    <input type="file" name="file" accept=".xlsx,.xls,.csv" className="hidden" id="excel-upload-unit" onChange={handleImport} />
+                    <UnitFormModal />
+                </div>
             </div>
             <div className="rounded-md border-2 dark:border-0 dark:bg-violet-600">
                 <Table>

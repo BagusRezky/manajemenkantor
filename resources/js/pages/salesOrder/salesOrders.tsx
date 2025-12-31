@@ -35,7 +35,7 @@ export default function Index({ salesOrders }: IndexProps) {
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Master Items" />
+            <Head title="Sales Order" />
             <div className="mx-5 py-5">
                 <DataTable columns={columns(setSelectedItem, openDetailModal)} data={data} />
             </div>

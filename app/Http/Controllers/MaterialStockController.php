@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\MasterItem;
 use App\Models\PenerimaanBarangItem;
 use App\Models\ReturEksternalItem;
+use App\Models\ReturInternalItem;
 use App\Models\InternalMaterialRequestItem;
 use App\Models\ImrDiemakingItem;
 use App\Models\ImrFinishingItem;
+use App\Models\KartuInstruksiKerjaBom;
 use Inertia\Inertia;
 
 class MaterialStockController extends Controller
@@ -17,6 +19,7 @@ class MaterialStockController extends Controller
      */
     public function index()
     {
+        // Ambil data master item
         $materialStocks = MasterItem::with([
             'typeItem',
             'unit',
@@ -33,11 +36,15 @@ class MaterialStockController extends Controller
             ])
             ->get()
             ->map(function ($item) {
-                // Calculate stock metrics
+                // 1. Calculate Onhand (Logic: Terima - IMR Approved + Retur Internal - Retur External)
                 $onhandStock = $this->calculateOnhandStock($item->id);
+
+                // 2. Calculate Outstanding (Logic: Kebutuhan BOM - IMR Approved)
                 $outstandingStock = $this->calculateOutstandingStock($item->id);
+
+                // 3. Calculate Allocation (Logic: Onhand - Outstanding)
+                // Sesuai request Anda: Allocation adalah sisa stok setelah dikurangi kebutuhan outstanding
                 $allocationStock = $onhandStock - $outstandingStock;
-                $availableStock = $onhandStock - $outstandingStock - $allocationStock;
 
                 return [
                     'id' => $item->id,
@@ -50,7 +57,8 @@ class MaterialStockController extends Controller
                     'onhand_stock' => $onhandStock,
                     'outstanding_stock' => $outstandingStock,
                     'allocation_stock' => $allocationStock,
-                    'available_stock' => $availableStock,
+                    // available_stock saya samakan dengan allocation jika frontend butuh field ini
+                    'available_stock' => $allocationStock,
                     'status' => $this->getStockStatus($onhandStock, $item->min_stock ?? 0),
                 ];
             });
@@ -61,91 +69,81 @@ class MaterialStockController extends Controller
     }
 
     /**
-     * Calculate onhand stock (total received - total returned)
+     * LOGIC: Onhand = Total Penerimaan - Total IMR Approved + Retur Internal - Retur External
      */
     private function calculateOnhandStock($masterItemId): float
     {
-        // Total penerimaan dari LPB
+        // 1. (+) Total Penerimaan dari Supplier (LPB)
         $totalReceived = PenerimaanBarangItem::whereHas('purchaseOrderItem', function ($query) use ($masterItemId) {
             $query->where('id_master_item', $masterItemId);
         })->sum('qty_penerimaan');
 
-        // Total retur eksternal
-        $totalReturned = ReturEksternalItem::whereHas('penerimaanBarangItem.purchaseOrderItem', function ($query) use ($masterItemId) {
+        // 2. (+) Total Retur Internal (Masuk kembali ke Gudang dari Produksi)
+        // Cek dari 3 jenis item retur (Regular, Diemaking, Finishing) yang mengarah ke MasterItem ini
+        $returInternalRegular = ReturInternalItem::whereHas('imrItem.kartuInstruksiKerjaBom.billOfMaterials', function ($q) use ($masterItemId) {
+            $q->where('id_master_item', $masterItemId);
+        })->sum('qty_approved_retur');
+
+        $returInternalDiemaking = ReturInternalItem::whereHas('imrDiemakingItem.kartuInstruksiKerjaBom.billOfMaterials', function ($q) use ($masterItemId) {
+            $q->where('id_master_item', $masterItemId);
+        })->sum('qty_approved_retur');
+
+        $returInternalFinishing = ReturInternalItem::whereHas('imrFinishingItem.kartuInstruksiKerjaBom.billOfMaterials', function ($q) use ($masterItemId) {
+            $q->where('id_master_item', $masterItemId);
+        })->sum('qty_approved_retur');
+
+        $totalReturInternal = $returInternalRegular + $returInternalDiemaking + $returInternalFinishing;
+
+        // 3. (-) Total Retur Eksternal (Keluar ke Supplier)
+        $totalReturExternal = ReturEksternalItem::whereHas('penerimaanBarangItem.purchaseOrderItem', function ($query) use ($masterItemId) {
             $query->where('id_master_item', $masterItemId);
         })->sum('qty_retur');
 
-        return $totalReceived - $totalReturned;
+        // 4. (-) Total IMR Approved (Keluar ke Produksi)
+        $imrApproved = InternalMaterialRequestItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
+            $query->where('id_master_item', $masterItemId);
+        })->sum('qty_approved');
+
+        $imrDiemakingApproved = ImrDiemakingItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
+            $query->where('id_master_item', $masterItemId);
+        })->sum('qty_approved');
+
+        $imrFinishingApproved = ImrFinishingItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
+            $query->where('id_master_item', $masterItemId);
+        })->sum('qty_approved');
+
+        $totalImrApproved = $imrApproved + $imrDiemakingApproved + $imrFinishingApproved;
+
+        // Formula Akhir
+        return ($totalReceived + $totalReturInternal) - ($totalReturExternal + $totalImrApproved);
     }
 
     /**
-     * Calculate outstanding stock (pending requests - belum disetujui)
+     * LOGIC: Outstanding = Total Kebutuhan BOM - Total IMR Approved
      */
     private function calculateOutstandingStock($masterItemId): float
     {
-        // Outstanding dari InternalMaterialRequestItem
-        $imrOutstanding = InternalMaterialRequestItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
+        // Ambil semua KIK BOM yang menggunakan master item ini
+        // Kita gunakan withSum untuk efisiensi query mengambil total approved per KIK BOM
+        $kikBoms = KartuInstruksiKerjaBom::whereHas('billOfMaterials', function ($query) use ($masterItemId) {
             $query->where('id_master_item', $masterItemId);
         })
-            ->whereHas('internalMaterialRequest', function ($query) {
-                $query->whereIn('status', ['pending', 'submitted', 'waiting_approval']);
-            })
-            ->sum('qty_request');
+        ->withSum('internalMaterialRequestItems', 'qty_approved')
+        ->withSum('imrDiemakingItems', 'qty_approved')
+        ->withSum('imrFinishingItems', 'qty_approved')
+        ->get();
 
-        // Outstanding dari ImrDiemakingItem
-        $imrDiemakingOutstanding = ImrDiemakingItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-            $query->where('id_master_item', $masterItemId);
-        })
-            ->whereHas('internalMaterialRequest', function ($query) {
-                $query->whereIn('status', ['pending', 'submitted', 'waiting_approval']);
-            })
-            ->sum('qty_request');
+        $totalKebutuhanBOM = $kikBoms->sum('total_kebutuhan');
 
-        // Outstanding dari ImrFinishingItem
-        $imrFinishingOutstanding = ImrFinishingItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-            $query->where('id_master_item', $masterItemId);
-        })
-            ->whereHas('internalMaterialRequest', function ($query) {
-                $query->whereIn('status', ['pending', 'submitted', 'waiting_approval']);
-            })
-            ->sum('qty_request');
+        $totalSudahDipenuhi = $kikBoms->sum(function($bom) {
+            return $bom->internal_material_request_items_sum_qty_approved +
+                   $bom->imr_diemaking_items_sum_qty_approved +
+                   $bom->imr_finishing_items_sum_qty_approved;
+        });
 
-        return $imrOutstanding + $imrDiemakingOutstanding + $imrFinishingOutstanding;
-    }
-
-    /**
-     * Calculate allocation stock (approved requests - sudah dialokasikan)
-     */
-    private function calculateAllocationStock($masterItemId): float
-    {
-        // Allocation dari InternalMaterialRequestItem
-        $imrAllocation = InternalMaterialRequestItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-            $query->where('id_master_item', $masterItemId);
-        })
-            ->whereHas('internalMaterialRequest', function ($query) {
-                $query->where('status', 'approved');
-            })
-            ->sum('qty_approved');
-
-        // Allocation dari ImrDiemakingItem
-        $imrDiemakingAllocation = ImrDiemakingItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-            $query->where('id_master_item', $masterItemId);
-        })
-            ->whereHas('internalMaterialRequest', function ($query) {
-                $query->where('status', 'approved');
-            })
-            ->sum('qty_approved');
-
-        // Allocation dari ImrFinishingItem
-        $imrFinishingAllocation = ImrFinishingItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-            $query->where('id_master_item', $masterItemId);
-        })
-            ->whereHas('internalMaterialRequest', function ($query) {
-                $query->where('status', 'approved');
-            })
-            ->sum('qty_approved');
-
-        return $imrAllocation + $imrDiemakingAllocation + $imrFinishingAllocation;
+        // Outstanding adalah sisa yang belum diberikan
+        // Jika hasil negatif (artinya approved > kebutuhan), kita anggap 0 outstandingnya
+        return max(0, $totalKebutuhanBOM - $totalSudahDipenuhi);
     }
 
     /**
@@ -163,149 +161,7 @@ class MaterialStockController extends Controller
     }
 
     /**
-     * Get detailed stock transactions for a specific material
-     */
-    private function getStockTransactions($masterItemId): array
-    {
-        // Penerimaan barang (IN)
-        $received = PenerimaanBarangItem::with([
-            'penerimaanBarang:id,no_laporan_barang,tgl_terima_barang'
-        ])
-            ->whereHas('purchaseOrderItem', function ($query) use ($masterItemId) {
-                $query->where('id_master_item', $masterItemId);
-            })
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'type' => 'received',
-                    'qty' => $item->qty_penerimaan,
-                    'date' => $item->created_at,
-                    'reference' => $item->penerimaanBarang->no_laporan_barang ?? '-',
-                    'reference_date' => $item->penerimaanBarang->tgl_terima_barang ?? null,
-                ];
-            });
-
-        // Retur barang (OUT)
-        $returned = ReturEksternalItem::with([
-            'returEksternal:id,no_retur,tgl_retur_barang'
-        ])
-            ->whereHas('penerimaanBarangItem.purchaseOrderItem', function ($query) use ($masterItemId) {
-                $query->where('id_master_item', $masterItemId);
-            })
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'type' => 'returned',
-                    'qty' => -$item->qty_retur, // negative untuk OUT
-                    'date' => $item->created_at,
-                    'reference' => $item->returEksternal->no_retur ?? '-',
-                    'reference_date' => $item->returEksternal->tgl_retur_barang ?? null,
-                ];
-            });
-
-        // Material requests dari InternalMaterialRequestItem (PENDING/APPROVED)
-        $requestedImr = InternalMaterialRequestItem::with([
-            'internalMaterialRequest:id,no_imr,tgl_request,status',
-            'kartuInstruksiKerjaBom.kartuInstruksiKerja:id,no_kartu_instruksi_kerja'
-        ])
-            ->whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-                $query->where('id_master_item', $masterItemId);
-            })
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'type' => 'requested_imr',
-                    'qty' => $item->qty_request,
-                    'qty_approved' => $item->qty_approved ?? 0,
-                    'date' => $item->created_at,
-                    'reference' => $item->internalMaterialRequest->no_imr ?? '-',
-                    'reference_date' => $item->internalMaterialRequest->tgl_request ?? null,
-                    'status' => $item->internalMaterialRequest->status ?? 'pending',
-                    'spk_no' => $item->kartuInstruksiKerjaBom->kartuInstruksiKerja->no_kartu_instruksi_kerja ?? '-',
-                ];
-            });
-
-        // Material requests dari ImrDiemakingItem (PENDING/APPROVED)
-        $requestedDiemaking = ImrDiemakingItem::with([
-            'internalMaterialRequest:id,no_imr_diemaking,tgl_request,status',
-            'kartuInstruksiKerjaBom.kartuInstruksiKerja:id,no_kartu_instruksi_kerja'
-        ])
-            ->whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-                $query->where('id_master_item', $masterItemId);
-            })
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'type' => 'requested_diemaking',
-                    'qty' => $item->qty_request,
-                    'qty_approved' => $item->qty_approved ?? 0,
-                    'date' => $item->created_at,
-                    'reference' => $item->internalMaterialRequest->no_imr_diemaking ?? '-',
-                    'reference_date' => $item->internalMaterialRequest->tgl_request ?? null,
-                    'status' => $item->internalMaterialRequest->status ?? 'pending',
-                    'spk_no' => $item->kartuInstruksiKerjaBom->kartuInstruksiKerja->no_kartu_instruksi_kerja ?? '-',
-                ];
-            });
-
-        // Material requests dari ImrFinishingItem (PENDING/APPROVED)
-        $requestedFinishing = ImrFinishingItem::with([
-            'internalMaterialRequest:id,no_imr_finishing,tgl_request,status',
-            'kartuInstruksiKerjaBom.kartuInstruksiKerja:id,no_kartu_instruksi_kerja'
-        ])
-            ->whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-                $query->where('id_master_item', $masterItemId);
-            })
-            ->orderBy('created_at', 'desc')
-            ->get()
-            ->map(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'type' => 'requested_finishing',
-                    'qty' => $item->qty_request,
-                    'qty_approved' => $item->qty_approved ?? 0,
-                    'date' => $item->created_at,
-                    'reference' => $item->internalMaterialRequest->no_imr_finishing ?? '-',
-                    'reference_date' => $item->internalMaterialRequest->tgl_request ?? null,
-                    'status' => $item->internalMaterialRequest->status ?? 'pending',
-                    'spk_no' => $item->kartuInstruksiKerjaBom->kartuInstruksiKerja->no_kartu_instruksi_kerja ?? '-',
-                ];
-            });
-
-        // Gabungkan semua material requests
-        $allRequested = collect()
-            ->merge($requestedImr)
-            ->merge($requestedDiemaking)
-            ->merge($requestedFinishing);
-
-        // Gabungkan semua transaksi dan urutkan berdasarkan tanggal
-        $allTransactions = collect()
-            ->merge($received)
-            ->merge($returned)
-            ->merge($allRequested)
-            ->sortByDesc('date')
-            ->values()
-            ->all();
-
-        return [
-            'received' => $received->toArray(),
-            'returned' => $returned->toArray(),
-            'requested_imr' => $requestedImr->toArray(),
-            'requested_diemaking' => $requestedDiemaking->toArray(),
-            'requested_finishing' => $requestedFinishing->toArray(),
-            'all' => $allTransactions,
-        ];
-    }
-
-    /**
-     * API endpoint untuk mendapatkan stock summary
+     * API endpoint untuk mendapatkan stock summary (Dashboard/Chart)
      */
     public function getStockSummary()
     {
@@ -337,30 +193,29 @@ class MaterialStockController extends Controller
     }
 
     /**
-     * Get detailed stock breakdown by request type
+     * API Endpoint: Get detailed stock breakdown by request type
      */
     public function getStockBreakdown($masterItemId)
     {
         try {
+            $onhand = $this->calculateOnhandStock($masterItemId);
+            $outstanding = $this->calculateOutstandingStock($masterItemId);
+            $allocation = $onhand - $outstanding;
+
+            // Untuk detail outstanding per tipe, kita hitung manual proporsinya
+            // (Ini estimasi karena outstanding logic baru berbasis BOM global)
             $breakdown = [
-                'onhand_stock' => $this->calculateOnhandStock($masterItemId),
+                'onhand_stock' => $onhand,
                 'outstanding_stock' => [
-                    'imr' => $this->calculateImrOutstandingStock($masterItemId),
-                    'diemaking' => $this->calculateDiemakingOutstandingStock($masterItemId),
-                    'finishing' => $this->calculateFinishingOutstandingStock($masterItemId),
-                    'total' => $this->calculateOutstandingStock($masterItemId),
+                    'total' => $outstanding,
+                    // Note: Detail per tipe (IMR/Die/Finish) agak bias di logic baru karena basisnya BOM,
+                    // tapi kita set totalnya valid.
                 ],
                 'allocation_stock' => [
-                    'imr' => $this->calculateImrAllocationStock($masterItemId),
-                    'diemaking' => $this->calculateDiemakingAllocationStock($masterItemId),
-                    'finishing' => $this->calculateFinishingAllocationStock($masterItemId),
-                    'total' => $this->calculateAllocationStock($masterItemId),
+                    'total' => $allocation,
                 ],
+                'available_stock' => $allocation
             ];
-
-            $breakdown['available_stock'] = $breakdown['onhand_stock'] -
-                $breakdown['outstanding_stock']['total'] -
-                $breakdown['allocation_stock']['total'];
 
             return response()->json($breakdown);
         } catch (\Exception $e) {
@@ -369,71 +224,99 @@ class MaterialStockController extends Controller
     }
 
     /**
-     * Helper methods untuk breakdown yang lebih detail
+     * Get detailed stock transactions for a specific material (History)
+     * Updated to include Retur Internal
      */
-    private function calculateImrOutstandingStock($masterItemId): float
+    private function getStockTransactions($masterItemId): array
     {
-        return InternalMaterialRequestItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-            $query->where('id_master_item', $masterItemId);
-        })
-            ->whereHas('internalMaterialRequest', function ($query) {
-                $query->whereIn('status', ['pending', 'submitted', 'waiting_approval']);
+        // 1. Penerimaan barang (IN)
+        $received = PenerimaanBarangItem::with([
+            'penerimaanBarang:id,no_laporan_barang,tgl_terima_barang'
+        ])
+            ->whereHas('purchaseOrderItem', function ($query) use ($masterItemId) {
+                $query->where('id_master_item', $masterItemId);
             })
-            ->sum('qty_request');
-    }
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'type' => 'received',
+                    'qty' => $item->qty_penerimaan,
+                    'date' => $item->created_at,
+                    'reference' => $item->penerimaanBarang->no_laporan_barang ?? '-',
+                    'reference_date' => $item->penerimaanBarang->tgl_terima_barang ?? null,
+                ];
+            });
 
-    private function calculateDiemakingOutstandingStock($masterItemId): float
-    {
-        return ImrDiemakingItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-            $query->where('id_master_item', $masterItemId);
-        })
-            ->whereHas('internalMaterialRequest', function ($query) {
-                $query->whereIn('status', ['pending', 'submitted', 'waiting_approval']);
+        // 2. Retur Internal (IN) - NEW
+        $returInternal = ReturInternalItem::with(['returInternal'])
+            ->where(function($q) use ($masterItemId) {
+                $q->whereHas('imrItem.kartuInstruksiKerjaBom.billOfMaterials', fn($qi) => $qi->where('id_master_item', $masterItemId))
+                  ->orWhereHas('imrDiemakingItem.kartuInstruksiKerjaBom.billOfMaterials', fn($qd) => $qd->where('id_master_item', $masterItemId))
+                  ->orWhereHas('imrFinishingItem.kartuInstruksiKerjaBom.billOfMaterials', fn($qf) => $qf->where('id_master_item', $masterItemId));
             })
-            ->sum('qty_request');
-    }
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'type' => 'retur_internal',
+                    'qty' => $item->qty_approved_retur,
+                    'date' => $item->created_at,
+                    'reference' => $item->returInternal->no_retur_internal ?? '-',
+                    'reference_date' => $item->returInternal->tgl_retur_internal ?? null,
+                ];
+            });
 
-    private function calculateFinishingOutstandingStock($masterItemId): float
-    {
-        return ImrFinishingItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-            $query->where('id_master_item', $masterItemId);
-        })
-            ->whereHas('internalMaterialRequest', function ($query) {
-                $query->whereIn('status', ['pending', 'submitted', 'waiting_approval']);
+        // 3. Retur Eksternal (OUT)
+        $returnedExternal = ReturEksternalItem::with([
+            'returEksternal:id,no_retur,tgl_retur_barang'
+        ])
+            ->whereHas('penerimaanBarangItem.purchaseOrderItem', function ($query) use ($masterItemId) {
+                $query->where('id_master_item', $masterItemId);
             })
-            ->sum('qty_request');
-    }
+            ->orderBy('created_at', 'desc')
+            ->get()
+            ->map(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'type' => 'returned_external',
+                    'qty' => -$item->qty_retur, // negative for OUT
+                    'date' => $item->created_at,
+                    'reference' => $item->returEksternal->no_retur ?? '-',
+                    'reference_date' => $item->returEksternal->tgl_retur_barang ?? null,
+                ];
+            });
 
-    private function calculateImrAllocationStock($masterItemId): float
-    {
-        return InternalMaterialRequestItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-            $query->where('id_master_item', $masterItemId);
-        })
-            ->whereHas('internalMaterialRequest', function ($query) {
-                $query->where('status', 'approved');
-            })
-            ->sum('qty_approved');
-    }
+        // 4. Usage / IMR Approved (OUT)
+        // Kita ambil yang statusnya approved saja karena logic onhand sekarang based on approved
+        $usageImr = InternalMaterialRequestItem::with(['internalMaterialRequest'])
+            ->whereHas('kartuInstruksiKerjaBom.billOfMaterials', fn($q) => $q->where('id_master_item', $masterItemId))
+            ->where('qty_approved', '>', 0)
+            ->get()
+            ->map(function($item) {
+                return [
+                    'id' => $item->id,
+                    'type' => 'usage_production',
+                    'qty' => -$item->qty_approved, // negative for OUT
+                    'date' => $item->updated_at, // usually approval time
+                    'reference' => $item->internalMaterialRequest->no_imr ?? '-',
+                ];
+            });
 
-    private function calculateDiemakingAllocationStock($masterItemId): float
-    {
-        return ImrDiemakingItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-            $query->where('id_master_item', $masterItemId);
-        })
-            ->whereHas('internalMaterialRequest', function ($query) {
-                $query->where('status', 'approved');
-            })
-            ->sum('qty_approved');
-    }
+        // Gabungkan semua
+        $allTransactions = collect()
+            ->merge($received)
+            ->merge($returInternal)
+            ->merge($returnedExternal)
+            ->merge($usageImr)
+            ->sortByDesc('date')
+            ->values()
+            ->all();
 
-    private function calculateFinishingAllocationStock($masterItemId): float
-    {
-        return ImrFinishingItem::whereHas('kartuInstruksiKerjaBom.billOfMaterials', function ($query) use ($masterItemId) {
-            $query->where('id_master_item', $masterItemId);
-        })
-            ->whereHas('internalMaterialRequest', function ($query) {
-                $query->where('status', 'approved');
-            })
-            ->sum('qty_approved');
+        return [
+            'all' => $allTransactions
+        ];
     }
 }

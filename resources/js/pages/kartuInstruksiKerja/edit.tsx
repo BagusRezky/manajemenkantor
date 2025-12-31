@@ -335,19 +335,13 @@ export default function Edit({ kartuInstruksiKerja, salesOrders }: EditProps) {
                                         {/* Tanggal Estimasi Selesai */}
                                         <div className="space-y-2">
                                             <Label htmlFor="tgl_estimasi_selesai">Tanggal Estimasi Selesai</Label>
-                                            <DatePicker
-                                                id="tgl_estimasi_selesai"
-                                                value={data.tgl_estimasi_selesai}
-                                                onChange={(date) => {
-                                                    setData('tgl_estimasi_selesai', date.target.value || '');
-                                                }}
-                                            />
+                                            <Input value={data.tgl_estimasi_selesai} type='date' onChange={handleChange} />
                                             {errors.tgl_estimasi_selesai && <p className="text-sm text-red-500">{errors.tgl_estimasi_selesai}</p>}
                                         </div>
 
                                         {/* ETA Marketing */}
                                         <div className="space-y-2">
-                                            <Label htmlFor="eta_marketing">ETA Marketing</Label>
+                                            <Label htmlFor="eta_marketing">Tanggal PO</Label>
                                             <Input value={selectedSalesOrder?.eta_marketing || ''} readOnly />
                                         </div>
                                     </div>

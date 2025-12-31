@@ -56,11 +56,6 @@ export default function Karyawans({ karyawans }: KaryawanIndexProps) {
                                 Import Excel
                             </Button>
                             <input type="file" name="file" accept=".xlsx,.xls,.csv" className="hidden" id="excel-upload" onChange={handleImport} />
-
-                            {/* Tombol Tambah Karyawan (diubah menjadi Link)
-                            <Link href={route('karyawans.create')}>
-                                <Button>Tambah Karyawan</Button>
-                            </Link> */}
                         </div>
                     </CardHeader>
                     <CardContent>

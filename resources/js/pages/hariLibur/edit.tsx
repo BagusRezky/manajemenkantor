@@ -3,7 +3,7 @@
 import { Textarea } from '@/components/ui/textarea';
 import { HariLibur } from '@/types/hariLibur';
 import { Head, useForm } from '@inertiajs/react';
-import { DatePicker } from '../../components/date-picker';
+import { Input } from '@/components/ui/input';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Label } from '../../components/ui/label';
@@ -44,18 +44,11 @@ export default function EditHariLibur({ hariLibur }: Props) {
                                 {/* Tanggal Libur */}
                                 <div className="space-y-2">
                                     <Label htmlFor="tanggal_libur">Tanggal Libur *</Label>
-                                    <DatePicker
+                                    <Input
+                                        type="date"
+                                        id="tanggal_libur"
                                         value={data.tanggal_libur}
-                                        onChange={(date) => {
-                                            if (date) {
-                                                const formatted = new Date(date.getTime() - date.getTimezoneOffset() * 60000)
-                                                    .toISOString()
-                                                    .split('T')[0];
-                                                setData('tanggal_libur', formatted);
-                                            } else {
-                                                setData('tanggal_libur', '');
-                                            }
-                                        }}
+                                        onChange={(e) => setData('tanggal_libur', e.target.value)}
                                     />
                                     {errors.tanggal_libur && <p className="text-sm text-red-500">{errors.tanggal_libur}</p>}
                                 </div>

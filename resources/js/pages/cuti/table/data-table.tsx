@@ -43,9 +43,14 @@ export function DataTable<TData, TValue>({ columns, data}: DataTableProps<TData,
                     onChange={(e) => table.getColumn('karyawan')?.setFilterValue(e.target.value)}
                     className="max-w-sm"
                 />
-                <Link href={route('cutis.create')}>
-                    <Button>Tambah Data Cuti</Button>
-                </Link>
+                <div className='ml-auto flex space-x-2'>
+                    <Link href={route('cutiTahunan.index')}>
+                        <Button>Cuti Tahunan</Button>
+                    </Link>
+                    <Link href={route('cutis.create')}>
+                        <Button>Tambah Data Cuti</Button>
+                    </Link>
+                </div>
             </div>
 
             <div className="rounded-md border">
