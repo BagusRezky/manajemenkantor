@@ -19,7 +19,7 @@ const generateImrPdf = (imr: InternalMaterialRequest, download = false): void =>
     const logo = new Image();
     logo.src = '/images/logo-kantor.png';
     doc.addImage(logo, 'PNG', 14, 17, 17, 17);
-    
+
     // Header dengan border
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
@@ -270,8 +270,10 @@ export const columns = (): ColumnDef<InternalMaterialRequest>[] => [
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => router.get(`/internalMaterialRequests/${item.id}`)}>Detail</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        {/* <DropdownMenuItem onClick={() => router.get(`/internalMaterialRequests/${item.id}/edit`)}>Edit</DropdownMenuItem>
-                        <DropdownMenuSeparator /> */}
+                        {item.status === 'pending' && (
+                            <DropdownMenuItem onClick={() => router.get(`/internalMaterialRequests/${item.id}/edit`)}>Edit</DropdownMenuItem>
+                        )}
+                        <DropdownMenuSeparator />
                         {item.status === 'pending' && (
                             <>
                                 <DropdownMenuItem onClick={() => handleApprove(item.id)}>
