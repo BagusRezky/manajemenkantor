@@ -7,7 +7,6 @@ use App\Models\Mesin;
 use App\Models\Operator;
 use App\Models\KartuInstruksiKerja;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 

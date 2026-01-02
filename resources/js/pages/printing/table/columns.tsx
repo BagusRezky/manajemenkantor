@@ -274,15 +274,14 @@ export const columns = (): ColumnDef<Printing>[] => [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        {/* <DropdownMenuItem onClick={() => router.get(`/printings/${item.id}`)}>
-                            <Eye className="mr-2 h-4 w-4" />
+                        <DropdownMenuItem onClick={() => router.get(`/printings/${item.id}/show`)}>
                             Detail
-                        </DropdownMenuItem> */}
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        {/* <DropdownMenuItem onClick={() => router.get(`/printings/${item.id}/edit`)}>
-                            <Edit className="mr-2 h-4 w-4" />
+                        <DropdownMenuItem onClick={() => router.get(`/printings/${item.id}/edit`)}>
+
                             Edit
-                        </DropdownMenuItem> */}
+                        </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleDelete(item.id)}>
                             <Trash2 className="mr-2 h-4 w-4" />
