@@ -271,8 +271,13 @@ export const columns = (): ColumnDef<ImrDiemaking>[] => [
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => router.get(`/imrDiemakings/${item.id}`)}>Detail</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        {/* <DropdownMenuItem onClick={() => router.get(`/imrDiemakings/${item.id}/edit`)}>Edit</DropdownMenuItem>
-                        <DropdownMenuSeparator /> */}
+                        {item.status !== 'approved' && (
+                            <>
+                                <DropdownMenuItem onClick={() => router.get(`/imrDiemakings/${item.id}/edit`)}>Edit</DropdownMenuItem>
+                                <DropdownMenuSeparator />
+                            </>
+                        )}
+
                         {item.status === 'pending' && (
                             <>
                                 <DropdownMenuItem onClick={() => handleApprove(item.id)}>

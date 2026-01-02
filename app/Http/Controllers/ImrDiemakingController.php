@@ -157,11 +157,15 @@ class ImrDiemakingController extends Controller
             'kartuInstruksiKerja.salesOrder',
             'kartuInstruksiKerja.kartuInstruksiKerjaBoms.billOfMaterials.masterItem',
             'items.kartuInstruksiKerjaBom.billOfMaterials.masterItem',
+            'items.kartuInstruksiKerjaBom.billOfMaterials.departemen',
+            'items.kartuInstruksiKerjaBom.billOfMaterials.masterItem.unit'
         ])->findOrFail($id);
 
         $kartuInstruksiKerjas = KartuInstruksiKerja::with([
             'salesOrder',
-            'kartuInstruksiKerjaBoms.billOfMaterials.masterItem'
+            'kartuInstruksiKerjaBoms.billOfMaterials.masterItem',
+            'kartuInstruksiKerjaBoms.billOfMaterials.masterItem.unit',
+            'kartuInstruksiKerjaBoms.billOfMaterials.departemen'
         ])->get();
 
         return Inertia::render('imrDiemaking/edit', [
