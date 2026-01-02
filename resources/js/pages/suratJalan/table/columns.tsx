@@ -321,8 +321,9 @@ export const columns = (): ColumnDef<SuratJalan>[] => [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        {/* <DropdownMenuItem onClick={() => router.get(`/suratJalans/${item.id}`)}>Detail</DropdownMenuItem>
-                        <DropdownMenuItem onClick={() => router.get(`/suratJalans/${item.id}/edit`)}>Edit</DropdownMenuItem> */}
+                        <DropdownMenuItem onClick={() => router.get(`/suratJalans/${item.id}`)}>Detail</DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => router.get(`/suratJalans/${item.id}/edit`)}>Edit</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
