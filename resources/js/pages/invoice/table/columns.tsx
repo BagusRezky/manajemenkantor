@@ -343,7 +343,8 @@ export const columns = (): ColumnDef<Invoice>[] => [
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => router.get(`/invoices/${item.id}`)}>Detail</DropdownMenuItem>
-                        {/* <DropdownMenuItem onClick={() => router.get(`/invoices/${item.id}/edit`)}>Edit</DropdownMenuItem> */}
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => router.get(`/invoices/${item.id}/edit`)}>Edit</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />

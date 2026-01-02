@@ -29,7 +29,7 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        
+
         $suratJalans = SuratJalan::with([
             'kartuInstruksiKerja.salesOrder.customerAddress',
             'kartuInstruksiKerja.salesOrder.finishGoodItem'
@@ -117,7 +117,26 @@ class InvoiceController extends Controller
      */
     public function edit(Invoice $invoice)
     {
-        //
+        // Load relasi agar detail Surat Jalan muncul di form edit
+        $invoice->load([
+            'suratJalan.kartuInstruksiKerja.salesOrder.customerAddress',
+            'suratJalan.kartuInstruksiKerja.salesOrder.finishGoodItem'
+        ]);
+
+        // Ambil Surat Jalan yang belum ada invoice-nya, ATAU yang sedang digunakan invoice ini
+        $suratJalans = SuratJalan::with([
+            'kartuInstruksiKerja.salesOrder.customerAddress',
+            'kartuInstruksiKerja.salesOrder.finishGoodItem'
+        ])
+            ->whereDoesntHave('invoice')
+            ->orWhere('id', $invoice->id_surat_jalan)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('invoice/edit', [
+            'invoice' => $invoice,
+            'suratJalans' => $suratJalans
+        ]);
     }
 
     /**
@@ -125,7 +144,19 @@ class InvoiceController extends Controller
      */
     public function update(Request $request, Invoice $invoice)
     {
-        //
+        $validated = $request->validate([
+            'id_surat_jalan' => 'required|exists:surat_jalans,id|unique:invoices,id_surat_jalan,' . $invoice->id,
+            'tgl_invoice' => 'required|date',
+            'tgl_jatuh_tempo' => 'required|date|after_or_equal:tgl_invoice',
+            'discount' => 'required|integer|min:0',
+            'ppn' => 'required|numeric|min:0|max:100',
+            'ongkos_kirim' => 'nullable|integer|min:0',
+            'uang_muka' => 'nullable|integer|min:0',
+        ]);
+
+        $invoice->update($validated);
+
+        return redirect()->route('invoices.index')->with('success', 'Invoice berhasil diperbarui');
     }
 
     /**
