@@ -172,6 +172,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/penerimaanBarangs', [PenerimaanBarangController::class, 'index'])->name('penerimaanBarangs.index')->middleware('permission:penerimaanBarangs.index');
     Route::get('/penerimaanBarangs/create', [PenerimaanBarangController::class, 'create'])->name('penerimaanBarangs.create')->middleware('permission:penerimaanBarangs.create');
     Route::post('/penerimaanBarangs', [PenerimaanBarangController::class, 'store'])->name('penerimaanBarangs.store')->middleware('permission:penerimaanBarangs.store');
+    Route::get('/penerimaanBarangs/{id}/edit', [PenerimaanBarangController::class, 'edit'])->name('penerimaanBarangs.edit')->middleware('permission:penerimaanBarangs.edit');
+    Route::put('/penerimaanBarangs/{id}', [PenerimaanBarangController::class, 'update'])->name('penerimaanBarangs.update')->middleware('permission:penerimaanBarangs.update');
+    Route::delete('/penerimaanBarangs/{id}', [PenerimaanBarangController::class, 'destroy'])->name('penerimaanBarangs.destroy')->middleware('permission:penerimaanBarangs.destroy');
     Route::get('/penerimaanBarangs/{id}', [PenerimaanBarangController::class, 'show'])->name('penerimaanBarangs.show')->middleware('permission:penerimaanBarangs.show');
     Route::get('/penerimaanBarangs/{id}/pdf', [PenerimaanBarangController::class, 'generatePdf'])->name('penerimaanBarangs.pdf')->middleware('permission:penerimaanBarangs.pdf');
 
@@ -223,6 +226,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/dieMakings', [DieMakingController::class, 'index'])->name('dieMakings.index')->middleware('permission:dieMakings.index');
     Route::get('/dieMakings/create', [DieMakingController::class, 'create'])->name('dieMakings.create')->middleware('permission:dieMakings.create');
     Route::post('/dieMakings', [DieMakingController::class, 'store'])->name('dieMakings.store')->middleware('permission:dieMakings.store');
+    Route::get('/dieMakings/{dieMaking}/edit', [DieMakingController::class, 'edit'])->name('dieMakings.edit')->middleware('permission:dieMakings.edit');
+    Route::put('/dieMakings/{dieMaking}', [DieMakingController::class, 'update'])->name('dieMakings.update')->middleware('permission:dieMakings.update');
+    Route::get('/dieMakings/{dieMaking}/show', [DieMakingController::class, 'show'])->name('dieMakings.show')->middleware('permission:dieMakings.show');
     Route::delete('/dieMakings/{dieMaking}', [DieMakingController::class, 'destroy'])->name('dieMakings.destroy')->middleware('permission:dieMakings.destroy');
 
     Route::get('/mesinDiemakings', [MesinDiemakingController::class, 'index'])->name('mesinDiemakings.index')->middleware('permission:mesinDiemakings.index');
