@@ -19,10 +19,10 @@ class PenerimaanBarangController extends Controller
     {
         // Perbaiki eager loading
         $penerimaanBarang = PenerimaanBarang::with([
-                'purchaseOrder.supplier',
-                'items.purchaseOrderItem.masterItem',
-                'items.purchaseOrderItem.satuan'
-            ])
+            'purchaseOrder.supplier',
+            'items.purchaseOrderItem.masterItem',
+            'items.purchaseOrderItem.satuan'
+        ])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -35,26 +35,26 @@ class PenerimaanBarangController extends Controller
      * Show the form for creating a new resource.
      */
     public function create()
-{
-    // Ubah dari purchaseOrderItems menjadi items
-    $purchaseOrders = PurchaseOrder::with([
-        'items.masterItem',     // ← Ubah dari purchaseOrderItems ke items
-        'items.satuan',         // ← Ubah dari purchaseOrderItems ke items
-        'supplier'
-    ])->get();
+    {
+        // Ubah dari purchaseOrderItems menjadi items
+        $purchaseOrders = PurchaseOrder::with([
+            'items.masterItem',     // ← Ubah dari purchaseOrderItems ke items
+            'items.satuan',         // ← Ubah dari purchaseOrderItems ke items
+            'supplier'
+        ])->get();
 
-    $previousReceipts = PenerimaanBarangItem::select(
+        $previousReceipts = PenerimaanBarangItem::select(
             'id_purchase_order_item',
             DB::raw('SUM(qty_penerimaan) as total_qty_penerimaan')
         )
-        ->groupBy('id_purchase_order_item')
-        ->get();
+            ->groupBy('id_purchase_order_item')
+            ->get();
 
-    return Inertia::render('penerimaanBarang/create', [
-        'purchaseOrders' => $purchaseOrders,
-        'previousReceipts' => $previousReceipts
-    ]);
-}
+        return Inertia::render('penerimaanBarang/create', [
+            'purchaseOrders' => $purchaseOrders,
+            'previousReceipts' => $previousReceipts
+        ]);
+    }
 
     /**
      * Store a newly created resource in storage.
@@ -140,8 +140,31 @@ class PenerimaanBarangController extends Controller
      */
     public function edit(string $id)
     {
-        // Editing functionality is not implemented as per requirements
-        abort(404);
+        // Load header dan item LPB ini
+        $penerimaanBarang = PenerimaanBarang::with([
+            'items',
+            'purchaseOrder.supplier',
+            'purchaseOrder.items.masterItem',
+            'purchaseOrder.items.satuan'
+        ])->findOrFail($id);
+
+        // Load semua PO untuk dropdown (jika diperbolehkan ganti PO)
+        $purchaseOrders = PurchaseOrder::with(['items.masterItem', 'items.satuan'])->get();
+
+        // Hitung qty yang sudah diterima di LPB LAIN (selain LPB ini)
+        $previousReceipts = PenerimaanBarangItem::select(
+            'id_purchase_order_item',
+            DB::raw('SUM(qty_penerimaan) as total_qty_penerimaan')
+        )
+            ->where('id_penerimaan_barang', '!=', $id) // PENTING: kecualikan diri sendiri
+            ->groupBy('id_purchase_order_item')
+            ->get();
+
+        return Inertia::render('penerimaanBarang/edit', [
+            'penerimaanBarang' => $penerimaanBarang,
+            'purchaseOrders' => $purchaseOrders,
+            'previousReceipts' => $previousReceipts
+        ]);
     }
 
     /**
@@ -149,8 +172,56 @@ class PenerimaanBarangController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        // Update functionality is not implemented as per requirements
-        abort(404);
+        $request->validate([
+            'id_purchase_order' => 'required|exists:purchase_orders,id',
+            'no_surat_jalan' => 'required|string|max:255',
+            'tgl_terima_barang' => 'required|date',
+            'nopol_kendaraan' => 'required|string|max:255',
+            'nama_pengirim' => 'required|string|max:255',
+            'items' => 'required|array|min:1',
+            'items.*.id' => 'required|exists:purchase_order_items,id',
+            'items.*.qty_penerimaan' => 'required|numeric|min:0.01',
+        ]);
+
+        try {
+            DB::beginTransaction();
+
+            $penerimaanBarang = PenerimaanBarang::findOrFail($id);
+
+            // Update Header
+            $penerimaanBarang->update([
+                'id_purchase_order' => $request->id_purchase_order,
+                'no_surat_jalan' => $request->no_surat_jalan,
+                'tgl_terima_barang' => $request->tgl_terima_barang,
+                'nopol_kendaraan' => $request->nopol_kendaraan,
+                'nama_pengirim' => $request->nama_pengirim,
+                'catatan_pengirim' => $request->catatan_pengirim,
+            ]);
+
+            // Hapus item lama (Re-sync approach)
+            $penerimaanBarang->items()->delete();
+
+            // Insert item baru hasil edit
+            foreach ($request->items as $item) {
+                PenerimaanBarangItem::create([
+                    'id_penerimaan_barang' => $penerimaanBarang->id,
+                    'id_purchase_order_item' => $item['id'],
+                    'qty_penerimaan' => $item['qty_penerimaan'],
+                    'catatan_item' => $item['catatan_item'] ?? null,
+                    'tgl_expired' => $item['tgl_expired'] ?? null,
+                    'no_delivery_order' => $item['no_delivery_order'] ?? null,
+                ]);
+            }
+
+            DB::commit();
+
+            return redirect()->route('penerimaanBarangs.index')
+                ->with('success', 'Penerimaan barang berhasil diperbarui.');
+        } catch (\Exception $e) {
+            DB::rollback();
+            return redirect()->back()
+                ->with('error', 'Terjadi kesalahan: ' . $e->getMessage());
+        }
     }
 
     /**
@@ -193,7 +264,5 @@ class PenerimaanBarangController extends Controller
         } catch (\Exception $e) {
             return response()->json(['error' => 'Failed to generate PDF: ' . $e->getMessage()], 500);
         }
-
     }
-
 }

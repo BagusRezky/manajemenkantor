@@ -243,6 +243,8 @@ export const columns = (): ColumnDef<PenerimaanBarang>[] => [
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => router.get(`/penerimaanBarangs/${item.id}`)}>Detail</DropdownMenuItem>
                         <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => router.get(`/penerimaanBarangs/${item.id}/edit`)}>Edit</DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handlePreviewPdf}>

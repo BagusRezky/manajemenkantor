@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -251,14 +250,6 @@ export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({ purc
                 <CardTitle>Form Penerimaan Barang</CardTitle>
             </CardHeader>
             <CardContent>
-                {/* DEBUG INFO PANEL - Hapus setelah debugging selesai */}
-                <div className="mb-4 rounded bg-gray-100 p-4">
-                    <h4 className="mb-2 font-bold">Debug Info:</h4>
-                    <p>Selected PO: {selectedPO}</p>
-                    <p>Purchase Orders Count: {purchaseOrders.length}</p>
-                    <p>PO Items Count: {poItems.length}</p>
-                    <p>Previous Receipts Count: {previousReceipts.length}</p>
-                </div>
 
                 <form onSubmit={handleSubmit}>
                     <div className="mb-6 grid grid-cols-3 gap-4">
@@ -288,10 +279,10 @@ export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({ purc
                         </div>
                         <div>
                             <label className="mb-1 block text-sm font-medium">Tgl. Terima Barang:</label>
-                            <DatePicker
-                                id="tgl_terima_barang"
+                            <input
+                                type="date"
                                 value={data.tgl_terima_barang}
-                                onChange={(e) => setData('tgl_terima_barang', e.target.value ? e.target.value : '')}
+                                onChange={(e) => setData('tgl_terima_barang', e.target.value)}
                             />
                             {errors.tgl_terima_barang && <div className="text-sm text-red-500">{errors.tgl_terima_barang}</div>}
                         </div>
