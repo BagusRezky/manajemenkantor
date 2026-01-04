@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\FinishGoodItem;
 use App\Models\Unit;
-use App\Models\CustomerAddress;
+use App\Models\customerAddress;
 use App\Models\Departemen;
 use App\Models\TypeItem;
 use App\Models\MasterItem;
@@ -37,7 +37,7 @@ class FinishGoodItemController extends Controller
             $query->whereRaw('LOWER(nama_category_item) = ?', ['finish goods']);
         })
         ->get();
-        $customerAddresses = CustomerAddress::select('id', 'nama_customer')->get();
+        $customerAddresses = customerAddress::select('id', 'nama_customer')->get();
         $masterItems = MasterItem::select('id', 'kode_master_item', 'nama_master_item', 'satuan_satu_id', 'id_category_item')->with(['unit', 'categoryItem'])->get();
         $departements = Departemen::select('id', 'nama_departemen')->get();
 
@@ -157,7 +157,7 @@ class FinishGoodItemController extends Controller
         // Get all required data for the edit form
         $units = Unit::select('id', 'nama_satuan')->get();
         $typeItems = TypeItem::select('id', 'nama_type_item')->get();
-        $customerAddresses = CustomerAddress::select('id', 'nama_customer')->get();
+        $customerAddresses = customerAddress::select('id', 'nama_customer')->get();
         $masterItems = MasterItem::select('id', 'kode_master_item', 'nama_master_item', 'satuan_satu_id', 'id_category_item')
             ->with(['unit', 'categoryItem'])
             ->get();

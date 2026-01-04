@@ -30,7 +30,7 @@ class SalesOrder extends Model
     protected function casts(): array
     {
         return [
-            'tolerasi_pengiriman' => 'string',
+            'toleransi_pengiriman' => 'string',
             'catatan_colour_range' => 'string',
             'catatan' => 'string',
         ];
@@ -79,7 +79,7 @@ class SalesOrder extends Model
 
     public function customerAddress()
     {
-        return $this->belongsTo(CustomerAddress::class, 'id_customer_address');
+        return $this->belongsTo(customerAddress::class, 'id_customer_address');
     }
 
     public function customer_address() // alias untuk backward compatibility
