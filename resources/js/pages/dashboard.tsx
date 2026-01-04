@@ -15,14 +15,14 @@ interface DashboardProps {
     totalOrderValue: number;
     totalKirimValue: number;
     totalPOQty: number;
-    totalLPBValue: number;
+    totalLPBQty: number;
     chartData: any[];
     selectedYear: number;
 }
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Dashboard', href: '/dashboard' }];
 
-export default function Dashboard({ totalOrderValue, totalKirimValue, totalPOQty, totalLPBValue, chartData, selectedYear }: DashboardProps) {
+export default function Dashboard({ totalOrderValue, totalKirimValue, totalPOQty, totalLPBQty, chartData, selectedYear }: DashboardProps) {
     // State lokal untuk menampung input ketikan user
     const [yearInput, setYearInput] = useState(selectedYear.toString());
 
@@ -92,7 +92,7 @@ export default function Dashboard({ totalOrderValue, totalKirimValue, totalPOQty
                     />
                     <StatCard
                         title="Total PB"
-                        value={totalLPBValue}
+                        value={totalLPBQty}
                         colorClass="bg-rose-500 text-white"
                         accentColor="border-rose-500"
                         icon={<PackageCheck className="h-5 w-5" />}

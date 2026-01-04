@@ -77,7 +77,7 @@ class DashboardController extends Controller
             'totalOrderValue' => (float)$totalOrderValue,
             'totalKirimValue' => (float)$totalKirimValue,
             'totalPOQty'      => (float)$totalPOQty,
-            'totalLPBValue'     => (float)$totalLPBValue,
+            'totalLPBQty'     => (float)$totalLPBValue,
             'chartData'       => $chartData,
             'selectedYear'    => (int)$year,
         ]);
