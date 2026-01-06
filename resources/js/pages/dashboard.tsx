@@ -102,7 +102,7 @@ export default function Dashboard({ totalOrderValue, totalKirimValue, totalPOQty
                 {/* Charts Section */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <OrderChart data={chartData} dataKey="salesTotal" title="Statistik Penjualan (IDR)" color="#4f46e5" />
-                    <OrderChart data={chartData} dataKey="lpbTotal" title="Statistik Penerimaan Barang (IDR)" color="#f43f5e" />
+                    <OrderChart data={chartData} dataKey="lpbTotal" title="Statistik Pembelian (IDR)" color="#f43f5e" />
                 </div>
             </div>
         </AppLayout>

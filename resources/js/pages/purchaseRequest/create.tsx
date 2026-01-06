@@ -173,7 +173,7 @@ export default function Create({ departments, masterItems, customerAddresses, ka
         }
 
         const newItem: PurchaseRequestItem = {
-            id: crypto.randomUUID(), // Generate unique ID for each item
+            //id: crypto.randomUUID(), // Generate unique ID for each item
             id_master_item: parseInt(itemInput.id_master_item),
             qty: parseFloat(itemInput.qty),
             eta: itemInput.eta,
