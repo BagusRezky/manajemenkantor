@@ -60,15 +60,7 @@ export default function EditPrinting({ printing, kartuInstruksiKerjas, mesins, o
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label>Surat Perintah Kerja (SPK) *</Label>
-                                    <SearchableSelect
-                                        items={kartuInstruksiKerjas.map((k) => ({
-                                            key: String(k.id),
-                                            value: String(k.id),
-                                            label: k.no_kartu_instruksi_kerja,
-                                        }))}
-                                        value={data.id_kartu_instruksi_kerja}
-                                        onChange={(val) => setData('id_kartu_instruksi_kerja', val)}
-                                    />
+                                    <Input value={kartuInstruksiKerjas.find(k => String(k.id) === data.id_kartu_instruksi_kerja)?.no_kartu_instruksi_kerja || ''} readOnly />
                                     {errors.id_kartu_instruksi_kerja && <p className="text-sm text-red-500">{errors.id_kartu_instruksi_kerja}</p>}
                                 </div>
 
