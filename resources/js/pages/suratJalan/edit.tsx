@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -110,15 +109,8 @@ export default function Edit({ suratJalan, kartuInstruksiKerjas }: EditProps) {
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <Label>Pilih SPK (KIK) *</Label>
-                                        <SearchableSelect
-                                            items={kartuInstruksiKerjas.map((k) => ({
-                                                key: String(k.id),
-                                                value: String(k.id),
-                                                label: `${k.no_kartu_instruksi_kerja} | ${k.sales_order?.customer_address?.nama_customer || 'No Customer'}`,
-                                            }))}
-                                            value={data.id_kartu_instruksi_kerja}
-                                            onChange={(val) => setData('id_kartu_instruksi_kerja', val)}
-                                        />
+                                        <Input value={selectedKIK?.no_kartu_instruksi_kerja || ''} readOnly />
+
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Tanggal Surat Jalan *</Label>
