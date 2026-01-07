@@ -64,7 +64,7 @@ const generatePenerimaanBarangPdf = (penerimaanBarang: PenerimaanBarang, downloa
     doc.text('Tgl.Penerimaan', 15, 59);
     doc.text(':', 65, 59);
     doc.setFont('helvetica', 'normal');
-    const formattedDate = penerimaanBarang.tgl_terima_barang ? format(new Date(penerimaanBarang.tgl_terima_barang), 'dd-MM-yyyy HH:mm:ss') : '';
+    const formattedDate = penerimaanBarang.tgl_terima_barang ? format(new Date(penerimaanBarang.tgl_terima_barang), 'dd-MM-yyyy') : '';
     doc.text(formattedDate, 70, 59);
 
     doc.setFont('helvetica', 'bold');
