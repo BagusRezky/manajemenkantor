@@ -116,7 +116,7 @@ class PurchaseOrderController extends Controller
 
         // Generate PO number
         $lastPO = PurchaseOrder::orderBy('id', 'desc')->first();
-        $poNumber = 'PO-' . date('Ymd') . '-' . (($lastPO ? $lastPO->id : 0) + 1);
+        $poNumber = 'PO-UGRMS' . date('Ymd') . '-' . (($lastPO ? $lastPO->id : 0) + 1);
 
         // Create Purchase Order
         $purchaseOrder = PurchaseOrder::create([
@@ -200,6 +200,7 @@ class PurchaseOrderController extends Controller
     public function update(Request $request, $id)
     {
         $validated = $request->validate([
+            'no_po' => 'required|string|unique:purchase_orders,no_po,' . $id,
             'id_purchase_request' => 'required|exists:purchase_requests,id',
             'tanggal_po' => 'required|date',
             'id_supplier' => 'required|exists:suppliers,id',
@@ -225,6 +226,7 @@ class PurchaseOrderController extends Controller
 
         // Update Purchase Order
         $purchaseOrder->update([
+            'no_po' => $validated['no_po'],
             'id_purchase_request' => $validated['id_purchase_request'],
             'tanggal_po' => $validated['tanggal_po'],
             'id_supplier' => $validated['id_supplier'],
