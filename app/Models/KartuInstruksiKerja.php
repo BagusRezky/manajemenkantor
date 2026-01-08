@@ -95,7 +95,14 @@ class KartuInstruksiKerja extends Model
     {
         $currentYear = date('Y');
 
-        // Count records from the current year and add 1
-        return static::whereYear('created_at', $currentYear)->count() + 1;
+        // GANTI INI
+        // return static::whereYear('created_at', $currentYear)->count() + 1;
+
+        // JADI INI
+        $maxNumber = static::whereYear('created_at', $currentYear)
+            ->selectRaw('MAX(CAST(SUBSTRING_INDEX(no_kartu_instruksi_kerja, "/", 1) AS UNSIGNED)) as max_number')
+            ->value('max_number');
+
+        return $maxNumber ? $maxNumber + 1 : 1;
     }
 }
