@@ -30,6 +30,10 @@ class KaryawanImport implements ToModel, WithHeadingRow, WithUpserts
             ->where('nama', $row['nama'])
             ->first();
 
+        $statusPegawai = $row['status_pegawai']
+            ?? $existing?->status_pegawai
+            ?? 'Aktif';
+
         // buat array baru
         $data = [
             'pin'            => $row['pin'] ?? $existing?->pin,
@@ -42,7 +46,7 @@ class KaryawanImport implements ToModel, WithHeadingRow, WithUpserts
             'rfid'           => $row['rfid'] ?? $existing?->rfid,
             'no_telp'        => $row['no_telp'] ?? $existing?->no_telp,
             'privilege'      => $row['privilege'] ?? $existing?->privilege,
-            'status_pegawai' => $row['status_pegawai'] ?? $existing?->status_pegawai,
+            'status_pegawai' => $statusPegawai,
             'nip'            => $row['nip'] ?? $existing?->nip,
         ];
 
