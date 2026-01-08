@@ -116,7 +116,7 @@ class PurchaseOrderController extends Controller
 
         // Generate PO number
         $lastPO = PurchaseOrder::orderBy('id', 'desc')->first();
-        $poNumber = 'PO-UGRMS' . date('Ymd') . '-' . (($lastPO ? $lastPO->id : 0) + 1);
+        $poNumber = 'PO-UGRMS-' . date('Ymd') . '-' . (($lastPO ? $lastPO->id : 0) + 1);
 
         // Create Purchase Order
         $purchaseOrder = PurchaseOrder::create([
