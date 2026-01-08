@@ -40,21 +40,12 @@ class KartuInstruksiKerjaController extends Controller
             ->get();
 
         $currentYear = date('Y');
-
-        // --- KODE LAMA (HAPUS ATAU KOMENTAR) ---
-        // $latestKikId = KartuInstruksiKerja::whereYear('created_at', $currentYear)
-        //    ->count() + 1;
-
-        // --- KODE BARU (SOLUSI) ---
-        // Ambil angka paling depan (sebelum slash /) dari string no_kartu_instruksi_kerja
-        // Lalu cari nilai MAX-nya.
         $maxNumber = KartuInstruksiKerja::whereYear('created_at', $currentYear)
             ->selectRaw('MAX(CAST(SUBSTRING_INDEX(no_kartu_instruksi_kerja, "/", 1) AS UNSIGNED)) as max_number')
             ->value('max_number');
 
-        // Jika ada datanya, ambil max + 1. Jika belum ada (awal tahun), mulai dari 1.
+
         $latestKikId = $maxNumber ? $maxNumber + 1 : 1;
-        // ------------------------------------------
 
         return Inertia::render('kartuInstruksiKerja/create', [
             'salesOrders' => $salesOrders,
