@@ -219,7 +219,7 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
                                         <Label htmlFor="id_supplier">
                                             Supplier <span className="text-red-500">*</span>
                                         </Label>
-                                        <Select value={data.id_supplier} onValueChange={(value) => setData('id_supplier', value)}>
+                                        {/* <Select value={data.id_supplier} onValueChange={(value) => setData('id_supplier', value)}>
                                             <SelectTrigger className={errors.id_supplier ? 'border-red-500' : ''}>
                                                 <SelectValue placeholder="Input Supplier" />
                                             </SelectTrigger>
@@ -230,7 +230,17 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
-                                        </Select>
+                                        </Select> */}
+                                        <SearchableSelect
+                                            items={suppliers.map((supplier) => ({
+                                                key: String(supplier.id),
+                                                value: String(supplier.id),
+                                                label: supplier.nama_suplier,
+                                            }))}
+                                            value={data.id_supplier}
+                                            placeholder="Input Supplier"
+                                            onChange={(value) => setData('id_supplier', value)}
+                                        />
                                         {errors.id_supplier && <p className="text-sm text-red-500">{errors.id_supplier}</p>}
                                     </div>
 
