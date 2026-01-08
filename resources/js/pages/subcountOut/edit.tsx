@@ -183,14 +183,15 @@ export default function Edit({ subcountOut, suppliers, kartuInstruksiKerjas, uni
 
                                     <div className="space-y-2">
                                         <Label>Supplier <span className="text-red-500">*</span></Label>
-                                        <Select value={data.id_supplier} onValueChange={(v) => setData('id_supplier', v)}>
-                                            <SelectTrigger><SelectValue placeholder="Pilih Supplier" /></SelectTrigger>
-                                            <SelectContent>
-                                                {suppliers.map((s) => (
-                                                    <SelectItem key={s.id} value={s.id}>{s.nama_suplier}</SelectItem>
-                                                ))}
-                                            </SelectContent>
-                                        </Select>
+                                        <SearchableSelect
+                                            items={suppliers.map((s) => ({
+                                                key: s.id, value: s.id, label: s.nama_suplier
+                                            }))}
+                                            value={data.id_supplier}
+                                            onChange={(v) => setData('id_supplier', v)}
+
+                                        />
+                                        {errors.id_supplier && <p className="text-sm text-red-500">{errors.id_supplier}</p>}
                                     </div>
                                 </div>
 
@@ -274,6 +275,7 @@ export default function Edit({ subcountOut, suppliers, kartuInstruksiKerjas, uni
                                                 <TableHead>No.SPK </TableHead>
                                                 <TableHead>Produk</TableHead>
                                                 <TableHead>Qty</TableHead>
+                                                <TableHead>Satuan</TableHead>
                                                 <TableHead>Catatan</TableHead>
                                                 <TableHead className="w-[100px]">Aksi</TableHead>
                                             </TableRow>
@@ -283,11 +285,12 @@ export default function Edit({ subcountOut, suppliers, kartuInstruksiKerjas, uni
                                                 <TableRow key={index}>
                                                     <TableCell>{index + 1}</TableCell>
                                                     <TableCell>
-                                                        <div className="font-medium">{item.no_kik}</div>
+                                                    <div className="font-medium">{item.no_kik || '-'}</div>
 
                                                     </TableCell>
-                                                    <TableCell>{item.nama_produk}</TableCell>
-                                                    <TableCell>{item.qty} {item.nama_satuan}</TableCell>
+                                                    <TableCell>{item.nama_produk || '-'}</TableCell>
+                                                    <TableCell>{item.qty || '-'}</TableCell>
+                                                    <TableCell>{item.nama_satuan || '-'}</TableCell>
                                                     <TableCell>{item.keterangan || '-'}</TableCell>
                                                     <TableCell>
                                                         <Button
