@@ -28,6 +28,7 @@ export default function Edit({ invoice, suratJalans }: EditProps) {
 
     const { data, setData, put, processing, errors } = useForm({
         id_surat_jalan: invoice.id_surat_jalan || '',
+        no_invoice: invoice.no_invoice || '',
         tgl_invoice: invoice.tgl_invoice || '',
         tgl_jatuh_tempo: invoice.tgl_jatuh_tempo || '',
         discount: invoice.discount.toString() || '0',
@@ -94,6 +95,18 @@ export default function Edit({ invoice, suratJalans }: EditProps) {
                         <CardContent>
                             <form onSubmit={submit} className="space-y-6">
                                 <div className="space-y-2">
+                                    <div className="space-y-2">
+                                        <Label htmlFor="no_invoice">Nomor Invoice</Label>
+                                        <Input
+                                            id="no_invoice"
+                                            type="text"
+                                            value={data.no_invoice}
+                                            onChange={(e) => setData('no_invoice', e.target.value)}
+                                            placeholder="000001/INV/MMYY"
+                                            className="font-mono font-bold text-blue-600 uppercase"
+                                        />
+                                        {errors.no_invoice && <p className="text-sm text-red-600">{errors.no_invoice}</p>}
+                                    </div>
                                     <Label>Pilih Surat Jalan *</Label>
                                     <SearchableSelect
                                         items={suratJalans.map((sj) => ({
@@ -103,57 +116,108 @@ export default function Edit({ invoice, suratJalans }: EditProps) {
                                         }))}
                                         value={data.id_surat_jalan}
                                         onChange={handleSJChange}
-                                        placeholder="Pilih Surat Jalan..."
+                                        placeholder={
+                                            selectedSuratJalan
+                                                ? `${selectedSuratJalan.no_surat_jalan} | SPK: ${selectedSuratJalan.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}`
+                                                : 'Pilih Surat Jalan...'
+                                        }
                                     />
                                     {errors.id_surat_jalan && <p className="text-sm text-red-600">{errors.id_surat_jalan}</p>}
                                 </div>
 
                                 {selectedSuratJalan && (
-                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-100 dark:border-blue-800 text-sm">
+                                    <div className="grid grid-cols-1 gap-4 rounded-lg border border-blue-100 bg-blue-50 p-4 text-sm md:grid-cols-2 dark:border-blue-800 dark:bg-blue-900/20">
                                         <div className="space-y-1">
-                                            <p><span className="text-gray-500">Customer:</span> <span className="font-semibold">{(selectedSuratJalan as any).kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '-'}</span></p>
-                                            <p><span className="text-gray-500">Qty Kirim:</span> <span className="font-semibold">{selectedSuratJalan.qty_pengiriman} pcs</span></p>
+                                            <p>
+                                                <span className="text-gray-500">Customer:</span>{' '}
+                                                <span className="font-semibold">
+                                                    {(selectedSuratJalan as any).kartu_instruksi_kerja?.sales_order?.customer_address
+                                                        ?.nama_customer || '-'}
+                                                </span>
+                                            </p>
+                                            <p>
+                                                <span className="text-gray-500">Qty Kirim:</span>{' '}
+                                                <span className="font-semibold">{selectedSuratJalan.qty_pengiriman} pcs</span>
+                                            </p>
                                         </div>
                                         <div className="space-y-1">
-                                            <p><span className="text-gray-500">Harga Satuan:</span> <span className="font-semibold font-mono text-blue-600">Rp {Number((selectedSuratJalan as any).kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0).toLocaleString('id-ID')}</span></p>
-                                            <p><span className="text-gray-500">No. SO:</span> <span className="font-semibold">{(selectedSuratJalan as any).kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}</span></p>
+                                            <p>
+                                                <span className="text-gray-500">Harga Satuan:</span>{' '}
+                                                <span className="font-mono font-semibold text-blue-600">
+                                                    Rp{' '}
+                                                    {Number(
+                                                        (selectedSuratJalan as any).kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0,
+                                                    ).toLocaleString('id-ID')}
+                                                </span>
+                                            </p>
+                                            <p>
+                                                <span className="text-gray-500">No. SO:</span>{' '}
+                                                <span className="font-semibold">
+                                                    {(selectedSuratJalan as any).kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}
+                                                </span>
+                                            </p>
                                         </div>
                                     </div>
                                 )}
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <Label htmlFor="tgl_invoice">Tanggal Invoice</Label>
-                                        <Input type="date" value={data.tgl_invoice} onChange={e => setData('tgl_invoice', e.target.value)} />
+                                        <Input type="date" value={data.tgl_invoice} onChange={(e) => setData('tgl_invoice', e.target.value)} />
                                         {errors.tgl_invoice && <p className="text-xs text-red-500">{errors.tgl_invoice}</p>}
                                     </div>
                                     <div className="space-y-2">
                                         <Label htmlFor="tgl_jatuh_tempo">Jatuh Tempo</Label>
-                                        <Input type="date" value={data.tgl_jatuh_tempo} onChange={e => setData('tgl_jatuh_tempo', e.target.value)} />
+                                        <Input
+                                            type="date"
+                                            value={data.tgl_jatuh_tempo}
+                                            onChange={(e) => setData('tgl_jatuh_tempo', e.target.value)}
+                                        />
                                     </div>
                                 </div>
 
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                     <div className="space-y-2">
                                         <Label>Discount (Rp)</Label>
-                                        <Input type="number" value={data.discount} onChange={e => setData('discount', e.target.value)} placeholder="0" />
+                                        <Input
+                                            type="number"
+                                            value={data.discount}
+                                            onChange={(e) => setData('discount', e.target.value)}
+                                            placeholder="0"
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <Label>PPN (%)</Label>
-                                        <Input type="number" step="0.01" value={data.ppn} onChange={e => setData('ppn', e.target.value)} placeholder="11" />
+                                        <Input
+                                            type="number"
+                                            step="0.01"
+                                            value={data.ppn}
+                                            onChange={(e) => setData('ppn', e.target.value)}
+                                            placeholder="11"
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Ongkos Kirim (Rp)</Label>
-                                        <Input type="number" value={data.ongkos_kirim} onChange={e => setData('ongkos_kirim', e.target.value)} placeholder="0" />
+                                        <Input
+                                            type="number"
+                                            value={data.ongkos_kirim}
+                                            onChange={(e) => setData('ongkos_kirim', e.target.value)}
+                                            placeholder="0"
+                                        />
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Uang Muka / DP (Rp)</Label>
-                                        <Input type="number" value={data.uang_muka} onChange={e => setData('uang_muka', e.target.value)} placeholder="0" />
+                                        <Input
+                                            type="number"
+                                            value={data.uang_muka}
+                                            onChange={(e) => setData('uang_muka', e.target.value)}
+                                            placeholder="0"
+                                        />
                                     </div>
                                 </div>
 
                                 {/* Live Summary Calculation */}
-                                <div className="mt-8 space-y-3 p-6 bg-gray-900 rounded-xl text-white shadow-inner font-mono">
+                                <div className="mt-8 space-y-3 rounded-xl bg-gray-900 p-6 font-mono text-white shadow-inner">
                                     <div className="flex justify-between text-sm opacity-70">
                                         <span>Subtotal (Net)</span>
                                         <span>Rp {summary.subtotal.toLocaleString('id-ID')}</span>
@@ -166,7 +230,7 @@ export default function Edit({ invoice, suratJalans }: EditProps) {
                                         <span>Ongkos Kirim</span>
                                         <span>Rp {Number(data.ongkos_kirim || 0).toLocaleString('id-ID')}</span>
                                     </div>
-                                    <div className="flex justify-between border-t border-white/20 pt-2 text-blue-400 font-bold">
+                                    <div className="flex justify-between border-t border-white/20 pt-2 font-bold text-blue-400">
                                         <span>Total Tagihan</span>
                                         <span>Rp {summary.total.toLocaleString('id-ID')}</span>
                                     </div>
@@ -174,7 +238,7 @@ export default function Edit({ invoice, suratJalans }: EditProps) {
                                         <span>Uang Muka (DP)</span>
                                         <span>- Rp {Number(data.uang_muka || 0).toLocaleString('id-ID')}</span>
                                     </div>
-                                    <div className="flex justify-between border-t border-white/20 pt-2 text-xl font-black bg-white/5 p-2 rounded">
+                                    <div className="flex justify-between rounded border-t border-white/20 bg-white/5 p-2 pt-2 text-xl font-black">
                                         <span>SISA TAGIHAN</span>
                                         <span>Rp {summary.sisa.toLocaleString('id-ID')}</span>
                                     </div>
