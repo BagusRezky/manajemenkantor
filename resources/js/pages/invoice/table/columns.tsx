@@ -16,7 +16,7 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
     // Inisialisasi ukuran kertas 9.5 x 11 inci dalam milimeter
     // 9.5 inc = 241.3 mm, 11 inc = 279.4 mm
     const doc = new jsPDF({
-        orientation: 'p',
+        orientation: 'landscape',
         unit: 'mm',
         format: [241.3, 279.4],
     });
