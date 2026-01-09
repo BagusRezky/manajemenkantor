@@ -13,87 +13,98 @@ import { toast } from 'sonner';
 
 // Function untuk generate PDF invoice
 const generateInvoicePdf = (invoice: Invoice, download = false): void => {
-    const doc = new jsPDF('p', 'mm', 'a4');
-    const pageWidth = doc.internal.pageSize.getWidth();
+    // Inisialisasi ukuran kertas 9.5 x 11 inci dalam milimeter
+    // 9.5 inc = 241.3 mm, 11 inc = 279.4 mm
+    const doc = new jsPDF({
+        orientation: 'p',
+        unit: 'mm',
+        format: [241.3, 279.4],
+    });
 
-    const topOffset = 15;
+    const pageWidth = doc.internal.pageSize.getWidth(); // Akan bernilai 241.3
+    const topOffset = 8;
     const logo = new Image();
     logo.src = '/images/logo-kantor.png';
-    doc.addImage(logo, 'PNG', 15, 15 + topOffset, 18, 18);
+    // Menempatkan logo
+    doc.addImage(logo, 'PNG', 15, topOffset + 5, 18, 18);
 
+    // Garis luar header
     doc.setLineWidth(0.5);
-    doc.rect(10, 10 + topOffset, pageWidth - 20, 30);
+    doc.rect(10, topOffset, pageWidth - 20, 30);
 
-    // =============================
-    // COMPANY INFO
-    // =============================
+    // INFO PERUSAHAAN
     doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('CV. Indigama Khatulistiwa', 40, 18 + topOffset);
+    doc.text('CV. Indigama Khatulistiwa', 40, 8 + topOffset);
 
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 40, 23 + topOffset);
-    doc.text('Pasuruan, Jawa Timur 67155', 40, 28 + topOffset);
-    doc.text('Email: indigama.khatulistiwa01@gmail.com', 40, 33 + topOffset);
-    doc.text('Telp: 081703101012', 40, 38 + topOffset);
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 40, 13 + topOffset);
+    doc.text('Pasuruan, Jawa Timur 67155', 40, 18 + topOffset);
+    doc.text('Email: indigama.khatulistiwa01@gmail.com', 40, 23 + topOffset);
+    doc.text('Telp: 081703101012', 40, 28 + topOffset);
 
-    // =============================
-    // INVOICE TITLE
-    // =============================
+    // JUDUL INVOICE & TANGGAL
     doc.setFontSize(16).setFont('helvetica', 'bold');
-    doc.text('INVOICE', pageWidth - 15, 20 + topOffset, { align: 'right' });
+    doc.text('INVOICE', pageWidth - 15, 10 + topOffset, { align: 'right' });
 
     doc.setFontSize(10).setFont('helvetica', 'normal');
     const invoiceDate = invoice.tgl_invoice ? format(new Date(invoice.tgl_invoice), 'dd-MM-yyyy') : '';
     const dueDate = invoice.tgl_jatuh_tempo ? format(new Date(invoice.tgl_jatuh_tempo), 'dd-MM-yyyy') : '';
 
-    doc.text(`Tanggal Invoice : ${invoiceDate}`, pageWidth - 15, 26 + topOffset, {
-        align: 'right',
-    });
-    doc.text(`Jatuh Tempo     : ${dueDate}`, pageWidth - 15, 31 + topOffset, {
-        align: 'right',
-    });
-    doc.rect(10, 45 + topOffset, pageWidth - 20, 30);
-    // Customer
+    doc.text(`Tanggal Invoice : ${invoiceDate}`, pageWidth - 15, 16 + topOffset, { align: 'right' });
+    doc.text(`Jatuh Tempo     : ${dueDate}`, pageWidth - 15, 21 + topOffset, { align: 'right' });
+
+    // =============================
+    // CUSTOMER INFO & NO INVOICE
+    // =============================
+    doc.rect(10, 35 + topOffset, pageWidth - 20, 30);
+
+    // Sisi Kiri: Customer
     doc.setFont('helvetica', 'bold');
-    doc.text('Kepada:', 15, 52 + topOffset);
+    doc.text('Kepada:', 15, 42 + topOffset);
     doc.setFont('helvetica', 'normal');
 
     const customerName = invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '';
-    doc.text(customerName, 15, 58 + topOffset);
+    doc.text(customerName, 15, 48 + topOffset);
 
     const customerAddress = invoice.surat_jalan?.alamat_tujuan || '';
-    const addressLines = doc.splitTextToSize(customerAddress, 80);
-    let addrY = 64 + topOffset;
+    const addressLines = doc.splitTextToSize(customerAddress, 100); // Dilebarkan karena kertas lebih luas
+    let addrY = 54 + topOffset;
     addressLines.forEach((line: string) => {
         doc.text(line, 15, addrY);
         addrY += 5;
     });
 
-    // Right info
-    const rightX = pageWidth - 85;
+    // Sisi Kanan: Detail Invoice
+    const rightInfoX = pageWidth - 85;
     doc.setFont('helvetica', 'bold');
-    doc.text('No. Invoice', rightX, 52 + topOffset);
-    doc.text(':', rightX + 25, 52 + topOffset);
+    doc.text('No. Invoice', rightInfoX, 42 + topOffset);
+    doc.text(':', rightInfoX + 25, 42 + topOffset);
     doc.setFont('helvetica', 'normal');
-    doc.text(invoice.no_invoice || '', rightX + 30, 52 + topOffset);
+    doc.text(invoice.no_invoice || '', rightInfoX + 30, 42 + topOffset);
 
     doc.setFont('helvetica', 'bold');
-    doc.text('No.Surat Jalan', rightX, 59 + topOffset);
-    doc.text(':', rightX + 25, 59 + topOffset);
+    doc.text('No.Surat Jalan', rightInfoX, 49 + topOffset);
+    doc.text(':', rightInfoX + 25, 49 + topOffset);
     doc.setFont('helvetica', 'normal');
-    doc.text(invoice.surat_jalan?.no_surat_jalan || '', rightX + 30, 59 + topOffset);
-    const tableStartY = 80 + topOffset;
+    doc.text(invoice.surat_jalan?.no_surat_jalan || '', rightInfoX + 30, 49 + topOffset);
 
+    doc.setFont('helvetica', 'bold');
+    doc.text('No.PO Cust', rightInfoX, 56 + topOffset);
+    doc.text(':', rightInfoX + 25, 56 + topOffset);
+    doc.setFont('helvetica', 'normal');
+    doc.text(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.no_po_customer || '', rightInfoX + 30, 56 + topOffset);
+    // =============================
+    // TABEL DETAIL
+    // =============================
+    const tableStartY = 70 + topOffset;
     doc.setFont('helvetica', 'bold');
     doc.rect(10, tableStartY, pageWidth - 20, 10);
-    doc.text('DETAIL INVOICE', pageWidth / 2, tableStartY + 6, {
-        align: 'center',
-    });
+    doc.text('DETAIL INVOICE', pageWidth / 2, tableStartY + 6, { align: 'center' });
 
+    // Perhitungan
     const discount = Number(invoice.discount || 0);
     const qty = Number(invoice.surat_jalan?.qty_pengiriman || 0);
     const harga = Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
-
     const ppnRate = Number(invoice.ppn || 0);
     const ongkir = Number(invoice.ongkos_kirim || 0);
     const dp = Number(invoice.uang_muka || 0);
@@ -119,6 +130,7 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
         bodyStyles: {
             lineWidth: 0.5,
             lineColor: [0, 0, 0],
+            textColor: [0, 0, 0],
         },
         columns: [
             { header: 'Nama Barang', dataKey: 'desc' },
@@ -145,32 +157,49 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
                 : []),
         ],
         columnStyles: {
-            desc: { cellWidth: 80 },
-            qty: { cellWidth: 25, halign: 'center' },
-            harga: { cellWidth: 40, halign: 'right' },
-            jumlah: { cellWidth: 45, halign: 'right' },
+            desc: { cellWidth: 'auto', fontStyle: 'bold' }, // Biarkan menyesuaikan sisa lebar
+            qty: { cellWidth: 25, halign: 'center', fontStyle: 'bold' },
+            harga: { cellWidth: 40, halign: 'right', fontStyle: 'bold' },
+            jumlah: { cellWidth: 45, halign: 'right', fontStyle: 'bold' },
         },
     });
 
+    // =============================
+    // FOOTER (REKENING, TTD, & SUMMARY)
+    // =============================
     const afterTableY = (doc as any).lastAutoTable.finalY + 10;
 
+    // 1. Rekening (Sisi Kiri)
     doc.setFont('helvetica', 'bold');
     doc.text('Rekening Pembayaran :', 15, afterTableY);
-
     doc.setFont('helvetica', 'normal');
     doc.text('BRI', 15, afterTableY + 6);
     doc.text('CV. INDIGAMA KHATULISTIWA', 15, afterTableY + 11);
     doc.text('0583 0110 0100 565', 15, afterTableY + 16);
 
-    // =============================
-    // SUMMARY (KANAN)
-    // =============================
-    doc.rect(pageWidth - 80, afterTableY - 5, 70, 43);
+    // 2. Tanda Tangan Penerbit (Ditengah-tengah)
+    const centerX = pageWidth / 2;
+    doc.setFont('helvetica', 'normal');
+    doc.text('TTD Penerbit Invoice,', centerX, afterTableY, { align: 'center' });
+
+    // Tempat Tanda Tangan (Space kosong)
+    // Anda bisa menambahkan doc.addImage di sini jika memiliki scan TTD digital
+
+    doc.setFont('helvetica', 'bold');
+    doc.text('( ................................................... )', centerX, afterTableY + 25, { align: 'center' });
+    doc.setFontSize(9);
+
+    // 3. Kotak Summary (Sisi Kanan)
+    doc.setFontSize(10); // Reset font size
+    const summaryWidth = 75;
+    const summaryX = pageWidth - summaryWidth - 10;
+    doc.rect(summaryX, afterTableY - 5, summaryWidth, 43);
 
     let y = afterTableY + 3;
-    const labelX = pageWidth - 75;
+    const labelX = summaryX + 5;
     const valueX = pageWidth - 15;
 
+    doc.setFont('helvetica', 'normal');
     doc.text('Subtotal', labelX, y);
     doc.text(`Rp ${subtotal.toLocaleString('id-ID')}`, valueX, y, { align: 'right' });
 
@@ -195,9 +224,7 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
     y += 6;
     doc.setFont('helvetica', 'bold');
     doc.text('Grand Total', labelX, y);
-    doc.text(`Rp ${grandTotal.toLocaleString('id-ID')}`, valueX, y, {
-        align: 'right',
-    });
+    doc.text(`Rp ${grandTotal.toLocaleString('id-ID')}`, valueX, y, { align: 'right' });
 
     // Output PDF
     if (download) {
