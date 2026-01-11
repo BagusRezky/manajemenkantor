@@ -33,11 +33,11 @@ export const columns = (): ColumnDef<Cuti>[] => [
         enableHiding: false,
     },
     {
-        // Tampilkan nama karyawan dari relasi
-        accessorKey: 'karyawan',
+        id: 'karyawan',
         header: 'Karyawan',
+        accessorFn: (row) => row.karyawan?.nama,
         cell: ({ row }) => {
-            const nama = row.original.karyawan?.nama;
+            const nama = row.getValue('karyawan') as string;
             return <div>{nama || '-'}</div>;
         },
     },
