@@ -9,7 +9,6 @@ use App\Models\Absen;
 use App\Models\Lembur;
 use App\Models\BonusKaryawan;
 use App\Models\Cuti;
-use App\Models\HariLibur;
 use App\Models\PotonganTunjangan;
 use App\Models\Izin;
 
@@ -124,6 +123,93 @@ class GajiController extends Controller
         ]);
     }
 
+    public function sendSlip(Request $request)
+    {
+        // Validasi range tanggal
+        $startDate = Carbon::parse($request->start_date)->startOfDay();
+        $endDate   = Carbon::parse($request->end_date)->endOfDay();
+        $id_karyawan = $request->input('id_karyawan'); // null jika kirim semua
+
+        if (!$startDate || !$endDate) {
+            return back()->with('error', 'Range tanggal wajib diisi.');
+        }
+
+        $bulanText = Carbon::parse($startDate)->translatedFormat('F');
+        $tahunText = Carbon::parse($startDate)->format('Y');
+
+        // Query dasar: Karyawan yang punya email
+        $query = Karyawan::with('user')->whereNotNull('user_id');
+
+        // Jika id_karyawan ada, berarti kirim individu
+        if ($id_karyawan) {
+            $query->where('id', $id_karyawan);
+        }
+
+        $karyawans = $query->get();
+
+        // Data pendukung untuk perhitungan (diambil sekaligus agar tidak query di dalam loop)
+        $absens = Absen::whereBetween('tanggal_scan', [$startDate, $endDate])->get();
+        $lemburs = Lembur::whereBetween('tanggal_lembur', [$startDate, $endDate])->get();
+        $bonusList = BonusKaryawan::whereBetween('tanggal_bonus', [$startDate, $endDate])->get();
+        $cutis = Cuti::with('karyawan')->whereBetween('tanggal_cuti', [$startDate, $endDate])->get();
+        $izins = Izin::whereBetween('tanggal_izin', [$startDate, $endDate])->get();
+        $potonganList = PotonganTunjangan::whereBetween('periode_payroll', [$startDate, $endDate])->get();
+
+        foreach ($karyawans as $karyawan) {
+            if (!$karyawan->user || !$karyawan->user->email) continue;
+
+            $absenKaryawan = $absens->where('nama', $karyawan->nama);
+            $tanggalHadirFisik = $absenKaryawan->groupBy(fn($item) => date('Y-m-d', strtotime($item->tanggal_scan)))
+                ->filter(fn($group) => $group->where('io', 1)->isNotEmpty() && $group->where('io', 2)->isNotEmpty())
+                ->keys()->toArray();
+
+            // --- 2. LOGIKA IZIN & ALPHA ---
+            $izinKaryawan = $izins->where('id_karyawan', $karyawan->id);
+            $dataIzin = $izinKaryawan->where('jenis_izin', '!=', 'Alpha');
+            $totalIzin = $dataIzin->count();
+            $tanggalIzinHadir = $dataIzin->map(fn($i) => date('Y-m-d', strtotime($i->tanggal_izin)))->toArray();
+            $totalAlpha = $izinKaryawan->where('jenis_izin', 'Alpha')->count();
+
+            // --- 3. LOGIKA CUTI ---
+            
+            $cutiKaryawan = $cutis->where('karyawan.id', $karyawan->id);
+            $tanggalCutiHadir = $cutiKaryawan->map(fn($c) => date('Y-m-d', strtotime($c->tanggal_cuti)))->toArray();
+
+            // --- 4. TOTAL HADIR (SAMA DENGAN INDEX) ---
+            // Menggabungkan Fisik + Izin + Cuti lalu di-unique
+            $totalHariHadir = count(array_unique(array_merge($tanggalHadirFisik, $tanggalIzinHadir, $tanggalCutiHadir)));
+
+            // --- 5. POTONGAN & TUNJANGAN ---
+            $potongan = $potonganList->where('id_karyawan', $karyawan->id)->first();
+            $dataGaji = [
+                'hadir' => $totalHariHadir,
+                'total_izin' => $totalIzin,
+                'total_alpha' => $totalAlpha,
+                'total_cuti' => $cutiKaryawan->count(),
+                'gaji_pokok' => $karyawan->gaji_pokok ?? 0,
+                'tunj_kompetensi' => $karyawan->tunjangan_kompetensi ?? 0,
+                'tunj_jabatan' => $karyawan->tunjangan_jabatan ?? 0,
+                'tunj_intensif' => $karyawan->tunjangan_intensif ?? 0,
+                'pot_kompetensi' => $potongan->potongan_tunjangan_kompetensi ?? 0,
+                'pot_jabatan' => $potongan->potongan_tunjangan_jabatan ?? 0,
+                'pot_intensif' => $potongan->potongan_intensif ?? 0,
+                'bonus' => $bonusList->where('id_karyawan', $karyawan->id)->sum('nilai_bonus'),
+            ];
+
+            // --- 6. PERHITUNGAN TOTAL GAJI (SAMA DENGAN INDEX) ---
+            $komponenTetap = $dataGaji['gaji_pokok'] +
+                ($dataGaji['tunj_kompetensi'] - $dataGaji['pot_kompetensi']) +
+                ($dataGaji['tunj_jabatan'] - $dataGaji['pot_jabatan']) +
+                ($dataGaji['tunj_intensif'] - $dataGaji['pot_intensif']);
+
+            $gajiHarian = $komponenTetap / 25;
+            $dataGaji['total_gaji'] = ($gajiHarian * $totalHariHadir) + $dataGaji['bonus'];
+
+            dispatch(new SendSlipGajiJob($karyawan, $bulanText, $tahunText, $dataGaji));
+        }
+
+        return back()->with('success', 'Proses pengiriman slip gaji telah dijadwalkan.');
+    }
 
     /**
      * Show the form for creating a new resource.

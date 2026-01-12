@@ -1,5 +1,5 @@
 import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { CardContent, CardTitle } from '@/components/ui/card';
 import AppLayout from '@/layouts/app-layout';
 import { Gaji } from '@/types/gaji';
 import { Head, router } from '@inertiajs/react';
@@ -20,6 +20,14 @@ export default function Gajis({ rekap, bulan, tahun }: Props) {
         bulan,
         tahun,
     });
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    const [range, setRange] = useState({ start_date: '', end_date: '' });
+
+    const handleSendAll = () => {
+        router.post(route('gajis.sendSlip'), range, {
+            onSuccess: () => setIsModalOpen(false),
+        });
+    };
 
     const handleFilter = (e: React.FormEvent) => {
         e.preventDefault();
@@ -45,10 +53,39 @@ export default function Gajis({ rekap, bulan, tahun }: Props) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Rekap Gaji" />
 
-            <Card>
-                <CardHeader>
+                <div className="p-5 flex items-center justify-between">
                     <CardTitle>Rekapitulasi Gaji Karyawan</CardTitle>
-                </CardHeader>
+                    <Button onClick={() => setIsModalOpen(true)} className="bg-green-600 text-white hover:bg-green-700">
+                        Kirim Semua Slip Gaji
+                    </Button>
+                </div>
+
+                {/* Modal Sederhana (Ganti dengan Komponen UI Anda) */}
+                {isModalOpen && (
+                    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
+                        <div className="w-96 rounded-lg bg-white p-6">
+                            <h3 className="mb-4 text-lg font-bold">Pilih Range Tanggal</h3>
+                            <div className="space-y-4">
+                                <input
+                                    type="date"
+                                    className="w-full rounded border p-2"
+                                    onChange={(e) => setRange({ ...range, start_date: e.target.value })}
+                                />
+                                <input
+                                    type="date"
+                                    className="w-full rounded border p-2"
+                                    onChange={(e) => setRange({ ...range, end_date: e.target.value })}
+                                />
+                                <div className="flex justify-end gap-2">
+                                    <Button variant="ghost" onClick={() => setIsModalOpen(false)}>
+                                        Batal
+                                    </Button>
+                                    <Button onClick={handleSendAll}>Kirim Sekarang</Button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 <CardContent>
                     {/* Filter Bulan & Tahun */}
@@ -86,7 +123,7 @@ export default function Gajis({ rekap, bulan, tahun }: Props) {
                     {/* Data Tabel */}
                     <DataTable columns={columns} data={rekap} />
                 </CardContent>
-            </Card>
+
         </AppLayout>
     );
 }

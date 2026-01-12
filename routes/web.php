@@ -451,6 +451,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/cutiTahunan', [CutiController::class, 'cutiTahunan'])->name('cutiTahunan.index')->middleware('permission:cutiTahunan.index');
 
         Route::get('/gajis', [GajiController::class, 'index'])->name('gajis.index')->middleware('permission:gajis.index');
+        Route::post('/gajis/send-slip', [GajiController::class, 'sendSlip'])->name('gajis.sendSlip')->middleware('permission:gajis.index');
     });
 });
 
