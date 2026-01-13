@@ -38,7 +38,7 @@ export const columns = (): ColumnDef<BonusKaryawan>[] => [
         header: 'Kode Gudang',
     },
     {
-        accessorKey: 'karyawan.nama',
+        accessorKey: 'karyawan',
         header: 'Karyawan',
         accessorFn: (row) => row.karyawan?.nama,
         cell: ({ row }) => {
