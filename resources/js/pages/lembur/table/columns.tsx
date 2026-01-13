@@ -38,9 +38,10 @@ export const columns = (): ColumnDef<Lembur>[] => [
     {
         accessorKey: 'id_karyawan',
         header: 'Karyawan',
+        accessorFn: (row) => row.karyawan?.nama,
         cell: ({ row }) => {
-            const data = row.original;
-            return <span>{data.karyawan?.nama || '-'}</span>;
+            const nama = row.getValue('karyawan') as string;
+            return <div>{nama || '-'}</div>;
         },
     },
     {
