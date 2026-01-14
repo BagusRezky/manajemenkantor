@@ -1,6 +1,8 @@
 import { DataTablePagination } from '@/components/custom-pagination';
+import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Gaji } from '@/types/gaji';
+import { router } from '@inertiajs/react';
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -10,15 +12,17 @@ import {
     getPaginationRowModel,
     useReactTable,
 } from '@tanstack/react-table';
-import React from 'react';
+import React, { useState } from 'react';
 
 interface DataTableProps {
     columns: ColumnDef<Gaji>[];
     data: Gaji[];
+    filters: { start_date: string; end_date: string };
 }
 
-export function DataTable({ columns, data }: DataTableProps) {
+export function DataTable({ columns, data, filters }: DataTableProps) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
+    const [dateRange, setDateRange] = useState(filters);
     const table = useReactTable({
         data,
         columns,
@@ -29,8 +33,38 @@ export function DataTable({ columns, data }: DataTableProps) {
         state: { columnFilters },
     });
 
+    const handleFilter = () => {
+        router.get(route('gajis.index'), dateRange, {
+            preserveState: true,
+            replace: true,
+        });
+    };
     return (
-        <div>
+        <div className="space-y-4">
+            {/* Filter Section di dalam Data Table */}
+            <div className="flex items-end gap-3 rounded-md border bg-slate-50 p-4">
+                <div className="grid gap-1">
+                    <label className="text-xs font-bold text-slate-500 uppercase">Tanggal Mulai</label>
+                    <input
+                        type="date"
+                        value={dateRange.start_date}
+                        onChange={(e) => setDateRange({ ...dateRange, start_date: e.target.value })}
+                        className="border-input rounded-md border p-2 text-sm"
+                    />
+                </div>
+                <div className="grid gap-1">
+                    <label className="text-xs font-bold text-slate-500 uppercase">Tanggal Selesai</label>
+                    <input
+                        type="date"
+                        value={dateRange.end_date}
+                        onChange={(e) => setDateRange({ ...dateRange, end_date: e.target.value })}
+                        className="border-input rounded-md border p-2 text-sm"
+                    />
+                </div>
+                <Button onClick={handleFilter} variant="default">
+                    Terapkan Filter
+                </Button>
+            </div>
             <div className="rounded-md border">
                 <Table>
                     <TableHeader>
