@@ -111,9 +111,18 @@ class SalesOrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(SalesOrder $salesOrder)
+    public function show($id)
     {
-        //
+        $salesOrder = SalesOrder::with([
+            'customerAddress',
+            'masterItem',
+            'finishGoodItem.billOfMaterials.masterItem.unit',
+            'finishGoodItem.billOfMaterials.departemen',
+        ])->findOrFail($id);
+
+        return Inertia::render('salesOrder/show', [
+            'salesOrder' => $salesOrder,
+        ]);
     }
 
     /**

@@ -129,6 +129,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/salesOrders', [SalesOrderController::class, 'index'])->name('salesOrders.index')->middleware('permission:salesOrders.index');
     Route::get('/salesOrders/create', [SalesOrderController::class, 'create'])->name('salesOrders.create')->middleware('permission:salesOrders.create');
     Route::post('/salesOrders', [SalesOrderController::class, 'store'])->name('salesOrders.store')->middleware('permission:salesOrders.store');
+    Route::get('/salesOrders/{id}', [SalesOrderController::class, 'show'])->name('salesOrders.show')->middleware('permission:salesOrders.show');
     Route::get('/salesOrders/{id}/edit', [SalesOrderController::class, 'edit'])->name('salesOrders.edit')->middleware('permission:salesOrders.edit');
     Route::put('/salesOrders/{id}', [SalesOrderController::class, 'update'])->name('salesOrders.update')->middleware('permission:salesOrders.update');
     Route::delete('/salesOrders/{id}', [SalesOrderController::class, 'destroy'])->name('salesOrders.destroy')->middleware('permission:salesOrders.destroy');
