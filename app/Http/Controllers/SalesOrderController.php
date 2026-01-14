@@ -16,7 +16,7 @@ class SalesOrderController extends Controller
      */
     public function index()
     {
-        $salesOrders = SalesOrder::with(['customerAddress', 'finishGoodItem', 'finishGoodItem.billOfMaterials', 'masterItem'])->get();
+        $salesOrders = SalesOrder::with(['customerAddress', 'finishGoodItem', 'finishGoodItem.billOfMaterials', 'masterItem'])->orderBy('id', 'desc')->get();
         return Inertia::render('salesOrder/salesOrders', [
             'salesOrders' => $salesOrders,
         ]);
