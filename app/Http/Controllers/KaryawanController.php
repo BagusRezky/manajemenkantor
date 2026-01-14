@@ -87,7 +87,7 @@ class KaryawanController extends Controller
     public function update(Request $request, Karyawan $karyawan)
     {
         $validated = $request->validate([
-            'user_id'        => ['nullable', 'exists:users,id', 'unique:karyawans,user_id,' . $karyawan->id],
+            'user_id'        => ['required', 'exists:users,id', 'unique:karyawans,user_id,' . $karyawan->id],
             'pin'            => ['nullable', 'string', 'max:20'],
             'nip'            => ['nullable', 'string', 'max:30'],
             'nama'           => ['required', 'string', 'max:255'],

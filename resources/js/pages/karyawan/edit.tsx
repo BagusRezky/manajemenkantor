@@ -585,12 +585,12 @@ export default function EditKaryawan({ karyawan, roles, users }: Props) {
                                 <h3 className="text-lg font-semibold">Role Karyawan</h3>
                                 <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
                                     <div className="space-y-2">
-                                        <Label htmlFor="user_id">User</Label>
+                                        <Label htmlFor="user_id">User*</Label>
                                         <SearchableSelect
                                             items={(users || []).map((user) => ({
                                                 key: user.id.toString(),
                                                 value: user.id.toString(),
-                                                label: user.name,
+                                                label: `${user.name} | ${user.email}`,
                                             }))}
                                             value={String(data.user_id) || ''}
                                             placeholder="Pilih User"
