@@ -7,6 +7,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 interface EditFormPOProps {
     data: {
+        no_po?: string;
         id_purchase_request?: string;
         id_supplier?: string;
         tanggal_po?: string;
@@ -38,6 +39,16 @@ export default function EditFormPO({ data, setData, errors, purchaseRequests, su
                 </CardHeader>
                 <CardContent className="space-y-4">
                     <div className="space-y-2">
+                        <Label htmlFor="no_po">No. Purchase Order</Label>
+                        <Input
+                            id="no_po"
+                            value={data.no_po || ''}
+                            onChange={(e) => setData('no_po', e.target.value)}
+                            placeholder="Masukkan Nomor PO"
+                        />
+                        {errors.no_po && <p className="text-sm text-red-500">{errors.no_po}</p>}
+                    </div>
+                    <div className="space-y-2">
                         <Label htmlFor="id_purchase_request">Purchase Request</Label>
                         {/* Tampilkan sebagai input disabled */}
                         <Input
@@ -50,12 +61,7 @@ export default function EditFormPO({ data, setData, errors, purchaseRequests, su
 
                     <div className="space-y-2">
                         <Label htmlFor="tanggal_po">PO Date</Label>
-                        <Input
-                            id="tanggal_po"
-                            type="date"
-                            value={data.tanggal_po || ''}
-                            onChange={(e) => setData('tanggal_po', e.target.value)}
-                        />
+                        <Input id="tanggal_po" type="date" value={data.tanggal_po || ''} onChange={(e) => setData('tanggal_po', e.target.value)} />
                         {errors.tanggal_po && <p className="text-sm text-red-500">{errors.tanggal_po}</p>}
                     </div>
 
@@ -126,7 +132,7 @@ export default function EditFormPO({ data, setData, errors, purchaseRequests, su
                         <Input
                             type="number"
                             id="ongkir"
-                            value={data.ongkir  ? data.ongkir : 0}
+                            value={data.ongkir ? data.ongkir : 0}
                             onChange={(e) => setData('ongkir', parseFloat(e.target.value) || 0)}
                         />
                         {errors.ongkir && <p className="mt-1 text-sm text-red-500">{errors.ongkir}</p>}
@@ -134,12 +140,7 @@ export default function EditFormPO({ data, setData, errors, purchaseRequests, su
 
                     <div>
                         <Label htmlFor="dp">DP</Label>
-                        <Input
-                            type="number"
-                            id="dp"
-                            value={data.dp ? data.dp : 0}
-                            onChange={(e) => setData('dp', parseFloat(e.target.value) || 0)}
-                        />
+                        <Input type="number" id="dp" value={data.dp ? data.dp : 0} onChange={(e) => setData('dp', parseFloat(e.target.value) || 0)} />
                         {errors.dp && <p className="mt-1 text-sm text-red-500">{errors.dp}</p>}
                     </div>
                 </CardContent>

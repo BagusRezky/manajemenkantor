@@ -41,9 +41,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <div>
             <div className="flex items-center justify-between py-4">
                 <Input
-                    placeholder="Cari Kode Item..."
-                    value={(table.getColumn('kode_master_item')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) => table.getColumn('kode_master_item')?.setFilterValue(event.target.value)}
+                    placeholder="Cari Nama Barang"
+                    value={(table.getColumn('nama_barang')?.getFilterValue() as string) ?? ''}
+                    onChange={(event) => table.getColumn('nama_barang')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
                 <Link href={route('finishGoodItems.cutOff')}>

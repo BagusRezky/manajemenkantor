@@ -252,6 +252,8 @@ export const columns = (): ColumnDef<SubcountOut>[] => [
                     <DropdownMenuContent align="end">
                         <DropdownMenuItem onClick={() => router.get(`/subcountOuts/${item.id}`)}>Detail</DropdownMenuItem>
                         <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => router.get(`/subcountOuts/${item.id}/edit`)}>Edit</DropdownMenuItem>
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handlePreviewPdf}>

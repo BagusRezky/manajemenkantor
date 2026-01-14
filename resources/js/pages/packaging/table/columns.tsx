@@ -9,13 +9,12 @@ import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { Download, FileText, MoreHorizontal, Tag } from 'lucide-react';
+import { Download, Edit, Eye, FileText, MoreHorizontal, Tag } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Function untuk generate label PDF
 const generateLabelsPdf = async (packaging: Packaging, download = false): Promise<void> => {
     try {
-
         // Gunakan route parameter (bukan query parameter)
         const response = await fetch(`/packagings/label-start-number/${packaging.id_kartu_instruksi_kerja}/${packaging.id}`);
 
@@ -90,14 +89,6 @@ const generateLabelsPdf = async (packaging: Packaging, download = false): Promis
             // Info detail
             doc.setFontSize(6);
             doc.setFont('helvetica', 'normal');
-
-            // // Customer (potong jika terlalu panjang)
-            // const customerText = customerName.length > 25 ? customerName.substring(0, 25) + '...' : customerName;
-            // doc.text(`Cust: ${customerText}`, x + 0.2, y + 1.6);
-
-            // // Item name (potong jika terlalu panjang)
-            // const itemText = itemName.length > 30 ? itemName.substring(0, 30) + '...' : itemName;
-            // doc.text(`Item: ${itemText}`, x + 0.2, y + 1.9);
 
             // Sales Order & Date
             doc.text(`Kode Packaging: ${kodePackaging}`, x + 0.2, y + 2.2);
@@ -432,7 +423,7 @@ export const columns = (): ColumnDef<Packaging>[] => [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        {/* <DropdownMenuItem onClick={() => router.get(`/packagings/${item.id}`)}>
+                        <DropdownMenuItem onClick={() => router.get(`/packagings/${item.id}/show`)}>
                             <Eye className="mr-2 h-4 w-4" />
                             Detail
                         </DropdownMenuItem>
@@ -441,7 +432,7 @@ export const columns = (): ColumnDef<Packaging>[] => [
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator /> */}
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleDelete(item.id)}>Delete</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handlePreviewPdf}>

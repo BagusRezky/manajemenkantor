@@ -5,7 +5,6 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
@@ -97,14 +96,14 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
         }
 
         // Get display data
-        const selectedKik = kartuInstruksiKerjas.find((kik) => kik.id === currentItem.id_kartu_instruksi_kerja);
-        const selectedUnit = units.find((unit) => unit.id === currentItem.id_unit);
+       const selectedKik = kartuInstruksiKerjas.find((kik) => String(kik.id) === String(currentItem.id_kartu_instruksi_kerja));
+       const selectedUnit = units.find((unit) => String(unit.id) === String(currentItem.id_unit));
 
         const newItem: SubcountOutItem = {
             ...currentItem,
-            nama_produk: selectedKik?.sales_order?.finish_good_item?.nama_barang || '',
-            no_kik: selectedKik?.no_kartu_instruksi_kerja || '',
-            nama_satuan: selectedUnit?.nama_satuan || '',
+            nama_produk: selectedKik?.sales_order?.finish_good_item?.nama_barang || '-',
+            no_kik: selectedKik?.no_kartu_instruksi_kerja || '-',
+            nama_satuan: selectedUnit?.nama_satuan || '-',
         };
 
         setItems([...items, newItem]);
@@ -219,7 +218,7 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
                                         <Label htmlFor="id_supplier">
                                             Supplier <span className="text-red-500">*</span>
                                         </Label>
-                                        <Select value={data.id_supplier} onValueChange={(value) => setData('id_supplier', value)}>
+                                        {/* <Select value={data.id_supplier} onValueChange={(value) => setData('id_supplier', value)}>
                                             <SelectTrigger className={errors.id_supplier ? 'border-red-500' : ''}>
                                                 <SelectValue placeholder="Input Supplier" />
                                             </SelectTrigger>
@@ -230,7 +229,17 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
                                                     </SelectItem>
                                                 ))}
                                             </SelectContent>
-                                        </Select>
+                                        </Select> */}
+                                        <SearchableSelect
+                                            items={suppliers.map((supplier) => ({
+                                                key: String(supplier.id),
+                                                value: String(supplier.id),
+                                                label: supplier.nama_suplier,
+                                            }))}
+                                            value={data.id_supplier}
+                                            placeholder="Input Supplier"
+                                            onChange={(value) => setData('id_supplier', value)}
+                                        />
                                         {errors.id_supplier && <p className="text-sm text-red-500">{errors.id_supplier}</p>}
                                     </div>
 
@@ -396,6 +405,7 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
                                                     <TableHead>No</TableHead>
                                                     <TableHead>No.SPK | Nama Produk</TableHead>
                                                     <TableHead>Qty</TableHead>
+                                                    <TableHead>Satuan</TableHead>
                                                     <TableHead>Catatan Item</TableHead>
                                                     <TableHead>Actions</TableHead>
                                                 </TableRow>
@@ -407,15 +417,20 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
                                                             <TableCell>{index + 1}</TableCell>
                                                             <TableCell>
                                                                 <div className="space-y-1">
-                                                                    <div className="font-medium">{item.no_kik}</div>
-                                                                    <div className="text-sm text-gray-500">{item.nama_produk}</div>
+                                                                    <div className="font-medium">
+                                                                        {item.no_kik}
+                                                                    </div>
+                                                                    <div className="text-sm text-gray-500">
+                                                                        {item.nama_produk}
+                                                                    </div>
                                                                 </div>
                                                             </TableCell>
                                                             <TableCell>
                                                                 <span className="font-medium">
-                                                                    {item.qty} {item.nama_satuan}
+                                                                    {item.qty}
                                                                 </span>
                                                             </TableCell>
+                                                            <TableCell>{item.nama_satuan || '-'}</TableCell>
                                                             <TableCell>{item.keterangan || '-'}</TableCell>
                                                             <TableCell>
                                                                 <Button

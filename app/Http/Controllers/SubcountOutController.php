@@ -124,6 +124,7 @@ class SubcountOutController extends Controller
         $subcountOut->load([
             'supplier',
             'subcountOutItems.kartuInstruksiKerja',
+            'subcountOutItems.kartuInstruksiKerja.salesOrder.finishGoodItem',
             'subcountOutItems.unit'
         ]);
 

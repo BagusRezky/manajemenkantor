@@ -40,7 +40,7 @@ class FinishGoodItem extends Model
     }
     public function customerAddress()
     {
-        return $this->belongsTo(CustomerAddress::class, 'id_customer_address');
+        return $this->belongsTo(customerAddress::class, 'id_customer_address');
     }
     public function unit()
     {

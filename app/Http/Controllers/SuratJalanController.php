@@ -103,11 +103,22 @@ class SuratJalanController extends Controller
         $suratJalan->load([
             'kartuInstruksiKerja.salesOrder.customerAddress',
             'kartuInstruksiKerja.salesOrder.finishGoodItem',
-            'kartuInstruksiKerja.kartuInstruksiKerjaBoms.billOfMaterials.masterItem.unit'
+            'kartuInstruksiKerja.kartuInstruksiKerjaBoms.billOfMaterials.masterItem.unit',
+        ]);
+
+        $kartuInstruksiKerjas = KartuInstruksiKerja::with([
+            'salesOrder.customerAddress', // camelCase version
+            'sales_order.customer_address', // snake_case version
+            'salesOrder.finishGoodItem',
+            'sales_order.finish_good_item',
+            'packagings',
+            'blokirs',
+            'suratJalans'
         ]);
 
         return Inertia::render('suratJalan/show', [
-            'suratJalan' => $suratJalan
+            'suratJalan' => $suratJalan,
+            'kartuInstruksiKerjas' => $kartuInstruksiKerjas
         ]);
     }
 
@@ -118,8 +129,13 @@ class SuratJalanController extends Controller
         ]);
 
         $kartuInstruksiKerjas = KartuInstruksiKerja::with([
-            'salesOrder.customerAddress',
-            'salesOrder.finishGoodItem'
+            'salesOrder.customerAddress', // camelCase version
+            'sales_order.customer_address', // snake_case version
+            'salesOrder.finishGoodItem',
+            'sales_order.finish_good_item',
+            'packagings',
+            'blokirs',
+            'suratJalans'
         ])
             ->where(function ($query) use ($suratJalan) {
                 $query->whereDoesntHave('suratJalans')

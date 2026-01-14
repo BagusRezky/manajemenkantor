@@ -92,7 +92,7 @@ class PackagingController extends Controller
         $validated = $request->validate([
             'id_kartu_instruksi_kerja' => 'required|exists:kartu_instruksi_kerjas,id',
             'satuan_transfer' => 'required|in:Box,Pallete,Pack',
-            'jenis_transfer' => 'required|in:Barang Hasil Baik, Label Kuning, Blokir',
+            'jenis_transfer' => 'required|in:Barang Hasil Baik,Label Kuning,Blokir',
             'tgl_transfer' => 'required|date',
             'jumlah_satuan_penuh' => 'required|integer|min:0',
             'qty_persatuan_penuh' => 'required|integer|min:0',

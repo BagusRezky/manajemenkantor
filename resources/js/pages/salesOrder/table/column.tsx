@@ -151,7 +151,7 @@ const handleDelete = (item: string) => {
     });
 };
 
-export const columns = (setSelectedItem: (item: SalesOrder | null) => void, openDetailModal: (item: SalesOrder) => void): ColumnDef<SalesOrder>[] => [
+export const columns = (): ColumnDef<SalesOrder>[] => [
     {
         id: 'select',
         header: ({ table }) => (
@@ -233,7 +233,7 @@ export const columns = (setSelectedItem: (item: SalesOrder | null) => void, open
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.get(`/salesOrders/${item.id}/edit`)}>Edit</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => openDetailModal(item)}>Detail</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => router.get(`/salesOrders/${item.id}`)}>Detail</DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handlePreviewPdf}>
                             <FileText className="mr-2 h-4 w-4" />

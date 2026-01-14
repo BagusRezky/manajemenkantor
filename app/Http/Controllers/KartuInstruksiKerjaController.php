@@ -40,8 +40,12 @@ class KartuInstruksiKerjaController extends Controller
             ->get();
 
         $currentYear = date('Y');
-        $latestKikId = KartuInstruksiKerja::whereYear('created_at', $currentYear)
-            ->count() + 1;
+        $maxNumber = KartuInstruksiKerja::whereYear('created_at', $currentYear)
+            ->selectRaw('MAX(CAST(SUBSTRING_INDEX(no_kartu_instruksi_kerja, "/", 1) AS UNSIGNED)) as max_number')
+            ->value('max_number');
+
+
+        $latestKikId = $maxNumber ? $maxNumber + 1 : 1;
 
         return Inertia::render('kartuInstruksiKerja/create', [
             'salesOrders' => $salesOrders,

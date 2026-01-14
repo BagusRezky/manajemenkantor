@@ -38,9 +38,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <div>
             <div className="flex justify-between py-4">
                 <Input
-                    placeholder="Cari Jenis Izin..."
-                    value={(table.getColumn('jenis_izin')?.getFilterValue() as string) ?? ''}
-                    onChange={(e) => table.getColumn('jenis_izin')?.setFilterValue(e.target.value)}
+                    placeholder="Cari Nama Karyawan..."
+                    value={(table.getColumn('karyawan')?.getFilterValue() as string) ?? ''}
+                    onChange={(e) => table.getColumn('karyawan')?.setFilterValue(e.target.value)}
                     className="max-w-sm"
                 />
                 <Link href={route('izins.create')}>

@@ -22,6 +22,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 // Interface untuk data form
 interface PurchaseOrderFormData {
+    no_po: string;
     id_purchase_request: string;
     id_supplier: string;
     tanggal_po: string;
@@ -48,6 +49,7 @@ export default function Edit({ purchaseOrder, purchaseRequests = [], suppliers =
 
     // Initialize form data with purchase order data
     const { data, setData, put, processing, errors } = useForm<PurchaseOrderFormData>({
+        no_po: purchaseOrder.no_po || '',
         id_purchase_request: purchaseOrder.id_purchase_request || '',
         id_supplier: purchaseOrder.id_supplier || '',
         tanggal_po: purchaseOrder.tanggal_po || new Date().toISOString().split('T')[0],
@@ -134,6 +136,7 @@ export default function Edit({ purchaseOrder, purchaseRequests = [], suppliers =
 
         // Final data to submit
         const finalData = {
+            no_po: data.no_po,
             id_purchase_request: data.id_purchase_request,
             id_supplier: data.id_supplier,
             tanggal_po: data.tanggal_po,

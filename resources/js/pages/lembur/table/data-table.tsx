@@ -43,9 +43,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <div>
             <div className="flex space-x-190 py-4">
                 <Input
-                    placeholder="Cari Kode Gudang..."
-                    value={(table.getColumn('kode_gudang')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) => table.getColumn('kode_gudang')?.setFilterValue(event.target.value)}
+                    placeholder="Cari Nama Karyawan..."
+                    value={(table.getColumn('karyawan')?.getFilterValue() as string) ?? ''}
+                    onChange={(e) => table.getColumn('karyawan')?.setFilterValue(e.target.value)}
                     className="max-w-sm"
                 />
                 <Link href={route('lemburs.create')}>

@@ -38,9 +38,13 @@ export const columns = (): ColumnDef<BonusKaryawan>[] => [
         header: 'Kode Gudang',
     },
     {
-        accessorKey: 'karyawan.nama',
+        accessorKey: 'karyawan',
         header: 'Karyawan',
-        cell: ({ row }) => row.original.karyawan?.nama || 'N/A',
+        accessorFn: (row) => row.karyawan?.nama,
+        cell: ({ row }) => {
+            const nama = row.getValue('karyawan') as string;
+            return <div>{nama || '-'}</div>;
+        },
     },
     {
         accessorKey: 'tanggal_bonus',

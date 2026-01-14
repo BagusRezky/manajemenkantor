@@ -16,7 +16,7 @@ class SalesOrderController extends Controller
      */
     public function index()
     {
-        $salesOrders = SalesOrder::with(['customerAddress', 'finishGoodItem', 'finishGoodItem.billOfMaterials', 'masterItem'])->get();
+        $salesOrders = SalesOrder::with(['customerAddress', 'finishGoodItem', 'finishGoodItem.billOfMaterials', 'masterItem'])->orderBy('id', 'desc')->get();
         return Inertia::render('salesOrder/salesOrders', [
             'salesOrders' => $salesOrders,
         ]);
@@ -111,9 +111,18 @@ class SalesOrderController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(SalesOrder $salesOrder)
+    public function show($id)
     {
-        //
+        $salesOrder = SalesOrder::with([
+            'customerAddress',
+            'masterItem',
+            'finishGoodItem.billOfMaterials.masterItem.unit',
+            'finishGoodItem.billOfMaterials.departemen',
+        ])->findOrFail($id);
+
+        return Inertia::render('salesOrder/show', [
+            'salesOrder' => $salesOrder,
+        ]);
     }
 
     /**

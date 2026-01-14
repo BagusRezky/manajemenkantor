@@ -2,14 +2,14 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Finishing } from '@/types/finishing';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { MoreHorizontal, Trash2 } from 'lucide-react';
+import { Edit, Eye, MoreHorizontal, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Function untuk generate PDF laporan finishing
@@ -205,14 +205,6 @@ export const columns = (): ColumnDef<Finishing>[] => [
             return <span>{data.tanggal_entri ? format(new Date(data.tanggal_entri), 'dd-MM-yyyy') : '-'}</span>;
         },
     },
-    // {
-    //     accessorKey: 'kartu_instruksi_kerja.no_kartu_instruksi_kerja',
-    //     header: 'SPK',
-    //     cell: ({ row }) => {
-    //         const data = row.original;
-    //         return <span>{data.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}</span>;
-    //     },
-    // },
     {
         accessorKey: 'mesin_finishing.nama_mesin_finishing',
         header: 'Mesin',
@@ -325,6 +317,16 @@ export const columns = (): ColumnDef<Finishing>[] => [
                         <DropdownMenuItem onClick={() => handleDelete(item.id)}>
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => router.get(`/finishings/${item.id}/edit`)}>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={() => router.get(`/finishings/${item.id}/show`)}>
+                            <Eye className="mr-2 h-4 w-4" />
+                            Detail
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

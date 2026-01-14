@@ -44,9 +44,7 @@ export default function Dashboard({ totalOrderValue, totalKirimValue, totalPOQty
                 {/* Header & Dynamic Filter Section */}
                 <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
                     <div>
-                        <h2 className="text-2xl font-black tracking-tight text-slate-800 dark:text-neutral-100">
-                            Dashboard
-                        </h2>
+                        <h2 className="text-2xl font-black tracking-tight text-slate-800 dark:text-neutral-100">Dashboard</h2>
                         <p className="text-muted-foreground text-xs font-medium">Monitoring performa operasional tahun {selectedYear}</p>
                     </div>
 
@@ -86,14 +84,14 @@ export default function Dashboard({ totalOrderValue, totalKirimValue, totalPOQty
                         icon={<Truck className="h-5 w-5" />}
                     />
                     <StatCard
-                        title="Total Qty PO"
+                        title="Total PO"
                         value={totalPOQty}
                         colorClass="bg-emerald-600 text-white"
                         accentColor="border-emerald-500"
                         icon={<FileText className="h-5 w-5" />}
                     />
                     <StatCard
-                        title="Total Qty PB"
+                        title="Total PB"
                         value={totalLPBQty}
                         colorClass="bg-rose-500 text-white"
                         accentColor="border-rose-500"
@@ -104,7 +102,7 @@ export default function Dashboard({ totalOrderValue, totalKirimValue, totalPOQty
                 {/* Charts Section */}
                 <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
                     <OrderChart data={chartData} dataKey="salesTotal" title="Statistik Penjualan (IDR)" color="#4f46e5" />
-                    <OrderChart data={chartData} dataKey="lpbTotal" title="Statistik Penerimaan Barang (Qty)" color="#f43f5e" />
+                    <OrderChart data={chartData} dataKey="lpbTotal" title="Statistik Pembelian (IDR)" color="#f43f5e" />
                 </div>
             </div>
         </AppLayout>

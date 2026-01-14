@@ -29,7 +29,7 @@ class InvoiceController extends Controller
      */
     public function create()
     {
-        
+
         $suratJalans = SuratJalan::with([
             'kartuInstruksiKerja.salesOrder.customerAddress',
             'kartuInstruksiKerja.salesOrder.finishGoodItem'
@@ -59,41 +59,46 @@ class InvoiceController extends Controller
             'uang_muka' => 'nullable|integer|min:0',
         ]);
 
-        // Set default values untuk field nullable
+        // Set default values
         $validated['ongkos_kirim'] = $validated['ongkos_kirim'] ?? 0;
         $validated['uang_muka'] = $validated['uang_muka'] ?? 0;
 
         // Generate the no_invoice
-        $currentMonth = date('m');
+        $currentMonth = str_pad(date('m'), 2, '0', STR_PAD_LEFT);
         $currentYear = date('y');
 
-        // Get the latest invoice number for the current year
-        $latestInvoice = Invoice::where('no_invoice', 'like', '%/INV/' . $currentYear)
-            ->orderBy('created_at', 'desc')
-            ->first();
+        // Pattern: /INV/MMYY (Sesuaikan dengan format Surat Jalan kamu)
+        $pattern = '/INV/' . $currentMonth . $currentYear;
 
-        $sequentialNumber = 1;
+        DB::transaction(function () use ($validated, $pattern) {
+            // Ambil nomor terakhir berdasarkan pattern bulan & tahun ini
+            // Kita gunakan CAST agar sorting numeric-nya benar
+            $latestInvoice = Invoice::where('no_invoice', 'like', '%' . $pattern)
+                ->orderByRaw('CAST(SUBSTRING_INDEX(no_invoice, "/", 1) AS UNSIGNED) DESC')
+                ->lockForUpdate()
+                ->first();
 
-        if ($latestInvoice) {
-            // Extract the sequential number from the latest invoice
-            $parts = explode('/', $latestInvoice->no_invoice);
-            if (isset($parts[0])) {
-                $sequentialNumber = (int) $parts[0] + 1;
+            $sequentialNumber = 1;
+
+            if ($latestInvoice) {
+                // Pecah string berdasarkan "/" dan ambil bagian pertama
+                $parts = explode('/', $latestInvoice->no_invoice);
+                if (isset($parts[0]) && is_numeric($parts[0])) {
+                    $sequentialNumber = (int) $parts[0] + 1;
+                }
             }
-        }
 
-        // Format the sequential number with leading zeros
-        $formattedNumber = str_pad($sequentialNumber, 6, '0', STR_PAD_LEFT);
+            // Format 6 digit (000001)
+            $formattedNumber = str_pad($sequentialNumber, 6, '0', STR_PAD_LEFT);
 
-        // Create the final no_invoice
-        $validated['no_invoice'] = $formattedNumber . '/INV/' . $currentMonth . $currentYear;
+            // Satukan: ######/INV/MMYY
+            $validated['no_invoice'] = $formattedNumber . $pattern;
 
-        DB::transaction(function () use ($validated) {
             Invoice::create($validated);
         });
 
         return redirect()->route('invoices.index')
-            ->with('success', 'Invoice berhasil dibuat');
+            ->with('success', 'Invoice berhasil dibuat ');
     }
 
     /**
@@ -117,7 +122,26 @@ class InvoiceController extends Controller
      */
     public function edit(Invoice $invoice)
     {
-        //
+        // Load relasi agar detail Surat Jalan muncul di form edit
+        $invoice->load([
+            'suratJalan.kartuInstruksiKerja.salesOrder.customerAddress',
+            'suratJalan.kartuInstruksiKerja.salesOrder.finishGoodItem'
+        ]);
+
+        // Ambil Surat Jalan yang belum ada invoice-nya, ATAU yang sedang digunakan invoice ini
+        $suratJalans = SuratJalan::with([
+            'kartuInstruksiKerja.salesOrder.customerAddress',
+            'kartuInstruksiKerja.salesOrder.finishGoodItem'
+        ])
+            ->whereDoesntHave('invoice')
+            ->orWhere('id', $invoice->id_surat_jalan)
+            ->orderBy('created_at', 'desc')
+            ->get();
+
+        return Inertia::render('invoice/edit', [
+            'invoice' => $invoice,
+            'suratJalans' => $suratJalans
+        ]);
     }
 
     /**
@@ -125,7 +149,21 @@ class InvoiceController extends Controller
      */
     public function update(Request $request, Invoice $invoice)
     {
-        //
+        $validated = $request->validate([
+
+            'id_surat_jalan' => 'required|exists:surat_jalans,id|unique:invoices,id_surat_jalan,' . $invoice->id,
+            'no_invoice' => 'required|string|max:255|unique:invoices,no_invoice,' . $invoice->id,
+            'tgl_invoice' => 'required|date',
+            'tgl_jatuh_tempo' => 'required|date|after_or_equal:tgl_invoice',
+            'discount' => 'required|integer|min:0',
+            'ppn' => 'required|numeric|min:0|max:100',
+            'ongkos_kirim' => 'nullable|integer|min:0',
+            'uang_muka' => 'nullable|integer|min:0',
+        ]);
+
+        $invoice->update($validated);
+
+        return redirect()->route('invoices.index')->with('success', 'Invoice berhasil diperbarui');
     }
 
     /**

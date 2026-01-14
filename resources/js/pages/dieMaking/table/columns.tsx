@@ -2,7 +2,7 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { DieMaking } from '@/types/dieMaking';
 
 import { router } from '@inertiajs/react';
@@ -10,7 +10,7 @@ import { ColumnDef } from '@tanstack/react-table';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
-import { MoreHorizontal, Trash2 } from 'lucide-react';
+import { Edit, Eye, MoreHorizontal, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 // Function untuk generate PDF laporan die making
@@ -303,7 +303,7 @@ export const columns = (): ColumnDef<DieMaking>[] => [
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        {/* <DropdownMenuItem onClick={() => router.get(`/dieMakings/${item.id}`)}>
+                        <DropdownMenuItem onClick={() => router.get(`/dieMakings/${item.id}/show`)}>
                             <Eye className="mr-2 h-4 w-4" />
                             Detail
                         </DropdownMenuItem>
@@ -312,7 +312,7 @@ export const columns = (): ColumnDef<DieMaking>[] => [
                         <Edit className="mr-2 h-4 w-4" />
                             Edit
                         </DropdownMenuItem>
-                        <DropdownMenuSeparator /> */}
+                        <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => handleDelete(item.id)}>
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete

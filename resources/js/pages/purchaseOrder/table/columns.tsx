@@ -45,9 +45,21 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     doc.text('Email: indigama.khatulistiwa01@gmail.com', 34, 33);
     doc.text('Telp: 081703101012', 34, 38);
 
-    // Informasi Purchase Order
+    // --- Bagian Informasi Purchase Order ---
     doc.setLineWidth(0.5);
-    doc.rect(10, 45, pageWidth - 20, 35);
+
+    // 1. Siapkan data alamat yang dibungkus (wrapped)
+    const supplierAddress = purchaseOrder.supplier?.alamat_lengkap || '';
+    const maxAddressWidth = pageWidth - 85; // Jarak dari titik mulai (70) ke margin kanan
+    const wrappedAddress = doc.splitTextToSize(supplierAddress, maxAddressWidth);
+
+    // 2. Hitung tinggi tambahan jika alamat lebih dari 1 baris
+    // Satu baris normal biasanya 7mm (selisih antar baris di kode Anda)
+    const addressLineHeight = 5;
+    const extraHeight = (wrappedAddress.length - 1) * addressLineHeight;
+
+    // 3. Gambar kotak dengan tinggi yang sudah disesuaikan (awal 35 + extraHeight)
+    doc.rect(10, 45, pageWidth - 20, 35 + extraHeight);
 
     doc.setFontSize(10).setFont('helvetica', 'bold');
     doc.text('Tanggal PO', 15, 52);
@@ -62,22 +74,26 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     doc.setFont('helvetica', 'normal');
     doc.text(purchaseOrder.supplier?.nama_suplier || '', 70, 59);
 
+    // Bagian Alamat Supplier (Dynamic Height)
     doc.setFont('helvetica', 'bold');
     doc.text('Alamat Supplier', 15, 66);
     doc.text(':', 65, 66);
     doc.setFont('helvetica', 'normal');
-    doc.text(purchaseOrder.supplier?.alamat_lengkap || '', 70, 66);
+    doc.text(wrappedAddress, 70, 66); // Menggunakan variabel wrappedAddress
 
+    // Mata Uang (Posisi Y disesuaikan dengan tinggi alamat)
+    const currencyY = 73 + extraHeight;
     doc.setFont('helvetica', 'bold');
-    doc.text('Mata Uang', 15, 73);
-    doc.text(':', 65, 73);
+    doc.text('Mata Uang', 15, currencyY);
+    doc.text(':', 65, currencyY);
     doc.setFont('helvetica', 'normal');
-    doc.text(purchaseOrder.mata_uang || '', 70, 73);
+    doc.text(purchaseOrder.mata_uang || '', 70, currencyY);
 
-    // Header tabel "DATA ITEM"
+    // 4. Update Header tabel "DATA ITEM" agar mengikuti tinggi kotak di atasnya
+    const tableHeaderY = 95 + extraHeight;
     doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.rect(10, 95, pageWidth - 20, 10);
-    doc.text('DATA ITEM', pageWidth / 2, 101, { align: 'center' });
+    doc.rect(10, tableHeaderY, pageWidth - 20, 10);
+    doc.text('DATA ITEM', pageWidth / 2, tableHeaderY + 6, { align: 'center' });
 
     // Isi tabel item menggunakan autoTable
     const tableColumns = [
@@ -141,7 +157,7 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     autoTable(doc, {
         columns: tableColumns,
         body: tableRows,
-        startY: 105,
+        startY: tableHeaderY + 10,
         margin: { left: 10, right: 10 },
         styles: { fontSize: 9, cellPadding: 2 },
         headStyles: { fillColor: [40, 88, 247], textColor: [0, 0, 0], fontStyle: 'bold', lineColor: [0, 0, 0], lineWidth: 0.5 },
