@@ -1,5 +1,6 @@
 import { DataTablePagination } from '@/components/custom-pagination';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Gaji } from '@/types/gaji';
 import { router } from '@inertiajs/react';
@@ -64,6 +65,14 @@ export function DataTable({ columns, data, filters }: DataTableProps) {
                 <Button onClick={handleFilter} variant="default">
                     Terapkan Filter
                 </Button>
+            </div>
+            <div className="flex space-x-190 py-4">
+                <Input
+                    placeholder="Cari Nama Karyawan..."
+                    value={(table.getColumn('nama')?.getFilterValue() as string) ?? ''}
+                    onChange={(event) => table.getColumn('nama')?.setFilterValue(event.target.value)}
+                    className="max-w-sm"
+                />
             </div>
             <div className="rounded-md border">
                 <Table>
