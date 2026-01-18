@@ -1,7 +1,9 @@
 import { DataTablePagination } from '@/components/custom-pagination';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { CustomerAddress } from '@/types/customerAddress';
+import { router } from '@inertiajs/react';
 import {
     ColumnDef,
     ColumnFiltersState,
@@ -11,12 +13,10 @@ import {
     getPaginationRowModel,
     useReactTable,
 } from '@tanstack/react-table';
-import React from 'react';
-import { CustomerAddressFormModal } from '../modal/add-modal';
-import { router } from '@inertiajs/react';
-import { toast } from 'sonner';
-import { Button } from '@/components/ui/button';
 import { Upload } from 'lucide-react';
+import React from 'react';
+import { toast } from 'sonner';
+import { CustomerAddressFormModal } from '../modal/add-modal';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -42,21 +42,21 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
     });
 
     const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-            if (!e.target.files?.[0]) return;
+        if (!e.target.files?.[0]) return;
 
-            const formData = new FormData();
-            formData.append('file', e.target.files[0]);
+        const formData = new FormData();
+        formData.append('file', e.target.files[0]);
 
-            router.post(route('customerAddresses.import'), formData, {
-                onSuccess: () => {
-                    e.target.value = '';
-                    toast.success('File berhasil diimpor!');
-                },
-                onError: () => {
-                    toast.error('Gagal mengimpor file.');
-                },
-            });
-        };
+        router.post(route('customerAddresses.import'), formData, {
+            onSuccess: () => {
+                e.target.value = '';
+                toast.success('File berhasil diimpor!');
+            },
+            onError: () => {
+                toast.error('Gagal mengimpor file.');
+            },
+        });
+    };
 
     return (
         <div>

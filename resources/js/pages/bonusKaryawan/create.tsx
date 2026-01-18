@@ -1,5 +1,6 @@
 // pages/bonusKaryawan/create.tsx
 
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Head, useForm } from '@inertiajs/react';
 import { SearchableSelect } from '../../components/search-select';
@@ -9,7 +10,6 @@ import { Label } from '../../components/ui/label';
 import AppLayout from '../../layouts/app-layout';
 import { BreadcrumbItem } from '../../types';
 import { Karyawan } from '../../types/karyawan';
-import { Input } from '@/components/ui/input';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {

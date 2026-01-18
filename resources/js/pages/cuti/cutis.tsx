@@ -1,11 +1,10 @@
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
+import { Cuti } from '@/types/cuti';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
-import { Cuti } from '@/types/cuti';
 import { columns } from './table/columns';
 import { DataTable } from './table/data-table';
-
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Cuti', href: '/cutis' }];
 

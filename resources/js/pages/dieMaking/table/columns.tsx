@@ -309,7 +309,7 @@ export const columns = (): ColumnDef<DieMaking>[] => [
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={() => router.get(`/dieMakings/${item.id}/edit`)}>
-                        <Edit className="mr-2 h-4 w-4" />
+                            <Edit className="mr-2 h-4 w-4" />
                             Edit
                         </DropdownMenuItem>
                         <DropdownMenuSeparator />

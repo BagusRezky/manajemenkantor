@@ -65,14 +65,11 @@ export const columns = (): ColumnDef<Absen>[] => [
             const absen = row.original;
             return (
                 <div className="space-x-2">
-                    <a
-                        href={route('absens.edit', absen.id)}
-                        className="text-blue-500 hover:underline"
-                    >
+                    <a href={route('absens.edit', absen.id)} className="text-blue-500 hover:underline">
                         Edit
                     </a>
                 </div>
             );
-        }
+        },
     },
 ];

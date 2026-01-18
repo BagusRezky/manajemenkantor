@@ -33,7 +33,6 @@ export default function ShowDieMaking({ dieMaking }: Props) {
                             <ArrowLeft className="mr-2 h-4 w-4" /> Kembali
                         </Button>
                     </Link>
-
                 </div>
 
                 <Card className="shadow-lg">

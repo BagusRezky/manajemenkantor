@@ -1,3 +1,5 @@
+import { SelectInput } from '@/components/select-input';
+import { Textarea } from '@/components/ui/textarea';
 import { Head, useForm } from '@inertiajs/react';
 import { SearchableSelect } from '../../components/search-select';
 import { Button } from '../../components/ui/button';
@@ -7,8 +9,6 @@ import { Label } from '../../components/ui/label';
 import AppLayout from '../../layouts/app-layout';
 import { BreadcrumbItem } from '../../types';
 import { Karyawan } from '../../types/karyawan';
-import { Textarea } from '@/components/ui/textarea';
-import { SelectInput } from '@/components/select-input';
 
 // Ganti breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
