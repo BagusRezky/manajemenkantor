@@ -156,8 +156,6 @@ export default function Create({ subcountOuts }: CreateProps) {
                                 <div className="space-y-6">
                                     {/* Form Header */}
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-
-
                                         <div className="space-y-2">
                                             <Label htmlFor="tgl_subcount_in">Tanggal Subcount In *</Label>
                                             <Input

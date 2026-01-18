@@ -4,8 +4,8 @@ import AppLayout from '@/layouts/app-layout';
 import { Gaji } from '@/types/gaji';
 import { Head, router } from '@inertiajs/react';
 import { useState } from 'react';
-import { DataTable } from './table/data-table';
 import { columns } from './table/columns';
+import { DataTable } from './table/data-table';
 
 const breadcrumbs = [{ title: 'Rekap Gaji', href: route('gajis.index') }];
 

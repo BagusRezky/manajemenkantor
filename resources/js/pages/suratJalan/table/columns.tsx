@@ -19,7 +19,7 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
     const doc = new jsPDF({
         orientation: 'landscape',
         unit: 'mm',
-        format: [241.3, 279.4]
+        format: [241.3, 279.4],
     });
 
     const pageWidth = doc.internal.pageSize.getWidth(); // 241.3 mm
@@ -148,13 +148,15 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
             { header: 'Jumlah (Pcs)', dataKey: 'jumlah' },
             { header: 'Keterangan', dataKey: 'keterangan' },
         ],
-        body: [{
-            no: '1',
-            nama_barang: finishGoodItem?.nama_barang || '-',
-            box: totalBox > 0 ? `${totalBox} BOX` : '-',
-            jumlah: formatWithThousandSeparator(suratJalan.qty_pengiriman) || '0',
-            keterangan: '-',
-        }],
+        body: [
+            {
+                no: '1',
+                nama_barang: finishGoodItem?.nama_barang || '-',
+                box: totalBox > 0 ? `${totalBox} BOX` : '-',
+                jumlah: formatWithThousandSeparator(suratJalan.qty_pengiriman) || '0',
+                keterangan: '-',
+            },
+        ],
         startY: tableHeaderY + 10,
         margin: { left: 10, right: 10 },
         styles: { fontSize: 9, cellPadding: 3 },
@@ -163,11 +165,11 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
             textColor: [0, 0, 0],
             fontStyle: 'bold',
             lineColor: [0, 0, 0],
-            lineWidth: 0.4
+            lineWidth: 0.4,
         },
         bodyStyles: {
             lineColor: [0, 0, 0],
-            lineWidth: 0.4
+            lineWidth: 0.4,
         },
         columnStyles: {
             no: { cellWidth: 12, halign: 'center' },

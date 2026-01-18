@@ -110,7 +110,6 @@ export default function Edit({ suratJalan, kartuInstruksiKerjas }: EditProps) {
                                     <div className="space-y-2">
                                         <Label>Pilih SPK (KIK) *</Label>
                                         <Input value={selectedKIK?.no_kartu_instruksi_kerja || ''} readOnly />
-
                                     </div>
                                     <div className="space-y-2">
                                         <Label>Tanggal Surat Jalan *</Label>

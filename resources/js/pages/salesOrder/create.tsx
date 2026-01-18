@@ -186,7 +186,6 @@ export default function Create({ combinedItems, customerAddresses, lastId }: Cre
                                         <div className="space-y-2">
                                             <Label htmlFor="no_po_customer">No.PO Customer</Label>
                                             <Input
-
                                                 id="no_po_customer"
                                                 value={data.no_po_customer}
                                                 onChange={(e) => setData('no_po_customer', e.target.value)}

@@ -148,14 +148,10 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
                             <CardContent>
                                 <form onSubmit={handleSubmit} className="space-y-6">
                                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-
                                         {/* Customer Select */}
                                         <div className="space-y-2">
                                             <Label htmlFor="id_customer_address">Customer</Label>
-                                            <Select
-                                                value={data.id_customer_address}
-                                                onValueChange={(val) => setData('id_customer_address', val)}
-                                            >
+                                            <Select value={data.id_customer_address} onValueChange={(val) => setData('id_customer_address', val)}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Pilih Customer" />
                                                 </SelectTrigger>
@@ -173,10 +169,7 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
                                         {/* Type Item Select */}
                                         <div className="space-y-2">
                                             <Label htmlFor="id_type_item">Type Item</Label>
-                                            <Select
-                                                value={data.id_type_item}
-                                                onValueChange={(val) => setData('id_type_item', val)}
-                                            >
+                                            <Select value={data.id_type_item} onValueChange={(val) => setData('id_type_item', val)}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Pilih Type Item" />
                                                 </SelectTrigger>
@@ -213,11 +206,7 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
 
                                         <div className="space-y-2">
                                             <Label htmlFor="pc_number">PC Number</Label>
-                                            <Input
-                                                id="pc_number"
-                                                value={data.pc_number}
-                                                onChange={(e) => setData('pc_number', e.target.value)}
-                                            />
+                                            <Input id="pc_number" value={data.pc_number} onChange={(e) => setData('pc_number', e.target.value)} />
                                         </div>
 
                                         <div className="space-y-2">
@@ -231,11 +220,7 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
 
                                         <div className="space-y-2">
                                             <Label htmlFor="deskripsi">Deskripsi</Label>
-                                            <Input
-                                                id="deskripsi"
-                                                value={data.deskripsi}
-                                                onChange={(e) => setData('deskripsi', e.target.value)}
-                                            />
+                                            <Input id="deskripsi" value={data.deskripsi} onChange={(e) => setData('deskripsi', e.target.value)} />
                                         </div>
 
                                         <div className="space-y-2">
@@ -264,40 +249,75 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
                                         {/* Ukuran & Berat */}
                                         <div className="space-y-2">
                                             <Label htmlFor="ukuran_potong">Ukuran Potong</Label>
-                                            <Input id="ukuran_potong" value={data.ukuran_potong} onChange={(e) => setData('ukuran_potong', e.target.value)} />
+                                            <Input
+                                                id="ukuran_potong"
+                                                value={data.ukuran_potong}
+                                                onChange={(e) => setData('ukuran_potong', e.target.value)}
+                                            />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="ukuran_cetak">Ukuran Cetak</Label>
-                                            <Input id="ukuran_cetak" value={data.ukuran_cetak} onChange={(e) => setData('ukuran_cetak', e.target.value)} />
+                                            <Input
+                                                id="ukuran_cetak"
+                                                value={data.ukuran_cetak}
+                                                onChange={(e) => setData('ukuran_cetak', e.target.value)}
+                                            />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="panjang">Panjang</Label>
-                                            <Input id="panjang" type="number" step="0.01" value={data.panjang} onChange={(e) => setData('panjang', e.target.value)} />
+                                            <Input
+                                                id="panjang"
+                                                type="number"
+                                                step="0.01"
+                                                value={data.panjang}
+                                                onChange={(e) => setData('panjang', e.target.value)}
+                                            />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="lebar">Lebar</Label>
-                                            <Input id="lebar" type="number" step="0.01" value={data.lebar} onChange={(e) => setData('lebar', e.target.value)} />
+                                            <Input
+                                                id="lebar"
+                                                type="number"
+                                                step="0.01"
+                                                value={data.lebar}
+                                                onChange={(e) => setData('lebar', e.target.value)}
+                                            />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="tinggi">Tinggi</Label>
-                                            <Input id="tinggi" type="number" step="0.01" value={data.tinggi} onChange={(e) => setData('tinggi', e.target.value)} />
+                                            <Input
+                                                id="tinggi"
+                                                type="number"
+                                                step="0.01"
+                                                value={data.tinggi}
+                                                onChange={(e) => setData('tinggi', e.target.value)}
+                                            />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="berat_kotor">Berat Kotor</Label>
-                                            <Input id="berat_kotor" type="number" step="0.01" value={data.berat_kotor} onChange={(e) => setData('berat_kotor', e.target.value)} />
+                                            <Input
+                                                id="berat_kotor"
+                                                type="number"
+                                                step="0.01"
+                                                value={data.berat_kotor}
+                                                onChange={(e) => setData('berat_kotor', e.target.value)}
+                                            />
                                         </div>
                                         <div className="space-y-2">
                                             <Label htmlFor="berat_bersih">Berat Bersih</Label>
-                                            <Input id="berat_bersih" type="number" step="0.01" value={data.berat_bersih} onChange={(e) => setData('berat_bersih', e.target.value)} />
+                                            <Input
+                                                id="berat_bersih"
+                                                type="number"
+                                                step="0.01"
+                                                value={data.berat_bersih}
+                                                onChange={(e) => setData('berat_bersih', e.target.value)}
+                                            />
                                         </div>
 
                                         {/* Satuan Select */}
                                         <div className="space-y-2">
                                             <Label>Satuan</Label>
-                                            <Select
-                                                value={data.satuan_satu_id}
-                                                onValueChange={(val) => setData('satuan_satu_id', val)}
-                                            >
+                                            <Select value={data.satuan_satu_id} onValueChange={(val) => setData('satuan_satu_id', val)}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Pilih Satuan" />
                                                 </SelectTrigger>
@@ -316,17 +336,25 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
                                     <div className="mt-8">
                                         <div className="mb-4 flex items-center justify-between">
                                             <h3 className="text-lg font-semibold">Bill of Materials</h3>
-                                            <Button type="button" variant="outline" onClick={handleAddBomItem}>Add Item</Button>
+                                            <Button type="button" variant="outline" onClick={handleAddBomItem}>
+                                                Add Item
+                                            </Button>
                                         </div>
-                                        <div className="rounded-md border overflow-x-auto">
+                                        <div className="overflow-x-auto rounded-md border">
                                             <table className="w-full divide-y">
                                                 <thead>
                                                     <tr>
-                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Master Item</th>
-                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Departemen</th>
+                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                                            Master Item
+                                                        </th>
+                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                                            Departemen
+                                                        </th>
                                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Waste</th>
                                                         <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Qty</th>
-                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Keterangan</th>
+                                                        <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">
+                                                            Keterangan
+                                                        </th>
                                                         <th className="px-4 py-3 text-right text-xs font-medium text-gray-500 uppercase">Actions</th>
                                                     </tr>
                                                 </thead>
@@ -334,32 +362,66 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
                                                     {data.bill_of_materials.map((item, index) => (
                                                         <tr key={item.id?.toString() || index}>
                                                             <td className="px-4 py-2">
-                                                                <Select value={item.id_master_item?.toString()} onValueChange={(v) => handleBomItemChange(index, 'id_master_item', v)}>
-                                                                    <SelectTrigger><SelectValue placeholder="Select Item" /></SelectTrigger>
+                                                                <Select
+                                                                    value={item.id_master_item?.toString()}
+                                                                    onValueChange={(v) => handleBomItemChange(index, 'id_master_item', v)}
+                                                                >
+                                                                    <SelectTrigger>
+                                                                        <SelectValue placeholder="Select Item" />
+                                                                    </SelectTrigger>
                                                                     <SelectContent>
-                                                                        {masterItems.map((m) => <SelectItem key={m.id} value={m.id.toString()}>{m.nama_master_item}</SelectItem>)}
+                                                                        {masterItems.map((m) => (
+                                                                            <SelectItem key={m.id} value={m.id.toString()}>
+                                                                                {m.nama_master_item}
+                                                                            </SelectItem>
+                                                                        ))}
                                                                     </SelectContent>
                                                                 </Select>
                                                             </td>
                                                             <td className="px-4 py-2">
-                                                                <Select value={item.id_departemen?.toString()} onValueChange={(v) => handleBomItemChange(index, 'id_departemen', v)}>
-                                                                    <SelectTrigger><SelectValue placeholder="Select Dept" /></SelectTrigger>
+                                                                <Select
+                                                                    value={item.id_departemen?.toString()}
+                                                                    onValueChange={(v) => handleBomItemChange(index, 'id_departemen', v)}
+                                                                >
+                                                                    <SelectTrigger>
+                                                                        <SelectValue placeholder="Select Dept" />
+                                                                    </SelectTrigger>
                                                                     <SelectContent>
-                                                                        {departements.map((d) => <SelectItem key={d.id} value={d.id.toString()}>{d.nama_departemen}</SelectItem>)}
+                                                                        {departements.map((d) => (
+                                                                            <SelectItem key={d.id} value={d.id.toString()}>
+                                                                                {d.nama_departemen}
+                                                                            </SelectItem>
+                                                                        ))}
                                                                     </SelectContent>
                                                                 </Select>
                                                             </td>
                                                             <td className="px-4 py-2">
-                                                                <Input value={item.waste} onChange={(e) => handleBomItemChange(index, 'waste', e.target.value)} />
+                                                                <Input
+                                                                    value={item.waste}
+                                                                    onChange={(e) => handleBomItemChange(index, 'waste', e.target.value)}
+                                                                />
                                                             </td>
                                                             <td className="px-4 py-2">
-                                                                <Input value={item.qty} onChange={(e) => handleBomItemChange(index, 'qty', e.target.value)} />
+                                                                <Input
+                                                                    value={item.qty}
+                                                                    onChange={(e) => handleBomItemChange(index, 'qty', e.target.value)}
+                                                                />
                                                             </td>
                                                             <td className="px-4 py-2">
-                                                                <Input value={item.keterangan} onChange={(e) => handleBomItemChange(index, 'keterangan', e.target.value)} />
+                                                                <Input
+                                                                    value={item.keterangan}
+                                                                    onChange={(e) => handleBomItemChange(index, 'keterangan', e.target.value)}
+                                                                />
                                                             </td>
                                                             <td className="px-4 py-2 text-right">
-                                                                <Button type="button" variant="destructive" size="sm" onClick={() => handleRemoveBomItem(index)}>Remove</Button>
+                                                                <Button
+                                                                    type="button"
+                                                                    variant="destructive"
+                                                                    size="sm"
+                                                                    onClick={() => handleRemoveBomItem(index)}
+                                                                >
+                                                                    Remove
+                                                                </Button>
                                                             </td>
                                                         </tr>
                                                     ))}
@@ -370,9 +432,13 @@ export default function Edit({ finishGoodItem, units, customerAddresses, typeIte
 
                                     <div className="flex justify-end space-x-4">
                                         <Link href={route('finishGoodItems.index')}>
-                                            <Button variant="outline" type="button">Cancel</Button>
+                                            <Button variant="outline" type="button">
+                                                Cancel
+                                            </Button>
                                         </Link>
-                                        <Button type="submit" disabled={processing}>Update</Button>
+                                        <Button type="submit" disabled={processing}>
+                                            Update
+                                        </Button>
                                     </div>
                                 </form>
                             </CardContent>

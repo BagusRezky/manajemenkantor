@@ -236,7 +236,6 @@ export default function CreatePrinting({ kartuInstruksiKerjas, mesins, operators
                                 {errors.keterangan_printing && <div className="text-sm text-red-600">{errors.keterangan_printing}</div>}
                             </div>
 
-
                             {/* Actions */}
                             <div className="flex items-center gap-4">
                                 <Button type="submit" disabled={processing}>

@@ -22,10 +22,9 @@ const generatePenerimaanBarangPdf = (penerimaanBarang: PenerimaanBarang, downloa
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
 
-     const logo = new Image();
-     logo.src = '/images/logo-kantor.png';
-     doc.addImage(logo, 'PNG', 14, 17, 17, 17);
-
+    const logo = new Image();
+    logo.src = '/images/logo-kantor.png';
+    doc.addImage(logo, 'PNG', 14, 17, 17, 17);
 
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('PENERIMAAN BARANG', pageWidth - 15, 18, { align: 'right' });
@@ -35,14 +34,14 @@ const generatePenerimaanBarangPdf = (penerimaanBarang: PenerimaanBarang, downloa
     doc.rect(10, 10, pageWidth - 20, 30);
 
     // Company Info
-   doc.setFontSize(14).setFont('helvetica', 'bold');
-   doc.text('CV. Indigama Khatulistiwa', 34, 18);
+    doc.setFontSize(14).setFont('helvetica', 'bold');
+    doc.text('CV. Indigama Khatulistiwa', 34, 18);
 
-   doc.setFontSize(10).setFont('helvetica', 'normal');
-   doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 34, 23);
-   doc.text('Pasuruan, Jawa Timur 67155', 34, 28);
-   doc.text('Email: indigama.khatulistiwa01@gmail.com', 34, 33);
-   doc.text('Telp: 081703101012', 34, 38);
+    doc.setFontSize(10).setFont('helvetica', 'normal');
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 34, 23);
+    doc.text('Pasuruan, Jawa Timur 67155', 34, 28);
+    doc.text('Email: indigama.khatulistiwa01@gmail.com', 34, 33);
+    doc.text('Telp: 081703101012', 34, 38);
 
     // Informasi penerimaan
     doc.setLineWidth(0.5);

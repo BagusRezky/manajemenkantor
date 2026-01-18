@@ -1,9 +1,9 @@
 // pages/hariLibur/edit.tsx
 
+import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { HariLibur } from '@/types/hariLibur';
 import { Head, useForm } from '@inertiajs/react';
-import { Input } from '@/components/ui/input';
 import { Button } from '../../components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '../../components/ui/card';
 import { Label } from '../../components/ui/label';

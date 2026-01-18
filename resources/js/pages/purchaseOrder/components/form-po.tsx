@@ -59,12 +59,7 @@ export default function FormPO({ data, setData, errors, purchaseRequests, suppli
 
                     <div className="space-y-2">
                         <Label htmlFor="tanggal_po">PO Date</Label>
-                        <Input
-                            id="tanggal_po"
-                            type="date"
-                            value={data.tanggal_po || ''}
-                            onChange={(e) => setData('tanggal_po', e.target.value)}
-                        />
+                        <Input id="tanggal_po" type="date" value={data.tanggal_po || ''} onChange={(e) => setData('tanggal_po', e.target.value)} />
                         {errors.tanggal_po && <p className="text-sm text-red-500">{errors.tanggal_po}</p>}
                     </div>
 

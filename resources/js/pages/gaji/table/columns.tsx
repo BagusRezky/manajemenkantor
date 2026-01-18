@@ -80,7 +80,7 @@ export const columns: ColumnDef<Gaji>[] = [
     {
         accessorKey: 'actions',
         header: 'Actions',
-         cell: ({ row }) => {
+        cell: ({ row }) => {
             const item = row.original;
 
             return (
@@ -111,5 +111,5 @@ export const columns: ColumnDef<Gaji>[] = [
                 </DropdownMenu>
             );
         },
-    }
+    },
 ];

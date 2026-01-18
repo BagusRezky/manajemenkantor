@@ -250,7 +250,6 @@ export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({ purc
                 <CardTitle>Form Penerimaan Barang</CardTitle>
             </CardHeader>
             <CardContent>
-
                 <form onSubmit={handleSubmit}>
                     <div className="mb-6 grid grid-cols-3 gap-4">
                         <div>
@@ -279,11 +278,7 @@ export const PenerimaanBarangForm: React.FC<PenerimaanBarangFormProps> = ({ purc
                         </div>
                         <div>
                             <label className="mb-1 block text-sm font-medium">Tgl. Terima Barang:</label>
-                            <input
-                                type="date"
-                                value={data.tgl_terima_barang}
-                                onChange={(e) => setData('tgl_terima_barang', e.target.value)}
-                            />
+                            <input type="date" value={data.tgl_terima_barang} onChange={(e) => setData('tgl_terima_barang', e.target.value)} />
                             {errors.tgl_terima_barang && <div className="text-sm text-red-500">{errors.tgl_terima_barang}</div>}
                         </div>
                     </div>

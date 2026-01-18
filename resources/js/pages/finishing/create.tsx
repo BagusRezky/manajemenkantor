@@ -183,7 +183,6 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                         className={errors.hasil_baik_finishing ? 'border-red-500' : ''}
                                     />
                                     {errors.hasil_baik_finishing && <div className="text-sm text-red-600">{errors.hasil_baik_finishing}</div>}
-
                                 </div>
 
                                 {/* Hasil Rusak */}
@@ -200,7 +199,6 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                         className={errors.hasil_rusak_finishing ? 'border-red-500' : ''}
                                     />
                                     {errors.hasil_rusak_finishing && <div className="text-sm text-red-600">{errors.hasil_rusak_finishing}</div>}
-
                                 </div>
 
                                 {/* Semi Waste */}
@@ -217,7 +215,6 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                         className={errors.semi_waste_finishing ? 'border-red-500' : ''}
                                     />
                                     {errors.semi_waste_finishing && <div className="text-sm text-red-600">{errors.semi_waste_finishing}</div>}
-                                    
                                 </div>
                             </div>
 

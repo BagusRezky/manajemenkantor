@@ -1,4 +1,4 @@
-import { PengajuanPinjaman } from "./pengajuanPinjaman";
+import { PengajuanPinjaman } from './pengajuanPinjaman';
 
 export type PembayaranPinjaman = {
     id: string;

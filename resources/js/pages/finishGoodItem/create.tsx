@@ -12,12 +12,12 @@ import { TypeItem } from '@/types/typeItem';
 import { Unit } from '@/types/unit';
 import { Head, Link, useForm } from '@inertiajs/react';
 
+import { Textarea } from '@/components/ui/textarea';
 import { BillOfMaterial } from '@/types/billOfMaterial';
 import { Departemen } from '@/types/departemen';
 import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
 import BillOfMaterialForm from './billoffmaterial/bill-of-material-form';
-import { Textarea } from '@/components/ui/textarea';
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
@@ -266,7 +266,13 @@ export default function Create({ units, customerAddresses, typeItems, masterItem
 
                                         <div className="space-y-2">
                                             <Label htmlFor="up_satu">UP Satu</Label>
-                                            <Input id="up_satu" type='number' step="0" value={data.up_satu} onChange={(e) => setData('up_satu', e.target.value)} />
+                                            <Input
+                                                id="up_satu"
+                                                type="number"
+                                                step="0"
+                                                value={data.up_satu}
+                                                onChange={(e) => setData('up_satu', e.target.value)}
+                                            />
                                             {errors.up_satu && <p className="text-sm text-red-500">{errors.up_satu}</p>}
                                         </div>
 
@@ -284,7 +290,13 @@ export default function Create({ units, customerAddresses, typeItems, masterItem
 
                                         <div className="space-y-2">
                                             <Label htmlFor="up_tiga">UP Tiga</Label>
-                                            <Input id="up_tiga" type='number' step="0" value={data.up_tiga} onChange={(e) => setData('up_tiga', e.target.value)} />
+                                            <Input
+                                                id="up_tiga"
+                                                type="number"
+                                                step="0"
+                                                value={data.up_tiga}
+                                                onChange={(e) => setData('up_tiga', e.target.value)}
+                                            />
                                             {errors.up_tiga && <p className="text-sm text-red-500">{errors.up_tiga}</p>}
                                         </div>
 

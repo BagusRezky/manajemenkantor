@@ -139,7 +139,6 @@ const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void =
     }
 };
 
-
 const handleDelete = (item: string) => {
     router.delete(`/salesOrders/${item}`, {
         onSuccess: () => {

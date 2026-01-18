@@ -22,11 +22,9 @@ interface IndexProps {
 export default function Index({ salesOrders }: IndexProps) {
     const [data, setData] = useState<SalesOrder[]>([]);
 
-
     useEffect(() => {
         setData(salesOrders);
     }, [salesOrders]);
-
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
