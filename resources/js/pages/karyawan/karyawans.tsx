@@ -10,16 +10,13 @@ import { toast } from 'sonner';
 import { columns } from './table/columns';
 import { DataTable } from './table/data-table';
 
-
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Karyawan', href: '/karyawans' }];
 
 interface KaryawanIndexProps {
     karyawans: Karyawan[];
-
 }
 
 export default function Karyawans({ karyawans }: KaryawanIndexProps) {
-
     const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
         if (!e.target.files?.[0]) return;
 

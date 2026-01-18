@@ -23,11 +23,7 @@ export const columns = (): ColumnDef<RekapPinjaman>[] => [
             />
         ),
         cell: ({ row }) => (
-            <Checkbox
-                checked={row.getIsSelected()}
-                onCheckedChange={(value) => row.toggleSelected(!!value)}
-                aria-label="Select row"
-            />
+            <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
         ),
         enableSorting: false,
         enableHiding: false,
@@ -50,7 +46,7 @@ export const columns = (): ColumnDef<RekapPinjaman>[] => [
         accessorKey: 'sisa',
         header: 'Sisa Pinjaman',
         cell: ({ row }) => (
-            <div className={row.original.sisa <= 0 ? 'text-green-600 font-semibold' : 'text-red-600 font-semibold'}>
+            <div className={row.original.sisa <= 0 ? 'font-semibold text-green-600' : 'font-semibold text-red-600'}>
                 {formatCurrency(row.original.sisa)}
             </div>
         ),
@@ -59,11 +55,7 @@ export const columns = (): ColumnDef<RekapPinjaman>[] => [
         accessorKey: 'status',
         header: 'Status',
         cell: ({ row }) => (
-            <span
-                className={`px-2 py-1 rounded-md text-white ${
-                    row.original.status === 'Lunas' ? 'bg-green-500' : 'bg-yellow-500'
-                }`}
-            >
+            <span className={`rounded-md px-2 py-1 text-white ${row.original.status === 'Lunas' ? 'bg-green-500' : 'bg-yellow-500'}`}>
                 {row.original.status}
             </span>
         ),

@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { DatePicker } from '@/components/date-picker';
 import { SearchableSelect } from '@/components/search-select';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -335,7 +334,7 @@ export default function Edit({ kartuInstruksiKerja, salesOrders }: EditProps) {
                                         {/* Tanggal Estimasi Selesai */}
                                         <div className="space-y-2">
                                             <Label htmlFor="tgl_estimasi_selesai">Tanggal Estimasi Selesai</Label>
-                                            <Input value={data.tgl_estimasi_selesai} type='date' onChange={handleChange} />
+                                            <Input value={data.tgl_estimasi_selesai} type="date" onChange={handleChange} />
                                             {errors.tgl_estimasi_selesai && <p className="text-sm text-red-500">{errors.tgl_estimasi_selesai}</p>}
                                         </div>
 

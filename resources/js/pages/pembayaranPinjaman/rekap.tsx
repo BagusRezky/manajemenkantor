@@ -3,11 +3,9 @@ import { BreadcrumbItem } from '@/types';
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 
-
-import { DataTable } from './table/rekap/data-table';
-import { columns } from './table/rekap/columns';
 import { RekapPinjaman } from '@/types/rekap';
-
+import { columns } from './table/rekap/columns';
+import { DataTable } from './table/rekap/data-table';
 
 // Ganti breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
@@ -36,7 +34,6 @@ export default function PembayaranPinjamans({ pembayaranPinjamans }: { pembayara
             <Head title="Pembayaran Pinjaman" />
 
             <div className="mx-5 py-5">
-
                 {/* Ganti props */}
                 <DataTable columns={columns()} data={data} pembayaranPinjamans={pembayaranPinjamans} />
             </div>

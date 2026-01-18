@@ -65,11 +65,8 @@ export default function Create({ penerimaanBarangs }: CreateProps) {
                 ppn: '',
                 qty_penerimaan: '',
             }));
-
         }
-
     };
-
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();

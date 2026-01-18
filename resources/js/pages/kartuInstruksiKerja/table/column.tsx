@@ -11,9 +11,9 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { KartuInstruksiKerja, KartuInstruksiKerjaBom } from '@/types/kartuInstruksiKerja';
 
+import { formatToInteger } from '@/utils/formatter/decimaltoint';
 import { Download, FileText, MoreHorizontal } from 'lucide-react';
 import { toast } from 'sonner';
-import { formatToInteger } from '@/utils/formatter/decimaltoint';
 
 export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, download = false): void => {
     const doc = new jsPDF('p', 'mm', 'a4');
@@ -185,7 +185,6 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
         window.open(doc.output('bloburl'), '_blank');
     }
 };
-
 
 const handleDelete = (item: string) => {
     if (confirm('Apakah Anda yakin ingin menghapus kartu instruksi kerja ini?')) {
