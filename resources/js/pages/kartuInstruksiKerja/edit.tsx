@@ -11,7 +11,7 @@ import { BreadcrumbItem } from '@/types';
 import { BillOfMaterial } from '@/types/billOfMaterial';
 import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { SalesOrder } from '@/types/salesOrder';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
 import { toast, Toaster } from 'sonner';
 
@@ -49,7 +49,7 @@ export default function Edit({ kartuInstruksiKerja, salesOrders }: EditProps) {
         id_sales_order: kartuInstruksiKerja.id_sales_order?.toString() || '',
         no_kartu_instruksi_kerja: kartuInstruksiKerja.no_kartu_instruksi_kerja || '',
         production_plan: kartuInstruksiKerja.production_plan || '',
-        tgl_estimasi_selesai: kartuInstruksiKerja.tgl_estimasi_selesai || '',
+        tgl_estimasi_selesai: kartuInstruksiKerja.tgl_estimasi_selesai ? kartuInstruksiKerja.tgl_estimasi_selesai.substring(0, 10) : '',
         bill_of_materials: [],
     });
 
@@ -263,14 +263,17 @@ export default function Edit({ kartuInstruksiKerja, salesOrders }: EditProps) {
             }));
 
             // Submit form menggunakan Inertia dengan data yang sudah diupdate
-            put(route('kartuInstruksiKerja.update', kartuInstruksiKerja.id), {
-                onSuccess: () => {
-                    toast.success('Surat Perintah Kerja berhasil diperbarui!');
+            router.put(
+                route('kartuInstruksiKerja.update', kartuInstruksiKerja.id),
+                {
+                    ...data,
+                    bill_of_materials: simpleBomItems,
                 },
-                onError: () => {
-                    toast.error('Terjadi kesalahan saat memperbarui data');
+                {
+                    onSuccess: () => toast.success('Berhasil diperbarui!'),
+                    onError: () => toast.error('Gagal memperbarui'),
                 },
-            });
+            );
         } else {
             // Jika tidak ada draft baru, update data dasar saja
             put(route('kartuInstruksiKerja.update', kartuInstruksiKerja.id), {
@@ -334,7 +337,13 @@ export default function Edit({ kartuInstruksiKerja, salesOrders }: EditProps) {
                                         {/* Tanggal Estimasi Selesai */}
                                         <div className="space-y-2">
                                             <Label htmlFor="tgl_estimasi_selesai">Tanggal Estimasi Selesai</Label>
-                                            <Input value={data.tgl_estimasi_selesai} type="date" onChange={handleChange} />
+                                            <Input
+                                                id="tgl_estimasi_selesai"
+                                                name="tgl_estimasi_selesai"
+                                                type="date"
+                                                value={data.tgl_estimasi_selesai}
+                                                onChange={handleChange}
+                                            />
                                             {errors.tgl_estimasi_selesai && <p className="text-sm text-red-500">{errors.tgl_estimasi_selesai}</p>}
                                         </div>
 
