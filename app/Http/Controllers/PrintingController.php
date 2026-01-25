@@ -28,7 +28,7 @@ class PrintingController extends Controller
      */
     public function create()
     {
-        $kartuInstruksiKerjas = KartuInstruksiKerja::all();
+        $kartuInstruksiKerjas = KartuInstruksiKerja::with(['salesOrder.finishGoodItem'])->get();
         $mesins = Mesin::all();
         $operators = Operator::all();
         return Inertia::render('printing/create', [

@@ -314,7 +314,7 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
                                                 items={kartuInstruksiKerjas.map((kik) => ({
                                                     key: String(kik.id),
                                                     value: String(kik.id),
-                                                    label: `${kik.no_kartu_instruksi_kerja}`,
+                                                    label: `${kik.no_kartu_instruksi_kerja} || ${kik.sales_order?.finish_good_item?.nama_barang || '-'}`,
                                                 }))}
                                                 value={currentItem.id_kartu_instruksi_kerja}
                                                 placeholder="Pilih SPK..."

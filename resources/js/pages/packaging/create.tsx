@@ -70,7 +70,7 @@ export default function CreatePackaging({ kartuInstruksiKerjas }: Props) {
                                         items={kartuInstruksiKerjas.map((kartu) => ({
                                             key: String(kartu.id),
                                             value: String(kartu.id),
-                                            label: kartu.no_kartu_instruksi_kerja,
+                                            label: `${kartu.no_kartu_instruksi_kerja} - ${kartu.sales_order?.finish_good_item?.nama_barang || '-'}`,
                                         }))}
                                         value={data.id_kartu_instruksi_kerja || ''} // fallback to empty string
                                         placeholder="Pilih SPK"

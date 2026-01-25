@@ -27,7 +27,7 @@ class PackagingController extends Controller
      */
     public function create()
     {
-        $kartuInstruksiKerjas = KartuInstruksiKerja::all();
+        $kartuInstruksiKerjas = KartuInstruksiKerja::with(['salesOrder.finishGoodItem'])->get();
 
         return Inertia::render('packaging/create', [
             'kartuInstruksiKerjas' => $kartuInstruksiKerjas
