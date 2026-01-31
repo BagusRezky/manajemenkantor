@@ -49,6 +49,8 @@ use App\Http\Controllers\PengajuanPinjamanController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\GajiController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MasterCoaClassController;
+use App\Http\Controllers\MetodeBayarController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -453,6 +455,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/gajis', [GajiController::class, 'index'])->name('gajis.index')->middleware('permission:gajis.index');
         Route::post('/gajis/send-slip', [GajiController::class, 'sendSlip'])->name('gajis.sendSlip')->middleware('permission:gajis.index');
+
+        Route::get('/masterCoaClasses', [MasterCoaClassController::class, 'index'])->name('masterCoaClasses.index')->middleware('permission:masterCoaClasses.index');
+        Route::get('/masterCoaClasses/create', [MasterCoaClassController::class, 'create'])->name('masterCoaClasses.create')->middleware('permission:masterCoaClasses.create');
+        Route::post('/masterCoaClasses', [MasterCoaClassController::class, 'store'])->name('masterCoaClasses.store')->middleware('permission:masterCoaClasses.store');
+        Route::get('/masterCoaClasses/{masterCoaClass}/edit', [MasterCoaClassController::class, 'edit'])->name('masterCoaClasses.edit')->middleware('permission:masterCoaClasses.edit');
+        Route::put('/masterCoaClasses/{masterCoaClass}', [MasterCoaClassController::class, 'update'])->name('masterCoaClasses.update')->middleware('permission:masterCoaClasses.update');
+        Route::delete('/masterCoaClasses/{masterCoaClass}', [MasterCoaClassController::class, 'destroy'])->name('masterCoaClasses.destroy')->middleware('permission:masterCoaClasses.destroy');
+
+        Route::get('/metodeBayars', [MetodeBayarController::class, 'index'])->name('metodeBayars.index')->middleware('permission:metodeBayars.index');
+        Route::get('/metodeBayars/create', [MetodeBayarController::class, 'create'])->name('metodeBayars.create')->middleware('permission:metodeBayars.create');
+        Route::post('/metodeBayars', [MetodeBayarController::class, 'store'])->name('metodeBayars.store')->middleware('permission:metodeBayars.store');
+        Route::get('/metodeBayars/{metodeBayar}/edit', [MetodeBayarController::class, 'edit'])->name('metodeBayars.edit')->middleware('permission:metodeBayars.edit');
+        Route::put('/metodeBayars/{metodeBayar}', [MetodeBayarController::class, 'update'])->name('metodeBayars.update')->middleware('permission:metodeBayars.update');
+        Route::delete('/metodeBayars/{metodeBayar}', [MetodeBayarController::class, 'destroy'])->name('metodeBayars.destroy')->middleware('permission:metodeBayars.destroy');
+
     });
 });
 
