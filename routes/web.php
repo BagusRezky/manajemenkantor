@@ -51,6 +51,7 @@ use App\Http\Controllers\GajiController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MasterCoaClassController;
 use App\Http\Controllers\MetodeBayarController;
+use App\Http\Controllers\MasterCoaController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -469,6 +470,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/metodeBayars/{metodeBayar}/edit', [MetodeBayarController::class, 'edit'])->name('metodeBayars.edit')->middleware('permission:metodeBayars.edit');
         Route::put('/metodeBayars/{metodeBayar}', [MetodeBayarController::class, 'update'])->name('metodeBayars.update')->middleware('permission:metodeBayars.update');
         Route::delete('/metodeBayars/{metodeBayar}', [MetodeBayarController::class, 'destroy'])->name('metodeBayars.destroy')->middleware('permission:metodeBayars.destroy');
+
+        Route::get('/masterCoas', [MasterCoaController::class, 'index'])->name('masterCoas.index')->middleware('permission:masterCoas.index');
+        Route::get('/masterCoas/create', [MasterCoaController::class, 'create'])->name('masterCoas.create')->middleware('permission:masterCoas.create');
+        Route::post('/masterCoas', [MasterCoaController::class, 'store'])->name('masterCoas.store')->middleware('permission:masterCoas.store');
+        Route::get('/masterCoas/{masterCoa}/edit', [MasterCoaController::class, 'edit'])->name('masterCoas.edit')->middleware('permission:masterCoas.edit');
+        Route::put('/masterCoas/{masterCoa}', [MasterCoaController::class, 'update'])->name('masterCoas.update')->middleware('permission:masterCoas.update');
+        Route::delete('/masterCoas/{masterCoa}', [MasterCoaController::class, 'destroy'])->name('masterCoas.destroy')->middleware('permission:masterCoas.destroy');
+        Route::get('/masterCoas/{masterCoa}', [MasterCoaController::class, 'show'])->name('masterCoas.show')->middleware('permission:masterCoas.show');
+        Route::post('/masterCoas/import', [MasterCoaController::class, 'import'])->name('masterCoas.import')->middleware('permission:masterCoas.import');
 
     });
 });

@@ -19,4 +19,9 @@ class MasterCoaClass extends Model
     {
         return $this->belongsTo(Karyawan::class, 'id_karyawan');
     }
+
+    public function masterCoa()
+    {
+        return $this->hasMany(MasterCoa::class, 'id_master_coa_class');
+    }
 }

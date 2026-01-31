@@ -136,6 +136,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             { title: 'Payment Entry Good', icon: Banknote, href: '/paymentEntryGoods', permission: 'paymentEntryGoods.index' },
             { title: 'Master COA Class', icon: Banknote, href: '/masterCoaClasses', permission: 'masterCoaClasses.index' },
             { title: 'Metode Bayar', icon: Banknote, href: '/metodeBayars', permission: 'metodeBayars.index' },
+            { title: 'Master COA', icon: Banknote, href: '/masterCoas', permission: 'masterCoas.index' },
         ],
     },
     {

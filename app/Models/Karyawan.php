@@ -120,4 +120,9 @@ class Karyawan extends Model
     {
         return $this->hasMany(MasterCoaClass::class, 'id_karyawan');
     }
+
+    public function masterCoa()
+    {
+        return $this->hasMany(MasterCoa::class, 'id_karyawan');
+    }
 }
