@@ -15,7 +15,7 @@ class PembayaranPinjamanController extends Controller
      */
     public function index()
     {
-        $pembayaranPinjamans = PembayaranPinjaman::with(['pengajuanPinjaman', 'pengajuanPinjaman.karyawan'])->get();
+        $pembayaranPinjamans = PembayaranPinjaman::with(['pengajuanPinjaman', 'pengajuanPinjaman.karyawan'])->orderBy('tanggal_pembayaran', 'desc')->get();
         return Inertia::render('pembayaranPinjaman/pembayaranPinjamans', [
             'pembayaranPinjamans' => $pembayaranPinjamans,
         ]);
