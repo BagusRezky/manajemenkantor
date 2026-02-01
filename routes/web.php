@@ -54,6 +54,7 @@ use App\Http\Controllers\MetodeBayarController;
 use App\Http\Controllers\MasterCoaController;
 use App\Http\Controllers\TransKasController;
 use App\Http\Controllers\TransKasBankController;
+use App\Http\Controllers\OperasionalPayController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -526,6 +527,16 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::post('/import', [TransKasBankController::class, 'import'])->name('import')->middleware('permission:trans-kas-banks.import');
             Route::delete('/{transKasBank}', [TransKasBankController::class, 'destroy'])->name('destroy')->middleware('permission:trans-kas-banks.destroy');
         });
+
+        Route::get('/operasionalPays', [OperasionalPayController::class, 'index'])->name('operasionalPays.index')->middleware('permission:operasionalPays.index');
+        Route::get('/operasionalPays/create', [OperasionalPayController::class, 'create'])->name('operasionalPays.create')->middleware('permission:operasionalPays.create');
+        Route::post('/operasionalPays', [OperasionalPayController::class, 'store'])->name('operasionalPays.store')->middleware('permission:operasionalPays.store');
+        Route::get('/operasionalPays/{operasionalPay}/edit', [OperasionalPayController::class, 'edit'])->name('operasionalPays.edit')->middleware('permission:operasionalPays.edit');
+        Route::put('/operasionalPays/{operasionalPay}', [OperasionalPayController::class, 'update'])->name('operasionalPays.update')->middleware('permission:operasionalPays.update');
+        Route::delete('/operasionalPays/{operasionalPay}', [OperasionalPayController::class, 'destroy'])->name('operasionalPays.destroy')->middleware('permission:operasionalPays.destroy');
+        Route::get('/operasionalPays/{operasionalPay}', [OperasionalPayController::class, 'show'])->name('operasionalPays.show')->middleware('permission:operasionalPays.show');
+        Route::get('/operasionalPays/{operasionalPay}/pdf', [OperasionalPayController::class, 'generatePdf'])->name('operasionalPays.pdf')->middleware('permission:operasionalPays.pdf');
+        Route::post('/operasionalPays/import', [OperasionalPayController::class, 'import'])->name('operasionalPays.import')->middleware('permission:operasionalPays.import');
     });
 });
 
