@@ -80,18 +80,18 @@ class TransKasBankImport implements ToModel, WithHeadingRow
             $idCustomerAddress = $cust ? $cust->id : null;
         }
 
-        // 7. Simpan atau Update (Guna mencegah duplikasi pada No Bukti & Nominal yang sama)
+
         return TransKasBank::create([
             'no_bukti'             => $row['no_bukti'],
             'nominal'              => $row['nominal'] ?? 0,
             'keterangan'           => $row['keterangan'] ?? null,
             'id_karyawan'          => $idKaryawan,
-            'id_account_bank'      => $idAccBank, // Pastikan variabel ini benar (tadi di kode kamu tertulis $idAccKas)
+            'id_account_bank'      => $idAccBank,
             'id_account_bank_lain' => $idAccBankLain,
             'id_customer_address'  => $idCustomerAddress,
             'transaksi'            => $row['transaksi'],
             'gudang'               => $row['gudang'] ?? '-',
-            'periode'              => $row['periode'] ?? date('Y'),
+            'periode'              => $row['periode'] ?? 0,
             'tanggal_transaksi'    => $tanggalTransaksi,
             'mesin'                => $mesin,
             'kode'                 => $kode,

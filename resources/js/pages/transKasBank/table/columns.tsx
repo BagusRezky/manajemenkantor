@@ -4,7 +4,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSepara
 import { TransKasBank } from '@/types/transKasBank';
 import { router } from '@inertiajs/react';
 import { ColumnDef } from '@tanstack/react-table';
-import { ArrowDownLeft, ArrowUpRight, Edit, MoreHorizontal, Trash } from 'lucide-react';
+import { ArrowDownLeft, ArrowUpRight, Edit, Eye, MoreHorizontal, Trash } from 'lucide-react';
 
 export const columns = (): ColumnDef<TransKasBank>[] => [
     {
@@ -33,8 +33,13 @@ export const columns = (): ColumnDef<TransKasBank>[] => [
     { accessorKey: 'no_bukti', header: 'No. Bukti' },
     {
         accessorKey: 'account_bank',
-        header: 'Akun Bank',
-        accessorFn: (row) => row.account_bank?.nama_akun,
+        header: 'Account Bank',
+        accessorFn: (row) => row.account_bank?.kode_akuntansi + ' - ' + row.account_bank?.nama_akun || '',
+    },
+    {
+        accessorKey: 'account_bank_lain',
+        header: 'Account Bank Lain',
+        accessorFn: (row) => row.account_bank_lain?.kode_akuntansi + ' - ' + row.account_bank_lain?.nama_akun || '',
     },
     {
         accessorKey: 'nominal',
@@ -42,7 +47,13 @@ export const columns = (): ColumnDef<TransKasBank>[] => [
         cell: ({ row }) => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR' }).format(row.original.nominal),
     },
     {
+        accessorKey: 'tanggal_transaksi',
+        header: 'Tanggal Transaksi',
+        cell: ({ row }) => row.getValue('tanggal_transaksi'),
+    },
+    {
         id: 'actions',
+        header: 'Actions',
         cell: ({ row }) => (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
@@ -52,7 +63,7 @@ export const columns = (): ColumnDef<TransKasBank>[] => [
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                     <DropdownMenuItem onClick={() => router.get(route('trans-kas-banks.show', row.original.id))}>
-                        <Edit className="mr-2 h-4 w-4" /> Detail
+                        <Eye className="mr-2 h-4 w-4" /> Detail
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => router.get(route('trans-kas-banks.edit', row.original.id))}>
