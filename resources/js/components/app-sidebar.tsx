@@ -137,6 +137,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             { title: 'Master COA Class', icon: Banknote, href: '/masterCoaClasses', permission: 'masterCoaClasses.index' },
             { title: 'Metode Bayar', icon: Banknote, href: '/metodeBayars', permission: 'metodeBayars.index' },
             { title: 'Master COA', icon: Banknote, href: '/masterCoas', permission: 'masterCoas.index' },
+            { title: 'Transaksi Kas', icon: Banknote, href: '/trans-kas', permission: 'trans-kas.index' },
         ],
     },
     {

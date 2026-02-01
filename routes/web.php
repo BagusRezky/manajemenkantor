@@ -52,6 +52,7 @@ use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\MasterCoaClassController;
 use App\Http\Controllers\MetodeBayarController;
 use App\Http\Controllers\MasterCoaController;
+use App\Http\Controllers\TransKasController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -480,6 +481,32 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/masterCoas/{masterCoa}', [MasterCoaController::class, 'show'])->name('masterCoas.show')->middleware('permission:masterCoas.show');
         Route::post('/masterCoas/import', [MasterCoaController::class, 'import'])->name('masterCoas.import')->middleware('permission:masterCoas.import');
 
+        Route::prefix('trans-kas')->name('trans-kas.')->group(function () {
+            Route::get('/', [TransKasController::class, 'index'])
+                ->name('index')
+                ->middleware('permission:trans-kas.index');
+            Route::get('/{transKas}/show', [TransKasController::class, 'show'])
+                ->name('show')
+                ->middleware('permission:trans-kas.show');
+            Route::get('/create/masuk', [TransKasController::class, 'createMasuk'])
+                ->name('create-masuk')
+                ->middleware('permission:trans-kas.create');
+            Route::get('/create/keluar', [TransKasController::class, 'createKeluar'])
+                ->name('create-keluar')
+                ->middleware('permission:trans-kas.create');
+            Route::post('/', [TransKasController::class, 'store'])
+                ->name('store')
+                ->middleware('permission:trans-kas.create');
+            Route::get('/{transKas}/edit', [TransKasController::class, 'edit'])
+                ->name('edit')
+                ->middleware('permission:trans-kas.edit');
+            Route::put('/{transKas}', [TransKasController::class, 'update'])
+                ->name('update')
+                ->middleware('permission:trans-kas.edit');
+            Route::delete('/{transKas}', [TransKasController::class, 'destroy'])
+                ->name('destroy')
+                ->middleware('permission:trans-kas.destroy');
+        });
     });
 });
 
