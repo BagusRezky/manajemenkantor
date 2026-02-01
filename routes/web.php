@@ -53,6 +53,7 @@ use App\Http\Controllers\MasterCoaClassController;
 use App\Http\Controllers\MetodeBayarController;
 use App\Http\Controllers\MasterCoaController;
 use App\Http\Controllers\TransKasController;
+use App\Http\Controllers\TransKasBankController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -509,6 +510,21 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/{transKas}', [TransKasController::class, 'destroy'])
                 ->name('destroy')
                 ->middleware('permission:trans-kas.destroy');
+        });
+        Route::prefix('trans-kas-banks')->name('trans-kas-banks.')->group(function () {
+            Route::get('/', [TransKasBankController::class, 'index'])->name('index')->middleware('permission:trans-kas-banks.index');
+            Route::get('/{transKasBank}/show', [TransKasBankController::class, 'show'])->name('show')->middleware('permission:trans-kas-banks.show');
+
+            // Create dipisah Masuk & Keluar
+            Route::get('/create/masuk', [TransKasBankController::class, 'createMasuk'])->name('create-masuk')->middleware('permission:trans-kas-banks.create');
+            Route::get('/create/keluar', [TransKasBankController::class, 'createKeluar'])->name('create-keluar')->middleware('permission:trans-kas-banks.create');
+
+            Route::post('/', [TransKasBankController::class, 'store'])->name('store')->middleware('permission:trans-kas-banks.create');
+
+            Route::get('/{transKasBank}/edit', [TransKasBankController::class, 'edit'])->name('edit')->middleware('permission:trans-kas-banks.edit');
+            Route::put('/{transKasBank}', [TransKasBankController::class, 'update'])->name('update')->middleware('permission:trans-kas-banks.edit');
+            Route::post('/import', [TransKasBankController::class, 'import'])->name('import')->middleware('permission:trans-kas-banks.import');
+            Route::delete('/{transKasBank}', [TransKasBankController::class, 'destroy'])->name('destroy')->middleware('permission:trans-kas-banks.destroy');
         });
     });
 });
