@@ -47,8 +47,14 @@ export const columns = (): ColumnDef<TransKas>[] => [
     },
     {
         accessorKey: 'account_kas',
-        header: 'Akun Kas',
-        accessorFn: (row) => row.account_kas?.nama_akun,
+        header: 'Account Kas',
+        accessorFn: (row) => row.account_kas?.kode_akuntansi + ' - ' + row.account_kas?.nama_akun || '',
+    },
+
+    {
+        accessorKey: 'account_kas_lain',
+        header: 'Account Kas Lain',
+        accessorFn: (row) => row.account_kas_lain?.kode_akuntansi + ' - ' + row.account_kas_lain?.nama_akun || '',
     },
     {
         accessorKey: 'nominal',
@@ -63,9 +69,9 @@ export const columns = (): ColumnDef<TransKas>[] => [
         },
     },
     {
-        accessorKey: 'periode',
-        header: 'Periode',
-        cell: ({ row }) => row.getValue('periode'),
+        accessorKey: 'tanggal_transaksi',
+        header: 'Tanggal Transaksi',
+        cell: ({ row }) => row.getValue('tanggal_transaksi'),
     },
     {
         id: 'actions',

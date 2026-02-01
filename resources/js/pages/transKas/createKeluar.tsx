@@ -37,6 +37,7 @@ export default function CreateKeluar({
         no_bukti: 'BKK/',
         gudang: '',
         periode: new Date().getFullYear(),
+        tanggal_transaksi: new Date().toISOString().split('T')[0],
         nominal: 0,
         keterangan: '',
         mesin: '',
@@ -71,6 +72,14 @@ export default function CreateKeluar({
                                 <div className="space-y-2">
                                     <Label>Periode</Label>
                                     <Input value={data.periode} onChange={(e) => setData('periode', Number(e.target.value))} placeholder="2024" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Tanggal Transaksi</Label>
+                                    <Input
+                                        type="date"
+                                        value={data.tanggal_transaksi}
+                                        onChange={(e) => setData('tanggal_transaksi', e.target.value)}
+                                    />
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Karyawan</Label>
@@ -128,7 +137,7 @@ export default function CreateKeluar({
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Mesin</Label>
-                                    <Input value={data.mesin} onChange={(e) => setData('mesin', (e.target.value))} />
+                                    <Input value={data.mesin} onChange={(e) => setData('mesin', e.target.value)} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Kode</Label>

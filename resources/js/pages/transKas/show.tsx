@@ -7,7 +7,7 @@ import { BreadcrumbItem } from '@/types';
 import { TransKas } from '@/types/transKas';
 
 import { Head, Link } from '@inertiajs/react';
-import { ArrowLeft, CreditCard, Home, LucideIcon, Tag, User } from 'lucide-react';
+import { ArrowLeft, Calendar, CreditCard, Home, LucideIcon, Tag, User } from 'lucide-react';
 
 interface InfoRowProps {
     icon: LucideIcon;
@@ -61,6 +61,7 @@ export default function Show({ item }: { item: TransKas }) {
                         <div className="grid grid-cols-2 gap-6 md:grid-cols-3">
                             <InfoRow icon={Home} label="Gudang" value={item.gudang} />
                             <InfoRow icon={Tag} label="Periode" value={item.periode} />
+                            <InfoRow icon={Calendar} label="Tanggal Transaksi" value={item.tanggal_transaksi} />
                         </div>
 
                         <Separator />

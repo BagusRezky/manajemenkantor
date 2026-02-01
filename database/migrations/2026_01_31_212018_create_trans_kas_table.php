@@ -15,13 +15,14 @@ return new class extends Migration
             $table->id();
             $table->foreignId('id_karyawan')->nullable()->constrained('karyawans')->onDelete('cascade');
             $table->foreignId('id_account_kas')->nullable()->constrained('master_coas')->onDelete('cascade');
-             $table->foreignId('id_account_kas_lain')->nullable()->constrained('master_coas')->onDelete('cascade');
-             $table->foreignId('id_customer_address')->nullable()->constrained('customer_addresses')->onDelete('cascade');
-             $table->tinyInteger('transaksi')
+            $table->foreignId('id_account_kas_lain')->nullable()->constrained('master_coas')->onDelete('cascade');
+            $table->foreignId('id_customer_address')->nullable()->constrained('customer_addresses')->onDelete('cascade');
+            $table->tinyInteger('transaksi')
                 ->comment('1 = kas masuk, 2 = kas keluar');
             $table->string('no_bukti');
             $table->string('gudang');
             $table->integer('periode');
+            $table->date('tanggal_transaksi')->nullable();
             $table->decimal('nominal', 15, 2)->default(0);
             $table->string('keterangan')->nullable();
             $table->string('mesin')->nullable();

@@ -38,6 +38,7 @@ export default function EditKeluar({ item, karyawans, customerAddresses, account
         no_bukti: item.no_bukti,
         gudang: item.gudang,
         periode: item.periode,
+        tanggal_transaksi: item.tanggal_transaksi || '',
         nominal: item.nominal,
         keterangan: item.keterangan || '',
         mesin: item.mesin || '',
@@ -47,7 +48,7 @@ export default function EditKeluar({ item, karyawans, customerAddresses, account
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // Method PUT untuk update data
+
         put(route('trans-kas.update', item.id));
     };
 
@@ -81,7 +82,16 @@ export default function EditKeluar({ item, karyawans, customerAddresses, account
                                     <Label>Periode</Label>
                                     <Input type="number" value={data.periode} onChange={(e) => setData('periode', Number(e.target.value))} />
                                 </div>
-
+                                {/* Tanggal Transaksi */}
+                                <div className="space-y-2">
+                                    <Label>Tanggal Transaksi</Label>
+                                    <Input
+                                        type="date"
+                                        value={data.tanggal_transaksi}
+                                        onChange={(e) => setData('tanggal_transaksi', e.target.value)}
+                                    />
+                                    {errors.tanggal_transaksi && <p className="text-sm text-red-500">{errors.tanggal_transaksi}</p>}
+                                </div>
                                 {/* Karyawan */}
                                 <div className="space-y-2">
                                     <Label>Karyawan</Label>

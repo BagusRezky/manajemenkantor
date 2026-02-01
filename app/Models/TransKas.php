@@ -19,6 +19,7 @@ class TransKas extends Model
         'no_bukti',
         'gudang',
         'periode',
+        'tanggal_transaksi',
         'nominal',
         'keterangan',
         'mesin',

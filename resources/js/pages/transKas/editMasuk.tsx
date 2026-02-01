@@ -37,6 +37,7 @@ export default function EditMasuk({ item, karyawans, customerAddresses, accountK
         no_bukti: item.no_bukti,
         gudang: item.gudang,
         periode: item.periode,
+        tanggal_transaksi: item.tanggal_transaksi || '',
         nominal: item.nominal,
         keterangan: item.keterangan || '',
         status: String(item.status),
@@ -79,6 +80,17 @@ export default function EditMasuk({ item, karyawans, customerAddresses, accountK
                                     {errors.periode && <p className="text-sm text-red-500">{errors.periode}</p>}
                                 </div>
 
+                                {/* Tanggal Transaksi */}
+                                <div className="space-y-2">
+                                    <Label>Tanggal Transaksi</Label>
+                                    <Input
+                                        type="date"
+                                        value={data.tanggal_transaksi}
+                                        onChange={(e) => setData('tanggal_transaksi', e.target.value)}
+                                    />
+                                    {errors.tanggal_transaksi && <p className="text-sm text-red-500">{errors.tanggal_transaksi}</p>}
+                                </div>
+                                
                                 {/* Karyawan */}
                                 <div className="space-y-2">
                                     <Label>Karyawan</Label>

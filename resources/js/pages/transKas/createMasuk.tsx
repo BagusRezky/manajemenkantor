@@ -38,6 +38,7 @@ export default function CreateMasuk({
         no_bukti: 'BKM/',
         gudang: '',
         periode: new Date().getFullYear(),
+        tanggal_transaksi: new Date().toISOString().split('T')[0],
         nominal: 0,
         keterangan: '',
         status: '1',
@@ -66,6 +67,14 @@ export default function CreateMasuk({
                                 <div className="space-y-2">
                                     <Label>Gudang</Label>
                                     <Input value={data.gudang} onChange={(e) => setData('gudang', e.target.value)} placeholder="Gudang A" />
+                                </div>
+                                <div className="space-y-2">
+                                    <Label>Tanggal Transaksi</Label>
+                                    <Input
+                                        type="date"
+                                        value={data.tanggal_transaksi}
+                                        onChange={(e) => setData('tanggal_transaksi', e.target.value)}
+                                    />
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Periode</Label>
@@ -114,7 +123,11 @@ export default function CreateMasuk({
                                 <div className="space-y-2">
                                     <Label>Customer </Label>
                                     <SearchableSelect
-                                        items={customerAddresses.map((k) => ({ key: String(k.id), value: String(k.id), label: k.nama_customer ?? '' }))}
+                                        items={customerAddresses.map((k) => ({
+                                            key: String(k.id),
+                                            value: String(k.id),
+                                            label: k.nama_customer ?? '',
+                                        }))}
                                         value={data.id_customer_address}
                                         onChange={(val) => setData('id_customer_address', val)}
                                         placeholder="Pilih Customer"

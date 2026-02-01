@@ -8,10 +8,11 @@ export interface TransKas {
     id_account_kas: number | null;
     id_account_kas_lain: number | null;
     id_customer_address: number | null;
-    transaksi: number; 
+    transaksi: number;
     no_bukti: string;
     gudang: string;
     periode: number;
+    tanggal_transaksi: string | null;
     nominal: number;
     keterangan: string | null;
     mesin: string | null;
