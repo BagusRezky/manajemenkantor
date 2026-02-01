@@ -67,7 +67,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                     className="max-w-sm"
                 />
                 <div className="ml-auto flex space-x-3">
-                    <Button type="button" variant="outline" onClick={() => document.getElementById('excel-upload-master-item')?.click()}>
+                    <Button type="button" variant="outline" onClick={() => document.getElementById('excel-upload-master-coa')?.click()}>
                         <Upload className="mr-2 h-4 w-4" />
                         Import Excel
                     </Button>
@@ -76,8 +76,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                         type="file"
                         name="file"
                         accept=".xlsx,.xls,.csv"
+                        id="excel-upload-master-coa"
                         className="hidden"
-                        id="excel-upload-master-item"
                         onChange={handleImport}
                     />
                     <Link href={route('masterCoas.create')}>
