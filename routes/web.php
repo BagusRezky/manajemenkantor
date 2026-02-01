@@ -503,6 +503,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/{transKas}', [TransKasController::class, 'update'])
                 ->name('update')
                 ->middleware('permission:trans-kas.edit');
+            Route::post('/import', [TransKasController::class, 'import'])
+                ->name('import')
+                ->middleware('permission:trans-kas.import');
             Route::delete('/{transKas}', [TransKasController::class, 'destroy'])
                 ->name('destroy')
                 ->middleware('permission:trans-kas.destroy');

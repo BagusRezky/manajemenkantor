@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\TransKasImport;
 use App\Models\TransKas;
 use App\Models\Karyawan;
 use App\Models\MasterCoa;
 use App\Models\CustomerAddress;
+
+use Maatwebsite\Excel\Facades\Excel;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
@@ -135,5 +138,16 @@ class TransKasController extends Controller
     {
         $transKas->delete();
         return back()->with('success', 'Transaksi Kas berhasil dihapus');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        Excel::import(new TransKasImport, $request->file('file'));
+
+        return redirect()->route('trans-kas.index')->with('success', 'Data Transaksi Kas berhasil diimport dari Excel.');
     }
 }

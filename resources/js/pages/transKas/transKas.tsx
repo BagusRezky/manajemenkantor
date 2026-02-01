@@ -5,6 +5,7 @@ import { TransKas } from '@/types/transKas';
 import { Head } from '@inertiajs/react';
 import { columns } from './table/columns';
 import { DataTable } from './table/data-table';
+import { Toaster } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Transaksi Kas', href: route('trans-kas.index') }];
 
@@ -15,6 +16,7 @@ export default function TransKasIndex({ transKas }: { transKas: TransKas[] }) {
             <div className="mx-5 py-5">
                 <DataTable columns={columns()} data={transKas} />
             </div>
+            <Toaster />
         </AppLayout>
     );
 }
