@@ -6,7 +6,7 @@ use App\Imports\TransKasBankImport;
 use App\Models\TransKasBank;
 use App\Models\Karyawan;
 use App\Models\MasterCoa;
-use App\Models\CustomerAddress;
+use App\Models\customerAddress;
 use Maatwebsite\Excel\Facades\Excel;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
@@ -29,7 +29,7 @@ class TransKasBankController extends Controller
             'karyawans' => Karyawan::all(),
             'accountBank' => MasterCoa::all(),
             'accountBankLain' => MasterCoa::all(),
-            'customerAddresses' => CustomerAddress::all(),
+            'customerAddresses' => customerAddress::all(),
             'type' => 21 // Bank Masuk
         ]);
     }
@@ -40,7 +40,7 @@ class TransKasBankController extends Controller
             'karyawans' => Karyawan::all(),
             'accountBank' => MasterCoa::all(),
             'accountBankLain' => MasterCoa::all(),
-            'customerAddresses' => CustomerAddress::all(),
+            'customerAddresses' => customerAddress::all(),
             'type' => 22
         ]);
     }
@@ -88,7 +88,7 @@ class TransKasBankController extends Controller
             'karyawans' => Karyawan::all(),
             'accountBank' => MasterCoa::all(),
             'accountBankLain' => MasterCoa::all(),
-            'customerAddresses' => CustomerAddress::all(),
+            'customerAddresses' => customerAddress::all(),
         ]);
     }
 
