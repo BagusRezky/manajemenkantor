@@ -13,7 +13,7 @@ const breadcrumbs: BreadcrumbItem[] = [{ title: 'Transaksi Kas', href: route('tr
 export default function TransKasIndex({ transKasBanks }: { transKasBanks: TransKasBank[] }) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Transaksi Kas" />
+            <Head title="Transaksi Kas Bank" />
             <div className="mx-5 py-5">
                 <DataTable columns={columns()} data={transKasBanks} />
             </div>
