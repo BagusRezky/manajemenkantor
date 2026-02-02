@@ -5,7 +5,7 @@ namespace App\Imports;
 use App\Models\TransKas;
 use App\Models\Karyawan;
 use App\Models\MasterCoa;
-use App\Models\CustomerAddress;
+use App\Models\customerAddress;
 use Carbon\Carbon;
 use PhpOffice\PhpSpreadsheet\Shared\Date;
 use Maatwebsite\Excel\Concerns\ToModel;
@@ -47,7 +47,7 @@ class TransKasImport implements ToModel, WithHeadingRow
         $idCustomerAddress = null;
         $kodeCust = $row['kode_customer'] ?? null;
         if ($kodeCust && !in_array(strtoupper($kodeCust), ['', 'NULL', '-'])) {
-            $cust = CustomerAddress::where('kode_customer', $kodeCust)->first();
+            $cust = customerAddress::where('kode_customer', $kodeCust)->first();
             $idCustomerAddress = $cust ? $cust->id : null;
         }
 
