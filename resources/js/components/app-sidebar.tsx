@@ -134,6 +134,12 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         children: [
             { title: 'Invoice', icon: StickyNote, href: '/invoices', permission: 'invoices.index' },
             { title: 'Payment Entry Good', icon: Banknote, href: '/paymentEntryGoods', permission: 'paymentEntryGoods.index' },
+            { title: 'COA Class', icon: Banknote, href: '/masterCoaClasses', permission: 'masterCoaClasses.index' },
+            { title: 'Metode Bayar', icon: Banknote, href: '/metodeBayars', permission: 'metodeBayars.index' },
+            { title: 'Master COA', icon: Banknote, href: '/masterCoas', permission: 'masterCoas.index' },
+            { title: 'Transaksi Kas', icon: Banknote, href: '/trans-kas', permission: 'trans-kas.index' },
+            { title: 'Trans. Kas Bank', icon: Banknote, href: '/trans-kas-banks', permission: 'trans-kas-banks.index' },
+            { title: 'Operasional Pay', icon: Banknote, href: '/operasionalPays', permission: 'operasionalPays.index' },
         ],
     },
     {

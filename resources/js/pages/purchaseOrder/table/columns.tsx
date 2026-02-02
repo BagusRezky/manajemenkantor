@@ -16,49 +16,48 @@ import { toast } from 'sonner';
 
 // Function untuk generate PDF penerimaan barang
 const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false): void => {
-    // Inisialisasi dokumen PDF
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
+    const bottomMargin = 20;
 
+    // --- Helper Function untuk Handle Halaman Baru ---
+    const checkPageBreak = (currentY: number, neededHeight: number): number => {
+        if (currentY + neededHeight > pageHeight - bottomMargin) {
+            doc.addPage();
+            return 20; // Margin atas di halaman baru
+        }
+        return currentY;
+    };
+
+    // --- Header Section ---
     const logo = new Image();
     logo.src = '/images/logo-kantor.png';
     doc.addImage(logo, 'PNG', 14, 17, 17, 17);
 
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('PURCHASE ORDER', pageWidth - 15, 18, { align: 'right' });
-
-    doc.setFont('helvetica', 'bold');
     doc.text(purchaseOrder.no_po || '', pageWidth - 15, 25, { align: 'right' });
 
-    // Tambahkan header dengan border
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
     doc.rect(10, 10, pageWidth - 20, 30);
 
-    // Company Info
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('CV. Indigama Khatulistiwa', 34, 18);
-
     doc.setFontSize(10).setFont('helvetica', 'normal');
     doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 34, 23);
     doc.text('Pasuruan, Jawa Timur 67155', 34, 28);
     doc.text('Email: indigama.khatulistiwa01@gmail.com', 34, 33);
     doc.text('Telp: 081703101012', 34, 38);
 
-    // --- Bagian Informasi Purchase Order ---
-    doc.setLineWidth(0.5);
-
-    // 1. Siapkan data alamat yang dibungkus (wrapped)
+    // --- Informasi Supplier & PO ---
     const supplierAddress = purchaseOrder.supplier?.alamat_lengkap || '';
-    const maxAddressWidth = pageWidth - 85; // Jarak dari titik mulai (70) ke margin kanan
+    const maxAddressWidth = pageWidth - 85;
     const wrappedAddress = doc.splitTextToSize(supplierAddress, maxAddressWidth);
-
-    // 2. Hitung tinggi tambahan jika alamat lebih dari 1 baris
-    // Satu baris normal biasanya 7mm (selisih antar baris di kode Anda)
     const addressLineHeight = 5;
     const extraHeight = (wrappedAddress.length - 1) * addressLineHeight;
 
-    // 3. Gambar kotak dengan tinggi yang sudah disesuaikan (awal 35 + extraHeight)
     doc.rect(10, 45, pageWidth - 20, 35 + extraHeight);
 
     doc.setFontSize(10).setFont('helvetica', 'bold');
@@ -74,14 +73,12 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     doc.setFont('helvetica', 'normal');
     doc.text(purchaseOrder.supplier?.nama_suplier || '', 70, 59);
 
-    // Bagian Alamat Supplier (Dynamic Height)
     doc.setFont('helvetica', 'bold');
     doc.text('Alamat Supplier', 15, 66);
     doc.text(':', 65, 66);
     doc.setFont('helvetica', 'normal');
-    doc.text(wrappedAddress, 70, 66); // Menggunakan variabel wrappedAddress
+    doc.text(wrappedAddress, 70, 66);
 
-    // Mata Uang (Posisi Y disesuaikan dengan tinggi alamat)
     const currencyY = 73 + extraHeight;
     doc.setFont('helvetica', 'bold');
     doc.text('Mata Uang', 15, currencyY);
@@ -89,19 +86,18 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
     doc.setFont('helvetica', 'normal');
     doc.text(purchaseOrder.mata_uang || '', 70, currencyY);
 
-    // 4. Update Header tabel "DATA ITEM" agar mengikuti tinggi kotak di atasnya
+    // --- Table Section ---
     const tableHeaderY = 95 + extraHeight;
     doc.setFontSize(10).setFont('helvetica', 'bold');
     doc.rect(10, tableHeaderY, pageWidth - 20, 10);
     doc.text('DATA ITEM', pageWidth / 2, tableHeaderY + 6, { align: 'center' });
 
-    // Isi tabel item menggunakan autoTable
     const tableColumns = [
         { header: 'No', dataKey: 'no' },
         { header: 'Deskripsi', dataKey: 'item' },
         { header: 'Qty', dataKey: 'qty' },
         { header: 'Satuan', dataKey: 'satuan' },
-        { header: 'Tonase', dataKey: 'tonase' }, // Tambahkan kolom Tonase
+        { header: 'Tonase', dataKey: 'tonase' },
         { header: 'Harga', dataKey: 'hsatuan' },
         { header: 'Disc', dataKey: 'diskon' },
         { header: 'Total', dataKey: 'jumlah' },
@@ -109,50 +105,27 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
 
     const tableRows =
         purchaseOrder.items?.map((item, index) => {
-            // Kalkulasi tonase berdasarkan rumus dan kondisi
             let tonase = 0;
             const satuanName = item.satuan?.nama_satuan || '';
-
-            // Terapkan rumus hanya untuk satuan SHEET atau RIM
             if (satuanName === 'SHEET' || satuanName === 'RIM') {
                 const panjang = parseFloat(item.master_item?.panjang || '0');
                 const lebar = parseFloat(item.master_item?.lebar || '0');
                 const berat = parseFloat(item.master_item?.berat || '0');
-
-                // Rumus tonase: (PANJANG X LEBAR X BERAT) / 20,000,000
                 if (panjang && lebar && berat) {
                     tonase = (panjang * lebar * berat) / 20000000;
                 }
             }
-
             return {
                 no: (index + 1).toString(),
                 item: `${item.master_item?.nama_master_item || ''}`,
                 qty: item.qty_po || 0,
                 satuan: item.satuan?.nama_satuan || '-',
-                tonase: tonase.toFixed(4), // Format ke 4 angka desimal
+                tonase: tonase.toFixed(4),
                 hsatuan: formatRupiah(item.harga_satuan || 0),
                 diskon: formatToPercent(item.diskon_satuan),
                 jumlah: formatRupiah(item.jumlah || 0),
             };
         }) || [];
-
-    // Hitung total bruto (sum dari semua jumlah item)
-    const totalBruto = Number(purchaseOrder.items?.reduce((sum, item) => sum + (Number(item.jumlah) || 0), 0) || 0);
-
-    // Hitung PPN (total bruto × nilai ppn)
-    const ppnRate = Number(purchaseOrder.ppn || 0);
-    const ppnAmount = (totalBruto * ppnRate) / 100;
-
-    // Ambil nilai ONGKIR dan DP
-    const ongkir = Number(purchaseOrder.ongkir || 0);
-    const dp = Number(purchaseOrder.dp || 0);
-
-    // Hitung total akhir (total bruto + ppn + ongkir)
-    const totalAkhir = Number(totalBruto) + Number(ppnAmount) + Number(ongkir);
-
-    // Hitung sisa (total akhir - dp)
-    const sisa = Number(totalAkhir) - Number(dp);
 
     autoTable(doc, {
         columns: tableColumns,
@@ -160,136 +133,106 @@ const generatePurchaseOrderPdf = (purchaseOrder: PurchaseOrder, download = false
         startY: tableHeaderY + 10,
         margin: { left: 10, right: 10 },
         styles: { fontSize: 9, cellPadding: 2 },
-        headStyles: { fillColor: [40, 88, 247], textColor: [0, 0, 0], fontStyle: 'bold', lineColor: [0, 0, 0], lineWidth: 0.5 },
-        bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.5 },
+        headStyles: { fillColor: [40, 88, 247], textColor: [255, 255, 255], fontStyle: 'bold', lineColor: [0, 0, 0], lineWidth: 0.2 },
+        bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.2 },
         columnStyles: {
             no: { cellWidth: 10, halign: 'center' },
             item: { cellWidth: 45 },
-            qty: { cellWidth: 20, halign: 'center' },
-            satuan: { cellWidth: 20, halign: 'center' },
+            qty: { cellWidth: 15, halign: 'center' },
+            satuan: { cellWidth: 15, halign: 'center' },
             tonase: { cellWidth: 20, halign: 'center' },
-            hsatuan: { cellWidth: 25, halign: 'right' },
-            diskon: { cellWidth: 20, halign: 'right' },
-            jumlah: { cellWidth: 30, halign: 'right' },
+            hsatuan: { cellWidth: 30, halign: 'right' },
+            diskon: { cellWidth: 15, halign: 'right' },
+            jumlah: { cellWidth: 40, halign: 'right' },
         },
     });
 
-    // Ambil posisi Y setelah tabel
-    const tableEndY = (doc as any).lastAutoTable.finalY;
+    // --- Footer Content Logic (Note, Total, Terms, Signs) ---
+    let currentY = (doc as any).lastAutoTable.finalY + 10;
 
-    const noteStartX = 10;
-    const totalWidth = 80;
-    const totalStartX = pageWidth - 10 - totalWidth;
-    const baseY = tableEndY + 10;
-
+    // 1. Note Section
     const remarks =
         purchaseOrder.items
             ?.map((item, idx) => {
-                const remark =
-                    item.remark_item_po && item.remark_item_po.trim() !== ''
-                        ? item.remark_item_po
-                        : item.purchase_request_items?.catatan && item.purchase_request_items.catatan.trim() !== ''
-                          ? item.purchase_request_items.catatan
-                          : '';
-
+                const remark = item.remark_item_po?.trim() || item.purchase_request_items?.catatan?.trim() || '';
                 return remark ? `${idx + 1}. ${remark}` : '';
             })
             .filter((r) => r !== '') || [];
 
-    // --- Note Section ---
-    doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.text('Note:', noteStartX, baseY);
-
-    doc.setFont('helvetica', 'normal');
-    const lineHeight = 6;
-    remarks.forEach((remark, i) => {
-        doc.text(remark, noteStartX + 10, baseY + lineHeight * (i + 1), {
-            maxWidth: pageWidth / 2 - 20,
+    if (remarks.length > 0) {
+        currentY = checkPageBreak(currentY, 15);
+        doc.setFontSize(10).setFont('helvetica', 'bold');
+        doc.text('Note:', 10, currentY);
+        currentY += 6;
+        doc.setFont('helvetica', 'normal');
+        remarks.forEach((remark) => {
+            const wrappedRemark = doc.splitTextToSize(remark, pageWidth / 2 - 20);
+            const neededHeight = wrappedRemark.length * 5;
+            currentY = checkPageBreak(currentY, neededHeight);
+            doc.text(wrappedRemark, 15, currentY);
+            currentY += neededHeight + 2;
         });
-    });
+    }
 
-    // --- Total Section ---
-    doc.setFontSize(9).setFont('helvetica', 'bold');
-    let totalY = baseY;
+    // 2. Total Section
+    const totalBruto = Number(purchaseOrder.items?.reduce((sum, item) => sum + (Number(item.jumlah) || 0), 0) || 0);
+    const ppnAmount = (totalBruto * Number(purchaseOrder.ppn || 0)) / 100;
+    const totalAkhir = totalBruto + ppnAmount + Number(purchaseOrder.ongkir || 0);
+    const sisa = totalAkhir - Number(purchaseOrder.dp || 0);
 
-    // Total Bruto
-    doc.text('Total', totalStartX + 5, totalY);
-    doc.text(formatRupiah(totalBruto), pageWidth - 15, totalY, { align: 'right' });
-    doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
-    totalY += 7;
+    currentY = checkPageBreak(currentY, 50); // Estimasi tinggi blok total
+    const totalStartX = pageWidth - 90;
+    const totalWidth = 80;
 
-    // PPN
-    doc.text('PPN', totalStartX + 5, totalY);
-    doc.text(formatRupiah(ppnAmount), pageWidth - 15, totalY, { align: 'right' });
-    doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
-    totalY += 7;
+    const drawTotalLine = (label: string, value: number | string, y: number, isBold = false) => {
+        doc.setFont('helvetica', isBold ? 'bold' : 'normal').setFontSize(isBold ? 10 : 9);
+        doc.text(label, totalStartX + 2, y);
+        const valStr = typeof value === 'number' ? formatRupiah(value) : value;
+        doc.text(valStr, pageWidth - 15, y, { align: 'right' });
+        doc.line(totalStartX, y + 2, totalStartX + totalWidth, y + 2);
+        return y + 7;
+    };
 
-    // ONGKIR
-    doc.text('ONGKIR', totalStartX + 5, totalY);
-    doc.text(formatRupiah(ongkir), pageWidth - 15, totalY, { align: 'right' });
-    doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
-    totalY += 7;
+    currentY = drawTotalLine('Total', totalBruto, currentY);
+    currentY = drawTotalLine('PPN', ppnAmount, currentY);
+    currentY = drawTotalLine('ONGKIR', Number(purchaseOrder.ongkir || 0), currentY);
+    currentY = drawTotalLine('Total Akhir', totalAkhir, currentY, true);
+    currentY = drawTotalLine('DP', Number(purchaseOrder.dp || 0), currentY);
+    currentY = drawTotalLine('Sisa', sisa, currentY, true);
 
-    // Total Akhir
-    doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.text('Total Akhir', totalStartX + 5, totalY);
-    doc.text(formatRupiah(totalAkhir), pageWidth - 15, totalY, { align: 'right' });
-    doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
-    totalY += 7;
-
-    // DP
-    doc.setFontSize(9).setFont('helvetica', 'bold');
-    doc.text('DP', totalStartX + 5, totalY);
-    doc.text(formatRupiah(dp), pageWidth - 15, totalY, { align: 'right' });
-    doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
-    totalY += 7;
-
-    // Sisa
-    doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.text('Sisa', totalStartX + 5, totalY);
-    doc.text(formatRupiah(sisa), pageWidth - 15, totalY, { align: 'right' });
-    doc.line(totalStartX, totalY + 2, totalStartX + totalWidth, totalY + 2);
-
-    // --- Syarat dan Ketentuan ---
-    let termsY = totalY + 6;
-
-    doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.text('Penting !', 10, termsY);
-    termsY += 6;
-
-    doc.setFontSize(9).setFont('helvetica', 'bold');
-    doc.text('Syarat dan Ketentuan Pengiriman Barang:', 10, termsY);
-    termsY += 6;
-
-    doc.setFont('helvetica', 'normal');
-
-    // List poin syarat
-    const termsList = [
+    // 3. Syarat dan Ketentuan
+    currentY += 5;
+    const terms = [
         '1. Seluruh proses pengiriman barang harus disertai dengan surat jalan, nota, atau kwitansi.',
-        '2. Proses pelunasan pembayaran dilakukan selambat-lambatnya 30 hari setelah barang diterima. (Atau sesuai dengan kesepakatan diawal).',
-        '3. Waktu pengiriman dilakukan sesuai kesepakatan oleh Purchasing. (Jika ada perubahan jadwal pengiriman, harus segera menginformasi hal tersebut).',
-        '4. Jika ada ketidakcocokan atau ketidaksesuaian jumlah atau kualitas dengan barang yang dipesan, customer berhak mengembalikan barang tersebut kepada rekanan.',
+        '2. Proses pelunasan pembayaran dilakukan selambat-lambatnya 30 hari setelah barang diterima.',
+        '3. Waktu pengiriman dilakukan sesuai kesepakatan oleh Purchasing.',
+        '4. Jika ada ketidakcocokan kualitas/jumlah, customer berhak mengembalikan barang.',
     ];
 
-    termsList.forEach((t) => {
-        doc.text(t, 12, termsY, { maxWidth: pageWidth - 25 });
-        termsY += 8;
+    currentY = checkPageBreak(currentY, 40);
+    doc.setFont('helvetica', 'bold').setFontSize(10);
+    doc.text('Penting !', 10, currentY);
+    currentY += 6;
+    doc.text('Syarat dan Ketentuan Pengiriman Barang:', 10, currentY);
+    currentY += 6;
+    doc.setFont('helvetica', 'normal').setFontSize(9);
+    terms.forEach((t) => {
+        const wrappedT = doc.splitTextToSize(t, pageWidth - 25);
+        currentY = checkPageBreak(currentY, wrappedT.length * 5);
+        doc.text(wrappedT, 12, currentY);
+        currentY += wrappedT.length * 5 + 1;
     });
 
-    // Geser posisi tanda tangan agar tidak bertabrakan
-    const adjustedSignY = termsY + 15;
-
-    // --- Tanda Tangan ---
-    // const noteEndY = baseY + lineHeight * (remarks.length + 2);
-    const signY = adjustedSignY;
-
+    // 4. Tanda Tangan
+    currentY = checkPageBreak(currentY, 45);
+    const signY = currentY + 15;
     doc.setFontSize(10).setFont('helvetica', 'normal');
     doc.text('Dibuat Oleh,', 50, signY, { align: 'center' });
     doc.text('Disetujui Oleh,', pageWidth - 50, signY, { align: 'center' });
-    doc.text('( ..................................... )', 50, signY + 30, { align: 'center' });
-    doc.text('( ..................................... )', pageWidth - 50, signY + 30, { align: 'center' });
+    doc.text('( ..................................... )', 50, signY + 25, { align: 'center' });
+    doc.text('( ..................................... )', pageWidth - 50, signY + 25, { align: 'center' });
 
-    // Output PDF
+    // Output
     if (download) {
         doc.save(`PO_${purchaseOrder.no_po}.pdf`);
     } else {

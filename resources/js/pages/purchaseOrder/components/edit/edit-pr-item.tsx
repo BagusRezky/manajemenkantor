@@ -124,12 +124,7 @@ export default function EditPrItems({ poItems, setPoItems }: EditPrItemsProps) {
                                     <TableCell>{item.purchaseRequestItem?.catatan || item.purchase_request_items?.catatan || '-'}</TableCell>
                                     <TableCell>{item.remark_item_po || '-'}</TableCell>
                                     <TableCell>
-                                        <Button
-                                            variant="outline"
-                                            size="sm"
-                                            type="button" 
-                                            onClick={(e) => handleEditItem(item, e)}
-                                        >
+                                        <Button variant="outline" size="sm" type="button" onClick={(e) => handleEditItem(item, e)}>
                                             Edit
                                         </Button>
                                     </TableCell>

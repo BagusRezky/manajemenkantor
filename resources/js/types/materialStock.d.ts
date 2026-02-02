@@ -13,18 +13,6 @@ export interface MaterialStock {
     status: 'normal' | 'low_stock' | 'out_of_stock';
 }
 
-export interface MaterialStockDetail {
-    item: MasterItem;
-    onhand_stock: number;
-    outstanding_stock: number;
-    allocation_stock: number;
-    transactions: {
-        received: ReceivedTransaction[];
-        returned: ReturnedTransaction[];
-        requested: RequestTransaction[];
-    };
-}
-
 export interface ReceivedTransaction {
     id: string;
     qty_penerimaan: number;

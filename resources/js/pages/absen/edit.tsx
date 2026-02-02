@@ -34,7 +34,7 @@ export default function Edit({ absen }: Props) {
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Edit Absen" />
-            <div className='py-12'>
+            <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="p-2">
                         <Card>

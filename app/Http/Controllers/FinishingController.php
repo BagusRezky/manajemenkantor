@@ -33,7 +33,7 @@ class FinishingController extends Controller
      */
     public function create()
     {
-        $kartuInstruksiKerjas = KartuInstruksiKerja::all();
+        $kartuInstruksiKerjas = KartuInstruksiKerja::with(['salesOrder.finishGoodItem'])->get();
         $mesinFinishings = MesinFinishing::all();
         $operatorFinishings = OperatorFinishing::all();
 
@@ -101,7 +101,7 @@ class FinishingController extends Controller
      */
     public function edit(Finishing $finishing)
     {
-        $kartuInstruksiKerjas = KartuInstruksiKerja::all();
+        $kartuInstruksiKerjas = KartuInstruksiKerja::with(['salesOrder.finishGoodItem'])->get();
         $mesinFinishings = MesinFinishing::all();
         $operatorFinishings = OperatorFinishing::all();
 

@@ -25,7 +25,6 @@ export default function PembayaranPinjamans({ pembayaranPinjamans }: { pembayara
             <Head title="Pembayaran Pinjaman" />
 
             <div className="mx-5 py-5">
-                
                 {/* Ganti props */}
                 <DataTable columns={columns()} data={data} pembayaranPinjamans={pembayaranPinjamans} />
             </div>

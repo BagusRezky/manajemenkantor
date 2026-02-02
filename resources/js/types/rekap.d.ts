@@ -6,4 +6,3 @@ export type RekapPinjaman = {
     sisa: number;
     status: string;
 };
-

@@ -60,7 +60,13 @@ export default function EditPrinting({ printing, kartuInstruksiKerjas, mesins, o
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
                                     <Label>Surat Perintah Kerja (SPK) *</Label>
-                                    <Input value={kartuInstruksiKerjas.find(k => String(k.id) === data.id_kartu_instruksi_kerja)?.no_kartu_instruksi_kerja || ''} readOnly />
+                                    <Input
+                                        value={
+                                            kartuInstruksiKerjas.find((k) => String(k.id) === data.id_kartu_instruksi_kerja)
+                                                ?.no_kartu_instruksi_kerja || ''
+                                        }
+                                        readOnly
+                                    />
                                     {errors.id_kartu_instruksi_kerja && <p className="text-sm text-red-500">{errors.id_kartu_instruksi_kerja}</p>}
                                 </div>
 

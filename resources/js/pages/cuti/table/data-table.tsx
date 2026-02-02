@@ -3,6 +3,7 @@ import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 import { Button } from '@/components/ui/button';
+import { Cuti } from '@/types/cuti';
 import { Link } from '@inertiajs/react';
 import {
     ColumnDef,
@@ -14,7 +15,6 @@ import {
     useReactTable,
 } from '@tanstack/react-table';
 import React from 'react';
-import { Cuti } from '@/types/cuti';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];
@@ -22,7 +22,7 @@ interface DataTableProps<TData, TValue> {
     cutis: Cuti[];
 }
 
-export function DataTable<TData, TValue>({ columns, data}: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const table = useReactTable({
         data,
@@ -43,7 +43,7 @@ export function DataTable<TData, TValue>({ columns, data}: DataTableProps<TData,
                     onChange={(e) => table.getColumn('karyawan')?.setFilterValue(e.target.value)}
                     className="max-w-sm"
                 />
-                <div className='ml-auto flex space-x-2'>
+                <div className="ml-auto flex space-x-2">
                     <Link href={route('cutiTahunan.index')}>
                         <Button>Cuti Tahunan</Button>
                     </Link>

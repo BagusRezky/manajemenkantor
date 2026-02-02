@@ -83,7 +83,7 @@ class SalesOrderController extends Controller
             'klaim_kertas' => 'required|string',
             'dipesan_via' => 'required|string',
             'tipe_pesanan' => 'required|string',
-            'toleransi_pengiriman' => 'nullable|string',
+            'toleransi_pengiriman' => 'required|string',
             'catatan_colour_range' => 'nullable|string',
             'catatan' => 'nullable|string',
         ]);
@@ -163,7 +163,7 @@ class SalesOrderController extends Controller
             'klaim_kertas' => 'required|string',
             'dipesan_via' => 'required|string',
             'tipe_pesanan' => 'required|string',
-            'toleransi_pengiriman' => 'nullable|string',
+            'toleransi_pengiriman' => 'required|string',
             'catatan_colour_range' => 'nullable|string',
             'catatan' => 'nullable|string',
         ]);

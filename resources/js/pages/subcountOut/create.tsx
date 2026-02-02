@@ -96,8 +96,8 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
         }
 
         // Get display data
-       const selectedKik = kartuInstruksiKerjas.find((kik) => String(kik.id) === String(currentItem.id_kartu_instruksi_kerja));
-       const selectedUnit = units.find((unit) => String(unit.id) === String(currentItem.id_unit));
+        const selectedKik = kartuInstruksiKerjas.find((kik) => String(kik.id) === String(currentItem.id_kartu_instruksi_kerja));
+        const selectedUnit = units.find((unit) => String(unit.id) === String(currentItem.id_unit));
 
         const newItem: SubcountOutItem = {
             ...currentItem,
@@ -314,7 +314,7 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
                                                 items={kartuInstruksiKerjas.map((kik) => ({
                                                     key: String(kik.id),
                                                     value: String(kik.id),
-                                                    label: `${kik.no_kartu_instruksi_kerja}`,
+                                                    label: `${kik.no_kartu_instruksi_kerja} || ${kik.sales_order?.finish_good_item?.nama_barang || '-'}`,
                                                 }))}
                                                 value={currentItem.id_kartu_instruksi_kerja}
                                                 placeholder="Pilih SPK..."
@@ -417,18 +417,12 @@ export default function Create({ suppliers, kartuInstruksiKerjas, units }: Creat
                                                             <TableCell>{index + 1}</TableCell>
                                                             <TableCell>
                                                                 <div className="space-y-1">
-                                                                    <div className="font-medium">
-                                                                        {item.no_kik}
-                                                                    </div>
-                                                                    <div className="text-sm text-gray-500">
-                                                                        {item.nama_produk}
-                                                                    </div>
+                                                                    <div className="font-medium">{item.no_kik}</div>
+                                                                    <div className="text-sm text-gray-500">{item.nama_produk}</div>
                                                                 </div>
                                                             </TableCell>
                                                             <TableCell>
-                                                                <span className="font-medium">
-                                                                    {item.qty}
-                                                                </span>
+                                                                <span className="font-medium">{item.qty}</span>
                                                             </TableCell>
                                                             <TableCell>{item.nama_satuan || '-'}</TableCell>
                                                             <TableCell>{item.keterangan || '-'}</TableCell>

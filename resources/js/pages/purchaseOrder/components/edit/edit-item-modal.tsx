@@ -37,16 +37,11 @@ export default function EditItemModal({ isOpen, setIsOpen, currentItem, setCurre
 
                 let unitId = null;
 
-
                 if (currentItem.purchaseRequestItem?.master_item?.unit?.id) {
                     unitId = currentItem.purchaseRequestItem.master_item.unit.id;
-                }
-
-                else if (currentItem.purchase_request_items?.master_item?.unit?.id) {
+                } else if (currentItem.purchase_request_items?.master_item?.unit?.id) {
                     unitId = currentItem.purchase_request_items.master_item.unit.id;
-                }
-
-                else if (currentItem.master_item?.unit?.id) {
+                } else if (currentItem.master_item?.unit?.id) {
                     unitId = currentItem.master_item.unit.id;
                 }
 

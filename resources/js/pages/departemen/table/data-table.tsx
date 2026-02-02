@@ -1,4 +1,5 @@
 import { DataTablePagination } from '@/components/custom-pagination';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Departemen } from '@/types/departemen';
@@ -12,11 +13,10 @@ import {
     getPaginationRowModel,
     useReactTable,
 } from '@tanstack/react-table';
+import { Upload } from 'lucide-react';
 import React from 'react';
 import { toast } from 'sonner';
 import { DepartemenFormModal } from '../modal/add-modal';
-import { Button } from '@/components/ui/button';
-import { Upload } from 'lucide-react';
 
 interface DataTableProps<TData, TValue> {
     columns: ColumnDef<TData, TValue>[];

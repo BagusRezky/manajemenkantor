@@ -5,7 +5,7 @@ interface StatCardProps {
     title: string;
     value: number;
     icon: ReactNode;
-    colorClass: string; 
+    colorClass: string;
     accentColor: string;
 }
 

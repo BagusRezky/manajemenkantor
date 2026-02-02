@@ -49,6 +49,12 @@ use App\Http\Controllers\PengajuanPinjamanController;
 use App\Http\Controllers\CutiController;
 use App\Http\Controllers\GajiController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\MasterCoaClassController;
+use App\Http\Controllers\MetodeBayarController;
+use App\Http\Controllers\MasterCoaController;
+use App\Http\Controllers\TransKasController;
+use App\Http\Controllers\TransKasBankController;
+use App\Http\Controllers\OperasionalPayController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -453,6 +459,84 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
         Route::get('/gajis', [GajiController::class, 'index'])->name('gajis.index')->middleware('permission:gajis.index');
         Route::post('/gajis/send-slip', [GajiController::class, 'sendSlip'])->name('gajis.sendSlip')->middleware('permission:gajis.index');
+
+        Route::get('/masterCoaClasses', [MasterCoaClassController::class, 'index'])->name('masterCoaClasses.index')->middleware('permission:masterCoaClasses.index');
+        Route::get('/masterCoaClasses/create', [MasterCoaClassController::class, 'create'])->name('masterCoaClasses.create')->middleware('permission:masterCoaClasses.create');
+        Route::post('/masterCoaClasses', [MasterCoaClassController::class, 'store'])->name('masterCoaClasses.store')->middleware('permission:masterCoaClasses.store');
+        Route::get('/masterCoaClasses/{masterCoaClass}/edit', [MasterCoaClassController::class, 'edit'])->name('masterCoaClasses.edit')->middleware('permission:masterCoaClasses.edit');
+        Route::put('/masterCoaClasses/{masterCoaClass}', [MasterCoaClassController::class, 'update'])->name('masterCoaClasses.update')->middleware('permission:masterCoaClasses.update');
+        Route::delete('/masterCoaClasses/{masterCoaClass}', [MasterCoaClassController::class, 'destroy'])->name('masterCoaClasses.destroy')->middleware('permission:masterCoaClasses.destroy');
+
+        Route::get('/metodeBayars', [MetodeBayarController::class, 'index'])->name('metodeBayars.index')->middleware('permission:metodeBayars.index');
+        Route::get('/metodeBayars/create', [MetodeBayarController::class, 'create'])->name('metodeBayars.create')->middleware('permission:metodeBayars.create');
+        Route::post('/metodeBayars', [MetodeBayarController::class, 'store'])->name('metodeBayars.store')->middleware('permission:metodeBayars.store');
+        Route::get('/metodeBayars/{metodeBayar}/edit', [MetodeBayarController::class, 'edit'])->name('metodeBayars.edit')->middleware('permission:metodeBayars.edit');
+        Route::put('/metodeBayars/{metodeBayar}', [MetodeBayarController::class, 'update'])->name('metodeBayars.update')->middleware('permission:metodeBayars.update');
+        Route::delete('/metodeBayars/{metodeBayar}', [MetodeBayarController::class, 'destroy'])->name('metodeBayars.destroy')->middleware('permission:metodeBayars.destroy');
+
+        Route::get('/masterCoas', [MasterCoaController::class, 'index'])->name('masterCoas.index')->middleware('permission:masterCoas.index');
+        Route::get('/masterCoas/create', [MasterCoaController::class, 'create'])->name('masterCoas.create')->middleware('permission:masterCoas.create');
+        Route::post('/masterCoas', [MasterCoaController::class, 'store'])->name('masterCoas.store')->middleware('permission:masterCoas.store');
+        Route::get('/masterCoas/{masterCoa}/edit', [MasterCoaController::class, 'edit'])->name('masterCoas.edit')->middleware('permission:masterCoas.edit');
+        Route::put('/masterCoas/{masterCoa}', [MasterCoaController::class, 'update'])->name('masterCoas.update')->middleware('permission:masterCoas.update');
+        Route::delete('/masterCoas/{masterCoa}', [MasterCoaController::class, 'destroy'])->name('masterCoas.destroy')->middleware('permission:masterCoas.destroy');
+        Route::get('/masterCoas/{masterCoa}', [MasterCoaController::class, 'show'])->name('masterCoas.show')->middleware('permission:masterCoas.show');
+        Route::post('/masterCoas/import', [MasterCoaController::class, 'import'])->name('masterCoas.import')->middleware('permission:masterCoas.import');
+
+        Route::prefix('trans-kas')->name('trans-kas.')->group(function () {
+            Route::get('/', [TransKasController::class, 'index'])
+                ->name('index')
+                ->middleware('permission:trans-kas.index');
+            Route::get('/{transKas}/show', [TransKasController::class, 'show'])
+                ->name('show')
+                ->middleware('permission:trans-kas.show');
+            Route::get('/create/masuk', [TransKasController::class, 'createMasuk'])
+                ->name('create-masuk')
+                ->middleware('permission:trans-kas.create');
+            Route::get('/create/keluar', [TransKasController::class, 'createKeluar'])
+                ->name('create-keluar')
+                ->middleware('permission:trans-kas.create');
+            Route::post('/', [TransKasController::class, 'store'])
+                ->name('store')
+                ->middleware('permission:trans-kas.create');
+            Route::get('/{transKas}/edit', [TransKasController::class, 'edit'])
+                ->name('edit')
+                ->middleware('permission:trans-kas.edit');
+            Route::put('/{transKas}', [TransKasController::class, 'update'])
+                ->name('update')
+                ->middleware('permission:trans-kas.edit');
+            Route::post('/import', [TransKasController::class, 'import'])
+                ->name('import')
+                ->middleware('permission:trans-kas.import');
+            Route::delete('/{transKas}', [TransKasController::class, 'destroy'])
+                ->name('destroy')
+                ->middleware('permission:trans-kas.destroy');
+        });
+        Route::prefix('trans-kas-banks')->name('trans-kas-banks.')->group(function () {
+            Route::get('/', [TransKasBankController::class, 'index'])->name('index')->middleware('permission:trans-kas-banks.index');
+            Route::get('/{transKasBank}/show', [TransKasBankController::class, 'show'])->name('show')->middleware('permission:trans-kas-banks.show');
+
+            // Create dipisah Masuk & Keluar
+            Route::get('/create/masuk', [TransKasBankController::class, 'createMasuk'])->name('create-masuk')->middleware('permission:trans-kas-banks.create');
+            Route::get('/create/keluar', [TransKasBankController::class, 'createKeluar'])->name('create-keluar')->middleware('permission:trans-kas-banks.create');
+
+            Route::post('/', [TransKasBankController::class, 'store'])->name('store')->middleware('permission:trans-kas-banks.create');
+
+            Route::get('/{transKasBank}/edit', [TransKasBankController::class, 'edit'])->name('edit')->middleware('permission:trans-kas-banks.edit');
+            Route::put('/{transKasBank}', [TransKasBankController::class, 'update'])->name('update')->middleware('permission:trans-kas-banks.edit');
+            Route::post('/import', [TransKasBankController::class, 'import'])->name('import')->middleware('permission:trans-kas-banks.import');
+            Route::delete('/{transKasBank}', [TransKasBankController::class, 'destroy'])->name('destroy')->middleware('permission:trans-kas-banks.destroy');
+        });
+
+        Route::get('/operasionalPays', [OperasionalPayController::class, 'index'])->name('operasionalPays.index')->middleware('permission:operasionalPays.index');
+        Route::get('/operasionalPays/create', [OperasionalPayController::class, 'create'])->name('operasionalPays.create')->middleware('permission:operasionalPays.create');
+        Route::post('/operasionalPays', [OperasionalPayController::class, 'store'])->name('operasionalPays.store')->middleware('permission:operasionalPays.store');
+        Route::get('/operasionalPays/{operasionalPay}/edit', [OperasionalPayController::class, 'edit'])->name('operasionalPays.edit')->middleware('permission:operasionalPays.edit');
+        Route::put('/operasionalPays/{operasionalPay}', [OperasionalPayController::class, 'update'])->name('operasionalPays.update')->middleware('permission:operasionalPays.update');
+        Route::delete('/operasionalPays/{operasionalPay}', [OperasionalPayController::class, 'destroy'])->name('operasionalPays.destroy')->middleware('permission:operasionalPays.destroy');
+        Route::get('/operasionalPays/{operasionalPay}', [OperasionalPayController::class, 'show'])->name('operasionalPays.show')->middleware('permission:operasionalPays.show');
+        Route::get('/operasionalPays/{operasionalPay}/pdf', [OperasionalPayController::class, 'generatePdf'])->name('operasionalPays.pdf')->middleware('permission:operasionalPays.pdf');
+        Route::post('/operasionalPays/import', [OperasionalPayController::class, 'import'])->name('operasionalPays.import')->middleware('permission:operasionalPays.import');
     });
 });
 

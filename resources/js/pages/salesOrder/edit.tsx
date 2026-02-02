@@ -178,7 +178,13 @@ export default function Edit({ salesOrder, finishGoodItems, customerAddresses }:
 
                                         <div className="space-y-2">
                                             <Label htmlFor="eta_marketing">Tanggal PO</Label>
-                                            <Input id="eta_marketing" type='date' name="eta_marketing" value={data.eta_marketing} onChange={handleChange} />
+                                            <Input
+                                                id="eta_marketing"
+                                                type="date"
+                                                name="eta_marketing"
+                                                value={data.eta_marketing}
+                                                onChange={handleChange}
+                                            />
                                             {errors.eta_marketing && <p className="text-sm text-red-500">{errors.eta_marketing}</p>}
                                         </div>
 

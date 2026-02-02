@@ -11,11 +11,11 @@ import { PenerimaanBarang } from '@/types/penerimaanBarang';
 import { Head, useForm } from '@inertiajs/react';
 import React, { useEffect, useState } from 'react';
 
+import { SearchableSelect } from '@/components/search-select';
 import { Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Textarea } from '@headlessui/react';
 import { Edit } from 'lucide-react';
 import { toast } from 'sonner';
-import { Textarea } from '@headlessui/react';
-import { SearchableSelect } from '@/components/search-select';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Retur Eksternal', href: '/returEksternals' },

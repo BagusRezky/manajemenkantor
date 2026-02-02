@@ -114,4 +114,15 @@ class Karyawan extends Model
     {
         return $this->hasMany(Cuti::class, 'id_karyawan');
     }
+
+    // Relasi ke model MasterCoaClass
+    public function masterCoaClasses()
+    {
+        return $this->hasMany(MasterCoaClass::class, 'id_karyawan');
+    }
+
+    public function masterCoa()
+    {
+        return $this->hasMany(MasterCoa::class, 'id_karyawan');
+    }
 }

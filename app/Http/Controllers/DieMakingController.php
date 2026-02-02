@@ -27,7 +27,7 @@ class DieMakingController extends Controller
      */
     public function create()
     {
-        $kartuInstruksiKerjas = KartuInstruksiKerja::all();
+        $kartuInstruksiKerjas = KartuInstruksiKerja::with(['salesOrder.finishGoodItem'])->get();
         $mesinDiemakings = MesinDiemaking::all();
         $operatorDiemakings = OperatorDiemaking::all();
         return inertia('dieMaking/create', [

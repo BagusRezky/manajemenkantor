@@ -16,7 +16,7 @@ export default function AuthSplitLayout({ children, title, description }: PropsW
             <div className="bg-muted relative hidden h-full flex-col p-10 text-white lg:flex dark:border-r">
                 <div className="absolute inset-0 bg-zinc-900" />
                 <div className="relative z-20 flex items-center text-lg font-medium">
-                    <img src="/images/logo-kantor.png" alt='logo' className="mr-2 size-8 fill-current " />
+                    <img src="/images/logo-kantor.png" alt="logo" className="mr-2 size-8 fill-current" />
                     {name}
                 </div>
                 {quote && (

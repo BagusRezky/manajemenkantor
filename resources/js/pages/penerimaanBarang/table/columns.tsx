@@ -18,85 +18,106 @@ const getSatuanName = (item: any) => {
 
 // Function untuk generate PDF penerimaan barang
 const generatePenerimaanBarangPdf = (penerimaanBarang: PenerimaanBarang, download = false): void => {
-    // Inisialisasi dokumen PDF
     const doc = new jsPDF('p', 'mm', 'a4');
     const pageWidth = doc.internal.pageSize.getWidth();
+    const pageHeight = doc.internal.pageSize.getHeight();
 
-     const logo = new Image();
-     logo.src = '/images/logo-kantor.png';
-     doc.addImage(logo, 'PNG', 14, 17, 17, 17);
+    // --- Helper Function untuk Handle Halaman Baru ---
+    const checkPageBreak = (currentY: number, neededHeight: number): number => {
+        if (currentY + neededHeight > pageHeight - 20) {
+            doc.addPage();
+            return 20; // Mulai dari Y 20 di halaman baru
+        }
+        return currentY;
+    };
 
+    // Header Logo & Title
+    const logo = new Image();
+    logo.src = '/images/logo-kantor.png';
+    doc.addImage(logo, 'PNG', 14, 17, 17, 17);
 
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('PENERIMAAN BARANG', pageWidth - 15, 18, { align: 'right' });
-    // Tambahkan header dengan border
+
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
     doc.rect(10, 10, pageWidth - 20, 30);
 
     // Company Info
-   doc.setFontSize(14).setFont('helvetica', 'bold');
-   doc.text('CV. Indigama Khatulistiwa', 34, 18);
+    doc.setFontSize(14).setFont('helvetica', 'bold');
+    doc.text('CV. Indigama Khatulistiwa', 34, 18);
+    doc.setFontSize(10).setFont('helvetica', 'normal');
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 34, 23);
+    doc.text('Pasuruan, Jawa Timur 67155', 34, 28);
+    doc.text('Email: indigama.khatulistiwa01@gmail.com', 34, 33);
+    doc.text('Telp: 081703101012', 34, 38);
 
-   doc.setFontSize(10).setFont('helvetica', 'normal');
-   doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 34, 23);
-   doc.text('Pasuruan, Jawa Timur 67155', 34, 28);
-   doc.text('Email: indigama.khatulistiwa01@gmail.com', 34, 33);
-   doc.text('Telp: 081703101012', 34, 38);
+    // --- Bagian Informasi Penerimaan (Dengan Perbaikan No. PO) ---
+    const noPoText = penerimaanBarang.purchase_order?.no_po || '-';
+    const maxPoWidth = 45;
+    const wrappedPo = doc.splitTextToSize(noPoText, maxPoWidth);
 
-    // Informasi penerimaan
-    doc.setLineWidth(0.5);
-    doc.rect(10, 45, pageWidth - 20, 45);
+    // Hitung tinggi ekstra jika PO pecah jadi beberapa baris
+    const extraPoHeight = (wrappedPo.length - 1) * 5;
+    const infoBoxHeight = 45 + extraPoHeight;
 
+    // Gambar kotak utama
+    doc.rect(10, 45, pageWidth - 20, infoBoxHeight);
+
+    // KOLOM KIRI
     doc.setFontSize(10).setFont('helvetica', 'bold');
     doc.text('No.Penerimaan Barang', 15, 52);
-    doc.text(':', 65, 52);
+    doc.text(':', 60, 52);
     doc.setFont('helvetica', 'normal');
-    doc.text(penerimaanBarang.no_laporan_barang || '', 70, 52);
+    doc.text(penerimaanBarang.no_laporan_barang || '', 63, 52);
 
+    // KOLOM KANAN (Referensi No.PO) - Diperbaiki posisinya
     doc.setFont('helvetica', 'bold');
-    doc.text('Referensi (No.PO)', pageWidth - 85, 52);
-    doc.text(':', pageWidth - 50, 52);
+    doc.text('Referensi (No.PO)', pageWidth - 95, 52); // Geser label lebih ke kiri
+    doc.text(':', pageWidth - 63, 52);
     doc.setFont('helvetica', 'normal');
-    doc.text(penerimaanBarang.purchase_order?.no_po || '', pageWidth - 45, 52);
+    // Cetak wrappedPo di koordinat X yang sudah aman
+    doc.text(wrappedPo, pageWidth - 60, 52);
 
+    // BARIS BERIKUTNYA
     doc.setFont('helvetica', 'bold');
     doc.text('Tgl.Penerimaan', 15, 59);
-    doc.text(':', 65, 59);
+    doc.text(':', 60, 59);
     doc.setFont('helvetica', 'normal');
     const formattedDate = penerimaanBarang.tgl_terima_barang ? format(new Date(penerimaanBarang.tgl_terima_barang), 'dd-MM-yyyy') : '';
-    doc.text(formattedDate, 70, 59);
+    doc.text(formattedDate, 63, 59);
 
     doc.setFont('helvetica', 'bold');
     doc.text('Supplier', 15, 66);
-    doc.text(':', 65, 66);
+    doc.text(':', 60, 66);
     doc.setFont('helvetica', 'normal');
-    doc.text(penerimaanBarang.purchase_order?.supplier?.nama_suplier || '', 70, 66);
+    doc.text(penerimaanBarang.purchase_order?.supplier?.nama_suplier || '', 63, 66);
 
     doc.setFont('helvetica', 'bold');
     doc.text('No.Surat Jalan', 15, 73);
-    doc.text(':', 65, 73);
+    doc.text(':', 60, 73);
     doc.setFont('helvetica', 'normal');
-    doc.text(penerimaanBarang.no_surat_jalan || '', 70, 73);
+    doc.text(penerimaanBarang.no_surat_jalan || '', 63, 73);
 
     doc.setFont('helvetica', 'bold');
     doc.text('No.Pol / Nama Pengirim', 15, 80);
-    doc.text(':', 65, 80);
+    doc.text(':', 60, 80);
     doc.setFont('helvetica', 'normal');
-    doc.text(`${penerimaanBarang.nopol_kendaraan || ''} / ${penerimaanBarang.nama_pengirim || ''}`, 70, 80);
+    doc.text(`${penerimaanBarang.nopol_kendaraan || ''} / ${penerimaanBarang.nama_pengirim || ''}`, 63, 80);
 
     doc.setFont('helvetica', 'bold');
     doc.text('Keterangan', 15, 87);
-    doc.text(':', 65, 87);
+    doc.text(':', 60, 87);
     doc.setFont('helvetica', 'normal');
-    doc.text(penerimaanBarang.catatan_pengirim || '-', 70, 87);
+    doc.text(penerimaanBarang.catatan_pengirim || '-', 63, 87);
 
-    // Header tabel "DATA ITEM"
+    // Update Header Tabel agar mengikuti tinggi kotak
+    const tableHeaderY = 90 + extraPoHeight;
     doc.setFontSize(10).setFont('helvetica', 'bold');
-    doc.rect(10, 90, pageWidth - 20, 10);
-    doc.text('DATA ITEM', pageWidth / 2, 96, { align: 'center' });
+    doc.rect(10, tableHeaderY, pageWidth - 20, 10);
+    doc.text('DATA ITEM', pageWidth / 2, tableHeaderY + 6, { align: 'center' });
 
-    // Isi tabel item menggunakan autoTable
+    // Tabel Item
     const tableColumns = [
         { header: 'No', dataKey: 'no' },
         { header: 'Kode - Nama Item', dataKey: 'item' },
@@ -106,44 +127,43 @@ const generatePenerimaanBarangPdf = (penerimaanBarang: PenerimaanBarang, downloa
     ];
 
     const tableRows =
-        penerimaanBarang.items?.map((item, index) => {
-            return {
-                no: (index + 1).toString(),
-                item: `${item.purchase_order_item?.master_item?.kode_master_item || ''} - ${item.purchase_order_item?.master_item?.nama_master_item || ''}`,
-                qty: item.qty_penerimaan.toString(),
-                satuan: getSatuanName(item),
-                catatan: item.catatan_item || '-',
-            };
-        }) || [];
+        penerimaanBarang.items?.map((item, index) => ({
+            no: (index + 1).toString(),
+            item: `${item.purchase_order_item?.master_item?.kode_master_item || ''} - ${item.purchase_order_item?.master_item?.nama_master_item || ''}`,
+            qty: item.qty_penerimaan.toString(),
+            satuan: getSatuanName(item),
+            catatan: item.catatan_item || '-',
+        })) || [];
 
     autoTable(doc, {
         columns: tableColumns,
         body: tableRows,
-        startY: 100,
+        startY: tableHeaderY + 10,
         margin: { left: 10, right: 10 },
-        styles: { fontSize: 9 },
+        styles: { fontSize: 9, cellPadding: 2 },
         headStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], fontStyle: 'bold', lineColor: [0, 0, 0], lineWidth: 0.5 },
         bodyStyles: { fillColor: [255, 255, 255], textColor: [0, 0, 0], lineColor: [0, 0, 0], lineWidth: 0.5 },
         columnStyles: {
-            no: { cellWidth: 10 },
+            no: { cellWidth: 10, halign: 'center' },
             item: { cellWidth: 70 },
-            qty: { cellWidth: 25, halign: 'right' },
+            qty: { cellWidth: 20, halign: 'right' },
             satuan: { cellWidth: 25 },
             catatan: { cellWidth: 'auto' },
         },
     });
 
-    // Ambil posisi Y setelah tabel
-    const tableEndY = (doc as any).lastAutoTable.finalY + 20;
+    // --- Bagian Tanda Tangan ---
+    let currentY = (doc as any).lastAutoTable.finalY + 15;
 
-    // Tanda tangan
+    // Cek apakah sisa halaman cukup untuk tanda tangan (butuh sekitar 40mm)
+    currentY = checkPageBreak(currentY, 40);
+
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Pengirim,', 50, tableEndY, { align: 'center' });
-    doc.text('Penerima,', pageWidth - 50, tableEndY, { align: 'center' });
+    doc.text('Pengirim,', 50, currentY, { align: 'center' });
+    doc.text('Penerima,', pageWidth - 50, currentY, { align: 'center' });
 
-    // Tempat tanda tangan
-    doc.text('( ..................................... )', 50, tableEndY + 30, { align: 'center' });
-    doc.text('( ..................................... )', pageWidth - 50, tableEndY + 30, { align: 'center' });
+    doc.text('( ..................................... )', 50, currentY + 25, { align: 'center' });
+    doc.text('( ..................................... )', pageWidth - 50, currentY + 25, { align: 'center' });
 
     // Output PDF
     if (download) {

@@ -300,7 +300,13 @@ export default function Create({ salesOrders, latestKikId }: CreateProps) {
                                         {/* Tanggal Estimasi Selesai */}
                                         <div className="space-y-2">
                                             <Label htmlFor="tgl_estimasi_selesai">Tanggal Estimasi Selesai</Label>
-                                            <Input id="tgl_estimasi_selesai" name="tgl_estimasi_selesai" type="date" value={data.tgl_estimasi_selesai} onChange={handleChange} />
+                                            <Input
+                                                id="tgl_estimasi_selesai"
+                                                name="tgl_estimasi_selesai"
+                                                type="date"
+                                                value={data.tgl_estimasi_selesai}
+                                                onChange={handleChange}
+                                            />
                                             {errors.tgl_estimasi_selesai && <p className="text-sm text-red-500">{errors.tgl_estimasi_selesai}</p>}
                                         </div>
                                         <div className="space-y-2">

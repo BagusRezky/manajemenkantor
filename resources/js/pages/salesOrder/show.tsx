@@ -43,7 +43,6 @@ export default function Show({ salesOrder }: ShowProps) {
                     </div>
 
                     <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
-
                         <Card className="md:col-span-1">
                             <CardHeader>
                                 <CardTitle className="text-lg">Informasi Pesanan</CardTitle>
@@ -124,7 +123,7 @@ export default function Show({ salesOrder }: ShowProps) {
                                                     <TableCell>{bom.departemen?.nama_departemen || '-'}</TableCell>
                                                     <TableCell className="text-center">{bom.qty}</TableCell>
                                                     <TableCell>{bom.master_item?.unit?.nama_satuan || '-'}</TableCell>
-                                                    <TableCell className="text-center ">{bom.waste}</TableCell>
+                                                    <TableCell className="text-center">{bom.waste}</TableCell>
                                                     <TableCell className="text-muted-foreground">{bom.keterangan || '-'}</TableCell>
                                                 </TableRow>
                                             ))

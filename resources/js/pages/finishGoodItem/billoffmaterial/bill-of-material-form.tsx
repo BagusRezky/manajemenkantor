@@ -7,10 +7,10 @@ import { MasterItem } from '@/types/masterItem';
 
 import { SearchableSelect } from '@/components/search-select';
 
+import { Textarea } from '@/components/ui/textarea';
 import { BillOfMaterial } from '@/types/billOfMaterial';
 import { useState } from 'react';
 import { toast } from 'sonner';
-import { Textarea } from '@/components/ui/textarea';
 
 interface BillOfMaterialFormProps {
     masterItems: MasterItem[];
@@ -212,7 +212,7 @@ export default function BillOfMaterialForm({ masterItems, departements, bomItems
                             <Input id="qty" name="qty" type="number" step={0.01} value={currentBomItem.qty} onChange={handleInputChange} />
                         </div>
 
-                        <div >
+                        <div>
                             <Label htmlFor="keterangan">Keterangan</Label>
                             <Textarea id="keterangan" name="keterangan" value={currentBomItem.keterangan} onChange={handleInputChange} />
                         </div>

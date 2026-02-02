@@ -9,9 +9,9 @@ import { BreadcrumbItem } from '@/types';
 import { Invoice } from '@/types/invoice';
 import { SuratJalan } from '@/types/suratJalan';
 import { Head, Link, useForm } from '@inertiajs/react';
-import { FormEventHandler, useState, useEffect } from 'react';
-import { toast } from 'sonner';
 import { ArrowLeft, Save } from 'lucide-react';
+import { FormEventHandler, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Invoice', href: '/invoices' },
@@ -68,7 +68,7 @@ export default function Edit({ invoice, suratJalans }: EditProps) {
         const ongkir = Number(data.ongkos_kirim || 0);
         const dp = Number(data.uang_muka || 0);
 
-        const subtotal = (qty * harga) - disc;
+        const subtotal = qty * harga - disc;
         const ppnNominal = (subtotal * ppnRate) / 100;
         const total = subtotal + ppnNominal + ongkir;
         const sisa = total - dp;

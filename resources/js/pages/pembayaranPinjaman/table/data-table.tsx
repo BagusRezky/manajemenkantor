@@ -50,7 +50,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                     onChange={(event) => table.getColumn('no_bukti_pembayaran')?.setFilterValue(event.target.value)}
                     className="max-w-sm"
                 />
-                <div className='ml-auto flex space-x-2'>
+                <div className="ml-auto flex space-x-2">
                     <Link href={route('pembayaranPinjamans.rekap')}>
                         <Button>Rekap</Button>
                     </Link>

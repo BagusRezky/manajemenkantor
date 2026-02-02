@@ -225,7 +225,7 @@ export default function Edit({ subcountOut, suppliers, kartuInstruksiKerjas, uni
                                             <Label>No. SPK / KIK</Label>
                                             <SearchableSelect
                                                 items={kartuInstruksiKerjas.map((k) => ({
-                                                    key: k.id, value: k.id, label: k.no_kartu_instruksi_kerja
+                                                    key: k.id, value: k.id, label: `${k.no_kartu_instruksi_kerja} || ${k.sales_order?.finish_good_item?.nama_barang || '-'}`
                                                 }))}
                                                 value={currentItem.id_kartu_instruksi_kerja}
                                                 onChange={(v) => setCurrentItem({ ...currentItem, id_kartu_instruksi_kerja: v })}

@@ -22,20 +22,22 @@ class GajiController extends Controller
      */
     public function index(Request $request)
     {
-        $bulan = $request->input('bulan', date('m'));
-        $tahun = $request->input('tahun', date('Y'));
+        // Jika tidak ada input, default ke awal & akhir bulan ini
+        $startDate = $request->input('start_date', Carbon::now()->startOfMonth()->toDateString());
+        $endDate = $request->input('end_date', Carbon::now()->endOfMonth()->toDateString());
 
-        $startDate = Carbon::createFromDate($tahun, $bulan, 1)->startOfDay()->toDateTimeString();
-        $endDate = Carbon::createFromDate($tahun, $bulan, 1)->endOfMonth()->endOfDay()->toDateTimeString();
+        // Pastikan jamnya mencakup seluruh hari
+        $startDateTime = Carbon::parse($startDate)->startOfDay()->toDateTimeString();
+        $endDateTime = Carbon::parse($endDate)->endOfDay()->toDateTimeString();
 
         $karyawans = Karyawan::all();
 
-        $absens = Absen::whereBetween('tanggal_scan', [$startDate, $endDate])->get();
-        $lemburs = Lembur::with('karyawan')->whereBetween('tanggal_lembur', [$startDate, $endDate])->get();
-        $bonusList = BonusKaryawan::whereBetween('tanggal_bonus', [$startDate, $endDate])->get();
-        $cutis = Cuti::with('karyawan')->whereBetween('tanggal_cuti', [$startDate, $endDate])->get();
-        $izins = Izin::whereBetween('tanggal_izin', [$startDate, $endDate])->get();
-        $potonganList = PotonganTunjangan::whereBetween('periode_payroll', [$startDate, $endDate])->get();
+        $absens = Absen::whereBetween('tanggal_scan', [$startDateTime, $endDateTime])->get();
+        $lemburs = Lembur::with('karyawan')->whereBetween('tanggal_lembur', [$startDateTime, $endDateTime])->get();
+        $bonusList = BonusKaryawan::whereBetween('tanggal_bonus', [$startDateTime, $endDateTime])->get();
+        $cutis = Cuti::with('karyawan')->whereBetween('tanggal_cuti', [$startDateTime, $endDateTime])->get();
+        $izins = Izin::whereBetween('tanggal_izin', [$startDateTime, $endDateTime])->get();
+        $potonganList = PotonganTunjangan::whereBetween('periode_payroll', [$startDateTime, $endDateTime])->get();
 
         $rekap = $karyawans->map(function ($karyawan) use (
             $absens,
@@ -104,7 +106,7 @@ class GajiController extends Controller
                 'total_lembur' => $totalLemburFormat,
                 'total_cuti_semua' => $cutiKaryawan->count(),
                 'cuti_tahunan_digunakan' => $cutiKaryawan->where('jenis_cuti', 'Cuti Tahunan')->count(),
-                'gaji_pokok' => $gajiPokokMaster, // Tetap statis sesuai master
+                'gaji_pokok' => $gajiPokokMaster,
                 'tunjangan_kompetensi' => $karyawan->tunjangan_kompetensi ?? 0,
                 'potongan_kompetensi' => $potKompetensi,
                 'tunjangan_jabatan' => $karyawan->tunjangan_jabatan ?? 0,
@@ -118,8 +120,10 @@ class GajiController extends Controller
 
         return Inertia::render('gaji/gajis', [
             'rekap' => $rekap,
-            'bulan' => $bulan,
-            'tahun' => $tahun,
+            'filters' => [
+                'start_date' => $startDate,
+                'end_date' => $endDate,
+            ],
         ]);
     }
 
@@ -171,7 +175,7 @@ class GajiController extends Controller
             $totalAlpha = $izinKaryawan->where('jenis_izin', 'Alpha')->count();
 
             // --- 3. LOGIKA CUTI ---
-            
+
             $cutiKaryawan = $cutis->where('karyawan.id', $karyawan->id);
             $tanggalCutiHadir = $cutiKaryawan->map(fn($c) => date('Y-m-d', strtotime($c->tanggal_cuti)))->toArray();
 
