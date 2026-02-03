@@ -20,7 +20,7 @@ class TransKasController extends Controller
     public function index()
     {
         return Inertia::render('transKas/transKas', [
-            'transKas' => TransKas::with(['karyawan', 'accountKas', 'accountKasLain', 'customerAddress'])->orderBy('id', 'desc')->get(),
+            'transKas' => TransKas::with(['karyawan', 'accountKas', 'accountKasLain', 'customerAddress'])->orderBy('tanggal_transaksi', 'desc')->get(),
         ]);
     }
 
