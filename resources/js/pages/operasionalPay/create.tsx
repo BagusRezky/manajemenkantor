@@ -23,7 +23,7 @@ export default function Create({ karyawans, accountKas, accountBeban }: {
         id_karyawan: '',
         id_account_kas: '',
         id_account_beban: '',
-        no_bukti: 'BOPK/',
+
         gudang: 'UGRMS',
         periode: new Date().getFullYear(),
         tanggal_transaksi: new Date().toISOString().split('T')[0],
@@ -65,10 +65,7 @@ export default function Create({ karyawans, accountKas, accountBeban }: {
                                         onChange={(e) => setData('tanggal_transaksi', e.target.value)}
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label>No. Bukti</Label>
-                                    <Input value={data.no_bukti} onChange={(e) => setData('no_bukti', e.target.value)} />
-                                </div>
+                               
                                 <div className="space-y-2">
                                     <Label>Periode</Label>
                                     <Input type="number" value={data.periode} onChange={(e) => setData('periode', Number(e.target.value))} />

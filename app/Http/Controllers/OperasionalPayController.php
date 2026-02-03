@@ -8,6 +8,7 @@ use App\Models\MasterCoa;
 use App\Imports\OperasionalPayImport;
 use Maatwebsite\Excel\Facades\Excel;
 use Inertia\Inertia;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class OperasionalPayController extends Controller
@@ -18,7 +19,7 @@ class OperasionalPayController extends Controller
     public function index()
     {
         return Inertia::render('operasionalPay/operasionalPays', [
-            'operasionalPays' => OperasionalPay::with(['karyawan', 'accountKas', 'accountBeban'])->get(),
+            'operasionalPays' => OperasionalPay::with(['karyawan', 'accountKas', 'accountBeban'])->orderBy('no_bukti', 'desc')->get(),
         ]);
     }
 
@@ -43,7 +44,7 @@ class OperasionalPayController extends Controller
             'id_karyawan'       => 'nullable|exists:karyawans,id',
             'id_account_kas'    => 'nullable|exists:master_coas,id',
             'id_account_beban'  => 'nullable|exists:master_coas,id',
-            'no_bukti'          => 'required|string|max:255',
+
             'gudang'            => 'required|string|max:255',
             'periode'           => 'required|integer',
             'tanggal_transaksi' => 'nullable|date',
@@ -57,9 +58,46 @@ class OperasionalPayController extends Controller
             'status'            => 'required|boolean',
         ]);
 
+        $validated['no_bukti'] = $this->generateNoBuktiBOPK(
+            $validated['tanggal_transaksi']
+        );
+
         OperasionalPay::create($validated);
 
         return redirect()->route('operasionalPays.index')->with('success', 'Data Operasional berhasil disimpan');
+    }
+
+    private function generateNoBuktiBOPK(string $tanggalTransaksi): string
+    {
+        $date = Carbon::parse($tanggalTransaksi);
+
+
+        $prefix = 'BOPK';
+
+        $year  = $date->year;
+        $month = $date->month;
+
+        $yymm = $date->format('ym');
+
+        $kode = '00';
+
+        $last = OperasionalPay::whereYear('tanggal_transaksi', $year)
+            ->whereMonth('tanggal_transaksi', $month)
+            ->orderBy('no_bukti', 'desc')
+            ->first();
+
+        if ($last) {
+            preg_match('/(\d{4})$/', $last->no_bukti, $matches);
+            $lastNumber = isset($matches[1]) ? (int) $matches[1] : 0;
+            $urut = $lastNumber + 1;
+        } else {
+            // 🔁 reset karena bulan / tahun berbeda
+            $urut = 1;
+        }
+
+        $urutFormatted = str_pad($urut, 4, '0', STR_PAD_LEFT);
+
+        return "{$prefix}/{$yymm}/{$kode}-{$urutFormatted}";
     }
 
     /**
