@@ -62,7 +62,7 @@ export default function EditMasuk({ item, karyawans, customerAddresses, accountK
                                 {/* No. Bukti */}
                                 <div className="space-y-2">
                                     <Label>No. Bukti</Label>
-                                    <Input value={data.no_bukti} onChange={(e) => setData('no_bukti', e.target.value)} />
+                                    <Input value={data.no_bukti} onChange={(e) => setData('no_bukti', e.target.value)} readOnly/>
                                     {errors.no_bukti && <p className="text-sm text-red-500">{errors.no_bukti}</p>}
                                 </div>
 
@@ -90,7 +90,7 @@ export default function EditMasuk({ item, karyawans, customerAddresses, accountK
                                     />
                                     {errors.tanggal_transaksi && <p className="text-sm text-red-500">{errors.tanggal_transaksi}</p>}
                                 </div>
-                                
+
                                 {/* Karyawan */}
                                 <div className="space-y-2">
                                     <Label>Karyawan</Label>
