@@ -9,6 +9,7 @@ use App\Models\MasterCoa;
 use App\Models\customerAddress;
 use Maatwebsite\Excel\Facades\Excel;
 use Inertia\Inertia;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TransKasBankController extends Controller
@@ -19,7 +20,7 @@ class TransKasBankController extends Controller
     public function index()
     {
         return Inertia::render('transKasBank/transKasBanks', [
-            'transKasBanks' => TransKasBank::with(['karyawan', 'accountBank', 'accountBankLain', 'customerAddress'])->get(),
+            'transKasBanks' => TransKasBank::with(['karyawan', 'accountBank', 'accountBankLain', 'customerAddress'])->orderBy('tanggal_transaksi', 'desc')->get(),
         ]);
     }
 
@@ -53,7 +54,6 @@ class TransKasBankController extends Controller
             'id_account_bank_lain' => 'nullable|exists:master_coas,id',
             'id_customer_address' => 'nullable|exists:customer_addresses,id',
             'transaksi'           => 'required|in:21,22',
-            'no_bukti'            => 'required|string|max:255',
             'gudang'              => 'required|string',
             'periode'             => 'required|integer',
             'tanggal_transaksi'   => 'nullable|date',
@@ -67,8 +67,51 @@ class TransKasBankController extends Controller
             'status'              => 'required|boolean',
         ]);
 
+        $validated['no_bukti'] = $this->generateNoBukti(
+            $validated['transaksi'],
+            $validated['tanggal_transaksi']
+        );
+
         TransKasBank::create($validated);
         return redirect()->route('trans-kas-banks.index')->with('success', 'Transaksi Bank berhasil disimpan');
+    }
+
+
+    private function generateNoBukti(int $transaksi, string $tanggalTransaksi): string
+    {
+        $date = Carbon::parse($tanggalTransaksi);
+
+        // Prefix transaksi
+        $prefix = $transaksi === 21 ? 'BBM' : 'BBK';
+
+
+        $year  = $date->year;
+        $month = $date->month;
+
+        $yymm = $date->format('ym');
+
+
+        $kode = '00';
+
+
+        $last = TransKasBank::where('transaksi', $transaksi)
+            ->whereYear('tanggal_transaksi', $year)
+            ->whereMonth('tanggal_transaksi', $month)
+            ->orderBy('no_bukti', 'desc')
+            ->first();
+
+        if ($last) {
+            preg_match('/(\d{4})$/', $last->no_bukti, $matches);
+            $lastNumber = isset($matches[1]) ? (int) $matches[1] : 0;
+            $urut = $lastNumber + 1;
+        } else {
+
+            $urut = 1;
+        }
+
+        $urutFormatted = str_pad($urut, 4, '0', STR_PAD_LEFT);
+
+        return "{$prefix}/{$yymm}/{$kode}-{$urutFormatted}";
     }
 
     public function show(TransKasBank $transKasBank)

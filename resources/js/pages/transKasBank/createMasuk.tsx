@@ -27,7 +27,6 @@ export default function CreateMasuk({  accountBank, accountBankLain, customerAdd
         id_account_bank: '',
         id_account_bank_lain: '',
         id_customer_address: '',
-        no_bukti: 'BBM/',
         gudang: '',
         periode: new Date().getFullYear(),
         tanggal_transaksi: new Date().toISOString().split('T')[0],
@@ -66,10 +65,6 @@ export default function CreateMasuk({  accountBank, accountBankLain, customerAdd
                                         value={data.tanggal_transaksi}
                                         onChange={(e) => setData('tanggal_transaksi', e.target.value)}
                                     />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>No. Bukti</Label>
-                                    <Input value={data.no_bukti} onChange={(e) => setData('no_bukti', e.target.value)} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Account Bank (Debit)</Label>

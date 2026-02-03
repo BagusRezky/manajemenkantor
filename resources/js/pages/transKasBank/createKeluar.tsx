@@ -29,7 +29,6 @@ export default function CreateKeluar({ karyawans,  accountBank, accountBankLain,
         id_account_bank: '',
         id_account_bank_lain: '',
         id_customer_address: '',
-        no_bukti: 'BBK/',
         gudang: 'UGRMS',
         periode: new Date().getFullYear(),
         tanggal_transaksi: new Date().toISOString().split('T')[0],
@@ -98,10 +97,6 @@ export default function CreateKeluar({ karyawans,  accountBank, accountBankLain,
                                         onChange={(val) => setData('id_account_bank_lain', val)}
                                         placeholder="Pilih Account Lain"
                                     />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>No. Bukti</Label>
-                                    <Input value={data.no_bukti} onChange={(e) => setData('no_bukti', e.target.value)} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Nominal</Label>
