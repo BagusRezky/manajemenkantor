@@ -35,7 +35,7 @@ export default function CreateMasuk({
         id_account_kas: '',
         id_account_kas_lain: '',
         id_customer_address: '',
-        no_bukti: 'BKM/',
+
         gudang: '',
         periode: new Date().getFullYear(),
         tanggal_transaksi: new Date().toISOString().split('T')[0],
@@ -60,10 +60,7 @@ export default function CreateMasuk({
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                <div className="space-y-2">
-                                    <Label>No. Bukti</Label>
-                                    <Input value={data.no_bukti} onChange={(e) => setData('no_bukti', e.target.value)} placeholder="BKM/" />
-                                </div>
+                                
                                 <div className="space-y-2">
                                     <Label>Gudang</Label>
                                     <Input value={data.gudang} onChange={(e) => setData('gudang', e.target.value)} placeholder="Gudang A" />
