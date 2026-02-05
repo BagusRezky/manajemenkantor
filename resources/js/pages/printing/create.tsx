@@ -164,6 +164,7 @@ export default function CreatePrinting({ kartuInstruksiKerjas, mesins, operators
                                         <SelectContent>
                                             <SelectItem value="Potong">Potong</SelectItem>
                                             <SelectItem value="Proses Cetak">Proses Cetak</SelectItem>
+                                            <SelectItem value="Proses Cetak 2">Proses Cetak 2</SelectItem>
                                         </SelectContent>
                                     </Select>
                                     {errors.tahap_printing && <div className="text-sm text-red-600">{errors.tahap_printing}</div>}
