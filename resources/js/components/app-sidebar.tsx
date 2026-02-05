@@ -140,6 +140,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             { title: 'Transaksi Kas', icon: Banknote, href: '/trans-kas', permission: 'trans-kas.index' },
             { title: 'Trans. Kas Bank', icon: Banknote, href: '/trans-kas-banks', permission: 'trans-kas-banks.index' },
             { title: 'Operasional Pay', icon: Banknote, href: '/operasionalPays', permission: 'operasionalPays.index' },
+            { title: 'PO Billing', icon: Banknote, href: '/poBillings', permission: 'poBillings.index' },
         ],
     },
     {

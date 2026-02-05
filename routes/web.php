@@ -55,6 +55,7 @@ use App\Http\Controllers\MasterCoaController;
 use App\Http\Controllers\TransKasController;
 use App\Http\Controllers\TransKasBankController;
 use App\Http\Controllers\OperasionalPayController;
+use App\Http\Controllers\PoBillingController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -537,6 +538,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/operasionalPays/{operasionalPay}', [OperasionalPayController::class, 'show'])->name('operasionalPays.show')->middleware('permission:operasionalPays.show');
         Route::get('/operasionalPays/{operasionalPay}/pdf', [OperasionalPayController::class, 'generatePdf'])->name('operasionalPays.pdf')->middleware('permission:operasionalPays.pdf');
         Route::post('/operasionalPays/import', [OperasionalPayController::class, 'import'])->name('operasionalPays.import')->middleware('permission:operasionalPays.import');
+
+        Route::get('/poBillings', [PoBillingController::class, 'index'])->name('poBillings.index')->middleware('permission:poBillings.index');
+        Route::get('/poBillings/create', [PoBillingController::class, 'create'])->name('poBillings.create')->middleware('permission:poBillings.create');
+        Route::post('/poBillings', [PoBillingController::class, 'store'])->name('poBillings.store')->middleware('permission:poBillings.store');
+        Route::get('/poBillings/{poBilling}/edit', [PoBillingController::class, 'edit'])->name('poBillings.edit')->middleware('permission:poBillings.edit');
+        Route::put('/poBillings/{poBilling}', [PoBillingController::class, 'update'])->name('poBillings.update')->middleware('permission:poBillings.update');
+        Route::delete('/poBillings/{poBilling}', [PoBillingController::class, 'destroy'])->name('poBillings.destroy')->middleware('permission:poBillings.destroy');
+        Route::get('/poBillings/{poBilling}', [PoBillingController::class, 'show'])->name('poBillings.show')->middleware('permission:poBillings.show');
+        Route::post('/poBillings/import', [PoBillingController::class, 'import'])->name('poBillings.import')->middleware('permission:poBillings.import');
     });
 });
 
