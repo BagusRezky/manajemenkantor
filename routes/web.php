@@ -57,6 +57,7 @@ use App\Http\Controllers\TransKasBankController;
 use App\Http\Controllers\OperasionalPayController;
 use App\Http\Controllers\PoBillingController;
 use App\Http\Controllers\TransPaymentController;
+use App\Http\Controllers\TransFakturController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -557,6 +558,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/transPayments/{transPayment}', [TransPaymentController::class, 'destroy'])->name('transPayments.destroy')->middleware('permission:transPayments.destroy');
         Route::get('/transPayments/{transPayment}', [TransPaymentController::class, 'show'])->name('transPayments.show')->middleware('permission:transPayments.show');
         Route::post('/transPayments/import', [TransPaymentController::class, 'import'])->name('transPayments.import')->middleware('permission:transPayments.import');
+
+        Route::get('/transFakturs', [TransFakturController::class, 'index'])->name('transFakturs.index')->middleware('permission:transFakturs.index');
+        Route::get('/transFakturs/create', [TransFakturController::class, 'create'])->name('transFakturs.create')->middleware('permission:transFakturs.create');
+        Route::post('/transFakturs', [TransFakturController::class, 'store'])->name('transFakturs.store')->middleware('permission:transFakturs.store');
+        Route::get('/transFakturs/{transFaktur}/edit', [TransFakturController::class, 'edit'])->name('transFakturs.edit')->middleware('permission:transFakturs.edit');
+        Route::put('/transFakturs/{transFaktur}', [TransFakturController::class, 'update'])->name('transFakturs.update')->middleware('permission:transFakturs.update');
+        Route::delete('/transFakturs/{transFaktur}', [TransFakturController::class, 'destroy'])->name('transFakturs.destroy')->middleware('permission:transFakturs.destroy');
+        Route::get('/transFakturs/{transFaktur}', [TransFakturController::class, 'show'])->name('transFakturs.show')->middleware('permission:transFakturs.show');
+        Route::post('/transFakturs/import', [TransFakturController::class, 'import'])->name('transFakturs.import')->middleware('permission:transFakturs.import');
     });
 });
 
