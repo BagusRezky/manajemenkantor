@@ -22,6 +22,7 @@ export interface PoBilling {
     id_karyawan: number | null;
     id_purchase_order: number | null;
     no_bukti_tagihan: string;
+    no_po_asal?: string | null; 
     invoice_vendor: string | null;
     gudang: string;
     periode: number;
