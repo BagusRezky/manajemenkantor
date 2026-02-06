@@ -21,7 +21,7 @@ class PoBillingController extends Controller
     public function index()
     {
         return Inertia::render('poBilling/poBillings', [
-            'billings' => PoBilling::with(['karyawan', 'purchaseOrder', 'penerimaanBarang'])->orderBy('created_at', 'desc')->get()
+            'billings' => PoBilling::with(['karyawan', 'purchaseOrder', 'penerimaanBarang'])->orderBy('tanggal_transaksi', 'desc')->get()
         ]);
     }
 
@@ -136,7 +136,7 @@ class PoBillingController extends Controller
             'file_detail' => 'required',
         ]);
 
-        
+
         Excel::import(new PoBillingImport, $request->file('file_header'));
         Excel::import(new PoBillingDetailImport, $request->file('file_detail'));
         // });

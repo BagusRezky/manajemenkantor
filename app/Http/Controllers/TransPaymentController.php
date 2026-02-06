@@ -22,7 +22,7 @@ class TransPaymentController extends Controller
     public function index()
     {
         return Inertia::render('transPayment/transPayments', [
-            'payments' => TransPayment::with(['poBilling', 'karyawan'])->get(),
+            'payments' => TransPayment::with(['poBilling', 'karyawan'])->orderBy('tanggal_header', 'desc')->get(),
         ]);
     }
 
