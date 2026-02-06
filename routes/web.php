@@ -56,6 +56,7 @@ use App\Http\Controllers\TransKasController;
 use App\Http\Controllers\TransKasBankController;
 use App\Http\Controllers\OperasionalPayController;
 use App\Http\Controllers\PoBillingController;
+use App\Http\Controllers\TransPaymentController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -547,6 +548,15 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/poBillings/{poBilling}', [PoBillingController::class, 'destroy'])->name('poBillings.destroy')->middleware('permission:poBillings.destroy');
         Route::get('/poBillings/{poBilling}', [PoBillingController::class, 'show'])->name('poBillings.show')->middleware('permission:poBillings.show');
         Route::post('/poBillings/import', [PoBillingController::class, 'import'])->name('poBillings.import')->middleware('permission:poBillings.import');
+
+        Route::get('/transPayments', [TransPaymentController::class, 'index'])->name('transPayments.index')->middleware('permission:transPayments.index');
+        Route::get('/transPayments/create', [TransPaymentController::class, 'create'])->name('transPayments.create')->middleware('permission:transPayments.create');
+        Route::post('/transPayments', [TransPaymentController::class, 'store'])->name('transPayments.store')->middleware('permission:transPayments.store');
+        Route::get('/transPayments/{transPayment}/edit', [TransPaymentController::class, 'edit'])->name('transPayments.edit')->middleware('permission:transPayments.edit');
+        Route::put('/transPayments/{transPayment}', [TransPaymentController::class, 'update'])->name('transPayments.update')->middleware('permission:transPayments.update');
+        Route::delete('/transPayments/{transPayment}', [TransPaymentController::class, 'destroy'])->name('transPayments.destroy')->middleware('permission:transPayments.destroy');
+        Route::get('/transPayments/{transPayment}', [TransPaymentController::class, 'show'])->name('transPayments.show')->middleware('permission:transPayments.show');
+        Route::post('/transPayments/import', [TransPaymentController::class, 'import'])->name('transPayments.import')->middleware('permission:transPayments.import');
     });
 });
 
