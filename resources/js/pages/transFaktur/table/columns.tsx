@@ -17,7 +17,11 @@ export const columns = (): ColumnDef<TransFaktur>[] => [
         cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} />,
     },
     { accessorKey: 'no_faktur', header: 'No. Faktur' },
-    { accessorKey: 'no_invoice', header: 'No. Invoice' },
+    {
+        accessorKey: 'id_purchase_order',
+        header: 'PO Reff',
+        accessorFn: (row) => row.purchase_order?.no_po || row.no_po_asal || '-',
+    },
     { accessorKey: 'tanggal_transaksi', header: 'Tanggal' },
     {
         accessorKey: 'grand_total',
