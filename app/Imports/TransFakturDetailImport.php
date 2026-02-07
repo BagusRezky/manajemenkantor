@@ -42,7 +42,7 @@ class TransFakturDetailImport implements ToModel, WithHeadingRow
             'ppn_persen'      => $ppnPersen,
             'ppn_nilai'       => $ppnNilai,
             'total_item'      => $totalItem,
-            'keterangan'      => $row['keterangan'] ?? null,
+            'discount'      => $row['discount'] ?? null,
         ]);
 
         // 4. LOGIC ROLL UP: Update total di Header

@@ -150,7 +150,7 @@ class TransFakturController extends Controller
                         'ppn_persen'    => $item['ppn_persen'] ?? 0,
                         'ppn_nilai'     => $item['ppn_nilai'],
                         'total_item'    => $item['total_item'],
-                        'keterangan'    => $item['keterangan'] ?? null,
+                        'discount'    => $item['discount'] ?? null,
                     ]);
                 }
             });

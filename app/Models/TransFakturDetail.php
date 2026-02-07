@@ -18,7 +18,7 @@ class TransFakturDetail extends Model
         'ppn_persen',
         'ppn_nilai',
         'total_item',
-        'keterangan',
+        'discount',
     ];
 
     public function transFaktur()

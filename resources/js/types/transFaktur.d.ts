@@ -13,7 +13,7 @@ export interface TransFakturDetail {
     ppn_persen: number;
     ppn_nilai: number;
     total_item: number;
-    keterangan: string | null;
+    discount: number | null;
 }
 
 export interface TransFaktur {

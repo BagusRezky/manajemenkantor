@@ -136,6 +136,10 @@ export default function Show({ item }: { item: TransFaktur }) {
                                             <p className="font-semibold text-slate-700">{formatIDR(detail.harga_per_qty)}</p>
                                         </div>
                                         <div className="space-y-1">
+                                            <p className="text-[10px] font-bold text-slate-400 uppercase">Discount</p>
+                                            <p className="font-semibold text-slate-700">{formatIDR(detail.discount ?? 0)}</p>
+                                        </div>
+                                        <div className="space-y-1">
                                             <p className="text-[10px] font-bold text-rose-500 uppercase">Subtotal (Net)</p>
                                             <p className="font-semibold text-slate-700">{formatIDR(detail.subtotal)}</p>
                                         </div>
@@ -151,11 +155,6 @@ export default function Show({ item }: { item: TransFaktur }) {
                                         </div>
                                     </div>
                                 </div>
-                                {detail.keterangan && (
-                                    <div className="border-t bg-slate-50 px-6 py-2 text-[10px] text-slate-400 italic">
-                                        Catatan: {detail.keterangan}
-                                    </div>
-                                )}
                             </Card>
                         ))}
                     </div>

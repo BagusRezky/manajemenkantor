@@ -9,7 +9,7 @@ import AppLayout from '@/layouts/app-layout';
 import { Karyawan } from '@/types/karyawan';
 import { PurchaseOrder } from '@/types/purchaseOrder';
 import { Head, useForm } from '@inertiajs/react';
-import { Calculator, FileText, Package, Plus, Tag, Trash2, User } from 'lucide-react';
+import { FileText, Package, Percent, Plus, Trash2, User } from 'lucide-react';
 import { useEffect } from 'react';
 
 interface TransFakturForm {
@@ -61,19 +61,35 @@ export default function Create({ purchaseOrders, karyawans }: CreateProps) {
         const selectedPO = purchaseOrders.find((p) => String(p.id) === poId);
         if (selectedPO) {
             const mappedItems = (selectedPO.purchaseOrderItems || selectedPO.items || []).map((item) => {
-                const diskon = Number(item.diskon_satuan || 0);
-                const subtotal = Number(item.qty_po) * (Number(item.harga_satuan) - diskon);
-                const ppn_nilai = subtotal * (Number(selectedPO.ppn || 0) / 100);
+                const qty = Number(item.qty_po || 0);
+                const hargaSatuan = Number(item.harga_satuan || 0);
+                const diskonPersen = Number(item.diskon_satuan || 0); // Nilai asli % (misal 5.44)
+
+                // LOGIKA PEMBULATAN SESUAI CONTOH:
+                // 1. Hitung Gross Total Line
+                const grossTotalLine = qty * hargaSatuan;
+                // 2. Hitung Estimasi Total Setelah Diskon
+                const rawTotalAfterDisc = grossTotalLine * (1 - diskonPersen / 100);
+                // 3. Bulatkan Hasil Akhir ke Ratusan Terdekat (1.134.720 -> 1.134.700)
+                const subtotalDibulatkan = Math.round(rawTotalAfterDisc / 100) * 100;
+
+                // Hitung Nominal Diskon Satuan untuk DB (Total Diskon / Qty)
+                const totalNominalDiskon = grossTotalLine - subtotalDibulatkan;
+                const nominalDiskonPerUnit = totalNominalDiskon / qty;
+
+                const ppn_nilai = subtotalDibulatkan * (Number(selectedPO.ppn || 0) / 100);
+
                 return {
                     master_item: item.master_item?.nama_master_item || item.master_item?.nama_master_item || '-',
-                    qty: item.qty_po,
-                    harga_per_qty: item.harga_satuan,
-                    diskon_satuan: diskon,
+                    qty: qty,
+                    harga_per_qty: hargaSatuan,
+                    diskon_persen: diskonPersen, // Untuk Tampilan UI (5.44%)
+                    diskon_satuan: nominalDiskonPerUnit, // Untuk DB (Angka Rupiah)
                     unit: item.satuan?.nama_satuan || 'PCS',
                     ppn_persen: selectedPO.ppn || 0,
-                    subtotal: subtotal,
+                    subtotal: subtotalDibulatkan,
                     ppn_nilai: ppn_nilai,
-                    total_item: subtotal + ppn_nilai,
+                    total_item: subtotalDibulatkan + ppn_nilai,
                     keterangan: item.remark_item_po || '',
                 };
             });
@@ -82,8 +98,8 @@ export default function Create({ purchaseOrders, karyawans }: CreateProps) {
                 ...prev,
                 id_purchase_order: poId,
                 no_po_asal: selectedPO.no_po,
-                kode_customer: selectedPO.supplier?.nama_suplier || selectedPO.supplier?.alamat_lengkap || '',
-                alamat: selectedPO.supplier?.alamat_lengkap ||  '',
+                kode_customer: selectedPO.supplier?.nama_suplier || '-',
+                alamat: selectedPO.supplier?.alamat_lengkap || '-',
                 items: mappedItems,
             }));
         }
@@ -98,10 +114,17 @@ export default function Create({ purchaseOrders, karyawans }: CreateProps) {
     const updateItem = (index: number, field: string, value: any) => {
         const newItems = [...data.items];
         const item = { ...newItems[index], [field]: value };
-        const hargaSetelahDiskon = Number(item.harga_per_qty) - Number(item.diskon_satuan || 0);
-        item.subtotal = Number(item.qty) * hargaSetelahDiskon;
-        item.ppn_nilai = item.subtotal * (Number(item.ppn_persen) / 100);
-        item.total_item = item.subtotal + item.ppn_nilai;
+
+        // Re-kalkulasi Manual jika ada perubahan
+        const gross = Number(item.qty) * Number(item.harga_per_qty);
+        const rawTotal = gross * (1 - Number(item.diskon_persen) / 100);
+        const subtotal = Math.round(rawTotal / 100) * 100;
+
+        item.diskon_satuan = (gross - subtotal) / Number(item.qty);
+        item.subtotal = subtotal;
+        item.ppn_nilai = subtotal * (Number(item.ppn_persen) / 100);
+        item.total_item = subtotal + item.ppn_nilai;
+
         newItems[index] = item;
         setData('items', newItems);
     };
@@ -122,37 +145,36 @@ export default function Create({ purchaseOrders, karyawans }: CreateProps) {
                         post(route('transFakturs.store'));
                     }}
                 >
-                    {/* SECTION 1: HEADER & SUPPLIER */}
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-3">
+                        {/* HEADER */}
                         <Card className="border-t-4 border-t-blue-600 shadow-sm lg:col-span-2">
-                            <CardHeader className="pb-4">
+                            <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-lg">
                                     <FileText className="h-5 w-5 text-blue-600" /> Informasi Transaksi
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label className="font-bold">Purchase Order Reff</Label>
+                                    <Label className="font-bold text-blue-700 underline">Purchase Order Reff</Label>
                                     <SearchableSelect
                                         items={purchaseOrders.map((p) => ({
                                             key: String(p.id),
                                             value: String(p.id),
-                                            label: `${p.no_po} - ${p.supplier?.nama_suplier ||  '-'}`,
+                                            label: `${p.no_po} - ${p.supplier?.nama_suplier || '-'}`,
                                         }))}
                                         onChange={handlePOChange}
                                         value={data.id_purchase_order}
-                                        placeholder="Pilih PO..."
                                     />
+                                    {errors.id_purchase_order && <p className="text-sm text-red-600">{errors.id_purchase_order}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label className="font-bold">No. Faktur</Label>
                                     <Input
                                         value={data.no_faktur}
                                         onChange={(e) => setData('no_faktur', e.target.value)}
-                                        placeholder="000.000-00.00000000"
-                                        className="h-11"
+                                        placeholder="000.000..."
+                                        className="h-11 font-bold"
                                     />
-                                    {errors.no_faktur && <p className="text-xs text-red-500">{errors.no_faktur}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label>No. Invoice</Label>
@@ -172,7 +194,7 @@ export default function Create({ purchaseOrders, karyawans }: CreateProps) {
                                     <Input value={data.gudang} onChange={(e) => setData('gudang', e.target.value)} className="h-11" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Karyawan (PIC)</Label>
+                                    <Label>PIC</Label>
                                     <SearchableSelect
                                         items={karyawans.map((k) => ({ key: String(k.id), value: String(k.id), label: k.nama ?? '' }))}
                                         value={data.id_karyawan}
@@ -182,40 +204,38 @@ export default function Create({ purchaseOrders, karyawans }: CreateProps) {
                             </CardContent>
                         </Card>
 
+                        {/* SUPPLIER */}
                         <Card className="border-t-4 border-t-emerald-500 shadow-sm">
-                            <CardHeader className="pb-4">
+                            <CardHeader>
                                 <CardTitle className="flex items-center gap-2 text-lg text-emerald-700">
                                     <User className="h-5 w-5" /> Supplier
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="space-y-4">
                                 <div>
-                                    <Label className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Nama Vendor</Label>
-                                    <p className="mt-1 font-bold text-slate-700">{data.kode_customer || '-'}</p>
+                                    <Label className="text-[10px] font-bold text-slate-400 uppercase">Vendor</Label>
+                                    <p className="font-bold text-slate-700">{data.kode_customer || '-'}</p>
                                 </div>
                                 <div>
-                                    <Label className="text-[10px] font-bold tracking-widest text-blue-600 uppercase underline">
-                                        NPWP (Input Manual)
-                                    </Label>
+                                    <Label className="text-[10px] font-bold text-blue-600 uppercase underline">NPWP (Manual)</Label>
                                     <Input
                                         value={data.npwp}
                                         onChange={(e) => setData('npwp', e.target.value)}
-                                        placeholder="00.000..."
                                         className="mt-1 h-10 border-blue-200"
                                     />
                                 </div>
                                 <div>
-                                    <Label className="text-[10px] font-bold tracking-widest text-slate-400 uppercase">Alamat</Label>
+                                    <Label className="text-[10px] font-bold text-slate-400 uppercase">Alamat</Label>
                                     <p className="mt-1 text-xs leading-relaxed text-slate-500">{data.alamat || '-'}</p>
                                 </div>
                             </CardContent>
                         </Card>
                     </div>
 
-                    {/* SECTION 2: ITEMS (VERTICAL CARDS) */}
+                    {/* ITEM CARDS */}
                     <div className="mt-10 mb-4 flex items-center justify-between">
-                        <h2 className="flex items-center gap-2 text-xl font-black tracking-tight text-slate-800">
-                            <Package className="h-6 w-6 text-blue-600" /> Rincian Barang & Pajak
+                        <h2 className="flex items-center gap-2 text-xl font-black text-slate-800">
+                            <Package className="h-6 w-6 text-blue-600" /> Rincian Barang
                         </h2>
                         <Button
                             type="button"
@@ -226,9 +246,10 @@ export default function Create({ purchaseOrders, karyawans }: CreateProps) {
                                         master_item: '',
                                         qty: 1,
                                         harga_per_qty: 0,
+                                        diskon_persen: 0,
                                         diskon_satuan: 0,
-                                        unit: '',
-                                        ppn_persen: 0,
+                                        unit: 'PCS',
+                                        ppn_persen: 11,
                                         subtotal: 0,
                                         ppn_nilai: 0,
                                         total_item: 0,
@@ -237,21 +258,14 @@ export default function Create({ purchaseOrders, karyawans }: CreateProps) {
                                 ])
                             }
                             variant="secondary"
-                            className="shadow-sm"
                         >
                             <Plus className="mr-2 h-4 w-4" /> Tambah Baris
                         </Button>
                     </div>
 
                     <div className="space-y-4">
-                        {data.items.length === 0 && (
-                            <div className="rounded-xl border-2 border-dashed bg-slate-50 p-12 text-center text-slate-400 italic">
-                                Belum ada item. Silahkan pilih Purchase Order atau klik Tambah Baris.
-                            </div>
-                        )}
-
                         {data.items.map((item, index) => (
-                            <Card key={index} className="group relative overflow-hidden border-l-4 border-l-blue-500 transition-all hover:shadow-md">
+                            <Card key={index} className="group relative border-l-4 border-l-blue-500 transition-all hover:shadow-md">
                                 <Button
                                     type="button"
                                     onClick={() =>
@@ -267,87 +281,60 @@ export default function Create({ purchaseOrders, karyawans }: CreateProps) {
                                     <Trash2 className="h-5 w-5" />
                                 </Button>
                                 <CardContent className="p-6">
-                                    <div className="grid grid-cols-1 items-start gap-6 md:grid-cols-12">
-                                        {/* Nama Barang - Dominan */}
+                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-12">
                                         <div className="space-y-2 md:col-span-4">
-                                            <Label className="text-[10px] font-black text-slate-400 uppercase">Deskripsi Barang</Label>
+                                            <Label className="text-[10px] font-black text-slate-400 uppercase">Deskripsi</Label>
                                             <Input
                                                 className="h-11 font-semibold"
                                                 value={item.master_item}
                                                 onChange={(e) => updateItem(index, 'master_item', e.target.value)}
-                                                placeholder="Nama item..."
                                                 readOnly
                                             />
                                             <Input
                                                 className="h-8 text-xs italic"
                                                 value={item.keterangan}
                                                 onChange={(e) => updateItem(index, 'keterangan', e.target.value)}
-                                                placeholder="Catatan kecil..."
                                                 readOnly
                                             />
                                         </div>
-
-                                        {/* Qty & Unit */}
                                         <div className="grid grid-cols-2 gap-2 md:col-span-2">
-                                            <div className="space-y-2">
-                                                <Label className="text-[10px] font-black text-slate-400 uppercase">Qty</Label>
-                                                <Input
-                                                    type="number"
-                                                    className="h-11 text-center font-bold"
-                                                    value={item.qty}
-                                                    onChange={(e) => updateItem(index, 'qty', Number(e.target.value))}
-                                                    readOnly
-                                                />
+                                            <div>
+                                                <Label className="text-[10px] font-bold text-slate-400">Qty</Label>
+                                                <Input type="number" className="h-11 text-center font-bold" value={item.qty} readOnly />
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label className="text-[10px] font-black text-slate-400 uppercase">Unit</Label>
-                                                <Input
-                                                    className="h-11 text-center"
-                                                    value={item.unit}
-                                                    onChange={(e) => updateItem(index, 'unit', e.target.value)}
-                                                    readOnly
-                                                />
+                                            <div>
+                                                <Label className="text-[10px] font-bold text-slate-400">Unit</Label>
+                                                <Input className="h-11 text-center" value={item.unit} readOnly />
                                             </div>
                                         </div>
-
-                                        {/* Pricing & Discount */}
                                         <div className="grid grid-cols-2 gap-4 md:col-span-4">
-                                            <div className="space-y-2">
-                                                <Label className="text-[10px] font-black text-slate-400 uppercase">Harga Satuan</Label>
+                                            <div>
+                                                <Label className="text-[10px] font-bold text-slate-400">Harga Satuan</Label>
+                                                <Input type="number" className="h-11 font-mono" value={item.harga_per_qty} readOnly />
+                                            </div>
+                                            <div className="space-y-1">
+                                                <Label className="flex items-center gap-1 text-[10px] font-black text-rose-500 uppercase">
+                                                    <Percent className="h-3 w-3" /> Diskon
+                                                </Label>
                                                 <div className="relative">
-                                                    <span className="absolute top-3 left-3 text-[10px] font-bold text-slate-400">Rp</span>
                                                     <Input
                                                         type="number"
-                                                        className="h-11 pl-8 font-mono"
-                                                        value={item.harga_per_qty}
-                                                        onChange={(e) => updateItem(index, 'harga_per_qty', Number(e.target.value))}
-                                                        readOnly
+                                                        className="h-11 border-rose-100 bg-rose-50/30 pr-8 font-bold text-rose-600"
+                                                        value={item.diskon_persen}
+                                                        onChange={(e) => updateItem(index, 'diskon_persen', Number(e.target.value))}
                                                     />
+                                                    <span className="absolute top-3 right-3 text-[10px] font-bold text-rose-400">%</span>
                                                 </div>
                                             </div>
-                                            <div className="space-y-2">
-                                                <Label className="flex items-center gap-1 text-[10px] font-black text-rose-500 uppercase">
-                                                    <Tag className="h-3 w-3" /> Diskon
-                                                </Label>
-                                                <Input
-                                                    type="number"
-                                                    className="h-11 border-rose-100 bg-rose-50/30 font-mono text-rose-600"
-                                                    value={item.diskon_satuan}
-                                                    onChange={(e) => updateItem(index, 'diskon_satuan', Number(e.target.value))}
-                                                    readOnly
-                                                />
-                                            </div>
                                         </div>
-
-                                        {/* PPN & Total Row */}
                                         <div className="space-y-2 text-right md:col-span-2">
-                                            <Label className="text-[10px] font-black tracking-tighter text-blue-600 uppercase">
-                                                Net + PPN {item.ppn_persen}%
-                                            </Label>
-                                            <div className="flex h-11 items-center justify-end font-mono text-lg font-black text-slate-900">
-                                                {formatIDR(item.total_item)}
+                                            <Label className="text-[10px] font-black text-blue-600 uppercase">Total (Dibulatkan)</Label>
+                                            <div className="flex h-11 items-center justify-end border-b font-mono text-lg font-black text-slate-900">
+                                                {formatIDR(item.subtotal)}
                                             </div>
-                                            <p className="text-[10px] text-slate-400 italic">Net: {formatIDR(item.subtotal)}</p>
+                                            <p className="text-[9px] text-slate-400 italic">
+                                                Asli: {formatIDR(item.qty * item.harga_per_qty * (1 - item.diskon_persen / 100))}
+                                            </p>
                                         </div>
                                     </div>
                                 </CardContent>
@@ -355,37 +342,32 @@ export default function Create({ purchaseOrders, karyawans }: CreateProps) {
                         ))}
                     </div>
 
-                    {/* SECTION 3: GRAND TOTAL SUMMARY */}
+                    {/* GRAND TOTAL */}
                     <div className="mt-10 flex justify-end">
-                        <Card className="relative w-full overflow-hidden rounded-[2rem] border-none bg-slate-900 text-white shadow-2xl lg:w-[450px]">
-                            <div className="absolute -right-4 -bottom-4 opacity-5">
-                                <Calculator className="h-40 w-40" />
-                            </div>
+                        <Card className="w-full rounded-[2.5rem] border-none bg-slate-900 text-white shadow-2xl lg:w-[450px]">
                             <CardContent className="space-y-6 p-10">
-                                <div className="space-y-3">
-                                    <div className="flex justify-between text-sm font-medium text-slate-400">
-                                        <span>Total DPP (Netto)</span>
+                                <div className="space-y-2">
+                                    <div className="flex justify-between text-sm text-slate-400">
+                                        <span>Subtotal (DPP)</span>
                                         <span className="font-mono">{formatIDR(data.total_dpp)}</span>
                                     </div>
-                                    <div className="flex justify-between text-sm font-medium text-slate-400">
+                                    <div className="flex justify-between text-sm text-slate-400">
                                         <span>Total PPN</span>
                                         <span className="font-mono text-emerald-400">+{formatIDR(data.total_ppn)}</span>
                                     </div>
                                 </div>
                                 <Separator className="bg-slate-700" />
-                                <div className="space-y-6">
-                                    <div>
-                                        <p className="mb-2 text-[10px] font-black tracking-[0.3em] text-blue-400 uppercase">Total Akhir Faktur</p>
-                                        <h2 className="font-mono text-4xl font-black tracking-tighter text-white">{formatIDR(data.grand_total)}</h2>
-                                    </div>
-                                    <Button
-                                        type="submit"
-                                        disabled={processing}
-                                        className="h-16 w-full rounded-2xl bg-blue-600 text-lg font-black shadow-xl shadow-blue-900/40 transition-transform hover:bg-blue-500 active:scale-95"
-                                    >
-                                        {processing ? 'MEMPROSES...' : 'SIMPAN FAKTUR SEKARANG'}
-                                    </Button>
+                                <div>
+                                    <p className="mb-2 text-[10px] font-black tracking-widest text-blue-400 uppercase">Grand Total</p>
+                                    <h2 className="font-mono text-4xl font-black tracking-tighter text-white">{formatIDR(data.grand_total)}</h2>
                                 </div>
+                                <Button
+                                    type="submit"
+                                    disabled={processing}
+                                    className="h-16 w-full rounded-2xl bg-blue-600 text-lg font-black shadow-xl shadow-blue-900/40 hover:bg-blue-500"
+                                >
+                                    {processing ? 'MEMPROSES...' : 'SIMPAN FAKTUR'}
+                                </Button>
                             </CardContent>
                         </Card>
                     </div>
