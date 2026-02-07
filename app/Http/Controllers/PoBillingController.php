@@ -10,6 +10,7 @@ use App\Imports\PoBillingImport;
 use App\Imports\PoBillingDetailImport;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Http\Request;
 
@@ -38,7 +39,7 @@ class PoBillingController extends Controller
     {
 
         $validated = $request->validate([
-            'no_bukti_tagihan' => 'required|unique:po_billings,no_bukti_tagihan',
+
             'id_penerimaan_barang' => 'nullable|exists:penerimaan_barangs,id',
             'id_karyawan' => 'nullable|exists:karyawans,id',
             'id_purchase_order' => 'nullable|exists:purchase_orders,id',
@@ -57,6 +58,8 @@ class PoBillingController extends Controller
             'items' => 'required|array|min:1',
         ]);
 
+        $validated['no_bukti_tagihan'] = $this->generateNoBukti();
+
         DB::transaction(function () use ($validated) {
             $billing = PoBilling::create($validated);
             foreach ($validated['items'] as $item) {
@@ -65,6 +68,39 @@ class PoBillingController extends Controller
         });
 
         return redirect()->route('poBillings.index')->with('success', 'Tagihan berhasil dibuat');
+    }
+
+    private function generateNoBukti()
+    {
+        $now = Carbon::now();
+        $tahun = $now->format('y'); // Hasil: 26
+        $bulanRomawi = $this->getRomanMonth($now->month);
+
+        $lastNumber = PoBilling::whereYear('tanggal_transaksi', $now->year)
+            ->selectRaw('MAX(CAST(SUBSTRING_INDEX(no_bukti_tagihan, "/", 1) AS UNSIGNED)) as max_no')
+            ->value('max_no');
+
+        $nextNumber = $lastNumber ? $lastNumber + 1 : 1;
+        return sprintf("%03d/BILL-IK01/%s/%s", $nextNumber, $bulanRomawi, $tahun);
+    }
+
+    private function getRomanMonth($month)
+    {
+        $map = [
+            1 => 'I',
+            2 => 'II',
+            3 => 'III',
+            4 => 'IV',
+            5 => 'V',
+            6 => 'VI',
+            7 => 'VII',
+            8 => 'VIII',
+            9 => 'IX',
+            10 => 'X',
+            11 => 'XI',
+            12 => 'XII'
+        ];
+        return $map[$month];
     }
 
     public function show(PoBilling $poBilling)

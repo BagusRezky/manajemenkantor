@@ -140,10 +140,7 @@ export default function Create({ karyawans, lpbList }: CreateProps) {
                         <CardTitle>Tagihan</CardTitle>
                     </CardHeader>
                     <CardContent className="grid grid-cols-1 gap-4 md:grid-cols-3">
-                        <div className="space-y-2">
-                            <Label>No. Bukti Tagihan</Label>
-                            <Input value={data.no_bukti_tagihan} onChange={(e) => setData('no_bukti_tagihan', e.target.value)} required />
-                        </div>
+                        
                         <div className="space-y-2">
                             <Label>Penerimaan Barang (LPB)</Label>
                             <SearchableSelect
