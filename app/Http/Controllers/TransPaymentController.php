@@ -12,6 +12,7 @@ use App\Imports\TransPaymentDetailImport;
 use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 use Maatwebsite\Excel\Facades\Excel;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class TransPaymentController extends Controller
@@ -47,7 +48,7 @@ class TransPaymentController extends Controller
         $request->validate([
             'id_po_billing'   => 'required|exists:po_billings,id',
             'id_karyawan'     => 'nullable|exists:karyawans,id',
-            'no_pembayaran'   => 'required|string|unique:trans_payments,no_pembayaran',
+
             'tanggal_header'  => 'required|date',
             'gudang'          => 'required|string',
             'periode'         => 'required|string',
@@ -59,11 +60,15 @@ class TransPaymentController extends Controller
         ]);
 
         DB::transaction(function () use ($request) {
+
+
             // 1. Simpan Header
-            $payment = TransPayment::create($request->only([
-                'id_po_billing', 'id_karyawan', 'no_pembayaran',
-                'tanggal_header', 'gudang', 'periode'
-            ]));
+            $payment = TransPayment::create(array_merge(
+                $request->only([
+                    'id_po_billing', 'id_karyawan', 'tanggal_header', 'gudang', 'periode'
+                ]),
+                ['no_pembayaran' => $this->generateNoPembayaran()]
+            ));
 
             // 2. Simpan Details
             foreach ($request->details as $detail) {
@@ -72,6 +77,25 @@ class TransPaymentController extends Controller
         });
 
         return redirect()->route('transPayments.index')->with('success', 'Pembayaran berhasil disimpan');
+    }
+
+    private function generateNoPembayaran()
+    {
+        $now = Carbon::now();
+        $tahunBulan = $now->format('y') . $now->format('m'); // Hasil: 2602
+        $prefix = "PAY/" . $tahunBulan . "/00-";
+
+        // Cari nomor urut terakhir di tahun berjalan
+        // Kita ambil angka setelah karakter terakhir '-'
+        $lastRecord = TransPayment::whereYear('tanggal_header', $now->year)
+            ->selectRaw("MAX(CAST(SUBSTRING_INDEX(no_pembayaran, '-', -1) AS UNSIGNED)) as max_no")
+            ->value('max_no');
+
+        $nextNumber = $lastRecord ? $lastRecord + 1 : 1;
+
+        // Format: PAY/2602/00-0004
+        // %04d memastikan 4 digit (0001)
+        return $prefix . sprintf("%04d", $nextNumber);
     }
 
     /**

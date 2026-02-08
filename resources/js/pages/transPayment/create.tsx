@@ -174,7 +174,7 @@ export default function Create({
                         <CardContent className="p-6">
                             <div className="grid grid-cols-1 gap-x-12 gap-y-6 md:grid-cols-2">
                                 <div className="space-y-4">
-                                    <div className="grid gap-2">
+                                    {/* <div className="grid gap-2">
                                         <Label className="text-xs font-bold tracking-wider text-slate-500 uppercase">Nomor Pembayaran</Label>
                                         <Input
                                             placeholder="PAY-202X-XXXX"
@@ -183,7 +183,7 @@ export default function Create({
                                             onChange={(e) => setData('no_pembayaran', e.target.value)}
                                         />
                                         {errors.no_pembayaran && <p className="text-xs text-red-500">{errors.no_pembayaran}</p>}
-                                    </div>
+                                    </div> */}
                                     <div className="grid gap-2">
                                         <Label className="text-xs font-bold tracking-wider text-slate-500 uppercase">Tanggal Pembayaran</Label>
                                         <Input
@@ -192,6 +192,7 @@ export default function Create({
                                             value={data.tanggal_header}
                                             onChange={(e) => setData('tanggal_header', e.target.value)}
                                         />
+                                        {errors.tanggal_header && <p className="text-xs text-red-500">{errors.tanggal_header}</p>}
                                     </div>
                                 </div>
                                 <div className="space-y-4">
