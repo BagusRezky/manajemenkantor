@@ -40,6 +40,10 @@ export const columns = (): ColumnDef<OperasionalPay>[] => [
 
     },
     {
+        accessorKey: 'keterangan',
+        header: 'Keterangan',
+    },
+    {
         id: 'actions',
         header: 'Actions',
         cell: ({ row }) => (
