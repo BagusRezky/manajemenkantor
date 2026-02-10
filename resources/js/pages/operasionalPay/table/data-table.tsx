@@ -24,7 +24,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [rowSelection, setRowSelection] = React.useState({});
-
+    const [globalFilter, setGlobalFilter] = React.useState('');
     const table = useReactTable({
         data,
         columns,
@@ -33,7 +33,8 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         getFilteredRowModel: getFilteredRowModel(),
         onRowSelectionChange: setRowSelection,
         getPaginationRowModel: getPaginationRowModel(),
-        state: { columnFilters, rowSelection },
+        state: { columnFilters, rowSelection, globalFilter },
+        onGlobalFilterChange: setGlobalFilter,
     });
 
     const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -57,10 +58,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <div>
             <div className="flex justify-between py-4">
                 <Input
-                    placeholder="Cari No. Bukti..."
-                    value={(table.getColumn('no_bukti')?.getFilterValue() as string) ?? ''}
-                    onChange={(e) => table.getColumn('no_bukti')?.setFilterValue(e.target.value)}
-                    className="max-w-sm"
+                    placeholder="Cari semua data"
+                    value={table.getState().globalFilter ?? ''}
+                    onChange={(event) => table.setGlobalFilter(event.target.value)}
+                    className="max-w-sm shadow-sm"
                 />
                 <div className="ml-auto flex space-x-3">
                     <Button type="button" variant="outline" onClick={() => document.getElementById('excel-upload-operasional-pay')?.click()}>
