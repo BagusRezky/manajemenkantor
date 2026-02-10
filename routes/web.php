@@ -58,6 +58,7 @@ use App\Http\Controllers\OperasionalPayController;
 use App\Http\Controllers\PoBillingController;
 use App\Http\Controllers\TransPaymentController;
 use App\Http\Controllers\TransFakturController;
+use App\Http\Controllers\ReportController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -567,6 +568,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/transFakturs/{transFaktur}', [TransFakturController::class, 'destroy'])->name('transFakturs.destroy')->middleware('permission:transFakturs.destroy');
         Route::get('/transFakturs/{transFaktur}', [TransFakturController::class, 'show'])->name('transFakturs.show')->middleware('permission:transFakturs.show');
         Route::post('/transFakturs/import', [TransFakturController::class, 'import'])->name('transFakturs.import')->middleware('permission:transFakturs.import');
+        Route::prefix('reports')->group(function () {
+            Route::get('/', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('/payment/export', [ReportController::class, 'exportPayment'])->name('paymentReports.export');
+            Route::get('/mutation/export', [ReportController::class, 'export'])->name('mutationReports.export');
+            Route::get('/sales/export', [ReportController::class, 'export'])->name('salesReports.export');
+            Route::get('/profit-loss/export', [ReportController::class, 'export'])->name('profitlossReports.export');
+        });
     });
 });
 

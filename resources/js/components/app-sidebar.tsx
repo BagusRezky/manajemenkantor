@@ -14,6 +14,7 @@ import {
     ContainerIcon,
     CuboidIcon,
     ExternalLinkIcon,
+    FileText,
     FolderInputIcon,
     LayoutGrid,
     Mailbox,
@@ -143,6 +144,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             { title: 'Operasional Pay', icon: Banknote, href: '/operasionalPays', permission: 'operasionalPays.index' },
             { title: 'PO Billing', icon: Banknote, href: '/poBillings', permission: 'poBillings.index' },
             { title: 'Trans Payment', icon: Banknote, href: '/transPayments', permission: 'transPayments.index' },
+            { title: 'Reports', icon: FileText, href: '/reports', permission: 'reports.index' },
         ],
     },
     {
