@@ -59,6 +59,7 @@ use App\Http\Controllers\PoBillingController;
 use App\Http\Controllers\TransPaymentController;
 use App\Http\Controllers\TransFakturController;
 use App\Http\Controllers\ReportController;
+use App\Http\Controllers\BonPayController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -576,6 +577,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/sales/export', [ReportController::class, 'export'])->name('salesReports.export');
             Route::get('/profit-loss/export', [ReportController::class, 'export'])->name('profitlossReports.export');
         });
+        Route::get('bonPays', [BonPayController::class, 'index'])->name('bonPays.index')->middleware('permission:bonPays.index');
+        Route::get('bonPays/create', [BonPayController::class, 'create'])->name('bonPays.create')->middleware('permission:bonPays.create');
+        Route::post('bonPays', [BonPayController::class, 'store'])->name('bonPays.store')->middleware('permission:bonPays.store');
+        Route::get('bonPays/{bonPay}/edit', [BonPayController::class, 'edit'])->name('bonPays.edit')->middleware('permission:bonPays.edit');
+        Route::get('bonPays/{bonPay}', [BonPayController::class, 'show'])->name('bonPays.show')->middleware('permission:bonPays.show');
+        Route::put('bonPays/{bonPay}', [BonPayController::class, 'update'])->name('bonPays.update')->middleware('permission:bonPays.update');
+        Route::delete('bonPays/{bonPay}', [BonPayController::class, 'destroy'])->name('bonPays.destroy')->middleware('permission:bonPays.destroy');
     });
 });
 

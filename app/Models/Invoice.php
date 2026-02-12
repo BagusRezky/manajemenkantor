@@ -46,4 +46,9 @@ class Invoice extends Model
     {
         return $this->hasMany(InvoiceDetail::class, 'id_invoice');
     }
+
+    public function bonPays()
+    {
+        return $this->hasMany(BonPay::class, 'id_invoice');
+    }
 }
