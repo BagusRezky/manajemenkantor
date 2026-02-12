@@ -13,222 +13,182 @@ import { toast } from 'sonner';
 
 // Function untuk generate PDF invoice
 const generateInvoicePdf = (invoice: Invoice, download = false): void => {
-    // Inisialisasi ukuran kertas 9.5 x 11 inci dalam milimeter
-    // 9.5 inc = 241.3 mm, 11 inc = 279.4 mm
+    const isLegacy = invoice.is_legacy;
+
     const doc = new jsPDF({
         orientation: 'landscape',
         unit: 'mm',
         format: [241.3, 279.4],
     });
 
-    const pageWidth = doc.internal.pageSize.getWidth(); // Akan bernilai 241.3
+    const pageWidth = doc.internal.pageSize.getWidth();
     const topOffset = 8;
+
     const logo = new Image();
     logo.src = '/images/logo-kantor.png';
-    // Menempatkan logo
     doc.addImage(logo, 'PNG', 15, topOffset + 5, 18, 18);
 
-    // Garis luar header
     doc.setLineWidth(0.5);
     doc.rect(10, topOffset, pageWidth - 20, 30);
 
-    // INFO PERUSAHAAN
     doc.setFontSize(14).setFont('helvetica', 'bold');
     doc.text('CV. Indigama Khatulistiwa', 40, 8 + topOffset);
-
     doc.setFontSize(10).setFont('helvetica', 'normal');
     doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 40, 13 + topOffset);
     doc.text('Pasuruan, Jawa Timur 67155', 40, 18 + topOffset);
     doc.text('Email: indigama.khatulistiwa01@gmail.com', 40, 23 + topOffset);
     doc.text('Telp: 081703101012', 40, 28 + topOffset);
 
-    // JUDUL INVOICE & TANGGAL
     doc.setFontSize(16).setFont('helvetica', 'bold');
-    doc.text('INVOICE', pageWidth - 15, 10 + topOffset, { align: 'right' });
+    doc.text(isLegacy ? 'INVOICE (LEGACY)' : 'INVOICE', pageWidth - 15, 10 + topOffset, { align: 'right' });
 
     doc.setFontSize(10).setFont('helvetica', 'normal');
-    const invoiceDate = invoice.tgl_invoice ? format(new Date(invoice.tgl_invoice), 'dd-MM-yyyy') : '';
-    const dueDate = invoice.tgl_jatuh_tempo ? format(new Date(invoice.tgl_jatuh_tempo), 'dd-MM-yyyy') : '';
-
+    const invoiceDate = invoice.tgl_invoice ? format(new Date(invoice.tgl_invoice), 'dd-MM-yyyy') : '-';
+    const dueDate = invoice.tgl_jatuh_tempo ? format(new Date(invoice.tgl_jatuh_tempo), 'dd-MM-yyyy') : '-';
     doc.text(`Tanggal Invoice : ${invoiceDate}`, pageWidth - 15, 16 + topOffset, { align: 'right' });
     doc.text(`Jatuh Tempo     : ${dueDate}`, pageWidth - 15, 21 + topOffset, { align: 'right' });
 
-    // =============================
-    // CUSTOMER INFO & NO INVOICE
-    // =============================
     doc.rect(10, 35 + topOffset, pageWidth - 20, 30);
-
-    // Sisi Kiri: Customer
     doc.setFont('helvetica', 'bold');
     doc.text('Kepada:', 15, 42 + topOffset);
     doc.setFont('helvetica', 'normal');
 
-    const customerName = invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '';
+    const customerName = isLegacy ? 'DATA LEGACY' : invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '-';
     doc.text(customerName, 15, 48 + topOffset);
 
-    const customerAddress = invoice.surat_jalan?.alamat_tujuan || '';
-    const addressLines = doc.splitTextToSize(customerAddress, 100); // Dilebarkan karena kertas lebih luas
+    const customerAddress = invoice.surat_jalan?.alamat_tujuan || '-';
+    const addressLines = doc.splitTextToSize(customerAddress, 120);
     let addrY = 54 + topOffset;
     addressLines.forEach((line: string) => {
         doc.text(line, 15, addrY);
         addrY += 5;
     });
 
-    // Sisi Kanan: Detail Invoice
-    const rightInfoX = pageWidth - 85;
-    doc.setFont('helvetica', 'bold');
-    doc.text('No. Invoice', rightInfoX, 42 + topOffset);
-    doc.text(':', rightInfoX + 25, 42 + topOffset);
-    doc.setFont('helvetica', 'normal');
-    doc.text(invoice.no_invoice || '', rightInfoX + 30, 42 + topOffset);
+    const rightInfoX = pageWidth - 95;
+    const colonX = rightInfoX + 35;
+    const valueX = rightInfoX + 38;
 
-    doc.setFont('helvetica', 'bold');
-    doc.text('No.Surat Jalan', rightInfoX, 49 + topOffset);
-    doc.text(':', rightInfoX + 25, 49 + topOffset);
-    doc.setFont('helvetica', 'normal');
-    doc.text(invoice.surat_jalan?.no_surat_jalan || '', rightInfoX + 30, 49 + topOffset);
+    const infoRows = [
+        { label: 'No. Invoice', val: invoice.no_invoice },
+        { label: 'No. Surat Jalan', val: isLegacy ? invoice.no_surat_jalan_lama : invoice.surat_jalan?.no_surat_jalan },
+        {
+            label: 'No. PO Cust / SO',
+            val: isLegacy ? invoice.no_so_lama || '-' : invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.no_po_customer || '-',
+        },
+    ];
 
-    doc.setFont('helvetica', 'bold');
-    doc.text('No.PO Cust', rightInfoX, 56 + topOffset);
-    doc.text(':', rightInfoX + 25, 56 + topOffset);
-    doc.setFont('helvetica', 'normal');
-    doc.text(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.no_po_customer || '', rightInfoX + 30, 56 + topOffset);
-    // =============================
-    // TABEL DETAIL
-    // =============================
+    infoRows.forEach((row, i) => {
+        doc.setFont('helvetica', 'bold');
+        doc.text(row.label, rightInfoX, 42 + i * 7 + topOffset);
+        doc.text(':', colonX, 42 + i * 7 + topOffset);
+        doc.setFont('helvetica', 'normal');
+        doc.text(row.val || '-', valueX, 42 + i * 7 + topOffset);
+    });
+
     const tableStartY = 70 + topOffset;
-    doc.setFont('helvetica', 'bold');
-    doc.rect(10, tableStartY, pageWidth - 20, 10);
-    doc.text('DETAIL INVOICE', pageWidth / 2, tableStartY + 6, { align: 'center' });
 
-    // Perhitungan
-    const discount = Number(invoice.discount || 0);
-    const qty = Number(invoice.surat_jalan?.qty_pengiriman || 0);
-    const harga = Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
-    const ppnRate = Number(invoice.ppn || 0);
-    const ongkir = Number(invoice.ongkos_kirim || 0);
-    const dp = Number(invoice.uang_muka || 0);
-
-    const subtotalAwal = harga * qty;
-    const subtotal = subtotalAwal - discount;
-    const ppn = (subtotal * ppnRate) / 100;
-    const total = subtotal + ppn + ongkir;
-    const grandTotal = total - dp;
-
-    const namaBarang = invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang || '';
+    // PERBAIKAN: Pastikan semua field memiliki fallback string agar tidak undefined
+    let tableBody: any[] = [];
+    if (isLegacy && invoice.details) {
+        tableBody = invoice.details.map((item) => ({
+            desc: item.nama_produk || '-',
+            qty: `${Number(item.jumlah || 0).toLocaleString('id-ID')} ${item.unit || ''}`,
+            harga: `Rp ${Number(item.harga || 0).toLocaleString('id-ID')}`,
+            jumlah: `Rp ${Number(item.total || 0).toLocaleString('id-ID')}`,
+        }));
+    } else {
+        const qtySistem = Number(invoice.surat_jalan?.qty_pengiriman || 0);
+        const hargaSistem = Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
+        tableBody = [
+            {
+                desc: invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang || '-',
+                qty: `${qtySistem.toLocaleString('id-ID')} PCS`,
+                harga: `Rp ${hargaSistem.toLocaleString('id-ID')}`,
+                jumlah: `Rp ${(qtySistem * hargaSistem).toLocaleString('id-ID')}`,
+            },
+        ];
+    }
 
     autoTable(doc, {
-        startY: tableStartY + 10,
+        startY: tableStartY,
         margin: { left: 10, right: 10 },
-        styles: { fontSize: 9 },
+        theme: 'plain',
+        styles: { fontSize: 9, cellPadding: 3 },
         headStyles: {
-            fillColor: [255, 255, 255],
+            fillColor: [240, 240, 240],
             textColor: [0, 0, 0],
-            lineWidth: 0.5,
+            fontStyle: 'bold',
+            lineWidth: 0.1,
             lineColor: [0, 0, 0],
         },
         bodyStyles: {
-            lineWidth: 0.5,
+            lineWidth: 0.1,
             lineColor: [0, 0, 0],
-            textColor: [0, 0, 0],
         },
         columns: [
-            { header: 'Nama Barang', dataKey: 'desc' },
-            { header: 'Qty', dataKey: 'qty' },
+            { header: 'Deskripsi Barang', dataKey: 'desc' },
+            { header: 'Quantity', dataKey: 'qty' },
             { header: 'Harga Satuan', dataKey: 'harga' },
-            { header: 'Jumlah', dataKey: 'jumlah' },
+            { header: 'Total Harga', dataKey: 'jumlah' },
         ],
-        body: [
-            {
-                desc: namaBarang,
-                qty: qty.toLocaleString('id-ID'),
-                harga: `Rp ${harga.toLocaleString('id-ID')}`,
-                jumlah: `Rp ${subtotalAwal.toLocaleString('id-ID')}`,
-            },
-            ...(discount > 0
-                ? [
-                      {
-                          desc: 'Diskon',
-                          qty: '',
-                          harga: '',
-                          jumlah: `- Rp ${discount.toLocaleString('id-ID')}`,
-                      },
-                  ]
-                : []),
-        ],
+        body: tableBody,
         columnStyles: {
-            desc: { cellWidth: 'auto', fontStyle: 'bold' }, // Biarkan menyesuaikan sisa lebar
-            qty: { cellWidth: 25, halign: 'center', fontStyle: 'bold' },
-            harga: { cellWidth: 40, halign: 'right', fontStyle: 'bold' },
-            jumlah: { cellWidth: 45, halign: 'right', fontStyle: 'bold' },
+            desc: { cellWidth: 'auto' },
+            qty: { cellWidth: 30, halign: 'center' },
+            harga: { cellWidth: 45, halign: 'right' },
+            jumlah: { cellWidth: 45, halign: 'right' },
         },
     });
 
-    // =============================
-    // FOOTER (REKENING, TTD, & SUMMARY)
-    // =============================
     const afterTableY = (doc as any).lastAutoTable.finalY + 10;
 
-    // 1. Rekening (Sisi Kiri)
-    doc.setFont('helvetica', 'bold');
-    doc.text('Rekening Pembayaran :', 15, afterTableY);
-    doc.setFont('helvetica', 'normal');
-    doc.text('BRI', 15, afterTableY + 6);
-    doc.text('CV. INDIGAMA KHATULISTIWA', 15, afterTableY + 11);
-    doc.text('0583 0110 0100 565', 15, afterTableY + 16);
-
-    // 2. Tanda Tangan Penerbit (Ditengah-tengah)
-    const centerX = pageWidth / 2;
-    doc.setFont('helvetica', 'normal');
-    doc.text('TTD Penerbit Invoice,', centerX, afterTableY, { align: 'center' });
-
-    // Tempat Tanda Tangan (Space kosong)
-    // Anda bisa menambahkan doc.addImage di sini jika memiliki scan TTD digital
-
-    doc.setFont('helvetica', 'bold');
-    doc.text('( ................................................... )', centerX, afterTableY + 25, { align: 'center' });
-    doc.setFontSize(9);
-
-    // 3. Kotak Summary (Sisi Kanan)
-    doc.setFontSize(10); // Reset font size
-    const summaryWidth = 75;
+    const summaryWidth = 85;
     const summaryX = pageWidth - summaryWidth - 10;
-    doc.rect(summaryX, afterTableY - 5, summaryWidth, 43);
 
-    let y = afterTableY + 3;
-    const labelX = summaryX + 5;
-    const valueX = pageWidth - 15;
+    const subtotal = isLegacy
+        ? Number(invoice.total_sub)
+        : Number(invoice.surat_jalan?.qty_pengiriman || 0) * Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
+    const disc = Number(invoice.discount || 0);
+    const ppnNominal = isLegacy ? Number(invoice.ppn_nominal) : ((subtotal - disc) * Number(invoice.ppn)) / 100;
+    const ongkir = Number(invoice.ongkos_kirim || 0);
+    const totalFull = isLegacy ? Number(invoice.total) : subtotal - disc + ppnNominal + ongkir;
+    const bayar = isLegacy ? Number(invoice.bayar) : Number(invoice.uang_muka);
+    const sisa = isLegacy ? Number(invoice.kembali) : totalFull - bayar;
 
-    doc.setFont('helvetica', 'normal');
-    doc.text('Subtotal', labelX, y);
-    doc.text(`Rp ${subtotal.toLocaleString('id-ID')}`, valueX, y, { align: 'right' });
+    // PENYEDERHANAAN: Label diringkas sesuai permintaan
+    const summaryRows = [
+        { label: 'Subtotal', val: subtotal },
+        { label: `Diskon`, val: -disc },
+        { label: `PPN (${invoice.ppn}%)`, val: ppnNominal },
+        { label: 'Ongkos Kirim', val: ongkir },
+        { label: 'Total Tagihan', val: totalFull, bold: true },
+        { label: isLegacy ? 'SUDAH DIBAYAR' : 'UANG MUKA (DP)', val: -bayar },
+        { label: 'SISA', val: sisa, bold: true },
+    ];
 
-    y += 6;
-    doc.text(`PPN (${ppnRate}%)`, labelX, y);
-    doc.text(`Rp ${ppn.toLocaleString('id-ID')}`, valueX, y, { align: 'right' });
+    let currentSumY = afterTableY;
+    summaryRows.forEach((row) => {
+        doc.setFont('helvetica', row.bold ? 'bold' : 'normal');
+        doc.text(row.label, summaryX + 2, currentSumY);
+        doc.text(`Rp ${Math.abs(row.val).toLocaleString('id-ID')}`, pageWidth - 15, currentSumY, { align: 'right' });
+        currentSumY += 6;
+    });
+    doc.rect(summaryX, afterTableY - 4, summaryWidth, currentSumY - afterTableY + 2);
 
-    y += 6;
-    doc.text('Ongkos Kirim', labelX, y);
-    doc.text(`Rp ${ongkir.toLocaleString('id-ID')}`, valueX, y, { align: 'right' });
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold').text('Pembayaran Transfer Ke:', 15, afterTableY);
+    doc.setFont('helvetica', 'normal')
+        .text('Bank BRI', 15, afterTableY + 5)
+        .text('A/N : CV. INDIGAMA KHATULISTIWA', 15, afterTableY + 10)
+        .text('No. Rek : 0583 0110 0100 565', 15, afterTableY + 15);
 
-    y += 6;
-    doc.setFont('helvetica', 'bold');
-    doc.text('Total', labelX, y);
-    doc.text(`Rp ${total.toLocaleString('id-ID')}`, valueX, y, { align: 'right' });
+    const centerX = pageWidth / 2;
+    doc.text('Hormat Kami,', centerX, afterTableY + 5, { align: 'center' });
+    doc.text('( ......................................... )', centerX, afterTableY + 25, { align: 'center' });
 
-    y += 6;
-    doc.setFont('helvetica', 'normal');
-    doc.text('DP', labelX, y);
-    doc.text(`Rp ${dp.toLocaleString('id-ID')}`, valueX, y, { align: 'right' });
-
-    y += 6;
-    doc.setFont('helvetica', 'bold');
-    doc.text('Grand Total', labelX, y);
-    doc.text(`Rp ${grandTotal.toLocaleString('id-ID')}`, valueX, y, { align: 'right' });
-
-    // Output PDF
+    const fileName = `Invoice_${invoice.no_invoice.replace(/\//g, '_')}.pdf`;
     if (download) {
-        doc.save(`Invoice_${invoice.no_invoice?.replace(/\//g, '_')}.pdf`);
+        doc.save(fileName);
     } else {
         window.open(doc.output('bloburl'), '_blank');
     }
@@ -268,11 +228,11 @@ export const columns = (): ColumnDef<Invoice>[] => [
         header: 'No. Invoice',
     },
     {
-        accessorKey: 'surat_jalan.no_surat_jalan',
         header: 'No. Surat Jalan',
         cell: ({ row }) => {
             const data = row.original;
-            return <span>{data.surat_jalan?.no_surat_jalan || '-'}</span>;
+            // Jika legacy pakai no_surat_jalan_lama, jika bukan pakai relasi
+            return <span>{data.is_legacy ? data.no_surat_jalan_lama : data.surat_jalan?.no_surat_jalan || '-'}</span>;
         },
     },
     {
@@ -304,20 +264,20 @@ export const columns = (): ColumnDef<Invoice>[] => [
         header: 'Total Invoice',
         cell: ({ row }) => {
             const data = row.original;
+            // Untuk legacy, kita sudah punya kolom 'total' di database hasil import
+            if (data.is_legacy) {
+                return <span className="font-semibold text-blue-600">Rp {Number(data.total).toLocaleString('id-ID')}</span>;
+            }
+
+            // Kalkulasi otomatis untuk data sistem baru
             const discount = Number(data.discount || 0);
-            const qtyPengiriman = Number(data.surat_jalan?.qty_pengiriman || 0);
-            const hargaSO = Number(data.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
+            const qty = Number(data.surat_jalan?.qty_pengiriman || 0);
+            const harga = Number(data.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
             const ppnRate = Number(data.ppn || 0);
-            const ongkosKirim = Number(data.ongkos_kirim || 0);
+            const ongkir = Number(data.ongkos_kirim || 0);
 
-            // Hitung subtotal
-            const subtotalSebelumToleransi = hargaSO * qtyPengiriman;
-
-            const subtotal = subtotalSebelumToleransi - discount;
-
-            // Hitung PPN dan total
-            const ppnAmount = (subtotal * ppnRate) / 100;
-            const total = subtotal + ppnAmount + ongkosKirim;
+            const subtotal = harga * qty - discount;
+            const total = subtotal + (subtotal * ppnRate) / 100 + ongkir;
 
             return <span className="font-semibold">Rp {total.toLocaleString('id-ID')}</span>;
         },

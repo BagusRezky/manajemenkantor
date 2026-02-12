@@ -336,6 +336,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy')->middleware('permission:invoices.destroy');
     Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show')->middleware('permission:invoices.show');
     Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'generatePdf'])->name('invoices.pdf')->middleware('permission:invoices.pdf');
+    Route::post('/invoices/import', [InvoiceController::class, 'importLegacy'])->name('invoices.import')->middleware('permission:invoices.import');
 
     Route::get('/subcountOuts', [SubcountOutController::class, 'index'])->name('subcountOuts.index')->middleware('permission:subcountOuts.index');
     Route::get('/subcountOuts/create', [SubcountOutController::class, 'create'])->name('subcountOuts.create')->middleware('permission:subcountOuts.create');
