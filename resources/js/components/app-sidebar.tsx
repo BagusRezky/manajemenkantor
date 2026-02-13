@@ -134,7 +134,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         icon: StickyNote,
         children: [
             { title: 'Invoice', icon: StickyNote, href: '/invoices', permission: 'invoices.index' },
-            {title: 'Bon Pay', icon: Banknote, href: '/bonPays', permission: 'bonPays.index' },
+            {title: 'Inv. Payment', icon: Banknote, href: '/bonPays', permission: 'bonPays.index' },
             { title: 'Payment Entry Good', icon: Banknote, href: '/paymentEntryGoods', permission: 'paymentEntryGoods.index' },
             { title: 'COA Class', icon: Banknote, href: '/masterCoaClasses', permission: 'masterCoaClasses.index' },
             { title: 'Metode Bayar', icon: Banknote, href: '/metodeBayars', permission: 'metodeBayars.index' },

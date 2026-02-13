@@ -9,11 +9,11 @@ interface Props {
 }
 
 export default function Index({ bonPays }: Props) {
-    const breadcrumbs = [{ title: 'BonPay', href: '/bonPays' }];
+    const breadcrumbs = [{ title: 'Inv. Payment', href: '/bonPays' }];
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
-            <Head title="Daftar Pembayaran (BonPay)" />
+            <Head title="Daftar Pembayaran (Inv. Payment)" />
             <div className="p-6">
                 <DataTable columns={columns} data={bonPays} />
             </div>

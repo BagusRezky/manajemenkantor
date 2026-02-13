@@ -7,7 +7,7 @@ import { Head, Link } from '@inertiajs/react';
 import { ArrowLeft, Printer } from 'lucide-react';
 
 const breadcrumbs = [
-    { title: 'Bon Pay', href: route('bonPays.index') },
+    { title: 'Inv. Payment', href: route('bonPays.index') },
     { title: 'Detail', href: '#' },
 ];
 

@@ -1,4 +1,5 @@
 import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -15,6 +16,21 @@ import { Eye, MoreHorizontal, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const columns: ColumnDef<BonPay>[] = [
+    {
+        id: 'select',
+        header: ({ table }) => (
+            <Checkbox
+                checked={table.getIsAllPageRowsSelected() || (table.getIsSomePageRowsSelected() && 'indeterminate')}
+                onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
+                aria-label="Select all"
+            />
+        ),
+        cell: ({ row }) => (
+            <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} aria-label="Select row" />
+        ),
+        enableSorting: false,
+        enableHiding: false,
+    },
     {
         accessorKey: 'nomor_pembayaran',
         header: 'No. Bayar',
@@ -41,7 +57,9 @@ export const columns: ColumnDef<BonPay>[] = [
         accessorKey: 'metode_bayar.metode_bayar',
         header: 'Metode',
     },
+    { accessorKey: 'keterangan', header: 'Keterangan' },
     {
+        header: 'Aksi',
         id: 'actions',
         cell: ({ row }) => {
             const bonPay = row.original;

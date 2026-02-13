@@ -31,9 +31,34 @@ class BonPayController extends Controller
 
     public function create()
     {
-        $invoices = Invoice::with(['suratJalan.kartuInstruksiKerja.salesOrder.customerAddress'])
-            ->orderBy('created_at', 'desc')
-            ->get();
+        // Ambil invoice beserta relasi dan history pembayarannya (bonPays)
+       $invoices = Invoice::with([
+            'bonPays',
+            'suratJalan',
+            'suratJalan.kartuInstruksiKerja',
+            'suratJalan.kartuInstruksiKerja.salesOrder',
+            'suratJalan.kartuInstruksiKerja.salesOrder.customerAddress', // Nama customer ada di sini
+        ])
+        ->orderBy('created_at', 'desc')
+        ->get()
+        ->filter(function ($invoice) {
+            // Logic hitung sisa piutang untuk filter lunas
+            if ($invoice->is_legacy) {
+                $grandTotal = (float) $invoice->total;
+            } else {
+                $qty = (float) ($invoice->suratJalan->qty_pengiriman ?? 0);
+                $harga = (float) ($invoice->suratJalan->kartuInstruksiKerja->salesOrder->harga_pcs_bp ?? 0);
+                $subtotal = ($qty * $harga) - (float) $invoice->discount;
+                $ppn = ($subtotal * (float) $invoice->ppn) / 100;
+                $grandTotal = $subtotal + $ppn + (float) $invoice->ongkos_kirim;
+            }
+
+            $totalDibayar = ($invoice->is_legacy ? 0 : (float) $invoice->uang_muka) + $invoice->bonPays->sum('nominal_pembayaran');
+
+            // Tampilkan hanya yang masih punya hutang (sisa > 0)
+            return ($grandTotal - $totalDibayar) > 0;
+        })
+        ->values();
 
         return Inertia::render('bonPay/create', [
             'invoices' => $invoices,

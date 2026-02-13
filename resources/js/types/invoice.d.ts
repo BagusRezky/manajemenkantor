@@ -1,3 +1,4 @@
+import { BonPay } from './bonPay';
 import { SuratJalan } from './suratJalan';
 
 export interface InvoiceDetail {
@@ -46,5 +47,6 @@ export interface Invoice {
 
     // Relasi
     surat_jalan?: SuratJalan;
-    details?: InvoiceDetail[]; // Tambahkan ini bro
+    details?: InvoiceDetail[];
+    bon_pays?: BonPay;
 }
