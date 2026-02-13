@@ -19,7 +19,7 @@ class InvoiceController extends Controller
     public function index()
     {
         $invoices = Invoice::with('suratJalan.kartuInstruksiKerja.salesOrder.customerAddress')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('tgl_invoice', 'desc')
             ->get();
 
         return Inertia::render('invoice/invoices', [
@@ -38,7 +38,7 @@ class InvoiceController extends Controller
             'kartuInstruksiKerja.salesOrder.finishGoodItem'
         ])
             ->whereDoesntHave('invoice')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('tgl_invoice', 'desc')
             ->get();
 
         return Inertia::render('invoice/create', [
