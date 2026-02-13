@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Imports\BonPayImport;
 use App\Models\BonPay;
 use App\Models\Invoice;
 use App\Models\MasterCoa;
@@ -9,6 +10,7 @@ use App\Models\MetodeBayar;
 use App\Models\Karyawan;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Maatwebsite\Excel\Facades\Excel;
 use Inertia\Inertia;
 
 class BonPayController extends Controller
@@ -19,7 +21,7 @@ class BonPayController extends Controller
     public function index()
     {
         $bonPays = BonPay::with(['invoice', 'metodeBayar', 'karyawan', 'account'])
-            ->orderBy('created_at', 'desc')
+            ->orderBy('tanggal_pembayaran', 'desc')
             ->get();
 
         return Inertia::render('bonPay/bonPays', [
@@ -55,14 +57,17 @@ class BonPayController extends Controller
         ]);
 
         DB::transaction(function () use ($validated) {
-            // Generate Nomor Pembayaran
-            $datePart = date('Ym');
-            $latest = BonPay::where('nomor_pembayaran', 'like', "PAY/$datePart/%")->count();
-            $validated['nomor_pembayaran'] = "PAY/$datePart/" . str_pad($latest + 1, 4, '0', STR_PAD_LEFT);
+            // 1. Generate Nomor Pembayaran dengan format MM/YYMM/00-XXXX
+            $datePart = date('ym');
+            $latest = BonPay::where('nomor_pembayaran', 'like', "MM/$datePart/00-%")->count();
 
+            // Format akhir: MM/2406/00-0001
+            $validated['nomor_pembayaran'] = "MM/$datePart/00-" . str_pad($latest + 1, 4, '0', STR_PAD_LEFT);
+
+            // 2. Simpan Data
             BonPay::create($validated);
 
-            // Update saldo di tabel invoices
+            // 3. Update saldo di tabel invoices
             $this->updateInvoiceBalance($validated['id_invoice']);
         });
 
@@ -115,5 +120,16 @@ class BonPayController extends Controller
         });
 
         return redirect()->route('bonPays.index')->with('success', 'Pembayaran berhasil dihapus');
+    }
+
+    public function import(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        Excel::import(new BonPayImport, $request->file('file'));
+
+        return redirect()->route('bonPays.index')->with('success', 'Data pembayaran berhasil diimport dari Excel.');
     }
 }

@@ -584,6 +584,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('bonPays/{bonPay}', [BonPayController::class, 'show'])->name('bonPays.show')->middleware('permission:bonPays.show');
         Route::put('bonPays/{bonPay}', [BonPayController::class, 'update'])->name('bonPays.update')->middleware('permission:bonPays.update');
         Route::delete('bonPays/{bonPay}', [BonPayController::class, 'destroy'])->name('bonPays.destroy')->middleware('permission:bonPays.destroy');
+        Route::post('bonPays/import', [BonPayController::class, 'import'])->name('bonPays.import')->middleware('permission:bonPays.import');
     });
 });
 
