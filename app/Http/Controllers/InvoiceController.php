@@ -38,7 +38,6 @@ class InvoiceController extends Controller
             'kartuInstruksiKerja.salesOrder.finishGoodItem'
         ])
             ->whereDoesntHave('invoice')
-            ->orderBy('tgl_invoice', 'desc')
             ->get();
 
         return Inertia::render('invoice/create', [
