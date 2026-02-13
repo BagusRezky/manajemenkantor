@@ -573,9 +573,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::prefix('reports')->group(function () {
             Route::get('/', [ReportController::class, 'index'])->name('reports.index');
             Route::get('/payment/export', [ReportController::class, 'exportPayment'])->name('paymentReports.export');
-            Route::get('/mutation/export', [ReportController::class, 'export'])->name('mutationReports.export');
-            Route::get('/sales/export', [ReportController::class, 'export'])->name('salesReports.export');
-            Route::get('/profit-loss/export', [ReportController::class, 'export'])->name('profitlossReports.export');
+            Route::get('/mutation/export', [ReportController::class, 'exportMutation'])->name('mutationReports.export');
+            Route::get('/sales/export', [ReportController::class, 'exportSales'])->name('salesReports.export');
+            Route::get('/profit-loss/export', [ReportController::class, 'exportProfitLoss'])->name('profitlossReports.export');
         });
         Route::get('bonPays', [BonPayController::class, 'index'])->name('bonPays.index')->middleware('permission:bonPays.index');
         Route::get('bonPays/create', [BonPayController::class, 'create'])->name('bonPays.create')->middleware('permission:bonPays.create');

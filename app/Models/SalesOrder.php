@@ -91,4 +91,16 @@ class SalesOrder extends Model
     {
         return $this->hasOne(KartuInstruksiKerja::class, 'id_sales_order');
     }
+
+    public function suratJalans()
+    {
+        return $this->hasManyThrough(
+            SuratJalan::class,           // Model tujuan akhir
+            KartuInstruksiKerja::class,  // Model perantara (SPK)
+            'id_sales_order',            // Foreign key di tabel SPK (KIK) yang merujuk ke SO
+            'id_kartu_instruksi_kerja',  // Foreign key di tabel Surat Jalan yang merujuk ke SPK
+            'id',                        // Local key di tabel Sales Order
+            'id'                         // Local key di tabel SPK (KIK)
+        );
+    }
 }
