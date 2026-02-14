@@ -65,7 +65,7 @@ class MutationReportExport implements FromView, ShouldAutoSize
 
     private function getMutationData($accountId, $start, $end)
     {
-        // 1. Trans Kas (1=Masuk/D, 2=Keluar/K) - SUDAH BENAR
+        // 1. Trans Kas (1=Masuk/D, 2=Keluar/K) 
         $q1 = DB::table('trans_kas as t')
             ->leftJoin('master_coas as c_utama', 't.id_account_kas', '=', 'c_utama.id')
             ->leftJoin('master_coas as c_lain', 't.id_account_kas_lain', '=', 'c_lain.id')
@@ -74,8 +74,6 @@ class MutationReportExport implements FromView, ShouldAutoSize
                 't.no_bukti',
                 't.keterangan',
                 't.nominal',
-                // Logika Tipe: Jika akun yang dicari ada di id_account_kas dan transaksi=1 (Masuk), maka Debet.
-                // Jika akun yang dicari ada di id_account_kas_lain dan transaksi=1 (Masuk), maka Kredit (Lawan).
                 DB::raw("CASE
                 WHEN t.id_account_kas = $accountId AND t.transaksi = 1 THEN 'D'
                 WHEN t.id_account_kas = $accountId AND t.transaksi = 2 THEN 'K'
