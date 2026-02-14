@@ -67,32 +67,49 @@ class MutationReportExport implements FromView, ShouldAutoSize
     {
         // 1. Trans Kas (1=Masuk/D, 2=Keluar/K) - SUDAH BENAR
         $q1 = DB::table('trans_kas as t')
-            ->leftJoin('master_coas as c', 't.id_account_kas_lain', '=', 'c.id')
+            ->leftJoin('master_coas as c_utama', 't.id_account_kas', '=', 'c_utama.id')
+            ->leftJoin('master_coas as c_lain', 't.id_account_kas_lain', '=', 'c_lain.id')
             ->select(
                 't.tanggal_transaksi as tgl',
                 't.no_bukti',
                 't.keterangan',
                 't.nominal',
-                DB::raw("CASE WHEN t.transaksi = 1 THEN 'D' ELSE 'K' END as tipe"),
-                'c.kode_akuntansi as lawan_akun'
+                // Logika Tipe: Jika akun yang dicari ada di id_account_kas dan transaksi=1 (Masuk), maka Debet.
+                // Jika akun yang dicari ada di id_account_kas_lain dan transaksi=1 (Masuk), maka Kredit (Lawan).
+                DB::raw("CASE
+                WHEN t.id_account_kas = $accountId AND t.transaksi = 1 THEN 'D'
+                WHEN t.id_account_kas = $accountId AND t.transaksi = 2 THEN 'K'
+                WHEN t.id_account_kas_lain = $accountId AND t.transaksi = 1 THEN 'K'
+                WHEN t.id_account_kas_lain = $accountId AND t.transaksi = 2 THEN 'D'
+                ELSE 'D' END as tipe"),
+                DB::raw("CASE WHEN t.id_account_kas = $accountId THEN c_lain.kode_akuntansi ELSE c_utama.kode_akuntansi END as lawan_akun")
             )
-            ->where('t.id_account_kas', $accountId)
+            ->where(function ($q) use ($accountId) {
+                $q->where('t.id_account_kas', $accountId)->orWhere('t.id_account_kas_lain', $accountId);
+            })
             ->whereBetween('t.tanggal_transaksi', [$start, $end]);
 
-        // 2. Trans Kas Bank (21=Masuk/D, 22=Keluar/K) - SUDAH BENAR
+        // 2. Trans Kas Bank (Cek di kedua kolom: id_account_bank & id_account_bank_lain)
         $q2 = DB::table('trans_kas_banks as t')
-            ->leftJoin('master_coas as c', 't.id_account_bank_lain', '=', 'c.id')
+            ->leftJoin('master_coas as c_utama', 't.id_account_bank', '=', 'c_utama.id')
+            ->leftJoin('master_coas as c_lain', 't.id_account_bank_lain', '=', 'c_lain.id')
             ->select(
                 't.tanggal_transaksi as tgl',
                 't.no_bukti',
                 't.keterangan',
                 't.nominal',
-                DB::raw("CASE WHEN t.transaksi = 21 THEN 'D' ELSE 'K' END as tipe"),
-                'c.kode_akuntansi as lawan_akun'
+                DB::raw("CASE
+                WHEN t.id_account_bank = $accountId AND t.transaksi = 21 THEN 'D'
+                WHEN t.id_account_bank = $accountId AND t.transaksi = 22 THEN 'K'
+                WHEN t.id_account_bank_lain = $accountId AND t.transaksi = 21 THEN 'K'
+                WHEN t.id_account_bank_lain = $accountId AND t.transaksi = 22 THEN 'D'
+                ELSE 'D' END as tipe"),
+                DB::raw("CASE WHEN t.id_account_bank = $accountId THEN c_lain.kode_akuntansi ELSE c_utama.kode_akuntansi END as lawan_akun")
             )
-            ->where('t.id_account_bank', $accountId)
+            ->where(function ($q) use ($accountId) {
+                $q->where('t.id_account_bank', $accountId)->orWhere('t.id_account_bank_lain', $accountId);
+            })
             ->whereBetween('t.tanggal_transaksi', [$start, $end]);
-
         // 3. Operasional Pay (Biaya Operasional = Uang Keluar/K) - TETAP KREDIT
         $q3 = DB::table('operasional_pays as t')
             ->leftJoin('master_coas as c', 't.id_account_beban', '=', 'c.id')
