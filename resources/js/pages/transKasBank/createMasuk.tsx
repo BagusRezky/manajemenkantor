@@ -27,7 +27,7 @@ export default function CreateMasuk({  accountBank, accountBankLain, customerAdd
         id_account_bank: '',
         id_account_bank_lain: '',
         id_customer_address: '',
-        gudang: '',
+        gudang: 'UGRMS',
         periode: new Date().getFullYear(),
         tanggal_transaksi: new Date().toISOString().split('T')[0],
         nominal: 0,
@@ -59,15 +59,21 @@ export default function CreateMasuk({  accountBank, accountBankLain, customerAdd
                                     <Input value={data.gudang} onChange={(e) => setData('gudang', e.target.value)} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Tanggal Transaksi</Label>
+                                    <Label>
+                                        Tanggal Transaksi <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input
                                         type="date"
                                         value={data.tanggal_transaksi}
                                         onChange={(e) => setData('tanggal_transaksi', e.target.value)}
+                                        required
                                     />
+                                    {errors.tanggal_transaksi && <p className="text-sm text-red-500">{errors.tanggal_transaksi}</p>}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Account Bank (Debit)</Label>
+                                    <Label>
+                                        Account Bank (Debit) <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={accountBank.map((c) => ({
                                             key: String(c.id),
@@ -78,9 +84,12 @@ export default function CreateMasuk({  accountBank, accountBankLain, customerAdd
                                         onChange={(val) => setData('id_account_bank', val)}
                                         placeholder="Pilih Account Bank"
                                     />
+                                    {errors.id_account_bank && <p className="text-sm text-red-500">{errors.id_account_bank}</p>}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Account Lain (Kredit)</Label>
+                                    <Label>
+                                        Account Lain (Kredit) <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={accountBankLain.map((c) => ({
                                             key: String(c.id),
@@ -91,11 +100,15 @@ export default function CreateMasuk({  accountBank, accountBankLain, customerAdd
                                         onChange={(val) => setData('id_account_bank_lain', val)}
                                         placeholder="Pilih Account Lain"
                                     />
+                                    {errors.id_account_bank_lain && <p className="text-sm text-red-500">{errors.id_account_bank_lain}</p>}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Nominal</Label>
-                                    <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} />
+                                    <Label>
+                                        Nominal <span className="text-red-500">*</span>
+                                    </Label>
+                                    <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} required />
+                                    {errors.nominal && <p className="text-sm text-red-500">{errors.nominal}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Periode</Label>
