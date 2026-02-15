@@ -41,17 +41,17 @@ class OperasionalPayController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'id_karyawan'       => 'nullable|exists:karyawans,id',
-            'id_account_kas'    => 'nullable|exists:master_coas,id',
-            'id_account_beban'  => 'nullable|exists:master_coas,id',
+            'id_karyawan'       => 'required|exists:karyawans,id',
+            'id_account_kas'    => 'required|exists:master_coas,id',
+            'id_account_beban'  => 'required|exists:master_coas,id',
 
             'gudang'            => 'required|string|max:255',
             'periode'           => 'required|integer',
-            'tanggal_transaksi' => 'nullable|date',
+            'tanggal_transaksi' => 'required|date',
             'nominal'           => 'required|numeric|min:0',
             'keterangan'        => 'nullable|string',
             'mesin'             => 'nullable|string',
-            'kode'              => 'nullable|integer',
+            'kode'              => 'required|integer',
             'nopol'             => 'nullable|string',
             'odometer'          => 'nullable|string',
             'jenis'             => 'nullable|string',
