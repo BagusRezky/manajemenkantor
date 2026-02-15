@@ -66,7 +66,9 @@ export default function CreateMasuk({
                                     <Input value={data.gudang} onChange={(e) => setData('gudang', e.target.value)} placeholder="Gudang A" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Tanggal Transaksi</Label>
+                                    <Label>
+                                        Tanggal Transaksi <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input
                                         type="date"
                                         value={data.tanggal_transaksi}
@@ -80,7 +82,9 @@ export default function CreateMasuk({
                                     <Input value={data.periode} onChange={(e) => setData('periode', Number(e.target.value))} placeholder="2024" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Karyawan (PIC)</Label>
+                                    <Label>
+                                        Karyawan (PIC) <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={karyawans.map((k) => ({ key: String(k.id), value: String(k.id), label: k.nama ?? '' }))}
                                         value={data.id_karyawan}
@@ -90,7 +94,9 @@ export default function CreateMasuk({
                                     {errors.id_karyawan && <p className="text-sm text-red-500">{errors.id_karyawan}</p>}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Account Bank</Label>
+                                    <Label>
+                                        Account Bank <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={accountKas.map((a) => ({
                                             key: String(a.id),
@@ -104,7 +110,9 @@ export default function CreateMasuk({
                                     {errors.id_account_kas && <p className="text-sm text-red-500">{errors.id_account_kas}</p>}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Account Kas (Debit)</Label>
+                                    <Label>
+                                        Account Kas (Debit) <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={accountLawan.map((a) => ({
                                             key: String(a.id),
@@ -118,7 +126,9 @@ export default function CreateMasuk({
                                     {errors.id_account_kas_lain && <p className="text-sm text-red-500">{errors.id_account_kas_lain}</p>}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Nominal</Label>
+                                    <Label>
+                                        Nominal <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} required />
                                     {errors.nominal && <p className="text-sm text-red-500">{errors.nominal}</p>}
                                 </div>
