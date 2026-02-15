@@ -58,9 +58,9 @@ class TransKasController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'id_karyawan'         => 'nullable|exists:karyawans,id',
-            'id_account_kas'      => 'nullable|exists:master_coas,id',
-            'id_account_kas_lain' => 'nullable|exists:master_coas,id',
+            'id_karyawan'         => 'required|exists:karyawans,id',
+            'id_account_kas'      => 'required|exists:master_coas,id',
+            'id_account_kas_lain' => 'required|exists:master_coas,id',
             'id_customer_address' => 'nullable|exists:customer_addresses,id',
             'transaksi'           => 'required|in:1,2',
             // 'no_bukti'            => 'required|string|max:255',
@@ -145,15 +145,15 @@ class TransKasController extends Controller
     {
         $validated = $request->validate([
             'id_karyawan'         => 'nullable|exists:karyawans,id',
-            'id_account_kas'      => 'nullable|exists:master_coas,id',
-            'id_account_kas_lain' => 'nullable|exists:master_coas,id',
+            'id_account_kas'      => 'required|exists:master_coas,id',
+            'id_account_kas_lain' => 'required|exists:master_coas,id',
             'id_customer_address' => 'nullable|exists:customer_addresses,id',
             'transaksi'           => 'required|in:1,2',
             'no_bukti'            => 'required|string|max:255',
             'gudang'              => 'required|string|max:255',
             'periode'             => 'required|integer',
             'nominal'             => 'required|numeric|min:0',
-            'tanggal_transaksi'   => 'nullable|date',
+            'tanggal_transaksi'   => 'required|date',
             'keterangan'          => 'nullable|string',
             'mesin'               => 'nullable|string',
             'kode'                => 'nullable|integer',

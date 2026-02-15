@@ -35,7 +35,7 @@ export default function CreateKeluar({
         id_account_kas_lain: '',
         id_customer_address: '',
 
-        gudang: '',
+        gudang: 'UGRMS',
         periode: new Date().getFullYear(),
         tanggal_transaksi: new Date().toISOString().split('T')[0],
         nominal: 0,
@@ -64,7 +64,7 @@ export default function CreateKeluar({
 
                                 <div className="space-y-2">
                                     <Label>Gudang</Label>
-                                    <Input value={data.gudang} onChange={(e) => setData('gudang', e.target.value)} placeholder="Gudang A" />
+                                    <Input value={data.gudang} onChange={(e) => setData('gudang', e.target.value)}  />
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Periode</Label>
@@ -76,10 +76,11 @@ export default function CreateKeluar({
                                         type="date"
                                         value={data.tanggal_transaksi}
                                         onChange={(e) => setData('tanggal_transaksi', e.target.value)}
+                                        required
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Karyawan</Label>
+                                    <Label>Karyawan (PIC)</Label>
                                     <SearchableSelect
                                         items={karyawans.map((k) => ({ key: String(k.id), value: String(k.id), label: k.nama ?? '' }))}
                                         value={data.id_karyawan}
@@ -116,7 +117,7 @@ export default function CreateKeluar({
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Nominal</Label>
-                                    <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} />
+                                    <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} required/>
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Customer </Label>
@@ -138,7 +139,7 @@ export default function CreateKeluar({
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Kode</Label>
-                                    <Input type="number" value={data.kode} onChange={(e) => setData('kode', Number(e.target.value))} />
+                                    <Input type="number" min={0} value={data.kode} onChange={(e) => setData('kode', Number(e.target.value))} required/>
                                 </div>
                                 <div className="col-span-full space-y-2">
                                     <Label>Keterangan</Label>

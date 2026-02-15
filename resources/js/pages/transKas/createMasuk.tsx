@@ -36,7 +36,7 @@ export default function CreateMasuk({
         id_account_kas_lain: '',
         id_customer_address: '',
 
-        gudang: '',
+        gudang: 'UGRMS',
         periode: new Date().getFullYear(),
         tanggal_transaksi: new Date().toISOString().split('T')[0],
         nominal: 0,
@@ -60,7 +60,7 @@ export default function CreateMasuk({
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                
+
                                 <div className="space-y-2">
                                     <Label>Gudang</Label>
                                     <Input value={data.gudang} onChange={(e) => setData('gudang', e.target.value)} placeholder="Gudang A" />
@@ -71,14 +71,16 @@ export default function CreateMasuk({
                                         type="date"
                                         value={data.tanggal_transaksi}
                                         onChange={(e) => setData('tanggal_transaksi', e.target.value)}
+                                        required
                                     />
+                                    {errors.tanggal_transaksi && <p className="text-sm text-red-500">{errors.tanggal_transaksi}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Periode</Label>
                                     <Input value={data.periode} onChange={(e) => setData('periode', Number(e.target.value))} placeholder="2024" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Karyawan</Label>
+                                    <Label>Karyawan (PIC)</Label>
                                     <SearchableSelect
                                         items={karyawans.map((k) => ({ key: String(k.id), value: String(k.id), label: k.nama ?? '' }))}
                                         value={data.id_karyawan}
@@ -99,6 +101,7 @@ export default function CreateMasuk({
                                         onChange={(val) => setData('id_account_kas', val)}
                                         placeholder="Pilih Account Bank"
                                     />
+                                    {errors.id_account_kas && <p className="text-sm text-red-500">{errors.id_account_kas}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Account Kas (Debit)</Label>
@@ -112,10 +115,12 @@ export default function CreateMasuk({
                                         onChange={(val) => setData('id_account_kas_lain', val)}
                                         placeholder="Pilih Account Kas (Debit)"
                                     />
+                                    {errors.id_account_kas_lain && <p className="text-sm text-red-500">{errors.id_account_kas_lain}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Nominal</Label>
-                                    <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} />
+                                    <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} required />
+                                    {errors.nominal && <p className="text-sm text-red-500">{errors.nominal}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Customer </Label>
