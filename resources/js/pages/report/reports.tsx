@@ -1,9 +1,8 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { MasterCoa } from '@/types/masterCoa';
 import { Head, useForm } from '@inertiajs/react';
-import { Banknote, FileText, Search, ShoppingCart, TrendingUp, X } from 'lucide-react';
+import { Banknote, FileText,  ShoppingCart, TrendingUp, X } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Reports', href: '/reports' }];
@@ -143,7 +142,7 @@ const ReportCard = ({ title, description, icon: Icon, routeName, buttonColor, ac
 
                         <div className="p-4">
                             <div className="relative mb-4">
-                                <Search className="absolute top-2.5 left-3 text-gray-400" size={18} />
+
                                 <input
                                     type="text"
                                     placeholder="Cari kode atau nama akun..."
