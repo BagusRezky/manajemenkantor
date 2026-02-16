@@ -43,13 +43,13 @@ class ReportController extends Controller
         $request->validate([
             'start_date' => 'required|date',
             'end_date'   => 'required|date|after_or_equal:start_date',
-            'id_account' => 'required' // Filter akun wajib untuk mutasi
+            'id_accounts' => 'required|array' 
         ]);
 
         $fileName = 'REPORT_MUTASI_' . $request->start_date . '_to_' . $request->end_date . '.xlsx';
 
         return Excel::download(
-            new MutationReportExport($request->start_date, $request->end_date, $request->id_account),
+            new MutationReportExport($request->start_date, $request->end_date, $request->id_accounts),
             $fileName
         );
     }
