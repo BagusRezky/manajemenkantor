@@ -29,7 +29,6 @@ export default function CreateKeluar({ karyawans,  accountBank, accountBankLain,
         id_account_bank: '',
         id_account_bank_lain: '',
         id_customer_address: '',
-        no_bukti: 'BBK/',
         gudang: 'UGRMS',
         periode: new Date().getFullYear(),
         tanggal_transaksi: new Date().toISOString().split('T')[0],
@@ -65,16 +64,22 @@ export default function CreateKeluar({ karyawans,  accountBank, accountBankLain,
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Tanggal Transaksi</Label>
+                                    <Label>
+                                        Tanggal Transaksi <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input
                                         type="date"
                                         value={data.tanggal_transaksi}
                                         onChange={(e) => setData('tanggal_transaksi', e.target.value)}
+                                        required
                                     />
+                                    {errors.tanggal_transaksi && <p className="text-sm text-red-500">{errors.tanggal_transaksi}</p>}
                                 </div>
 
                                 <div className="space-y-2">
-                                    <Label>Account Bank </Label>
+                                    <Label>
+                                        Account Bank <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={accountBank.map((c) => ({
                                             key: String(c.id),
@@ -85,9 +90,12 @@ export default function CreateKeluar({ karyawans,  accountBank, accountBankLain,
                                         onChange={(val) => setData('id_account_bank', val)}
                                         placeholder="Pilih Account Bank"
                                     />
+                                    {errors.id_account_bank && <p className="text-sm text-red-500">{errors.id_account_bank}</p>}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Account Lain </Label>
+                                    <Label>
+                                        Account Lain <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={accountBankLain.map((c) => ({
                                             key: String(c.id),
@@ -98,14 +106,14 @@ export default function CreateKeluar({ karyawans,  accountBank, accountBankLain,
                                         onChange={(val) => setData('id_account_bank_lain', val)}
                                         placeholder="Pilih Account Lain"
                                     />
+                                    {errors.id_account_bank_lain && <p className="text-sm text-red-500">{errors.id_account_bank_lain}</p>}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>No. Bukti</Label>
-                                    <Input value={data.no_bukti} onChange={(e) => setData('no_bukti', e.target.value)} />
-                                </div>
-                                <div className="space-y-2">
-                                    <Label>Nominal</Label>
-                                    <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} />
+                                    <Label>
+                                        Nominal <span className="text-red-500">*</span>
+                                    </Label>
+                                    <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} required />
+                                    {errors.nominal && <p className="text-sm text-red-500">{errors.nominal}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Periode</Label>
@@ -144,7 +152,9 @@ export default function CreateKeluar({ karyawans,  accountBank, accountBankLain,
                                     <Input value={data.no_rekening} onChange={(e) => setData('no_rekening', e.target.value)} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Karyawan</Label>
+                                    <Label>
+                                        Karyawan (PIC) <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={karyawans.map((k) => ({ key: String(k.id), value: String(k.id), label: k.nama ?? '' }))}
                                         value={data.id_karyawan}
@@ -158,8 +168,11 @@ export default function CreateKeluar({ karyawans,  accountBank, accountBankLain,
                                     <Input value={data.mesin} onChange={(e) => setData('mesin', e.target.value)} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Kode</Label>
-                                    <Input type="number" value={data.kode} onChange={(e) => setData('kode', Number(e.target.value))} />
+                                    <Label>
+                                        Kode <span className="text-red-500">*</span>
+                                    </Label>
+                                    <Input type="number" value={data.kode} onChange={(e) => setData('kode', Number(e.target.value))} required />
+                                    {errors.kode && <p className="text-sm text-red-500">{errors.kode}</p>}
                                 </div>
                             </div>
                             <Button type="submit" disabled={processing} className="bg-orange-600 hover:bg-orange-700">

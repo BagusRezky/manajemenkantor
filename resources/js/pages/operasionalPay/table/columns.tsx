@@ -18,7 +18,7 @@ export const columns = (): ColumnDef<OperasionalPay>[] => [
         cell: ({ row }) => <Checkbox checked={row.getIsSelected()} onCheckedChange={(value) => row.toggleSelected(!!value)} />,
     },
     { accessorKey: 'no_bukti', header: 'No. Bukti' },
-    
+
     {
         accessorKey: 'account_kas',
         header: 'Akun Kas',
@@ -40,7 +40,12 @@ export const columns = (): ColumnDef<OperasionalPay>[] => [
 
     },
     {
+        accessorKey: 'keterangan',
+        header: 'Keterangan',
+    },
+    {
         id: 'actions',
+        header: 'Actions',
         cell: ({ row }) => (
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>

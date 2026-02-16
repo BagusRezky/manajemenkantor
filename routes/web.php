@@ -55,6 +55,11 @@ use App\Http\Controllers\MasterCoaController;
 use App\Http\Controllers\TransKasController;
 use App\Http\Controllers\TransKasBankController;
 use App\Http\Controllers\OperasionalPayController;
+use App\Http\Controllers\PoBillingController;
+use App\Http\Controllers\TransPaymentController;
+use App\Http\Controllers\TransFakturController;
+use App\Http\Controllers\ReportController;
+use App\Http\Controllers\BonPayController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -332,6 +337,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::delete('/invoices/{invoice}', [InvoiceController::class, 'destroy'])->name('invoices.destroy')->middleware('permission:invoices.destroy');
     Route::get('/invoices/{invoice}', [InvoiceController::class, 'show'])->name('invoices.show')->middleware('permission:invoices.show');
     Route::get('/invoices/{invoice}/pdf', [InvoiceController::class, 'generatePdf'])->name('invoices.pdf')->middleware('permission:invoices.pdf');
+    Route::post('/invoices/import', [InvoiceController::class, 'importLegacy'])->name('invoices.import')->middleware('permission:invoices.import');
 
     Route::get('/subcountOuts', [SubcountOutController::class, 'index'])->name('subcountOuts.index')->middleware('permission:subcountOuts.index');
     Route::get('/subcountOuts/create', [SubcountOutController::class, 'create'])->name('subcountOuts.create')->middleware('permission:subcountOuts.create');
@@ -537,6 +543,48 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/operasionalPays/{operasionalPay}', [OperasionalPayController::class, 'show'])->name('operasionalPays.show')->middleware('permission:operasionalPays.show');
         Route::get('/operasionalPays/{operasionalPay}/pdf', [OperasionalPayController::class, 'generatePdf'])->name('operasionalPays.pdf')->middleware('permission:operasionalPays.pdf');
         Route::post('/operasionalPays/import', [OperasionalPayController::class, 'import'])->name('operasionalPays.import')->middleware('permission:operasionalPays.import');
+
+        Route::get('/poBillings', [PoBillingController::class, 'index'])->name('poBillings.index')->middleware('permission:poBillings.index');
+        Route::get('/poBillings/create', [PoBillingController::class, 'create'])->name('poBillings.create')->middleware('permission:poBillings.create');
+        Route::post('/poBillings', [PoBillingController::class, 'store'])->name('poBillings.store')->middleware('permission:poBillings.store');
+        Route::get('/poBillings/{poBilling}/edit', [PoBillingController::class, 'edit'])->name('poBillings.edit')->middleware('permission:poBillings.edit');
+        Route::put('/poBillings/{poBilling}', [PoBillingController::class, 'update'])->name('poBillings.update')->middleware('permission:poBillings.update');
+        Route::delete('/poBillings/{poBilling}', [PoBillingController::class, 'destroy'])->name('poBillings.destroy')->middleware('permission:poBillings.destroy');
+        Route::get('/poBillings/{poBilling}', [PoBillingController::class, 'show'])->name('poBillings.show')->middleware('permission:poBillings.show');
+        Route::post('/poBillings/import', [PoBillingController::class, 'import'])->name('poBillings.import')->middleware('permission:poBillings.import');
+
+        Route::get('/transPayments', [TransPaymentController::class, 'index'])->name('transPayments.index')->middleware('permission:transPayments.index');
+        Route::get('/transPayments/create', [TransPaymentController::class, 'create'])->name('transPayments.create')->middleware('permission:transPayments.create');
+        Route::post('/transPayments', [TransPaymentController::class, 'store'])->name('transPayments.store')->middleware('permission:transPayments.store');
+        Route::get('/transPayments/{transPayment}/edit', [TransPaymentController::class, 'edit'])->name('transPayments.edit')->middleware('permission:transPayments.edit');
+        Route::put('/transPayments/{transPayment}', [TransPaymentController::class, 'update'])->name('transPayments.update')->middleware('permission:transPayments.update');
+        Route::delete('/transPayments/{transPayment}', [TransPaymentController::class, 'destroy'])->name('transPayments.destroy')->middleware('permission:transPayments.destroy');
+        Route::get('/transPayments/{transPayment}', [TransPaymentController::class, 'show'])->name('transPayments.show')->middleware('permission:transPayments.show');
+        Route::post('/transPayments/import', [TransPaymentController::class, 'import'])->name('transPayments.import')->middleware('permission:transPayments.import');
+
+        Route::get('/transFakturs', [TransFakturController::class, 'index'])->name('transFakturs.index')->middleware('permission:transFakturs.index');
+        Route::get('/transFakturs/create', [TransFakturController::class, 'create'])->name('transFakturs.create')->middleware('permission:transFakturs.create');
+        Route::post('/transFakturs', [TransFakturController::class, 'store'])->name('transFakturs.store')->middleware('permission:transFakturs.store');
+        Route::get('/transFakturs/{transFaktur}/edit', [TransFakturController::class, 'edit'])->name('transFakturs.edit')->middleware('permission:transFakturs.edit');
+        Route::put('/transFakturs/{transFaktur}', [TransFakturController::class, 'update'])->name('transFakturs.update')->middleware('permission:transFakturs.update');
+        Route::delete('/transFakturs/{transFaktur}', [TransFakturController::class, 'destroy'])->name('transFakturs.destroy')->middleware('permission:transFakturs.destroy');
+        Route::get('/transFakturs/{transFaktur}', [TransFakturController::class, 'show'])->name('transFakturs.show')->middleware('permission:transFakturs.show');
+        Route::post('/transFakturs/import', [TransFakturController::class, 'import'])->name('transFakturs.import')->middleware('permission:transFakturs.import');
+        Route::prefix('reports')->group(function () {
+            Route::get('/', [ReportController::class, 'index'])->name('reports.index');
+            Route::get('/payment/export', [ReportController::class, 'exportPayment'])->name('paymentReports.export');
+            Route::get('/mutation/export', [ReportController::class, 'exportMutation'])->name('mutationReports.export');
+            Route::get('/sales/export', [ReportController::class, 'exportSales'])->name('salesReports.export');
+            Route::get('/profit-loss/export', [ReportController::class, 'exportProfitLoss'])->name('profitlossReports.export');
+        });
+        Route::get('bonPays', [BonPayController::class, 'index'])->name('bonPays.index')->middleware('permission:bonPays.index');
+        Route::get('bonPays/create', [BonPayController::class, 'create'])->name('bonPays.create')->middleware('permission:bonPays.create');
+        Route::post('bonPays', [BonPayController::class, 'store'])->name('bonPays.store')->middleware('permission:bonPays.store');
+        Route::get('bonPays/{bonPay}/edit', [BonPayController::class, 'edit'])->name('bonPays.edit')->middleware('permission:bonPays.edit');
+        Route::get('bonPays/{bonPay}', [BonPayController::class, 'show'])->name('bonPays.show')->middleware('permission:bonPays.show');
+        Route::put('bonPays/{bonPay}', [BonPayController::class, 'update'])->name('bonPays.update')->middleware('permission:bonPays.update');
+        Route::delete('bonPays/{bonPay}', [BonPayController::class, 'destroy'])->name('bonPays.destroy')->middleware('permission:bonPays.destroy');
+        Route::post('bonPays/import', [BonPayController::class, 'import'])->name('bonPays.import')->middleware('permission:bonPays.import');
     });
 });
 

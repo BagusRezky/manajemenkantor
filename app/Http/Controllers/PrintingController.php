@@ -17,7 +17,7 @@ class PrintingController extends Controller
      */
     public function index()
     {
-        $printings = Printing::with(['mesin', 'operator', 'kartuInstruksiKerja'])->get();
+        $printings = Printing::with(['mesin', 'operator', 'kartuInstruksiKerja'])->orderBy('tanggal_entri', 'desc')->get();
         return inertia('printing/printings', [
             'printings' => $printings,
         ]);
@@ -52,7 +52,7 @@ class PrintingController extends Controller
             'id_operator' => 'required|exists:operators,id',
             'tanggal_entri' => 'required|date',
             'proses_printing' => 'required|in:Potong,Printing',
-            'tahap_printing' => 'required|in:Potong,Proses Cetak',
+            'tahap_printing' => 'required|in:Potong,Proses Cetak,Proses Cetak 2',
             'hasil_baik_printing' => 'required|numeric|min:0',
             'hasil_rusak_printing' => 'required|numeric|min:0',
             'semi_waste_printing' => 'required|numeric|min:0',

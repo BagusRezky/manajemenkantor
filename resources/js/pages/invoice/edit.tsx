@@ -35,6 +35,7 @@ export default function Edit({ invoice, suratJalans }: EditProps) {
         ppn: invoice.ppn.toString() || '0',
         ongkos_kirim: invoice.ongkos_kirim.toString() || '0',
         uang_muka: invoice.uang_muka.toString() || '0',
+        kode : invoice.kode || '',
     });
 
     // Inisialisasi selectedSuratJalan saat halaman dimuat
@@ -123,6 +124,17 @@ export default function Edit({ invoice, suratJalans }: EditProps) {
                                         }
                                     />
                                     {errors.id_surat_jalan && <p className="text-sm text-red-600">{errors.id_surat_jalan}</p>}
+                                    <Label>Kode *</Label>
+                                    <Input
+                                        id="kode"
+                                        type="number"
+                                        min={0}
+                                        value={data.kode}
+                                        onChange={(e) => setData('kode', e.target.value)}
+                                        placeholder="0"
+                                        required
+                                    />
+                                    {errors.kode && <p className="text-sm text-red-600">{errors.kode}</p>}
                                 </div>
 
                                 {selectedSuratJalan && (

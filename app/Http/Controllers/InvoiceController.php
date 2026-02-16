@@ -4,6 +4,9 @@ namespace App\Http\Controllers;
 
 use App\Models\Invoice;
 use App\Models\SuratJalan;
+use App\Imports\LegacyInvoiceImport;
+use App\Imports\LegacyInvoiceDetailImport;
+use Maatwebsite\Excel\Facades\Excel;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -16,7 +19,7 @@ class InvoiceController extends Controller
     public function index()
     {
         $invoices = Invoice::with('suratJalan.kartuInstruksiKerja.salesOrder.customerAddress')
-            ->orderBy('created_at', 'desc')
+            ->orderBy('tgl_invoice', 'desc')
             ->get();
 
         return Inertia::render('invoice/invoices', [
@@ -35,7 +38,6 @@ class InvoiceController extends Controller
             'kartuInstruksiKerja.salesOrder.finishGoodItem'
         ])
             ->whereDoesntHave('invoice')
-            ->orderBy('created_at', 'desc')
             ->get();
 
         return Inertia::render('invoice/create', [
@@ -57,6 +59,7 @@ class InvoiceController extends Controller
             'ppn' => 'required|numeric|min:0|max:100',
             'ongkos_kirim' => 'nullable|integer|min:0',
             'uang_muka' => 'nullable|integer|min:0',
+            'kode' => 'required|integer|min:0',
         ]);
 
         // Set default values
@@ -106,10 +109,11 @@ class InvoiceController extends Controller
      */
     public function show(Invoice $invoice)
     {
-        // Load semua relasi yang diperlukan untuk halaman show
+        // Load semua relasi sistem baru DAN relasi details untuk data legacy
         $invoice->load([
             'suratJalan.kartuInstruksiKerja.salesOrder.customerAddress',
-            'suratJalan.kartuInstruksiKerja.salesOrder.finishGoodItem'
+            'suratJalan.kartuInstruksiKerja.salesOrder.finishGoodItem',
+            'details' // <--- WAJIB TAMBAH INI agar rincian legacy muncul
         ]);
 
         return Inertia::render('invoice/show', [
@@ -159,6 +163,7 @@ class InvoiceController extends Controller
             'ppn' => 'required|numeric|min:0|max:100',
             'ongkos_kirim' => 'nullable|integer|min:0',
             'uang_muka' => 'nullable|integer|min:0',
+            'kode' => 'required|integer|min:0',
         ]);
 
         $invoice->update($validated);
@@ -184,11 +189,29 @@ class InvoiceController extends Controller
      */
     public function generatePdf(Invoice $invoice)
     {
+        // Samakan dengan show agar saat preview PDF data legacy juga terbaca
         $invoice->load([
             'suratJalan.kartuInstruksiKerja.salesOrder.customerAddress',
-            'suratJalan.kartuInstruksiKerja.salesOrder.finishGoodItem'
+            'suratJalan.kartuInstruksiKerja.salesOrder.finishGoodItem',
+            'details' // <--- Tambah ini juga bro
         ]);
 
         return response()->json($invoice);
+    }
+
+    public function importLegacy(Request $request)
+    {
+        $request->validate([
+            'file_header' => 'required|mimes:csv,txt,xlsx',
+            // 'file_detail' => 'required|mimes:csv,txt,xlsx',
+        ]);
+
+        // Import Header dulu agar ID tersedia
+        Excel::import(new LegacyInvoiceImport, $request->file('file_header'));
+
+        // // Baru Import Detail
+        // Excel::import(new LegacyInvoiceDetailImport, $request->file('file_detail'));
+
+        return back()->with('success', 'Data Legacy Berhasil Diimport!');
     }
 }

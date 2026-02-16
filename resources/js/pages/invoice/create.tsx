@@ -36,6 +36,7 @@ export default function Create({ suratJalans }: CreateProps) {
         ppn: '',
         ongkos_kirim: '',
         uang_muka: '',
+        kode: '',
     });
 
     const handleSJChange = (value: string) => {
@@ -85,6 +86,19 @@ export default function Create({ suratJalans }: CreateProps) {
                                         onChange={handleSJChange}
                                     />
                                     {errors.id_surat_jalan && <div className="text-sm text-red-600">{errors.id_surat_jalan}</div>}
+                                </div>
+                                <div className="space-y-2">
+                                    <Label htmlFor="kode">Kode <span className="text-red-500">*</span></Label>
+                                    <Input
+                                        id="kode"
+                                        type="number"
+                                        min={0}
+                                        value={data.kode}
+                                        onChange={(e) => setData('kode', e.target.value)}
+                                        placeholder="0"
+                                        required
+                                    />
+                                    {errors.kode && <div className="text-sm text-red-600">{errors.kode}</div>}
                                 </div>
 
                                 {selectedSuratJalan && (

@@ -34,8 +34,8 @@ export default function CreateKeluar({
         id_account_kas: '',
         id_account_kas_lain: '',
         id_customer_address: '',
-        no_bukti: 'BKK/',
-        gudang: '',
+
+        gudang: 'UGRMS',
         periode: new Date().getFullYear(),
         tanggal_transaksi: new Date().toISOString().split('T')[0],
         nominal: 0,
@@ -62,27 +62,28 @@ export default function CreateKeluar({
                         <form onSubmit={handleSubmit} className="space-y-4">
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                                 <div className="space-y-2">
-                                    <Label>No. Bukti</Label>
-                                    <Input value={data.no_bukti} onChange={(e) => setData('no_bukti', e.target.value)} placeholder="BKK/" />
-                                </div>
-                                <div className="space-y-2">
                                     <Label>Gudang</Label>
-                                    <Input value={data.gudang} onChange={(e) => setData('gudang', e.target.value)} placeholder="Gudang A" />
+                                    <Input value={data.gudang} onChange={(e) => setData('gudang', e.target.value)} />
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Periode</Label>
                                     <Input value={data.periode} onChange={(e) => setData('periode', Number(e.target.value))} placeholder="2024" />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Tanggal Transaksi</Label>
+                                    <Label>
+                                        Tanggal Transaksi <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input
                                         type="date"
                                         value={data.tanggal_transaksi}
                                         onChange={(e) => setData('tanggal_transaksi', e.target.value)}
+                                        required
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Karyawan</Label>
+                                    <Label>
+                                        Karyawan (PIC) <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={karyawans.map((k) => ({ key: String(k.id), value: String(k.id), label: k.nama ?? '' }))}
                                         value={data.id_karyawan}
@@ -92,7 +93,9 @@ export default function CreateKeluar({
                                     {errors.id_karyawan && <p className="text-sm text-red-500">{errors.id_karyawan}</p>}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Account Kas</Label>
+                                    <Label>
+                                        Account Kas <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={accountKas.map((a) => ({
                                             key: String(a.id),
@@ -105,7 +108,9 @@ export default function CreateKeluar({
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Account Lain (Beban)</Label>
+                                    <Label>
+                                        Account Lain (Beban) <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={accountLawan.map((a) => ({
                                             key: String(a.id),
@@ -118,8 +123,10 @@ export default function CreateKeluar({
                                     />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Nominal</Label>
-                                    <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} />
+                                    <Label>
+                                        Nominal <span className="text-red-500">*</span>
+                                    </Label>
+                                    <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} required />
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Customer </Label>
@@ -140,8 +147,16 @@ export default function CreateKeluar({
                                     <Input value={data.mesin} onChange={(e) => setData('mesin', e.target.value)} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Kode</Label>
-                                    <Input type="number" value={data.kode} onChange={(e) => setData('kode', Number(e.target.value))} />
+                                    <Label>
+                                        Kode <span className="text-red-500">*</span>
+                                    </Label>
+                                    <Input
+                                        type="number"
+                                        min={0}
+                                        value={data.kode}
+                                        onChange={(e) => setData('kode', Number(e.target.value))}
+                                        required
+                                    />
                                 </div>
                                 <div className="col-span-full space-y-2">
                                     <Label>Keterangan</Label>

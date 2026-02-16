@@ -23,7 +23,7 @@ export default function Create({ karyawans, accountKas, accountBeban }: {
         id_karyawan: '',
         id_account_kas: '',
         id_account_beban: '',
-        no_bukti: 'BOPK/',
+
         gudang: 'UGRMS',
         periode: new Date().getFullYear(),
         tanggal_transaksi: new Date().toISOString().split('T')[0],
@@ -58,23 +58,25 @@ export default function Create({ karyawans, accountKas, accountBeban }: {
                                     <Input value={data.gudang} onChange={(e) => setData('gudang', e.target.value)} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Tanggal Transaksi</Label>
+                                    <Label>
+                                        Tanggal Transaksi <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input
                                         type="date"
                                         value={data.tanggal_transaksi}
                                         onChange={(e) => setData('tanggal_transaksi', e.target.value)}
+                                        required
                                     />
                                 </div>
-                                <div className="space-y-2">
-                                    <Label>No. Bukti</Label>
-                                    <Input value={data.no_bukti} onChange={(e) => setData('no_bukti', e.target.value)} />
-                                </div>
+
                                 <div className="space-y-2">
                                     <Label>Periode</Label>
                                     <Input type="number" value={data.periode} onChange={(e) => setData('periode', Number(e.target.value))} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Account Kas</Label>
+                                    <Label>
+                                        Account Kas <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={accountKas.map((c) => ({
                                             key: String(c.id),
@@ -85,9 +87,12 @@ export default function Create({ karyawans, accountKas, accountBeban }: {
                                         onChange={(val) => setData('id_account_kas', val)}
                                         placeholder="Pilih Account Kas"
                                     />
+                                    {errors.id_account_kas && <p className="text-sm text-red-500">{errors.id_account_kas}</p>}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Account Beban</Label>
+                                    <Label>
+                                        Account Beban <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={accountBeban.map((c) => ({
                                             key: String(c.id),
@@ -98,9 +103,12 @@ export default function Create({ karyawans, accountKas, accountBeban }: {
                                         onChange={(val) => setData('id_account_beban', val)}
                                         placeholder="Pilih Account Beban"
                                     />
+                                    {errors.id_account_beban && <p className="text-sm text-red-500">{errors.id_account_beban}</p>}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Karyawan</Label>
+                                    <Label>
+                                        Karyawan <span className="text-red-500">*</span>
+                                    </Label>
                                     <SearchableSelect
                                         items={karyawans.map((k) => ({ key: String(k.id), value: String(k.id), label: k.nama ?? '' }))}
                                         value={data.id_karyawan}
@@ -110,8 +118,10 @@ export default function Create({ karyawans, accountKas, accountBeban }: {
                                     {errors.id_karyawan && <p className="text-sm text-red-500">{errors.id_karyawan}</p>}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Nominal</Label>
-                                    <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} />
+                                    <Label>
+                                        Nominal <span className="text-red-500">*</span>
+                                    </Label>
+                                    <Input type="number" value={data.nominal} onChange={(e) => setData('nominal', Number(e.target.value))} required />
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Nopol</Label>
@@ -126,8 +136,11 @@ export default function Create({ karyawans, accountKas, accountBeban }: {
                                     <Input value={data.mesin} onChange={(e) => setData('mesin', e.target.value)} />
                                 </div>
                                 <div className="space-y-2">
-                                    <Label>Kode</Label>
-                                    <Input type="number" value={data.kode} onChange={(e) => setData('kode', Number(e.target.value))} />
+                                    <Label>
+                                        Kode <span className="text-red-500">*</span>
+                                    </Label>
+                                    <Input type="number" value={data.kode} onChange={(e) => setData('kode', Number(e.target.value))} required />
+                                    {errors.kode && <p className="text-sm text-red-500">{errors.kode}</p>}
                                 </div>
                                 <div className="space-y-2">
                                     <Label>Jenis</Label>

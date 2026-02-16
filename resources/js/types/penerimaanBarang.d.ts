@@ -13,11 +13,24 @@ export interface PenerimaanBarangItem {
     purchase_order_item?: {
         id: string;
         id_purchase_order: string;
+        purchase_order?: {
+            id: string;
+            ppn: number;
+            ongkir: number;
+            dp: number;
+        };
         id_master_item: string;
         id_satuan_po: string;
         qty_po: number;
+        harga_satuan: number;
+        diskon_satuan: number;
+        jumlah: number;
         master_item?: {
             id: string;
+            unit?:{
+                id: string;
+                nama_satuan: string;
+            }
             kode_master_item: string;
             nama_master_item: string;
         };

@@ -8,7 +8,7 @@ import { Toaster } from 'sonner';
 import { TransKasBank } from '@/types/transKasBank';
 import { DataTable } from './table/data-table';
 
-const breadcrumbs: BreadcrumbItem[] = [{ title: 'Transaksi Kas', href: route('trans-kas-banks.index') }];
+const breadcrumbs: BreadcrumbItem[] = [{ title: 'Transaksi Kas Bank', href: route('trans-kas-banks.index') }];
 
 export default function TransKasIndex({ transKasBanks }: { transKasBanks: TransKasBank[] }) {
     return (

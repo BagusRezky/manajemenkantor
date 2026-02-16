@@ -74,6 +74,10 @@ export const columns = (): ColumnDef<TransKas>[] => [
         cell: ({ row }) => row.getValue('tanggal_transaksi'),
     },
     {
+        accessorKey: 'keterangan',
+        header: 'Keterangan',
+    },
+    {
         id: 'actions',
         header: 'Actions',
         cell: ({ row }) => {

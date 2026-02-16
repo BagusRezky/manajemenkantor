@@ -24,6 +24,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [rowSelection, setRowSelection] = React.useState({});
+    const [globalFilter, setGlobalFilter] = React.useState('');
 
     const table = useReactTable({
         data,
@@ -36,7 +37,10 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         state: {
             columnFilters,
             rowSelection,
+            globalFilter,
         },
+        onGlobalFilterChange: setGlobalFilter, // Tambahkan ini
+
     });
 
     const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,9 +64,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <div className="space-y-4">
             <div className="flex items-center">
                 <Input
-                    placeholder="Cari No. Bukti..."
-                    value={(table.getColumn('no_bukti')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) => table.getColumn('no_bukti')?.setFilterValue(event.target.value)}
+                    placeholder="Cari semua data..."
+                    value={table.getState().globalFilter ?? ''}
+                    onChange={(event) => table.setGlobalFilter(event.target.value)}
                     className="max-w-sm shadow-sm"
                 />
                 <div className="ml-auto flex space-x-3">
