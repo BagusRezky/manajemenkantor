@@ -110,20 +110,21 @@ class SalesReportExport implements
                 $keteranganKirim,
                 $invoice->suratJalan->no_surat_jalan ?? '-',
                 $invoice->no_invoice,
+                $invoice->kode ?? '-',
                 $nominalTotal,
                 $statusBayar
             ];
         }
 
         return [
-            $this->rowNumber, '-', $invoice->no_so_lama, $invoice->surat_jalan->kartu_instruksi_kerja->sales_order->customer_address->nama_customer ?? 'Legacy', '-', '-', '-', $invoice->no_spk_lama, $invoice->keterangan, $invoice->tgl_invoice, '-', '-', 'TERKIRIM', $invoice->no_surat_jalan_lama, $invoice->no_invoice, $nominalTotal, $statusBayar
+            $this->rowNumber, '-', $invoice->no_so_lama, $invoice->surat_jalan->kartu_instruksi_kerja->sales_order->customer_address->nama_customer ?? 'Legacy', '-', '-', '-', $invoice->no_spk_lama, $invoice->keterangan, $invoice->tgl_invoice, '-', '-', 'TERKIRIM', $invoice->no_surat_jalan_lama, $invoice->no_invoice, $invoice->kode ?? '-', $nominalTotal, $statusBayar
         ];
     }
 
     public function headings(): array
     {
         return [
-            'NO', 'TGL TERBIT SO', 'NO. SO', 'CUSTOMER', 'KODE CUST', 'QTY ORDER', 'UNIT', 'SPK', 'NAMA ITEM', 'TGL KIRIM', 'JUMLAH KIRIM', 'HARGA SATUAN', 'KETERANGAN', 'NO. SURAT JALAN', 'NO. INVOICE', 'NOMINAL', 'KETERANGAN STATUS'
+            'NO', 'TGL TERBIT SO', 'NO. SO', 'CUSTOMER', 'KODE CUST', 'QTY ORDER', 'UNIT', 'SPK', 'NAMA ITEM', 'TGL KIRIM', 'JUMLAH KIRIM', 'HARGA SATUAN', 'KETERANGAN', 'NO. SURAT JALAN', 'NO. INVOICE', 'KODE', 'NOMINAL', 'KETERANGAN STATUS'
         ];
     }
 
@@ -142,13 +143,13 @@ class SalesReportExport implements
                 $sheet->mergeCells('A1:C1');
                 $sheet->getStyle('A1')->getFont()->setBold(true)->setSize(14);
                 $sheet->getStyle('D1:D3')->getFont()->setBold(true);
-                $sheet->getStyle('A6:Q6')->applyFromArray([
+                $sheet->getStyle('A6:R6')->applyFromArray([
                     'font' => ['bold' => true],
                     'fill' => ['fillType' => Fill::FILL_SOLID, 'startColor' => ['rgb' => 'E2E2E2']],
                     'alignment' => ['horizontal' => Alignment::HORIZONTAL_CENTER],
                     'borders' => ['allBorders' => ['borderStyle' => \PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN]]
                 ]);
-                $sheet->getStyle('A6:Q' . $lastRow)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
+                $sheet->getStyle('A6:R' . $lastRow)->getBorders()->getAllBorders()->setBorderStyle(\PhpOffice\PhpSpreadsheet\Style\Border::BORDER_THIN);
 
                 // --- 2. SUMMARY (TOTAL PENDAPATAN, TERBAYAR, PIUTANG) ---
                 $summaryStartRow = $lastRow + 2;
