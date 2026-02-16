@@ -67,6 +67,9 @@ export default function ShowInvoice({ invoice }: Props) {
                             <CardHeader className="bg-gray-50/50">
                                 <CardTitle className="flex items-center gap-2 text-sm font-bold tracking-wider uppercase">
                                     <Receipt className="h-4 w-4" /> Data Header
+                                    <div>
+                                        <p className="text-sm text-gray-500">Kode: {invoice.kode || '-'}</p>
+                                    </div>
                                 </CardTitle>
                             </CardHeader>
                             <CardContent className="grid grid-cols-1 gap-6 pt-6 md:grid-cols-2">

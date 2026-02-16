@@ -59,6 +59,7 @@ class InvoiceController extends Controller
             'ppn' => 'required|numeric|min:0|max:100',
             'ongkos_kirim' => 'nullable|integer|min:0',
             'uang_muka' => 'nullable|integer|min:0',
+            'kode' => 'required|integer|min:0',
         ]);
 
         // Set default values
@@ -162,6 +163,7 @@ class InvoiceController extends Controller
             'ppn' => 'required|numeric|min:0|max:100',
             'ongkos_kirim' => 'nullable|integer|min:0',
             'uang_muka' => 'nullable|integer|min:0',
+            'kode' => 'required|integer|min:0',
         ]);
 
         $invoice->update($validated);
@@ -201,14 +203,14 @@ class InvoiceController extends Controller
     {
         $request->validate([
             'file_header' => 'required|mimes:csv,txt,xlsx',
-            'file_detail' => 'required|mimes:csv,txt,xlsx',
+            // 'file_detail' => 'required|mimes:csv,txt,xlsx',
         ]);
 
         // Import Header dulu agar ID tersedia
         Excel::import(new LegacyInvoiceImport, $request->file('file_header'));
 
-        // Baru Import Detail
-        Excel::import(new LegacyInvoiceDetailImport, $request->file('file_detail'));
+        // // Baru Import Detail
+        // Excel::import(new LegacyInvoiceDetailImport, $request->file('file_detail'));
 
         return back()->with('success', 'Data Legacy Berhasil Diimport!');
     }

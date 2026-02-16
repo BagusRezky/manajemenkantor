@@ -26,6 +26,7 @@ class LegacyInvoiceImport implements ToModel, WithHeadingRow
         return Invoice::updateOrCreate(
             ['no_invoice' => trim($row['no_invoice'])],
             [
+                'kode'                => $row['kode'] ?? null,
                 'no_invoice_lama'     => trim($row['no_invoice']),
                 'no_surat_jalan_lama' => $row['surat_jalan'] ?? null,
                 'no_spk_lama'         => $row['spk'] ?? null,
@@ -44,6 +45,7 @@ class LegacyInvoiceImport implements ToModel, WithHeadingRow
                 'id_metode_bayar'     => $metode ? $metode->id : null,
                 'is_legacy'           => true,
                 'keterangan'          => $row['keterangan'] ?? null,
+
             ]
         );
     }

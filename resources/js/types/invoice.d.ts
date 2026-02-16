@@ -26,6 +26,7 @@ export interface Invoice {
     no_invoice: string;
     tgl_invoice: string;
     tgl_jatuh_tempo: string;
+    kode:number;
 
     // Kolom Legacy
     no_surat_jalan_lama?: string;

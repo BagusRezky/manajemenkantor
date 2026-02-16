@@ -96,7 +96,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
                                 </div>
                                 <div className="space-y-2">
                                     <Label>File Detail</Label>
-                                    <Input type="file" name="file_detail" accept=".csv, .xlsx, .xls" required />
+                                    <Input type="file" name="file_detail" accept=".csv, .xlsx, .xls"  />
                                 </div>
                                 <DialogFooter>
                                     <Button type="submit" disabled={importLoading}>
