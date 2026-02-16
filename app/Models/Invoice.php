@@ -30,7 +30,8 @@ class Invoice extends Model
         'uang_muka',
         'discount',
         'is_legacy',
-        'keterangan'
+        'keterangan',
+        'kode'
     ];
 
     public function suratJalan()
