@@ -111,4 +111,11 @@ class PengajuanPinjamanController extends Controller
         $pengajuanPinjaman->delete();
         return redirect()->route('pengajuanPinjamans.index')->with('success', 'Pengajuan Pinjaman deleted successfully!');
     }
+
+    public function generatePdf(PengajuanPinjaman $pengajuanPinjaman)
+    {
+        $pengajuanPinjaman->load('karyawan');
+
+        return response()->json($pengajuanPinjaman);
+    }
 }
