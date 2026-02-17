@@ -32,6 +32,9 @@ export function DataTable({ columns, data, filters }: DataTableProps) {
         getFilteredRowModel: getFilteredRowModel(),
         getPaginationRowModel: getPaginationRowModel(),
         state: { columnFilters },
+        meta: {
+            filters: filters, 
+        },
     });
 
     const handleFilter = () => {
