@@ -39,7 +39,7 @@ class PembayaranPinjamanController extends Controller
     {
         $validated = $request->validate([
             'id_pengajuan_pinjaman' => 'required|exists:pengajuan_pinjamans,id',
-            'no_bukti_pembayaran' => 'required|string|max:255',
+            'tahap_cicilan' => 'required|string|max:255',
             'tanggal_pembayaran' => 'required|date',
             'nominal_pembayaran' => 'required|integer|min:0',
             'keterangan' => 'nullable|string',
@@ -76,7 +76,7 @@ class PembayaranPinjamanController extends Controller
     {
         $validated = $request->validate([
             'id_pengajuan_pinjaman' => 'required|exists:pengajuan_pinjamans,id',
-            'no_bukti_pembayaran' => 'required|string|max:255',
+            'tahap_cicilan' => 'required|string|max:255',
             'tanggal_pembayaran' => 'required|date',
             'nominal_pembayaran' => 'required|integer|min:0',
             'keterangan' => 'nullable|string',
@@ -123,5 +123,12 @@ class PembayaranPinjamanController extends Controller
         return Inertia::render('pembayaranPinjaman/rekap', [
             'pembayaranPinjamans' => $rekap,
         ]);
+    }
+
+    public function generatePdf(PembayaranPinjaman $pembayaranPinjaman)
+    {
+        $pembayaranPinjaman->load(['pengajuanPinjaman', 'pengajuanPinjaman.karyawan']);
+
+        return response()->json($pembayaranPinjaman);
     }
 }

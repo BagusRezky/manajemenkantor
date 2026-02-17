@@ -7,17 +7,17 @@ import { PembayaranPinjaman } from '@/types/pembayaranPinjaman'; // Ganti
 import { columns } from './table/columns';
 import { DataTable } from './table/data-table';
 
-// Ganti breadcrumbs
+
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Pembayaran Pinjaman', href: '/pembayaranPinjamans' }];
 
-// Ganti props
+
 export default function PembayaranPinjamans({ pembayaranPinjamans }: { pembayaranPinjamans: PembayaranPinjaman[] }) {
     const [data, setData] = useState<PembayaranPinjaman[]>([]);
 
     useEffect(() => {
-        // Ganti sumber data
+
         setData(pembayaranPinjamans);
-    }, [pembayaranPinjamans]); // Ganti dependensi
+    }, [pembayaranPinjamans]);
 
     return (
         <AppLayout breadcrumbs={breadcrumbs}>

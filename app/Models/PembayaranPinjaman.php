@@ -13,7 +13,7 @@ class PembayaranPinjaman extends Model
 
     protected $fillable = [
         'id_pengajuan_pinjaman',
-        'no_bukti_pembayaran',
+        'tahap_cicilan',
         'tanggal_pembayaran',
         'nominal_pembayaran',
         'keterangan',

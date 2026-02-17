@@ -25,7 +25,7 @@ const breadcrumbs: BreadcrumbItem[] = [
 export default function EditPembayaranPinjaman({ pembayaranPinjaman, pengajuanPinjamans }: Props) {
     // Ganti field form
     const { data, setData, put, processing, errors } = useForm({
-        no_bukti_pembayaran: pembayaranPinjaman.no_bukti_pembayaran || '',
+        tahap_cicilan: pembayaranPinjaman.tahap_cicilan || '',
         id_pengajuan_pinjaman: pembayaranPinjaman.id_pengajuan_pinjaman || '',
         tanggal_pembayaran: pembayaranPinjaman.tanggal_pembayaran || '',
         // Ubah number ke string untuk input
@@ -53,18 +53,6 @@ export default function EditPembayaranPinjaman({ pembayaranPinjaman, pengajuanPi
                     <CardContent>
                         <form onSubmit={handleSubmit} className="space-y-6">
                             <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                {/* No Bukti Pembayaran */}
-                                <div className="space-y-2">
-                                    <Label htmlFor="no_bukti_pembayaran">No Bukti Pembayaran *</Label>
-                                    <Input
-                                        id="no_bukti_pembayaran"
-                                        value={data.no_bukti_pembayaran}
-                                        onChange={(e) => setData('no_bukti_pembayaran', e.target.value)}
-                                        className={errors.no_bukti_pembayaran ? 'border-red-500' : ''}
-                                    />
-                                    {errors.no_bukti_pembayaran && <p className="text-sm text-red-500">{errors.no_bukti_pembayaran}</p>}
-                                </div>
-
                                 {/* Pengajuan Pinjaman (Karyawan) */}
                                 <div className="space-y-2">
                                     <Label htmlFor="id_pengajuan_pinjaman">Pinjaman (Karyawan) *</Label>
@@ -79,6 +67,18 @@ export default function EditPembayaranPinjaman({ pembayaranPinjaman, pengajuanPi
                                         onChange={(value) => setData('id_pengajuan_pinjaman', value)}
                                     />
                                     {errors.id_pengajuan_pinjaman && <p className="text-sm text-red-500">{errors.id_pengajuan_pinjaman}</p>}
+                                </div>
+
+                                {/* tahap cicilan */}
+                                <div className="space-y-2">
+                                    <Label htmlFor="tahap_cicilan">Tahap Cicilan *</Label>
+                                    <Input
+                                        id="tahap_cicilan"
+                                        value={data.tahap_cicilan}
+                                        onChange={(e) => setData('tahap_cicilan', e.target.value)}
+                                        className={errors.tahap_cicilan ? 'border-red-500' : ''}
+                                    />
+                                    {errors.tahap_cicilan && <p className="text-sm text-red-500">{errors.tahap_cicilan}</p>}
                                 </div>
 
                                 {/* Tanggal Pembayaran */}

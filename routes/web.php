@@ -446,6 +446,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::get('/pengajuanPinjamans/{pengajuanPinjaman}/edit', [PengajuanPinjamanController::class, 'edit'])->name('pengajuanPinjamans.edit')->middleware('permission:pengajuanPinjamans.edit');
         Route::put('/pengajuanPinjamans/{pengajuanPinjaman}', [PengajuanPinjamanController::class, 'update'])->name('pengajuanPinjamans.update')->middleware('permission:pengajuanPinjamans.update');
         Route::delete('/pengajuanPinjamans/{pengajuanPinjaman}', [PengajuanPinjamanController::class, 'destroy'])->name('pengajuanPinjamans.destroy')->middleware('permission:pengajuanPinjamans.destroy');
+        Route::get('/pengajuanPinjamans/{pengajuanPinjaman}/pdf', [PengajuanPinjamanController::class, 'generatePdf'])->name('pengajuanPinjamans.pdf')->middleware('permission:pengajuanPinjamans.pdf');
 
         Route::get('/pembayaranPinjamans', [PembayaranPinjamanController::class, 'index'])->name('pembayaranPinjamans.index')->middleware('permission:pembayaranPinjamans.index');
         Route::get('/pembayaranPinjamans/create', [PembayaranPinjamanController::class, 'create'])->name('pembayaranPinjamans.create')->middleware('permission:pembayaranPinjamans.create');
@@ -454,6 +455,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::put('/pembayaranPinjamans/{pembayaranPinjaman}', [PembayaranPinjamanController::class, 'update'])->name('pembayaranPinjamans.update')->middleware('permission:pembayaranPinjamans.update');
         Route::delete('/pembayaranPinjamans/{pembayaranPinjaman}', [PembayaranPinjamanController::class, 'destroy'])->name('pembayaranPinjamans.destroy')->middleware('permission:pembayaranPinjamans.destroy');
         Route::get('/pembayaranPinjamans/rekap', [PembayaranPinjamanController::class, 'rekap'])->name('pembayaranPinjamans.rekap')->middleware('permission:pembayaranPinjamans.rekap');
+        Route::get('/pembayaranPinjamans/{pembayaranPinjaman}/pdf', [PembayaranPinjamanController::class, 'generatePdf'])->name('pembayaranPinjamans.pdf')->middleware('permission:pembayaranPinjamans.pdf');
 
         Route::get('/cutis', [CutiController::class, 'index'])->name('cutis.index')->middleware('permission:cutis.index');
         Route::get('/cutis/create', [CutiController::class, 'create'])->name('cutis.create')->middleware('permission:cutis.create');
