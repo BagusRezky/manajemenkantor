@@ -74,6 +74,7 @@ export default function ShowFinishing({ finishing }: Props) {
                                     <QtyItem label="Hasil Baik" value={finishing.hasil_baik_finishing} color="text-green-600" />
                                     <QtyItem label="Hasil Rusak" value={finishing.hasil_rusak_finishing} color="text-red-600" />
                                     <QtyItem label="Semi Waste" value={finishing.semi_waste_finishing} color="text-yellow-600" />
+                                        <InfoItem label="Note Waste" value={finishing.eror_production?.nama_eror || '-'} />
                                     <div className="mt-3 flex items-center justify-between border-t-2 border-dashed pt-3">
                                         <span className="font-bold text-gray-800">Total Produksi</span>
                                         <span className="font-mono text-xl font-black text-blue-700">

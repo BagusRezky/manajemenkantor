@@ -6,6 +6,7 @@ use App\Models\DieMaking;
 use App\Models\KartuInstruksiKerja;
 use App\Models\MesinDiemaking;
 use App\Models\OperatorDiemaking;
+use App\Models\ErorProduction;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
 
@@ -16,7 +17,7 @@ class DieMakingController extends Controller
      */
     public function index()
     {
-        $dieMakings = DieMaking::with(['mesinDiemaking', 'operatorDiemaking', 'kartuInstruksiKerja'])->get();
+        $dieMakings = DieMaking::with(['mesinDiemaking', 'operatorDiemaking', 'kartuInstruksiKerja'])->orderBy('tanggal_entri', 'desc')->get();
         return inertia('dieMaking/dieMakings', [
             'dieMakings' => $dieMakings,
         ]);
@@ -30,10 +31,12 @@ class DieMakingController extends Controller
         $kartuInstruksiKerjas = KartuInstruksiKerja::with(['salesOrder.finishGoodItem'])->get();
         $mesinDiemakings = MesinDiemaking::all();
         $operatorDiemakings = OperatorDiemaking::all();
+        $erorProductions = ErorProduction::all();
         return inertia('dieMaking/create', [
             'kartuInstruksiKerjas' => $kartuInstruksiKerjas,
             'mesinDiemakings' => $mesinDiemakings,
-            'operatorDiemakings' => $operatorDiemakings
+            'operatorDiemakings' => $operatorDiemakings,
+            'erorProductions' => $erorProductions
         ]);
     }
 
@@ -46,6 +49,7 @@ class DieMakingController extends Controller
             'id_kartu_instruksi_kerja' => 'required|exists:kartu_instruksi_kerjas,id',
             'id_mesin_diemaking' => 'required|exists:mesin_diemakings,id',
             'id_operator_diemaking' => 'required|exists:operator_diemakings,id',
+            'id_note_waste_diemaking' => 'nullable|exists:eror_productions,id',
             'tanggal_entri' => 'required|date',
             'proses_diemaking' => 'required|in:Hot Print,Uv Spot,Uv Holo,Embos,Cutting,Uv Varnish',
             'tahap_diemaking' => 'required|in:Proses Die Making 1,Proses Die Making 2',
@@ -71,7 +75,7 @@ class DieMakingController extends Controller
      */
     public function show(DieMaking $dieMaking)
     {
-        $dieMaking->load(['mesinDiemaking', 'operatorDiemaking', 'kartuInstruksiKerja']);
+        $dieMaking->load(['mesinDiemaking', 'operatorDiemaking', 'kartuInstruksiKerja', 'erorProduction']);
 
         return Inertia::render('dieMaking/show', [
             'dieMaking' => $dieMaking,
@@ -88,6 +92,7 @@ class DieMakingController extends Controller
             'kartuInstruksiKerjas' => KartuInstruksiKerja::all(),
             'mesinDiemakings' => MesinDiemaking::all(),
             'operatorDiemakings' => OperatorDiemaking::all(),
+            'erorProductions' => ErorProduction::all(),
         ]);
     }
 
@@ -100,6 +105,7 @@ class DieMakingController extends Controller
             'id_kartu_instruksi_kerja' => 'required|exists:kartu_instruksi_kerjas,id',
             'id_mesin_diemaking' => 'required|exists:mesin_diemakings,id',
             'id_operator_diemaking' => 'required|exists:operator_diemakings,id',
+            'id_note_waste_diemaking' => 'nullable|exists:eror_productions,id',
             'tanggal_entri' => 'required|date',
             'proses_diemaking' => 'required|in:Hot Print,Uv Spot,Uv Holo,Embos,Cutting,Uv Varnish',
             'tahap_diemaking' => 'required|in:Proses Die Making 1,Proses Die Making 2',

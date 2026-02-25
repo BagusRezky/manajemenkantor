@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
+import { ErorProduction } from '@/types/erorProduction';
 import { Finishing, MesinFinishing, OperatorFinishing } from '@/types/finishing';
 import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { Head, Link, useForm } from '@inertiajs/react';
@@ -18,9 +19,10 @@ interface Props {
     kartuInstruksiKerjas: KartuInstruksiKerja[];
     mesinFinishings: MesinFinishing[];
     operatorFinishings: OperatorFinishing[];
+    erorProductions: ErorProduction[];
 }
 
-export default function EditFinishing({ finishing, kartuInstruksiKerjas, mesinFinishings, operatorFinishings }: Props) {
+export default function EditFinishing({ finishing, kartuInstruksiKerjas, mesinFinishings, operatorFinishings, erorProductions }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Finishing', href: '/finishings' },
         { title: 'Edit Data', href: '#' },
@@ -30,6 +32,7 @@ export default function EditFinishing({ finishing, kartuInstruksiKerjas, mesinFi
         id_kartu_instruksi_kerja: String(finishing.id_kartu_instruksi_kerja),
         id_mesin_finishing: String(finishing.id_mesin_finishing),
         id_operator_finishing: String(finishing.id_operator_finishing),
+        id_note_waste_finishing: String(finishing.id_note_waste_finishing),
         tanggal_entri: finishing.tanggal_entri,
         proses_finishing: finishing.proses_finishing,
         tahap_finishing: finishing.tahap_finishing,
@@ -163,6 +166,19 @@ export default function EditFinishing({ finishing, kartuInstruksiKerjas, mesinFi
                                         type="number"
                                         value={data.semi_waste_finishing}
                                         onChange={(e) => handleNumberChange('semi_waste_finishing', e.target.value)}
+                                    />
+                                </div>
+
+                                <div>
+                                    <Label>Note Waste</Label>
+                                    <SearchableSelect
+                                        items={erorProductions.map((e) => ({
+                                            key: String(e.id),
+                                            value: String(e.id),
+                                            label: e.nama_eror,
+                                        }))}
+                                        value={data.id_note_waste_finishing || ''}
+                                        onChange={(val) => setData('id_note_waste_finishing', val)}
                                     />
                                 </div>
 

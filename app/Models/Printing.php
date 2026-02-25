@@ -14,6 +14,7 @@ class Printing extends Model
         'id_kartu_instruksi_kerja',
         'id_mesin',
         'id_operator',
+        'id_note_waste_printing',
         'tanggal_entri',
         'proses_printing',
         'tahap_printing',
@@ -34,5 +35,8 @@ class Printing extends Model
     {
         return $this->belongsTo(Operator::class, 'id_operator');
     }
-
+    public function erorProduction()
+    {
+        return $this->belongsTo(ErorProduction::class, 'id_note_waste_printing');
+    }
 }

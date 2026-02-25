@@ -8,17 +8,20 @@ import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { Mesin, Operator, Printing } from '@/types/printing';
+import { ErorProduction } from '@/types/erorProduction';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { ArrowLeft, Save } from 'lucide-react';
+
 
 interface Props {
     printing: Printing;
     kartuInstruksiKerjas: KartuInstruksiKerja[];
     mesins: Mesin[];
     operators: Operator[];
+    erorProduction: ErorProduction[];
 }
 
-export default function EditPrinting({ printing, kartuInstruksiKerjas, mesins, operators }: Props) {
+export default function EditPrinting({ printing, kartuInstruksiKerjas, mesins, operators, erorProduction }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Printing', href: '/printings' },
         { title: 'Edit Data', href: '#' },
@@ -28,6 +31,7 @@ export default function EditPrinting({ printing, kartuInstruksiKerjas, mesins, o
         id_kartu_instruksi_kerja: String(printing.id_kartu_instruksi_kerja),
         id_mesin: String(printing.id_mesin),
         id_operator: String(printing.id_operator),
+        id_note_waste_printing:  String(printing.id_note_waste_printing || ''),
         tanggal_entri: printing.tanggal_entri,
         proses_printing: printing.proses_printing,
         tahap_printing: printing.tahap_printing,
@@ -134,6 +138,15 @@ export default function EditPrinting({ printing, kartuInstruksiKerjas, mesins, o
                                         type="number"
                                         value={data.hasil_rusak_printing}
                                         onChange={(e) => setData('hasil_rusak_printing', e.target.value)}
+                                    />
+                                </div>
+
+                                <div className="space-y-2">
+                                    <Label>Note Waste</Label>
+                                    <SearchableSelect
+                                        items={erorProduction.map((ep) => ({ key: String(ep.id), value: String(ep.id), label: ep.nama_eror }))}
+                                        value={data.id_note_waste_printing}
+                                        onChange={(val) => setData('id_note_waste_printing', val)}
                                     />
                                 </div>
 

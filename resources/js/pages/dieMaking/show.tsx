@@ -17,7 +17,7 @@ export default function ShowDieMaking({ dieMaking }: Props) {
     ];
 
     const LabelValue = ({ label, value }: { label: string; value: string | number | undefined | null }) => (
-        <div className="flex flex-col border-b py-3 sm:flex-row sm:justify-between">
+        <div className="grid grid-cols-2 gap-2 border-b py-1 last:border-0">
             <span className="text-sm font-semibold text-gray-500 uppercase">{label}</span>
             <span className="text-sm font-medium text-gray-900">{value || '-'}</span>
         </div>
@@ -44,8 +44,8 @@ export default function ShowDieMaking({ dieMaking }: Props) {
                             </span>
                         </div>
                     </CardHeader>
-                    <CardContent className="pt-6">
-                        <div className="grid grid-cols-1 gap-x-12 md:grid-cols-2">
+                    <CardContent className="mt-6">
+                        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
                             <div className="space-y-1">
                                 <h3 className="mb-4 border-l-4 border-blue-600 pl-3 text-lg font-bold text-blue-600">Informasi Umum</h3>
                                 <LabelValue label="No. SPK" value={dieMaking.kartu_instruksi_kerja?.no_kartu_instruksi_kerja} />
@@ -55,13 +55,14 @@ export default function ShowDieMaking({ dieMaking }: Props) {
                                 <LabelValue label="Tipe SPK" value={dieMaking.keterangan_diemaking} />
                             </div>
 
-                            <div className="mt-8 space-y-1 md:mt-0">
+                            <div className="space-y-1">
                                 <h3 className="mb-4 border-l-4 border-green-600 pl-3 text-lg font-bold text-green-600">Hasil Produksi</h3>
                                 <LabelValue label="Proses" value={dieMaking.proses_diemaking} />
                                 <LabelValue label="Tahap" value={dieMaking.tahap_diemaking} />
                                 <LabelValue label="Hasil Baik" value={`${dieMaking.hasil_baik_diemaking} Pcs`} />
                                 <LabelValue label="Hasil Rusak" value={`${dieMaking.hasil_rusak_diemaking} Pcs`} />
                                 <LabelValue label="Semi Waste" value={`${dieMaking.semi_waste_diemaking} Pcs`} />
+                                <LabelValue label="Note Waste" value={dieMaking.eror_production?.nama_eror || '-'} />
                                 <div className="mt-4 flex items-center justify-between rounded-lg bg-gray-900 p-4">
                                     <span className="text-xs font-bold text-white uppercase">Total Input</span>
                                     <span className="text-lg font-bold text-white">

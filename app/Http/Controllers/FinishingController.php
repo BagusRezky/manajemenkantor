@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use App\Models\KartuInstruksiKerja;
 use App\Models\MesinFinishing;
 use App\Models\OperatorFinishing;
+use App\Models\ErorProduction;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
@@ -20,7 +21,8 @@ class FinishingController extends Controller
         $finishings = Finishing::with([
             'kartuInstruksiKerja',
             'mesinFinishing',
-            'operatorFinishing'
+            'operatorFinishing',
+            'erorProduction'
         ])->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('finishing/finishings', [
@@ -36,11 +38,13 @@ class FinishingController extends Controller
         $kartuInstruksiKerjas = KartuInstruksiKerja::with(['salesOrder.finishGoodItem'])->get();
         $mesinFinishings = MesinFinishing::all();
         $operatorFinishings = OperatorFinishing::all();
+        $erorProductions = ErorProduction::all();
 
         return Inertia::render('finishing/create', [
             'kartuInstruksiKerjas' => $kartuInstruksiKerjas,
             'mesinFinishings' => $mesinFinishings,
-            'operatorFinishings' => $operatorFinishings
+            'operatorFinishings' => $operatorFinishings,
+            'erorProductions' => $erorProductions
         ]);
     }
 
@@ -54,6 +58,7 @@ class FinishingController extends Controller
             'id_kartu_instruksi_kerja' => 'required|exists:kartu_instruksi_kerjas,id',
             'id_mesin_finishing' => 'required|exists:mesin_finishings,id',
             'id_operator_finishing' => 'required|exists:operator_finishings,id',
+            'id_note_waste_finishing' => 'nullable|exists:eror_productions,id',
             'tanggal_entri' => 'required|date',
             'proses_finishing' => 'required|in:Protol,Sorter,Lem',
             'tahap_finishing' => 'required|in:Reguler,Semi Waste,Blokir,Retur',
@@ -88,7 +93,8 @@ class FinishingController extends Controller
         $finishing->load([
             'kartuInstruksiKerja',
             'mesinFinishing',
-            'operatorFinishing'
+            'operatorFinishing',
+            'erorProduction'
         ]);
 
         return Inertia::render('finishing/show', [
@@ -104,12 +110,14 @@ class FinishingController extends Controller
         $kartuInstruksiKerjas = KartuInstruksiKerja::with(['salesOrder.finishGoodItem'])->get();
         $mesinFinishings = MesinFinishing::all();
         $operatorFinishings = OperatorFinishing::all();
+        $erorProductions = ErorProduction::all();
 
         return Inertia::render('finishing/edit', [
             'finishing' => $finishing,
             'kartuInstruksiKerjas' => $kartuInstruksiKerjas,
             'mesinFinishings' => $mesinFinishings,
-            'operatorFinishings' => $operatorFinishings
+            'operatorFinishings' => $operatorFinishings,
+            'erorProductions' => $erorProductions
         ]);
     }
 
@@ -122,6 +130,7 @@ class FinishingController extends Controller
             'id_kartu_instruksi_kerja' => 'required|exists:kartu_instruksi_kerjas,id',
             'id_mesin_finishing' => 'required|exists:mesin_finishings,id',
             'id_operator_finishing' => 'required|exists:operator_finishings,id',
+            'id_note_waste_finishing' => 'nullable|exists:eror_productions,id',
             'tanggal_entri' => 'required|date',
             'proses_finishing' => 'required|in:Protol,Sorter,Lem',
             'tahap_finishing' => 'required|in:Reguler,Semi Waste,Blokir,Retur',
@@ -161,7 +170,8 @@ class FinishingController extends Controller
         $finishing->load([
             'kartuInstruksiKerja',
             'mesinFinishing',
-            'operatorFinishing'
+            'operatorFinishing',
+            'erorProduction'
         ]);
 
         return response()->json($finishing);

@@ -4,6 +4,7 @@ import { Printing } from '@/types/printing';
 
 import { Head } from '@inertiajs/react';
 import { useEffect, useState } from 'react';
+import { Toaster } from 'sonner';
 import { columns } from './table/columns';
 import { DataTable } from './table/data-table';
 
@@ -27,6 +28,7 @@ export default function PrintingPage({ printings }: { printings: Printing[] }) {
             <div className="mx-5 py-5">
                 <DataTable columns={columns()} data={data} printings={printings} />
             </div>
+            <Toaster position="top-right" richColors closeButton />
         </AppLayout>
     );
 }

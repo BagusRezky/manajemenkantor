@@ -14,6 +14,7 @@ class Finishing extends Model
         'id_kartu_instruksi_kerja',
         'id_mesin_finishing',
         'id_operator_finishing',
+        'id_note_waste_finishing',
         'tanggal_entri',
         'proses_finishing',
         'tahap_finishing',
@@ -36,5 +37,10 @@ class Finishing extends Model
     public function operatorFinishing()
     {
         return $this->belongsTo(OperatorFinishing::class, 'id_operator_finishing');
+    }
+
+    public function erorProduction()
+    {
+        return $this->belongsTo(ErorProduction::class, 'id_note_waste_finishing');
     }
 }

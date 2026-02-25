@@ -10,6 +10,7 @@ import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { Mesin, Operator } from '@/types/printing';
+import { ErorProduction } from '@/types/erorProduction';
 import { Head, useForm } from '@inertiajs/react';
 
 const breadcrumbs: BreadcrumbItem[] = [
@@ -27,13 +28,15 @@ interface Props {
     kartuInstruksiKerjas: KartuInstruksiKerja[];
     mesins: Mesin[];
     operators: Operator[];
+    erorProductions: ErorProduction[];
 }
 
-export default function CreatePrinting({ kartuInstruksiKerjas, mesins, operators }: Props) {
+export default function CreatePrinting({ kartuInstruksiKerjas, mesins, operators, erorProductions }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         id_kartu_instruksi_kerja: '',
         id_mesin: '',
         id_operator: '',
+        id_note_waste_printing: '',
         tanggal_entri: '',
         proses_printing: '',
         tahap_printing: '',
@@ -202,6 +205,16 @@ export default function CreatePrinting({ kartuInstruksiKerjas, mesins, operators
                                     />
                                     {errors.hasil_rusak_printing && <div className="text-sm text-red-600">{errors.hasil_rusak_printing}</div>}
                                     <div className="text-xs text-gray-500">Current value: {data.hasil_rusak_printing || '0'}</div>
+                                </div>
+
+                                <div>
+                                    <Label>Note Waste</Label>
+                                    <SearchableSelect
+                                        items={erorProductions.map((e) => ({ key: String(e.id), value: String(e.id), label: e.nama_eror }))}
+                                        value={data.id_note_waste_printing}
+                                        onChange={(val) => setData('id_note_waste_printing', val)}
+                                        placeholder="Pilih Note Waste"
+                                    />
                                 </div>
 
                                 {/* Semi Waste */}

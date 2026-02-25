@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
+import { ErorProduction } from '@/types/erorProduction';
 import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { MesinDiemaking } from '@/types/mesinDiemaking';
 import { OperatorDiemaking } from '@/types/operatorDiemaking';
@@ -28,13 +29,15 @@ interface Props {
     kartuInstruksiKerjas: KartuInstruksiKerja[];
     mesinDiemakings: MesinDiemaking[];
     operatorDiemakings: OperatorDiemaking[];
+    erorProductions: ErorProduction[];
 }
 
-export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings, operatorDiemakings }: Props) {
+export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings, operatorDiemakings, erorProductions }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         id_kartu_instruksi_kerja: '',
         id_mesin_diemaking: '',
         id_operator_diemaking: '',
+        id_note_waste_diemaking: '',
         tanggal_entri: '',
         proses_diemaking: '',
         tahap_diemaking: '',
@@ -223,7 +226,23 @@ export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings,
                                     {errors.semi_waste_diemaking && <div className="text-sm text-red-600">{errors.semi_waste_diemaking}</div>}
                                     <div className="text-xs text-gray-500">Current value: {data.semi_waste_diemaking || '0'}</div>
                                 </div>
+
+                                <div>
+                                    <Label htmlFor="id_note_waste_diemaking">Note Waste</Label>
+                                    <SearchableSelect
+                                        items={erorProductions.map((eror) => ({
+                                            key: String(eror.id),
+                                            value: String(eror.id),
+                                            label: eror.nama_eror,
+                                        }))}
+                                        value={data.id_note_waste_diemaking || ''}
+                                        placeholder="Pilih Note Waste"
+                                        onChange={(value) => setData('id_note_waste_diemaking', value)}
+                                    />
+                                    {errors.id_note_waste_diemaking && <div className="text-sm text-red-600">{errors.id_note_waste_diemaking}</div>}
+                                </div>
                             </div>
+                           
 
                             {/* Keterangan */}
                             <div className="space-y-2">

@@ -6,6 +6,7 @@ use App\Models\Printing;
 use App\Models\Mesin;
 use App\Models\Operator;
 use App\Models\KartuInstruksiKerja;
+use App\Models\ErorProduction;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
@@ -31,10 +32,12 @@ class PrintingController extends Controller
         $kartuInstruksiKerjas = KartuInstruksiKerja::with(['salesOrder.finishGoodItem'])->get();
         $mesins = Mesin::all();
         $operators = Operator::all();
+        $erorProductions = ErorProduction::all();
         return Inertia::render('printing/create', [
             'kartuInstruksiKerjas' => $kartuInstruksiKerjas,
             'mesins' => $mesins,
-            'operators' => $operators
+            'operators' => $operators,
+            'erorProductions' => $erorProductions
         ]);
     }
 
@@ -50,6 +53,7 @@ class PrintingController extends Controller
             'id_kartu_instruksi_kerja' => 'required|exists:kartu_instruksi_kerjas,id',
             'id_mesin' => 'required|exists:mesins,id',
             'id_operator' => 'required|exists:operators,id',
+            'id_note_waste_printing' => 'nullable|exists:eror_productions,id',
             'tanggal_entri' => 'required|date',
             'proses_printing' => 'required|in:Potong,Printing',
             'tahap_printing' => 'required|in:Potong,Proses Cetak,Proses Cetak 2',
@@ -88,7 +92,7 @@ class PrintingController extends Controller
      */
     public function show(Printing $printing)
     {
-        $printing->load(['mesin', 'operator', 'kartuInstruksiKerja']);
+        $printing->load(['mesin', 'operator', 'kartuInstruksiKerja', 'erorProduction']);
         return inertia('printing/show', [
             'printing' => $printing,
         ]);
@@ -102,12 +106,14 @@ class PrintingController extends Controller
         $kartuInstruksiKerjas = KartuInstruksiKerja::all();
         $mesins = Mesin::all();
         $operators = Operator::all();
+        $erorProduction = ErorProduction::all();
 
         return inertia::render('printing/edit', [
             'printing' => $printing,
             'kartuInstruksiKerjas' => $kartuInstruksiKerjas,
             'mesins' => $mesins,
-            'operators' => $operators
+            'operators' => $operators,
+            'erorProduction' => $erorProduction
         ]);
     }
 
@@ -121,6 +127,7 @@ class PrintingController extends Controller
             'id_kartu_instruksi_kerja' => 'required|exists:kartu_instruksi_kerjas,id',
             'id_mesin' => 'required|exists:mesins,id',
             'id_operator' => 'required|exists:operators,id',
+            'id_note_waste_printing' => 'nullable|exists:eror_productions,id',
             'tanggal_entri' => 'required|date',
             'proses_printing' => 'required|string|max:255',
             'tahap_printing' => 'required|string|max:255',
@@ -152,7 +159,8 @@ class PrintingController extends Controller
         $printing->load([
             'kartuInstruksiKerja',
             'mesin',
-            'operator'
+            'operator',
+            'erorProduction'
         ]);
 
         return response()->json($printing);

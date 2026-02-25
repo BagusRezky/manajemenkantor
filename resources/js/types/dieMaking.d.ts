@@ -1,6 +1,7 @@
 import { KartuInstruksiKerja } from './kartuInstruksiKerja';
 import { MesinDiemaking } from './mesinDiemaking';
 import { OperatorDiemaking } from './operatorDiemaking';
+import { ErorProduction } from './erorProduction';
 
 export interface DieMaking {
     id: string;
@@ -8,6 +9,7 @@ export interface DieMaking {
     id_kartu_instruksi_kerja: string;
     id_mesin_diemaking: string;
     id_operator_diemaking: string;
+    id_note_waste_diemaking?: string | null;
     tanggal_entri: string;
     proses_diemaking: string;
     tahap_diemaking: string;
@@ -20,4 +22,5 @@ export interface DieMaking {
     kartu_instruksi_kerja?: KartuInstruksiKerja;
     mesin_diemaking?: MesinDiemaking;
     operator_diemaking?: OperatorDiemaking;
+    eror_production?: ErorProduction;
 }

@@ -1,4 +1,5 @@
 import { KartuInstruksiKerja } from './kartuInstruksiKerja';
+import { ErorProduction } from './erorProduction';
 
 export interface Mesin {
     id: string;
@@ -16,6 +17,7 @@ export interface Printing {
     id_kartu_instruksi_kerja: string;
     id_mesin: string;
     id_operator: string;
+    id_note_waste_printing: string ;
     tanggal_entri: string;
     proses_printing: string;
     tahap_printing: string;
@@ -28,4 +30,5 @@ export interface Printing {
     kartu_instruksi_kerja?: KartuInstruksiKerja;
     mesin?: Mesin;
     operator?: Operator;
+    eror_production?: ErorProduction;
 }

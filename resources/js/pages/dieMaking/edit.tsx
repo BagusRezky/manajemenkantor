@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
+import { ErorProduction } from '@/types/erorProduction';
 import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { MesinDiemaking } from '@/types/mesinDiemaking';
 import { OperatorDiemaking } from '@/types/operatorDiemaking';
@@ -18,9 +19,10 @@ interface Props {
     kartuInstruksiKerjas: KartuInstruksiKerja[];
     mesinDiemakings: MesinDiemaking[];
     operatorDiemakings: OperatorDiemaking[];
+    erorProductions:ErorProduction[]; // Tambahkan erorProductions ke props
 }
 
-export default function EditDieMaking({ dieMaking, kartuInstruksiKerjas, mesinDiemakings, operatorDiemakings }: Props) {
+export default function EditDieMaking({ dieMaking, kartuInstruksiKerjas, mesinDiemakings, operatorDiemakings, erorProductions }: Props) {
     const breadcrumbs: BreadcrumbItem[] = [
         { title: 'Die Making', href: '/dieMakings' },
         { title: 'Edit Data', href: '#' },
@@ -30,6 +32,7 @@ export default function EditDieMaking({ dieMaking, kartuInstruksiKerjas, mesinDi
         id_kartu_instruksi_kerja: String(dieMaking.id_kartu_instruksi_kerja),
         id_mesin_diemaking: String(dieMaking.id_mesin_diemaking),
         id_operator_diemaking: String(dieMaking.id_operator_diemaking),
+        id_note_waste_diemaking: String(dieMaking.id_note_waste_diemaking || ''),
         tanggal_entri: dieMaking.tanggal_entri,
         proses_diemaking: dieMaking.proses_diemaking,
         tahap_diemaking: dieMaking.tahap_diemaking,
@@ -162,6 +165,21 @@ export default function EditDieMaking({ dieMaking, kartuInstruksiKerjas, mesinDi
                                         value={data.semi_waste_diemaking}
                                         onChange={(e) => handleNumberChange('semi_waste_diemaking', e.target.value)}
                                     />
+                                </div>
+
+                                <div>
+                                    <Label>Note Waste</Label>
+                                    <SearchableSelect
+                                        items={erorProductions.map((eror) => ({
+                                            key: String(eror.id),
+                                            value: String(eror.id),
+                                            label: eror.nama_eror,
+                                        }))}
+                                        value={data.id_note_waste_diemaking || ''}
+                                        placeholder="Pilih Note Waste"
+                                        onChange={(value) => setData('id_note_waste_diemaking', value)}
+                                    />
+                                    {errors.id_note_waste_diemaking && <div className="text-sm text-red-600">{errors.id_note_waste_diemaking}</div>}
                                 </div>
 
                                 <div className="space-y-2">

@@ -7,6 +7,7 @@ import { Label } from '@/components/ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
+import { ErorProduction } from '@/types/erorProduction';
 import { MesinFinishing, OperatorFinishing } from '@/types/finishing';
 import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
 import { Head, useForm } from '@inertiajs/react';
@@ -26,13 +27,15 @@ interface Props {
     kartuInstruksiKerjas: KartuInstruksiKerja[];
     mesinFinishings: MesinFinishing[];
     operatorFinishings: OperatorFinishing[];
+    erorProductions: ErorProduction[];
 }
 
-export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings, operatorFinishings }: Props) {
+export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings, operatorFinishings, erorProductions }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         id_kartu_instruksi_kerja: '',
         id_mesin_finishing: '',
         id_operator_finishing: '',
+        id_note_waste_finishing: '',
         tanggal_entri: '',
         proses_finishing: '',
         tahap_finishing: '',
@@ -44,9 +47,6 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        // Debug: Log data sebelum submit
-        console.log('Data before submit:', data);
 
         post(route('finishings.store'), {
             onSuccess: () => {
@@ -215,6 +215,21 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
                                         className={errors.semi_waste_finishing ? 'border-red-500' : ''}
                                     />
                                     {errors.semi_waste_finishing && <div className="text-sm text-red-600">{errors.semi_waste_finishing}</div>}
+                                </div>
+
+                                <div>
+                                    <Label htmlFor="id_note_waste_finishing">Note Waste</Label>
+                                    <SearchableSelect
+                                        items={erorProductions.map((eror) => ({
+                                            key: String(eror.id),
+                                            value: String(eror.id),
+                                            label: eror.nama_eror,
+                                        }))}
+                                        value={data.id_note_waste_finishing || ''}
+                                        placeholder="Pilih Note Waste"
+                                        onChange={(value) => setData('id_note_waste_finishing', value)}
+                                    />
+                                    {errors.id_note_waste_finishing && <div className="text-sm text-red-600">{errors.id_note_waste_finishing}</div>}
                                 </div>
                             </div>
 

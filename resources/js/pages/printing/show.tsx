@@ -61,6 +61,7 @@ export default function ShowPrinting({ printing }: Props) {
                                 {detailItem('Hasil Baik', `${printing.hasil_baik_printing} Pcs`)}
                                 {detailItem('Hasil Rusak', `${printing.hasil_rusak_printing} Pcs`)}
                                 {detailItem('Semi Waste', `${printing.semi_waste_printing} Pcs`)}
+                                {detailItem('Note Waste', printing.eror_production?.nama_eror || '-')}
                                 <div className="mt-4 rounded-lg bg-blue-50 p-4">
                                     <div className="flex justify-between font-bold text-blue-800">
                                         <span>Total Produksi</span>
