@@ -30,10 +30,28 @@ class AuthenticatedSessionController extends Controller
     public function store(LoginRequest $request): RedirectResponse
     {
         $request->authenticate();
-
         $request->session()->regenerate();
 
-        return redirect()->intended(route('dashboard', absolute: false));
+        $user = Auth::user();
+
+        // Admin langsung ke dashboard
+        if ($user->hasRole('admin')) {
+            return redirect()->route('dashboard');
+        }
+
+        // Ambil semua permission user
+        $permissions = $user->getAllPermissions();
+
+        foreach ($permissions as $permission) {
+
+            // Cek apakah nama permission sama dengan nama route
+            if (Route::has($permission->name)) {
+                return redirect()->route($permission->name);
+            }
+        }
+
+        // Kalau tidak punya permission apapun
+        return redirect()->route('approval.notice');
     }
 
     /**
