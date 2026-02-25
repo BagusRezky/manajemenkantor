@@ -38,7 +38,7 @@ const mainNavItems: NavItem[] = [
         title: 'DASHBOARD',
         href: '/dashboard',
         icon: LayoutGrid,
-        permission: null, // bisa diakses semua user yang login
+        permission: 'dashboard',
     },
 ];
 
@@ -108,6 +108,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         children: [
             { title: 'Penerimaan Barang', icon: CuboidIcon, href: '/penerimaanBarangs', permission: 'penerimaanBarangs.index' },
             { title: 'Material Stock', icon: CandlestickChartIcon, href: '/materialStocks', permission: 'materialStocks.index' },
+            { title: 'Eror Production', icon: FileText, href: '/erorProductions', permission: 'erorProductions.index' },
         ],
     },
     {
@@ -134,7 +135,7 @@ export const dropdownNavItems: NavItemWithChildren[] = [
         icon: StickyNote,
         children: [
             { title: 'Invoice', icon: StickyNote, href: '/invoices', permission: 'invoices.index' },
-            {title: 'Inv. Payment', icon: Banknote, href: '/bonPays', permission: 'bonPays.index' },
+            { title: 'Inv. Payment', icon: Banknote, href: '/bonPays', permission: 'bonPays.index' },
             { title: 'Payment Entry Good', icon: Banknote, href: '/paymentEntryGoods', permission: 'paymentEntryGoods.index' },
             { title: 'COA Class', icon: Banknote, href: '/masterCoaClasses', permission: 'masterCoaClasses.index' },
             { title: 'Metode Bayar', icon: Banknote, href: '/metodeBayars', permission: 'metodeBayars.index' },
@@ -145,7 +146,6 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             { title: 'Operasional Pay', icon: Banknote, href: '/operasionalPays', permission: 'operasionalPays.index' },
             { title: 'PO Billing', icon: Banknote, href: '/poBillings', permission: 'poBillings.index' },
             { title: 'Trans Payment', icon: Banknote, href: '/transPayments', permission: 'transPayments.index' },
-            { title: 'Reports', icon: FileText, href: '/reports', permission: 'reports.index' },
         ],
     },
     {
@@ -166,6 +166,16 @@ export const dropdownNavItems: NavItemWithChildren[] = [
             { title: 'Hari Libur', icon: Users, href: '/hariLiburs', permission: 'hariLiburs.index' },
             { title: 'Gaji', icon: Users, href: '/gajis', permission: 'gajis.index' },
         ],
+    },
+    {
+        title: 'REPORT',
+        icon: FileText,
+        children: [
+            { title: 'Report Finace',  href: '/reportFinances', permission: 'reportFinances.index' },
+            { title: 'Report Produksi',  href: '/reportProductions', permission: 'reportProductions.index' },
+            { title: 'Report PO vs PB',  href: '/reportPoPbs', permission: 'reportPoPbs.index' },
+        ],
+
     },
 ];
 

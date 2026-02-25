@@ -58,8 +58,11 @@ use App\Http\Controllers\OperasionalPayController;
 use App\Http\Controllers\PoBillingController;
 use App\Http\Controllers\TransPaymentController;
 use App\Http\Controllers\TransFakturController;
-use App\Http\Controllers\ReportController;
 use App\Http\Controllers\BonPayController;
+use App\Http\Controllers\ErorProductionController;
+use App\Http\Controllers\ReportFinanceController;
+use App\Http\Controllers\ReportProductionController;
+use App\Http\Controllers\ReportPoPbController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -74,7 +77,7 @@ Route::get('/approval-notice', function () {
 
 
 Route::middleware(['auth', 'verified'])->group(function () {
-    Route::get('dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard')->middleware('permission:dashboard');
 
     // Rute-rute yang sudah ada
     Route::get('/customerAddresses', [CustomerAddressController::class, 'index'])->name('customerAddresses.index')->middleware('permission:customerAddresses.index');
@@ -156,6 +159,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/kartuInstruksiKerja/{id}', [KartuInstruksiKerjaController::class, 'show'])->name('kartuInstruksiKerja.show')->middleware('permission:kartuInstruksiKerja.show');
     Route::get('/salesOrderData/{id}', [KartuInstruksiKerjaController::class, 'getSalesOrderData'])->name('salesOrderData.show')->middleware('permission:salesOrderData.show');
     Route::get('/kartuInstruksiKerja/{id}/pdf', [KartuInstruksiKerjaController::class, 'generatePdf'])->name('kartuInstruksiKerja.pdf')->middleware('permission:kartuInstruksiKerja.pdf');
+    Route::post('/kartuInstruksiKerja/{id}/updateStatusFinish', [KartuInstruksiKerjaController::class, 'updateStatusFinish'])->name('kartuInstruksiKerja.updateStatusFinish')->middleware('permission:kartuInstruksiKerja.updateStatusFinish');
 
 
     Route::get('/purchaseRequest', [PurchaseRequestController::class, 'index'])->name('purchaseRequest.index')->middleware('permission:purchaseRequest.index');
@@ -375,6 +379,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/paymentEntryGoods/{paymentEntryGood}', [PaymentEntryGoodController::class, 'show'])->name('paymentEntryGoods.show')->middleware('permission:paymentEntryGoods.show');
     Route::get('/paymentEntryGoods/{paymentEntryGood}/pdf', [PaymentEntryGoodController::class, 'pdf'])->name('paymentEntryGoods.pdf')->middleware('permission:paymentEntryGoods.pdf');
 
+    Route::get('/erorProductions', [ErorProductionController::class, 'index'])->name('erorProductions.index')->middleware('permission:erorProductions.index');
+    Route::post('/erorProductions/import', [ErorProductionController::class, 'import'])->name('erorProductions.import')->middleware('permission:erorProductions.import');
+
     // --- Penambahan Rute untuk Manajemen Admin ---
     Route::middleware('role:admin')->group(function () {
         // Rute untuk Master Karyawan
@@ -519,6 +526,9 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::delete('/{transKas}', [TransKasController::class, 'destroy'])
                 ->name('destroy')
                 ->middleware('permission:trans-kas.destroy');
+            Route::get('/{transKas}/pdf', [TransKasController::class, 'generatePdf'])
+                ->name('pdf')
+                ->middleware('permission:trans-kas.pdf');
         });
         Route::prefix('trans-kas-banks')->name('trans-kas-banks.')->group(function () {
             Route::get('/', [TransKasBankController::class, 'index'])->name('index')->middleware('permission:trans-kas-banks.index');
@@ -534,6 +544,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::put('/{transKasBank}', [TransKasBankController::class, 'update'])->name('update')->middleware('permission:trans-kas-banks.edit');
             Route::post('/import', [TransKasBankController::class, 'import'])->name('import')->middleware('permission:trans-kas-banks.import');
             Route::delete('/{transKasBank}', [TransKasBankController::class, 'destroy'])->name('destroy')->middleware('permission:trans-kas-banks.destroy');
+            Route::get('/{transKasBank}/pdf', [TransKasBankController::class, 'generatePdf'])->name('pdf')->middleware('permission:trans-kas-banks.pdf');
         });
 
         Route::get('/operasionalPays', [OperasionalPayController::class, 'index'])->name('operasionalPays.index')->middleware('permission:operasionalPays.index');
@@ -572,12 +583,24 @@ Route::middleware(['auth', 'verified'])->group(function () {
         Route::delete('/transFakturs/{transFaktur}', [TransFakturController::class, 'destroy'])->name('transFakturs.destroy')->middleware('permission:transFakturs.destroy');
         Route::get('/transFakturs/{transFaktur}', [TransFakturController::class, 'show'])->name('transFakturs.show')->middleware('permission:transFakturs.show');
         Route::post('/transFakturs/import', [TransFakturController::class, 'import'])->name('transFakturs.import')->middleware('permission:transFakturs.import');
-        Route::prefix('reports')->group(function () {
-            Route::get('/', [ReportController::class, 'index'])->name('reports.index');
-            Route::get('/payment/export', [ReportController::class, 'exportPayment'])->name('paymentReports.export');
-            Route::get('/mutation/export', [ReportController::class, 'exportMutation'])->name('mutationReports.export');
-            Route::get('/sales/export', [ReportController::class, 'exportSales'])->name('salesReports.export');
-            Route::get('/profit-loss/export', [ReportController::class, 'exportProfitLoss'])->name('profitlossReports.export');
+        Route::prefix('reportFinances')->group(function () {
+            Route::get('/', [ReportFinanceController::class, 'index'])->name('reportFinances.index');
+            Route::get('/payment/export', [ReportFinanceController::class, 'exportPayment'])->name('paymentReports.export');
+            Route::get('/mutation/export', [ReportFinanceController::class, 'exportMutation'])->name('mutationReports.export');
+            Route::get('/sales/export', [ReportFinanceController::class, 'exportSales'])->name('salesReports.export');
+            Route::get('/profit-loss/export', [ReportFinanceController::class, 'exportProfitLoss'])->name('profitlossReports.export');
+            Route::get('/reports/faktur-export', [ReportFinanceController::class, 'exportFaktur'])->name('fakturReports.export');
+        });
+        Route::prefix('reportProductions')->group(function () {
+            Route::get('/', [ReportProductionController::class, 'index'])->name('reportProductions.index');
+            Route::get('/waste-printing/export', [ReportProductionController::class, 'exportWastePrinting'])->name('reportProductions.exportWastePrinting');
+            Route::get('/waste-dieMaking/export', [ReportProductionController::class, 'exportWasteDieMaking'])->name('reportProductions.exportWasteDieMaking');
+            Route::get('/waste-finishing/export', [ReportProductionController::class, 'exportWasteFinishing'])->name('reportProductions.exportWasteFinishing');
+        });
+        Route::prefix('reportPoPbs')->group(function () {
+            Route::get('/', [ReportPoPbController::class, 'index'])->name('reportPoPbs.index');
+            Route::get('/popb/export', [ReportPoPbController::class, 'exportPoPb'])->name('reportPoPbs.exportPoPb');
+
         });
         Route::get('bonPays', [BonPayController::class, 'index'])->name('bonPays.index')->middleware('permission:bonPays.index');
         Route::get('bonPays/create', [BonPayController::class, 'create'])->name('bonPays.create')->middleware('permission:bonPays.create');
