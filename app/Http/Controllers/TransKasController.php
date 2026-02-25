@@ -194,4 +194,17 @@ class TransKasController extends Controller
 
         return redirect()->route('trans-kas.index')->with('success', 'Data Transaksi Kas berhasil diimport dari Excel.');
     }
+
+    public function generatePdf(TransKas $transKas)
+    {
+        // Mengambil data dengan relasi agar PDF memiliki informasi lengkap (nama akun, nama karyawan, dll)
+        $transKas = TransKas::with([
+            'karyawan',
+            'accountKas',
+            'accountKasLain',
+            'customerAddress'
+        ])->findOrFail($transKas->id);
+
+        return response()->json($transKas);
+    }
 }

@@ -170,4 +170,16 @@ class OperasionalPayController extends Controller
 
         return redirect()->route('operasionalPays.index')->with('success', 'Data Operasional berhasil diimport dari Excel.');
     }
+
+    public function generatePdf(OperasionalPay $operasionalPay)
+    {
+        // Mengambil data dengan relasi agar PDF memiliki informasi lengkap (nama akun, nama karyawan, dll)
+        $operasionalPay = OperasionalPay::with([
+            'karyawan',
+            'accountKas',
+            'accountBeban'
+        ])->findOrFail($operasionalPay->id);
+
+        return response()->json($operasionalPay);
+    }
 }
