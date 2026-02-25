@@ -89,8 +89,8 @@ export default function ReportProductions() {
 
             <div className="p-8">
                 <div className="mb-6">
-                    <h1 className="text-2xl font-bold text-gray-900">Laporan Waste Produksi</h1>
-                    <p className="text-gray-500">Pilih rentang tanggal entri untuk mendownload rekapitulasi hasil rusak.</p>
+                    <h1 className="text-2xl font-bold text-gray-900">Laporan Produksi</h1>
+                    <p className="text-gray-500">Pilih rentang tanggal entri untuk mendownload rekapitulasi.</p>
                 </div>
 
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
