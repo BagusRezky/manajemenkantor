@@ -225,6 +225,7 @@ export default function Edit({ salesOrder, finishGoodItems, customerAddresses }:
                                                 name="toleransi_pengiriman"
                                                 type="number"
                                                 step="0.01"
+                                                min={0}
                                                 value={data.toleransi_pengiriman}
                                                 onChange={handleChange}
                                             />

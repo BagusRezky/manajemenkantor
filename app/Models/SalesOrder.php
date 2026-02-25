@@ -50,7 +50,8 @@ class SalesOrder extends Model
     }
     public function setToleransiPengirimanAttribute($value)
     {
-        $this->attributes['toleransi_pengiriman'] = $value ?: null;
+        $this->attributes['toleransi_pengiriman'] =
+            ($value === null || $value === '') ? null : $value;
     }
     public function setCatatanColourRangeAttribute($value)
     {
