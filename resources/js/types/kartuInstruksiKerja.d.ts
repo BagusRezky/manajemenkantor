@@ -13,6 +13,7 @@ export interface KartuInstruksiKerja {
     no_kartu_instruksi_kerja: string;
     production_plan: string;
     tgl_estimasi_selesai: string;
+    status_finish: 'ON PROCESS' | 'FINISH';
     created_at: string;
     updated_at: string;
     sales_order?: SalesOrder;

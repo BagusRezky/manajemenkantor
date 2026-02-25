@@ -11,8 +11,8 @@ import { ColumnDef } from '@tanstack/react-table';
 
 import { KartuInstruksiKerja, KartuInstruksiKerjaBom } from '@/types/kartuInstruksiKerja';
 
-import { formatToInteger } from '@/utils/formatter/decimaltoint';
-import { Download, FileText, MoreHorizontal } from 'lucide-react';
+import { formatToInteger, formatWithThousandSeparator } from '@/utils/formatter/decimaltoint';
+import { CheckCircle, Download, FileText, MoreHorizontal, RefreshCcw } from 'lucide-react';
 import { toast } from 'sonner';
 
 export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, download = false): void => {
@@ -227,6 +227,11 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
     {
         accessorKey: 'sales_order.jumlah_pesanan',
         header: 'Jumlah Order',
+        cell: ({ getValue }) => {
+            const value = getValue() as number | null | undefined;
+            // Menggunakan format pemisah ribuan (1000 -> 1.000)
+            return value ? formatWithThousandSeparator(value) : '0';
+        },
     },
     {
         accessorKey: 'kartu_instruksi_kerja_boms',
@@ -235,7 +240,8 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
             const boms = getValue() as KartuInstruksiKerjaBom[];
             if (!boms || boms.length === 0) return '-';
 
-            return boms.map((bom) => bom.jumlah_produksi);
+            return boms.map((bom) => formatWithThousandSeparator(bom.jumlah_produksi));
+
         },
     },
     {
@@ -260,7 +266,7 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
             }, 0);
 
             const onHandStock = totalStokBarangJadi - transferBlokir - totalPengiriman;
-            return onHandStock.toLocaleString();
+            return formatWithThousandSeparator(onHandStock);
         },
     },
 
@@ -272,7 +278,7 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
             const totalPengiriman = suratJalans.reduce((total, suratJalan) => {
                 return total + (suratJalan.qty_pengiriman || 0);
             }, 0);
-            return totalPengiriman.toLocaleString();
+            return formatWithThousandSeparator(totalPengiriman);
         },
     },
 
@@ -298,10 +304,31 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
         cell: ({ row }) => row.original.sales_order?.finish_good_item?.nama_barang || row.original.sales_order?.master_item?.nama_master_item || '-',
     },
     {
+        accessorKey: 'status_finish',
+        header: 'Status Produksi',
+        cell: ({ row }) => {
+            const status = row.getValue('status_finish');
+            return (
+                <span
+                    className={`rounded px-2 py-1 text-xs font-bold ${
+                        status === 'FINISH' ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                    }`}
+                >
+                    {status === 'FINISH' ? 'FINISH' : 'ON PROCESS'}
+                </span>
+            );
+        },
+    },
+    {
         id: 'actions',
         header: 'Actions',
         cell: ({ row }) => {
             const item = row.original;
+            const handleToggleStatus = () => {
+                if (confirm(`Ubah status menjadi ${item.status_finish === 'FINISH' ? 'ON PROCESS' : 'FINISH'}?`)) {
+                    router.post(route('kartuInstruksiKerja.updateStatusFinish', item.id));
+                }
+            };
             const handlePreviewPdf = async () => {
                 try {
                     // Fetch data lengkap kartuInstruksiKerja beserta relasinya
@@ -356,6 +383,18 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
                         <DropdownMenuItem onClick={handleDownloadPdf}>
                             <Download className="mr-2 h-4 w-4" />
                             Download PDF
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem onClick={handleToggleStatus}>
+                            {item.status_finish === 'FINISH' ? (
+                                <span className="flex items-center text-yellow-600">
+                                    <RefreshCcw className="mr-2 h-4 w-4" /> Re-Open Process
+                                </span>
+                            ) : (
+                                <span className="flex items-center font-bold text-green-600">
+                                    <CheckCircle className="mr-2 h-4 w-4" /> Mark as FINISH
+                                </span>
+                            )}
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

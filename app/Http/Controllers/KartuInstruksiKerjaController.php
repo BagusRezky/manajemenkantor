@@ -16,8 +16,17 @@ class KartuInstruksiKerjaController extends Controller
      */
     public function index()
     {
-        $kartuInstruksiKerja = KartuInstruksiKerja::with(['salesOrder.finishGoodItem', 'salesOrder.customerAddress', 'kartuInstruksiKerjaBoms', 'kartuInstruksiKerjaBoms.billOfMaterials', 'packagings', 'blokirs', 'suratJalans',
-        'suratJalans', 'salesOrder.masterItem'])->get();
+        $kartuInstruksiKerja = KartuInstruksiKerja::with([
+            'salesOrder.finishGoodItem',
+            'salesOrder.customerAddress',
+            'kartuInstruksiKerjaBoms',
+            'kartuInstruksiKerjaBoms.billOfMaterials',
+            'packagings',
+            'blokirs',
+            'suratJalans',
+            'suratJalans',
+            'salesOrder.masterItem'
+        ])->get();
 
         return Inertia::render('kartuInstruksiKerja/kartuInstruksiKerja', [
             'kartuInstruksiKerja' => $kartuInstruksiKerja
@@ -106,6 +115,20 @@ class KartuInstruksiKerjaController extends Controller
 
         return redirect()->route('kartuInstruksiKerja.index')
             ->with('success', 'Surat Perintah Kerja berhasil dibuat!');
+    }
+
+    public function updateStatusFinish(Request $request, $id)
+    {
+        $kik = KartuInstruksiKerja::findOrFail($id);
+
+        // Logika: Jika klik Finish ubah ke FINISH, atau bisa dibuat toggle
+        $newStatus = ($kik->status_finish === 'FINISH') ? 'ON PROCESS' : 'FINISH';
+
+        $kik->update([
+            'status_finish' => $newStatus
+        ]);
+
+        return redirect()->back()->with('success', 'Status produksi berhasil diperbarui!');
     }
 
     /**

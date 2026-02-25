@@ -16,6 +16,7 @@ class KartuInstruksiKerja extends Model
         'no_kartu_instruksi_kerja',
         'production_plan',
         'tgl_estimasi_selesai',
+        'status_finish',
     ];
 
     protected $casts = [
