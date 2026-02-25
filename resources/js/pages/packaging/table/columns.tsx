@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
@@ -15,100 +14,149 @@ import { toast } from 'sonner';
 // Function untuk generate label PDF
 const generateLabelsPdf = async (packaging: Packaging, download = false): Promise<void> => {
     try {
-        // Gunakan route parameter (bukan query parameter)
         const response = await fetch(`/packagings/label-start-number/${packaging.id_kartu_instruksi_kerja}/${packaging.id}`);
 
         if (!response.ok) {
             throw new Error('Failed to fetch label start number');
         }
+
         const { startNumber } = await response.json();
 
-        // Inisialisasi dokumen PDF (A4)
         const doc = new jsPDF('p', 'cm', 'a4');
 
-        // Ukuran label
-        const labelWidth = 6; // 6 cm
-        const labelHeight = 3; // 3 cm
-        const marginX = 0.5; // margin horizontal antar label
-        const marginY = 0.5; // margin vertical antar label
-        const pageMargin = 1; // margin halaman
+        // ===============================
+        // CONFIG LABEL
+        // ===============================
+        const labelWidth = 6.1;
+        const labelHeight = 4.3;
 
-        // Hitung jumlah label per baris dan kolom
-        const pageWidth = 21; // A4 width in cm
-        const pageHeight = 29.7; // A4 height in cm
-        const labelsPerRow = Math.floor((pageWidth - 2 * pageMargin) / (labelWidth + marginX));
-        const labelsPerColumn = Math.floor((pageHeight - 2 * pageMargin) / (labelHeight + marginY));
-        const labelsPerPage = labelsPerRow * labelsPerColumn;
+        const labelsPerRow = 2;
+        const labelsPerColumn = 3;
+        const labelsPerPage = 6;
 
-        // Hitung total label
+        // Tambahan jarak antar label
+        const gapX = 0.5;
+        const gapY = 0.5;
+
+        const pageWidth = 21;
+        const pageHeight = 29.7;
+
+        // Hitung total grid size (termasuk gap)
+        const totalGridWidth = labelsPerRow * labelWidth + (labelsPerRow - 1) * gapX;
+
+        const totalGridHeight = labelsPerColumn * labelHeight + (labelsPerColumn - 1) * gapY;
+
+        // Centering
+        const pageMarginX = (pageWidth - totalGridWidth) / 2;
+        const pageMarginY = (pageHeight - totalGridHeight) / 2;
+
+        // ===============================
+        // TOTAL LABEL
+        // ===============================
         const totalPenuh = packaging.jumlah_satuan_penuh;
         const totalSisa = packaging.jumlah_satuan_sisa;
         const grandTotal = totalPenuh + totalSisa;
 
-        let currentLabel = 0;
-        let currentPage = 1;
+        // HITUNG TOTAL PCS
+        const totalQty = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh + packaging.jumlah_satuan_sisa * packaging.qty_persatuan_sisa;
 
-        // Generate labels
+        let currentLabel = 0;
+
         for (let i = 0; i < grandTotal; i++) {
-            // Hitung posisi label
             const labelOnPage = currentLabel % labelsPerPage;
             const row = Math.floor(labelOnPage / labelsPerRow);
             const col = labelOnPage % labelsPerRow;
 
-            const x = pageMargin + col * (labelWidth + marginX);
-            const y = pageMargin + row * (labelHeight + marginY);
+            const x = pageMarginX + col * (labelWidth + gapX);
 
-            // Gambar border label
+            const y = pageMarginY + row * (labelHeight + gapY);
+
+            // ===============================
+            // BORDER
+            // ===============================
             doc.setDrawColor(0);
-            doc.setLineWidth(0.02);
+            doc.setLineWidth(0.03);
             doc.rect(x, y, labelWidth, labelHeight);
 
-            // Content label
+            // ===============================
+            // DATA
+            // ===============================
             const labelNumber = startNumber + i;
+
             const kikNo = packaging.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '';
+
+            const itemName =
+                packaging.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang ??
+                packaging.kartu_instruksi_kerja?.sales_order?.master_item?.nama_master_item ??
+                '-';
+
             const kodePackaging = packaging.kode_packaging || '-';
+
             const packagingDate = packaging.tgl_transfer ? format(new Date(packaging.tgl_transfer), 'dd/MM/yyyy') : '';
 
-            // Set font size kecil untuk muat di label 3x6 cm
-            doc.setFontSize(8);
-
-            // Nomor label (pojok kanan atas)
+            // ===============================
+            // NOMOR LABEL
+            // ===============================
+            doc.setFontSize(9);
             doc.setFont('helvetica', 'bold');
-            doc.text(`#${labelNumber}`, x + labelWidth - 0.5, y + 0.5, { align: 'right' });
+            doc.text(`#${labelNumber}`, x + labelWidth - 0.3, y + 0.6, {
+                align: 'right',
+            });
 
-            // Logo atau nama perusahaan (kecil)
-            doc.setFontSize(7);
+            // ===============================
+            // PERUSAHAAN
+            // ===============================
+            doc.setFontSize(8);
             doc.setFont('helvetica', 'normal');
-            doc.text('CV. Indigama', x + 0.2, y + 0.4);
+            doc.text('CV. Indigama Khatulistiwa', x + 0.3, y + 0.6);
 
-            // Barcode area (simulasi dengan text, bisa diganti dengan barcode library)
+            // ===============================
+            // KIK
+            // ===============================
             doc.setFontSize(10);
             doc.setFont('helvetica', 'bold');
-            doc.text(kikNo, x + labelWidth / 2, y + 1.2, { align: 'center' });
+            doc.text(kikNo, x + labelWidth / 2, y + 1.7, {
+                align: 'center',
+            });
 
-            // Info detail
-            doc.setFontSize(6);
+            // ===============================
+            // NAMA BARANG
+            // ===============================
+            doc.setFontSize(8);
             doc.setFont('helvetica', 'normal');
+            const splitName = doc.splitTextToSize(itemName, labelWidth - 0.6);
+            doc.text(splitName, x + labelWidth / 2, y + 2.4, {
+                align: 'center',
+            });
 
-            // Sales Order & Date
-            doc.text(`Kode Packaging: ${kodePackaging}`, x + 0.2, y + 2.2);
-            doc.text(`Tgl: ${packagingDate}`, x + 0.2, y + 2.5);
+            // ===============================
+            // INFO BAWAH
+            // ===============================
+            doc.setFontSize(7);
 
-            // Jenis transfer (pojok kanan bawah)
-            doc.setFontSize(5);
+            // Kode kiri bawah
+            doc.text(`Kode: ${kodePackaging}`, x + 0.3, y + 3.5);
+
+            // Total PCS kanan sejajar kode
+            doc.text(`Total: ${totalQty} pcs`, x + labelWidth - 0.3, y + 3.5, { align: 'right' });
+
+            // Tanggal
+            doc.text(`Tgl: ${packagingDate}`, x + 0.3, y + 3.9);
+
+            // ===============================
+            // JENIS TRANSFER
+            // ===============================
+            doc.setFontSize(6);
             doc.setFont('helvetica', 'italic');
-            doc.text(packaging.jenis_transfer, x + labelWidth - 0.2, y + labelHeight - 0.2, { align: 'right' });
+            doc.text(packaging.jenis_transfer, x + labelWidth - 0.3, y + labelHeight - 0.3, { align: 'right' });
 
             currentLabel++;
 
-            // Cek apakah perlu halaman baru
             if (currentLabel % labelsPerPage === 0 && i < grandTotal - 1) {
                 doc.addPage();
-                currentPage++;
             }
         }
 
-        // Output PDF
         if (download) {
             doc.save(`Labels_${packaging.kode_packaging}.pdf`);
         } else {

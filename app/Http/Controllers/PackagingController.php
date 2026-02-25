@@ -6,7 +6,6 @@ use App\Models\Packaging;
 use App\Models\KartuInstruksiKerja;
 use Inertia\Inertia;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Log;
 
 class PackagingController extends Controller
 {
@@ -15,7 +14,7 @@ class PackagingController extends Controller
      */
     public function index()
     {
-        $packagings = Packaging::with('kartuInstruksiKerja')->get();
+        $packagings = Packaging::with([ 'kartuInstruksiKerja.salesOrder.masterItem', 'kartuInstruksiKerja.salesOrder.finishGoodItem', ])->orderBy('tgl_transfer', 'desc')->get();
 
         return Inertia::render('packaging/packagings', [
             'packagings' => $packagings
@@ -64,7 +63,7 @@ class PackagingController extends Controller
      */
     public function show(Packaging $packaging)
     {
-        $packaging->load('kartuInstruksiKerja');
+        $packaging->load([ 'kartuInstruksiKerja.salesOrder.masterItem', 'kartuInstruksiKerja.salesOrder.finishGoodItem' ]);
 
         return Inertia::render('packaging/show', [
             'packaging' => $packaging
@@ -122,33 +121,32 @@ class PackagingController extends Controller
      */
     public function generatePdf(Packaging $packaging)
     {
-        $packaging->load('kartuInstruksiKerja');
+        $packaging->load([ 'kartuInstruksiKerja.salesOrder.masterItem', 'kartuInstruksiKerja.salesOrder.finishGoodItem' ]);
 
         return response()->json($packaging);
     }
 
+    /**
+     * Get label start number for a specific packaging
+     */
     public function getLabelStartNumber($kikId, $packagingId)
-{
-    // Sekarang packagingId pasti ada
-    $previousPackagings = Packaging::where('id_kartu_instruksi_kerja', $kikId)
-        ->where('id', '<', $packagingId)
-        ->orderBy('id', 'asc')
-        ->get();
+    {
+        // Sekarang packagingId pasti ada
 
-    Log::info('KIK ID: ' . $kikId);
-    Log::info('Current packaging ID: ' . $packagingId);
-    Log::info('Previous packagings (ID < current): ' . $previousPackagings->pluck('id'));
+        $previousPackagings = Packaging::where('id_kartu_instruksi_kerja', $kikId)
+            ->where('id', '<', $packagingId)
+            ->orderBy('id', 'asc')
+            ->get();
 
-    $startNumber = 1;
+        $startNumber = 1;
 
-    foreach ($previousPackagings as $packaging) {
-        $totalLabels = $packaging->jumlah_satuan_penuh + $packaging->jumlah_satuan_sisa;
-        Log::info("Packaging ID {$packaging->id}: {$totalLabels} labels");
-        $startNumber += $totalLabels;
+        foreach ($previousPackagings as $packaging) {
+            $totalLabels = $packaging->jumlah_satuan_penuh + $packaging->jumlah_satuan_sisa;
+            $startNumber += $totalLabels;
+        }
+
+        // Log::info('Final start number: ' . $startNumber);
+
+        return response()->json(['startNumber' => $startNumber]);
     }
-
-    Log::info('Final start number: ' . $startNumber);
-
-    return response()->json(['startNumber' => $startNumber]);
-}
 }
