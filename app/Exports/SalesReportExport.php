@@ -27,16 +27,19 @@ class SalesReportExport implements
 {
     protected $startDate;
     protected $endDate;
+    protected $kode;
     private $rowNumber = 0;
+
 
     // Variabel penampung total untuk Summary
     private $totalPendapatan = 0;
     private $totalTerbayar = 0;
 
-    public function __construct($startDate, $endDate)
+    public function __construct($startDate, $endDate, $kode = null)
     {
         $this->startDate = $startDate;
         $this->endDate = $endDate;
+        $this->kode = $kode;
     }
 
     public function startCell(): string
@@ -53,6 +56,9 @@ class SalesReportExport implements
             'bonPays'
         ])
         ->whereBetween('tgl_invoice', [$this->startDate, $this->endDate])
+        ->when(!empty($this->kode), function ($query) {
+            return $query->where('kode', 'LIKE', '%' . $this->kode . '%');
+        })
         ->orderBy('tgl_invoice', 'asc')
         ->get();
     }

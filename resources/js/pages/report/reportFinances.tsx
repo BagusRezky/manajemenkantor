@@ -15,9 +15,19 @@ interface ReportCardProps {
     buttonColor: string;
     accounts?: MasterCoa[];
     isMutation?: boolean;
+    isSales?: boolean;
 }
 
-const ReportCard = ({ title, description, icon: Icon, routeName, buttonColor, accounts = [], isMutation = false }: ReportCardProps) => {
+const ReportCard = ({
+    title,
+    description,
+    icon: Icon,
+    routeName,
+    buttonColor,
+    accounts = [],
+    isMutation = false,
+    isSales = false,
+}: ReportCardProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
 
@@ -25,6 +35,7 @@ const ReportCard = ({ title, description, icon: Icon, routeName, buttonColor, ac
         start_date: '',
         end_date: '',
         selected_accounts: [] as string[], // Array untuk multiple IDs
+        kode: '',
     });
 
     // Filter akun berdasarkan pencarian
@@ -66,6 +77,10 @@ const ReportCard = ({ title, description, icon: Icon, routeName, buttonColor, ac
         const params = new URLSearchParams();
         params.append('start_date', data.start_date);
         params.append('end_date', data.end_date);
+
+        if (isSales && data.kode) {
+            params.append('kode', data.kode);
+        }
 
         if (isMutation) {
             data.selected_accounts.forEach((id) => params.append('id_accounts[]', id));
@@ -127,6 +142,19 @@ const ReportCard = ({ title, description, icon: Icon, routeName, buttonColor, ac
                         {processing ? 'Processing...' : 'Export Excel'}
                     </button>
                 )}
+
+                {isSales && (
+                    <div>
+                        <label className="text-xs font-semibold text-gray-400 uppercase">Filter Kode Invoice</label>
+                        <input
+                            type="text"
+                            placeholder="Contoh: INV, FAK, dll (Opsional)"
+                            className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+                            value={data.kode}
+                            onChange={(e) => setData('kode', e.target.value)}
+                        />
+                    </div>
+                )}
             </form>
 
             {/* Modal Pemilihan Akun (Hanya untuk Mutasi) */}
@@ -142,7 +170,6 @@ const ReportCard = ({ title, description, icon: Icon, routeName, buttonColor, ac
 
                         <div className="p-4">
                             <div className="relative mb-4">
-
                                 <input
                                     type="text"
                                     placeholder="Cari kode atau nama akun..."
@@ -213,7 +240,11 @@ export default function Reports({ accounts }: ReportsProps) {
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title="Laporan Sistem" />
 
-            <div className="p-6">
+            <div className="p-8">
+                <div className="mb-6">
+                    <h1 className="text-2xl font-bold text-gray-900">Laporan Keuangan</h1>
+                    <p className="mt-1 text-gray-500">Unduh laporan keuangan dan operasional dalam format Excel.</p>
+                </div>
                 <div className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
                     <ReportCard
                         title="Laporan Mutasi"
@@ -239,6 +270,7 @@ export default function Reports({ accounts }: ReportsProps) {
                         icon={ShoppingCart}
                         routeName="salesReports.export"
                         buttonColor="bg-purple-600"
+                        isSales={true}
                     />
 
                     <ReportCard
@@ -247,6 +279,14 @@ export default function Reports({ accounts }: ReportsProps) {
                         icon={FileText}
                         routeName="profitlossReports.export"
                         buttonColor="bg-orange-600"
+                    />
+
+                    <ReportCard
+                        title="Laporan Faktur"
+                        description="Export detail faktur lengkap dengan vendor dan detail item."
+                        icon={FileText} // Anda bisa ganti iconnya
+                        routeName="fakturReports.export"
+                        buttonColor="bg-red-600"
                     />
                 </div>
             </div>
