@@ -51,7 +51,7 @@ export const generateKikPdf = (kartuInstruksiKerja: KartuInstruksiKerja, downloa
     });
 
     const kikNumber = kartuInstruksiKerja?.no_kartu_instruksi_kerja || '-';
-    const currentDate = formatDate(new Date().toISOString());
+    const currentDate = formatDate(kartuInstruksiKerja.sales_order?.eta_marketing);
 
     doc.setFontSize(10).setFont('helvetica', 'bold');
     doc.text(kikNumber, pageWidth - 15, 25 + topOffset, { align: 'right' });
