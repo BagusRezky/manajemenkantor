@@ -596,6 +596,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/waste-printing/export', [ReportProductionController::class, 'exportWastePrinting'])->name('reportProductions.exportWastePrinting');
             Route::get('/waste-dieMaking/export', [ReportProductionController::class, 'exportWasteDieMaking'])->name('reportProductions.exportWasteDieMaking');
             Route::get('/waste-finishing/export', [ReportProductionController::class, 'exportWasteFinishing'])->name('reportProductions.exportWasteFinishing');
+            Route::get('/export-spk', [ReportProductionController::class, 'exportReportSpk'])->name('reportProductions.exportReportSpk');
         });
         Route::prefix('reportPoPbs')->group(function () {
             Route::get('/', [ReportPoPbController::class, 'index'])->name('reportPoPbs.index');
