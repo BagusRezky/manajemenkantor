@@ -6,6 +6,7 @@ use App\Exports\DieMakingWasteExport;
 use App\Exports\FinishingWasteExport;
 use App\Exports\PrintingWasteExport;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Exports\ReportSpkExport;
 
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -14,9 +15,7 @@ class ReportProductionController extends Controller
 {
     public function index()
     {
-        return Inertia::render('report/reportProductions', [
-
-        ]);
+        return Inertia::render('report/reportProductions', []);
     }
     public function exportWastePrinting(Request $request)
     {
@@ -64,7 +63,22 @@ class ReportProductionController extends Controller
 
         // Download file Excel menggunakan export class yang sesuai
         return Excel::download(
-            new FinishingWasteExport ($request->start_date, $request->end_date),
+            new FinishingWasteExport($request->start_date, $request->end_date),
+            $fileName
+        );
+    }
+
+    public function exportReportSpk(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'required|date',
+            'end_date'   => 'required|date|after_or_equal:start_date',
+        ]);
+
+        $fileName = 'REPORT_SPK_' . $request->start_date . '_to_' . $request->end_date . '.xlsx';
+
+        return Excel::download(
+            new ReportSpkExport($request->start_date, $request->end_date),
             $fileName
         );
     }

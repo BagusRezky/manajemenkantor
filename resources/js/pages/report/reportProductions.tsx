@@ -111,14 +111,19 @@ export default function ReportProductions() {
                         routeName="reportProductions.exportWasteDieMaking"
                         buttonColor="bg-rose-600"
                     />
-
-                    {/* Divisi Finishing - Route disiapkan untuk nanti */}
                     <ReportCard
                         title="Waste Finishing"
                         description="Rekapitulasi hasil rusak proses finishing."
                         icon={PackageCheck}
                         routeName="reportProductions.exportWasteFinishing"
                         buttonColor="bg-amber-600"
+                    />
+                    <ReportCard
+                        title="Report SPK"
+                        description="Laporan detail SPK, Produksi, hingga Pengiriman."
+                        icon={PackageCheck}
+                        routeName="reportProductions.exportReportSpk"
+                        buttonColor="bg-emerald-600"
                     />
                 </div>
             </div>
