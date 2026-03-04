@@ -24,15 +24,12 @@ const generateLabelsPdf = async (packaging: Packaging, download = false): Promis
 
         const doc = new jsPDF('p', 'cm', 'a4');
 
-        // ===============================
-        // CONFIG LABEL
-        // ===============================
         const labelWidth = 6.1;
         const labelHeight = 4.3;
 
-        const labelsPerRow = 2;
-        const labelsPerColumn = 3;
-        const labelsPerPage = 6;
+        const labelsPerRow = 3;
+        const labelsPerColumn = 6;
+        const labelsPerPage = 18;
 
         // Tambahan jarak antar label
         const gapX = 0.5;
