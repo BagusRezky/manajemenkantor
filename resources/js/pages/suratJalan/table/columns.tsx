@@ -82,7 +82,9 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
     doc.text('No. PO Customer', leftLabelX, 59);
     doc.text(':', leftColonX, 59);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.kartu_instruksi_kerja?.sales_order?.no_po_customer || '', leftValueX, 59);
+
+    const poCustomer = suratJalan.kartu_instruksi_kerja?.sales_order?.no_po_customer || suratJalan.sales_order?.no_po_customer || '-';
+    doc.text(poCustomer, leftValueX, 59);
 
     doc.setFont('helvetica', 'bold');
     doc.text('No. Polisi', rightLabelX, 59);
@@ -95,7 +97,11 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
     doc.text('Customer', leftLabelX, 66);
     doc.text(':', leftColonX, 66);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '', leftValueX, 66);
+    const customerName =
+        suratJalan.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer ||
+        suratJalan.sales_order?.customer_address?.nama_customer ||
+        '-';
+    doc.text(customerName, leftValueX, 66);
 
     doc.setFont('helvetica', 'bold');
     doc.text('Driver', rightLabelX, 66);
@@ -133,27 +139,48 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
     doc.rect(10, tableHeaderY, pageWidth - 20, 10);
     doc.text('DATA BARANG', pageWidth / 2, tableHeaderY + 7, { align: 'center' });
 
-    // Data Processing
+    const isFromKik = !!suratJalan.id_kartu_instruksi_kerja; // Cek apakah lewat SPK atau tidak
+
+    // 1. Tentukan Nama Barang
+    const namaBarang = isFromKik
+        ? suratJalan.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang || '-'
+        : suratJalan.sales_order?.master_item?.nama_master_item || '-';
+
+    // 2. Hitung Total Box (Hanya jika dari KIK)
     const packagings = suratJalan.kartu_instruksi_kerja?.packagings || [];
     const totalBox = packagings.reduce((acc, pkg) => {
         return acc + (Number(pkg.jumlah_satuan_penuh) || 0) + (Number(pkg.jumlah_satuan_sisa) || 0);
     }, 0);
-    const finishGoodItem = suratJalan.kartu_instruksi_kerja?.sales_order?.finish_good_item;
 
+    const tableColumns = [
+        { header: 'No', dataKey: 'no' },
+        { header: 'Nama Barang', dataKey: 'nama_barang' },
+    ];
+    if (isFromKik) {
+        tableColumns.push({ header: 'Box', dataKey: 'box' });
+    }
+    tableColumns.push({
+        header: isFromKik ? 'Jumlah (Pcs)' : 'Jumlah',
+        dataKey: 'jumlah',
+    });
+
+    tableColumns.push({ header: 'Keterangan', dataKey: 'keterangan' });
+
+    // 4. Render Table
     autoTable(doc, {
-        columns: [
-            { header: 'No', dataKey: 'no' },
-            { header: 'Nama Barang', dataKey: 'nama_barang' },
-            { header: 'Box', dataKey: 'box' },
-            { header: 'Jumlah (Pcs)', dataKey: 'jumlah' },
-            { header: 'Keterangan', dataKey: 'keterangan' },
-        ],
+        columns: tableColumns,
         body: [
             {
                 no: '1',
-                nama_barang: finishGoodItem?.nama_barang || '-',
-                box: totalBox > 0 ? `${totalBox} BOX` : '-',
-                jumlah: formatWithThousandSeparator(suratJalan.qty_pengiriman) || '0',
+                nama_barang: namaBarang,
+                box: isFromKik ? (totalBox > 0 ? `${totalBox} BOX` : '-') : null, // null jika bukan KIK
+                jumlah: isFromKik
+                    ? suratJalan.qty_pengiriman
+                        ? `${formatWithThousandSeparator(suratJalan.qty_pengiriman)} PCS`
+                        : '-'
+                    : suratJalan.qty_pengiriman
+                    ? `${formatWithThousandSeparator(suratJalan.qty_pengiriman)} ${suratJalan.sales_order?.master_item?.unit?.nama_satuan}`
+                    : '-',
                 keterangan: '-',
             },
         ],
@@ -180,8 +207,6 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
         },
     });
 
-    // Tanda Tangan (Diposisikan di bagian bawah kertas)
-    // Tinggi kertas NCR adalah 279.4, kita letakkan area tanda tangan sekitar 40-50mm dari bawah
     const footerY = (doc as any).lastAutoTable.finalY + 25;
 
     doc.setFontSize(10).setFont('helvetica', 'normal');
@@ -243,6 +268,14 @@ export const columns = (): ColumnDef<SuratJalan>[] => [
         },
     },
     {
+        accessorKey: 'sales_order.no_bon_pesanan',
+        header: 'No. SO',
+        cell: ({ row }) => {
+            const data = row.original;
+            return <span>{data.sales_order?.no_bon_pesanan || data.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}</span>;
+        },
+    },
+    {
         accessorKey: 'tgl_surat_jalan',
         header: 'Tanggal',
         cell: ({ row }) => {
@@ -251,11 +284,13 @@ export const columns = (): ColumnDef<SuratJalan>[] => [
         },
     },
     {
-        accessorKey: 'kartu_instruksi_kerja.salesOrder.customerAddress.nama_customer',
+        accessorKey: 'customer',
         header: 'Customer',
         cell: ({ row }) => {
             const data = row.original;
-            return <span>{data.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '-'}</span>;
+            const customerName =
+                data.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || data.sales_order?.customer_address?.nama_customer || '-';
+            return <span>{customerName}</span>;
         },
     },
 

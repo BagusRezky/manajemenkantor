@@ -1,8 +1,10 @@
 import { KartuInstruksiKerja } from './kartuInstruksiKerja';
+import { SalesOrder } from './salesOrder';
 
 export interface SuratJalan {
     id: string;
-    id_kartu_instruksi_kerja: string;
+    id_kartu_instruksi_kerja: string | null;
+    id_sales_order: string;
     no_surat_jalan: string;
     tgl_surat_jalan: string;
     transportasi: string;
@@ -14,11 +16,14 @@ export interface SuratJalan {
     created_at: string;
     updated_at: string;
     qty_pengiriman: number;
+    salesOrder?: SalesOrder;
+    sales_order?: SalesOrder; 
     kartuInstruksiKerja?: KartuInstruksiKerja;
-    kartu_instruksi_kerja?: KartuInstruksiKerja; // snake_case version for backward compatibility
+    kartu_instruksi_kerja?: KartuInstruksiKerja; 
 }
 
 export interface SuratJalanFormData {
+    id_sales_order: string;
     id_kartu_instruksi_kerja: string;
     no_surat_jalan: string;
     tgl_surat_jalan: string;

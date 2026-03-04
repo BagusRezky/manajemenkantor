@@ -16,6 +16,23 @@ export default function ShowSuratJalan({ suratJalan }: Props) {
         { title: 'Detail', href: '#' },
     ];
 
+    // Logika Fallback Data
+    const isFromKik = !!suratJalan.id_kartu_instruksi_kerja;
+
+    // 1. Nama Customer
+    const customerName =
+        suratJalan.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer ||
+        suratJalan.sales_order?.customer_address?.nama_customer ||
+        '-';
+
+    // 2. Nama Barang
+    const productName = isFromKik
+        ? suratJalan.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang || '-'
+        : suratJalan.sales_order?.master_item?.nama_master_item || '-';
+
+    // 3. No PO Customer
+    const poCustomer = suratJalan.kartu_instruksi_kerja?.sales_order?.no_po_customer || suratJalan.sales_order?.no_po_customer || '-';
+
     return (
         <AppLayout breadcrumbs={breadcrumbs}>
             <Head title={`Detail Surat Jalan - ${suratJalan.no_surat_jalan}`} />
@@ -53,9 +70,7 @@ export default function ShowSuratJalan({ suratJalan }: Props) {
                                     <MapPin className="h-4 w-4" /> Tujuan Pengiriman
                                 </div>
                                 <div className="rounded-lg border bg-gray-50 p-4">
-                                    <p className="mb-1 font-bold text-gray-900">
-                                        {suratJalan.kartuInstruksiKerja?.sales_order?.customer_address?.nama_customer || 'Customer'}
-                                    </p>
+                                    <p className="mb-1 font-bold text-gray-900">{customerName}</p>
                                     <p className="text-sm leading-relaxed whitespace-pre-line text-gray-600">{suratJalan.alamat_tujuan}</p>
                                 </div>
                             </div>
@@ -102,19 +117,17 @@ export default function ShowSuratJalan({ suratJalan }: Props) {
                                     <tbody className="divide-y">
                                         <tr>
                                             <td className="px-4 py-4">
-                                                <p className="font-bold text-gray-900">
-                                                    {suratJalan.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang || '-'}
-                                                </p>
-                                                <p className="text-xs text-gray-500">
-                                                    PO Customer: {suratJalan.kartu_instruksi_kerja?.sales_order?.no_po_customer || '-'}
-                                                </p>
+                                                <p className="font-bold text-gray-900">{productName}</p>
+                                                <p className="text-xs text-gray-500">PO Customer: {poCustomer}</p>
                                             </td>
                                             <td className="px-4 py-4 font-mono text-xs">
                                                 {suratJalan.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}
                                             </td>
                                             <td className="px-4 py-4 text-right">
                                                 <span className="text-lg font-bold">{suratJalan.qty_pengiriman?.toLocaleString()}</span>
-                                                <span className="ml-1 text-xs text-gray-500">PCS</span>
+                                                <span className="ml-1 text-xs text-gray-500">
+                                                    {isFromKik ? 'PCS' : suratJalan.sales_order?.master_item?.unit?.nama_satuan || '-'}
+                                                </span>
                                             </td>
                                         </tr>
                                     </tbody>

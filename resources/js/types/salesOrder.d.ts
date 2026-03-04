@@ -25,7 +25,8 @@ export interface SalesOrder {
     customer_address?: CustomerAddress;
     finish_good_item?: FinishGoodItem;
     kartu_instruksi_kerja?: KartuInstruksiKerja[];
-    master_item?: MasterItem; // New relation for Master Item
+    master_item?: MasterItem; 
+    masterItem?: MasterItem;
 }
 
 interface CombinedItem {

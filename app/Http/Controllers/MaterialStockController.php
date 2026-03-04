@@ -71,7 +71,7 @@ class MaterialStockController extends Controller
     /**
      * LOGIC: Onhand = Total Penerimaan - Total IMR Approved + Retur Internal - Retur External
      */
-    private function calculateOnhandStock($masterItemId): float
+    public function calculateOnhandStock($masterItemId): float
     {
         // 1. (+) Total Penerimaan dari Supplier (LPB)
         $totalReceived = PenerimaanBarangItem::whereHas('purchaseOrderItem', function ($query) use ($masterItemId) {
@@ -114,8 +114,12 @@ class MaterialStockController extends Controller
 
         $totalImrApproved = $imrApproved + $imrDiemakingApproved + $imrFinishingApproved;
 
-        // Formula Akhir
-        return ($totalReceived + $totalReturInternal) - ($totalReturExternal + $totalImrApproved);
+        $totalSjTanpaSpk = \App\Models\SuratJalan::whereNull('id_kartu_instruksi_kerja')
+        ->whereHas('salesOrder', function ($query) use ($masterItemId) {
+            $query->where('id_master_item', $masterItemId);
+        })->sum('qty_pengiriman');
+
+    return ($totalReceived + $totalReturInternal) - ($totalReturExternal + $totalImrApproved + $totalSjTanpaSpk);
     }
 
     /**
@@ -304,6 +308,22 @@ class MaterialStockController extends Controller
                     'reference' => $item->internalMaterialRequest->no_imr ?? '-',
                 ];
             });
+        $sjDirect = \App\Models\SuratJalan::with(['salesOrder'])
+        ->whereNull('id_kartu_instruksi_kerja')
+        ->whereHas('salesOrder', function ($query) use ($masterItemId) {
+            $query->where('id_master_item', $masterItemId);
+        })
+        ->get()
+        ->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'type' => 'sj_direct', 
+                'qty' => -$item->qty_pengiriman,
+                'date' => $item->created_at,
+                'reference' => $item->no_surat_jalan,
+                'reference_date' => $item->tgl_surat_jalan,
+            ];
+        });
 
         // Gabungkan semua
         $allTransactions = collect()
@@ -311,6 +331,7 @@ class MaterialStockController extends Controller
             ->merge($returInternal)
             ->merge($returnedExternal)
             ->merge($usageImr)
+            ->merge($sjDirect)
             ->sortByDesc('date')
             ->values()
             ->all();

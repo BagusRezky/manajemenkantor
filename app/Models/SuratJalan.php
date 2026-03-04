@@ -10,6 +10,7 @@ class SuratJalan extends Model
     use HasFactory;
 
     protected $fillable = [
+        'id_sales_order',
         'id_kartu_instruksi_kerja',
         'no_surat_jalan',
         'tgl_surat_jalan',
@@ -21,6 +22,11 @@ class SuratJalan extends Model
         'alamat_tujuan',
         'qty_pengiriman',
     ];
+
+    public function salesOrder()
+    {
+        return $this->belongsTo(SalesOrder::class, 'id_sales_order');
+    }
 
     public function kartuInstruksiKerja()
     {

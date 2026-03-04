@@ -7,32 +7,30 @@ import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { KartuInstruksiKerja } from '@/types/kartuInstruksiKerja';
+import { SalesOrder } from '@/types/salesOrder';
 import { SuratJalanFormData } from '@/types/suratJalan';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { useState } from 'react';
 import { toast } from 'sonner';
 
 const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Surat Jalan',
-        href: '/suratJalans',
-    },
-    {
-        title: 'Tambah',
-        href: '#',
-    },
+    { title: 'Surat Jalan', href: '/suratJalans' },
+    { title: 'Tambah', href: '#' },
 ];
 
 interface CreateProps {
-    kartuInstruksiKerjas: KartuInstruksiKerja[];
+    salesOrders: (SalesOrder & { material_onhand: number })[];
+    allKartuInstruksiKerjas: KartuInstruksiKerja[]; // Data semua SPK dari controller
 }
 
-export default function Create({ kartuInstruksiKerjas }: CreateProps) {
+export default function Create({ salesOrders, allKartuInstruksiKerjas }: CreateProps) {
+    const [selectedSO, setSelectedSO] = useState<(SalesOrder & { material_onhand: number }) | null>(null);
     const [selectedKIK, setSelectedKIK] = useState<KartuInstruksiKerja | null>(null);
-    const [selectedAlamat, setSelectedAlamat] = useState<string>('');
+    const [selectedAlamatKey, setSelectedAlamatKey] = useState<string>('');
     const [onHandStock, setOnHandStock] = useState<number>(0);
 
     const { data, setData, post, processing, errors, reset } = useForm<SuratJalanFormData>({
+        id_sales_order: '',
         id_kartu_instruksi_kerja: '',
         no_surat_jalan: '',
         tgl_surat_jalan: new Date().toISOString().split('T')[0],
@@ -40,117 +38,98 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
         no_polisi: '',
         driver: '',
         pengirim: '',
-        keterangan: '',
+        keterangan: '-',
         alamat_tujuan: '',
         qty_pengiriman: '',
     });
 
-    const handleKIKChange = (kikId: string) => {
-        const selectedKartuInstruksiKerja = kartuInstruksiKerjas.find((k) => k.id.toString() === kikId);
-        setSelectedKIK(selectedKartuInstruksiKerja || null);
-        setSelectedAlamat('');
+    // --- LOGIC ALAMAT (Sesuai Permintaanmu) ---
+    const handleAlamatChange = (alamatType: string) => {
+        if (!selectedSO?.customer_address) return;
 
-        // Hitung onhand stock
-        const stock = selectedKartuInstruksiKerja ? calculateOnHandStock(selectedKartuInstruksiKerja) : 0;
-        setOnHandStock(stock);
+        const addr = selectedSO.customer_address;
+        let alamatValue = '';
+
+        if (alamatType === 'alamat_lengkap') alamatValue = addr.alamat_lengkap || '';
+        else if (alamatType === 'alamat_kedua') alamatValue = addr.alamat_kedua || '';
+        else if (alamatType === 'alamat_ketiga') alamatValue = addr.alamat_ketiga || '';
+
+        setSelectedAlamatKey(alamatType);
+        setData('alamat_tujuan', alamatValue);
+    };
+
+    const alamatItems = selectedSO?.customer_address
+        ? [
+              { key: 'alamat_lengkap', value: 'alamat_lengkap', label: `Utama: ${selectedSO.customer_address.alamat_lengkap}` },
+              ...(selectedSO.customer_address.alamat_kedua
+                  ? [{ key: 'alamat_kedua', value: 'alamat_kedua', label: `Kedua: ${selectedSO.customer_address.alamat_kedua}` }]
+                  : []),
+              ...(selectedSO.customer_address.alamat_ketiga
+                  ? [{ key: 'alamat_ketiga', value: 'alamat_ketiga', label: `Ketiga: ${selectedSO.customer_address.alamat_ketiga}` }]
+                  : []),
+          ]
+        : [];
+
+    // --- LOGIC STOK KIK (Rumus Kamu) ---
+    const calculateKikStock = (kik: KartuInstruksiKerja): number => {
+        const packagings = kik.packagings || [];
+        const suratJalans = kik.surat_jalans || [];
+        const blokirs = kik.blokirs || [];
+
+        const totalStokBarangJadi = packagings.reduce(
+            (total, p) => total + p.jumlah_satuan_penuh * p.qty_persatuan_penuh + p.jumlah_satuan_sisa * p.qty_persatuan_sisa,
+            0,
+        );
+
+        const totalPengiriman = suratJalans.reduce((total, sj) => total + (sj.qty_pengiriman || 0), 0);
+        const transferBlokir = blokirs.reduce((total, b) => total + (b.qty_blokir || 0), 0);
+
+        return totalStokBarangJadi - transferBlokir - totalPengiriman;
+    };
+
+    // --- HANDLE CHANGES ---
+    const handleSOChange = (soId: string) => {
+        const so = salesOrders.find((s) => s.id.toString() === soId);
+        setSelectedSO(so || null);
+        setSelectedKIK(null);
+        setSelectedAlamatKey('');
+
+        // Default: OnHand Stock ambil dari Material Stock SO (Case 2)
+        setOnHandStock(so ? so.material_onhand : 0);
 
         setData((prev) => ({
             ...prev,
-            id_kartu_instruksi_kerja: kikId,
+            id_sales_order: soId,
+            id_kartu_instruksi_kerja: '',
             alamat_tujuan: '',
             qty_pengiriman: '',
         }));
     };
 
-    const handleAlamatChange = (alamatType: string) => {
-        if (!selectedKIK?.sales_order?.customer_address) {
+    const handleKIKChange = (kikId: string) => {
+        if (!kikId) {
+            setSelectedKIK(null);
+            setOnHandStock(selectedSO?.material_onhand || 0);
+            setData('id_kartu_instruksi_kerja', '');
             return;
         }
 
-        const customerAddress = selectedKIK.sales_order.customer_address;
-        let alamat = '';
+        const kik = allKartuInstruksiKerjas.find((k) => k.id.toString() === kikId);
+        setSelectedKIK(kik || null);
 
-        switch (alamatType) {
-            case 'alamat_lengkap':
-                alamat = customerAddress.alamat_lengkap || '';
-                break;
-            case 'alamat_kedua':
-                alamat = customerAddress.alamat_kedua || '';
-                break;
-            case 'alamat_ketiga':
-                alamat = customerAddress.alamat_ketiga || '';
-                break;
-            default:
-                alamat = '';
-        }
-
-        setSelectedAlamat(alamatType);
-        setData('alamat_tujuan', alamat);
-    };
-
-    const alamatItems: { key: string; value: string; label: string }[] = [];
-
-    const customerAddress = selectedKIK?.sales_order?.customer_address;
-
-    if (customerAddress?.alamat_lengkap) {
-        alamatItems.push({
-            key: 'alamat_lengkap',
-            value: 'alamat_lengkap',
-            label: `Alamat Utama - ${customerAddress.alamat_lengkap}`,
-        });
-    }
-    if (customerAddress?.alamat_kedua) {
-        alamatItems.push({
-            key: 'alamat_kedua',
-            value: 'alamat_kedua',
-            label: `Alamat Kedua - ${customerAddress.alamat_kedua}`,
-        });
-    }
-    if (customerAddress?.alamat_ketiga) {
-        alamatItems.push({
-            key: 'alamat_ketiga',
-            value: 'alamat_ketiga',
-            label: `Alamat Ketiga - ${customerAddress.alamat_ketiga}`,
-        });
-    }
-
-    const calculateOnHandStock = (kik: KartuInstruksiKerja): number => {
-        const packagings = kik.packagings || [];
-        const suratJalans = kik.surat_jalans || [];
-        const blokirs = kik.blokirs || [];
-
-        const totalStokBarangJadi = packagings.reduce((total, packaging) => {
-            const totalPenuh = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh;
-            const totalSisa = packaging.jumlah_satuan_sisa * packaging.qty_persatuan_sisa;
-            return total + totalPenuh + totalSisa;
-        }, 0);
-
-        const totalPengiriman = suratJalans.reduce((total, suratJalan) => {
-            return total + (suratJalan.qty_pengiriman || 0);
-        }, 0);
-
-        const transferBlokir = blokirs.reduce((total, blokir) => {
-            return total + (blokir.qty_blokir || 0);
-        }, 0);
-
-        return totalStokBarangJadi - transferBlokir - totalPengiriman;
+        // Jika pilih KIK, gunakan rumus Case 1 (Barang Jadi)
+        const stock = kik ? calculateKikStock(kik) : selectedSO?.material_onhand || 0;
+        setOnHandStock(stock);
+        setData('id_kartu_instruksi_kerja', kikId);
     };
 
     const submit = (e: React.FormEvent) => {
         e.preventDefault();
-
-        if (!data.id_kartu_instruksi_kerja) {
-            toast.error('Pilih SPK terlebih dahulu');
-            return;
-        }
-
+        if (!data.id_sales_order) return toast.error('Pilih Sales Order!');
         post(route('suratJalans.store'), {
             onSuccess: () => {
-                toast.success('Surat Jalan berhasil dibuat');
+                toast.success('Berhasil!');
                 reset();
-            },
-            onError: () => {
-                toast.error('Gagal membuat Surat Jalan');
             },
         });
     };
@@ -160,225 +139,149 @@ export default function Create({ kartuInstruksiKerjas }: CreateProps) {
             <Head title="Tambah Surat Jalan" />
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="p-2">
-                        <Card>
-                            <CardHeader>
-                                <CardTitle className="flex items-center gap-2">Tambah Surat Jalan</CardTitle>
-                            </CardHeader>
-                            <CardContent>
-                                <form onSubmit={submit} className="space-y-6">
-                                    {/* Pilih SPK */}
+                    <Card>
+                        <CardHeader>
+                            <CardTitle>Tambah Surat Jalan</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <form onSubmit={submit} className="space-y-6">
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    {/* PILIH SALES ORDER */}
                                     <div className="space-y-2">
-                                        <Label htmlFor="id_kartu_instruksi_kerja">
-                                            Pilih Surat Perintah Kerja <span className="text-red-500">*</span>
+                                        <Label>
+                                            Pilih Sales Order <span className="text-red-500">*</span>
                                         </Label>
                                         <SearchableSelect
-                                            items={kartuInstruksiKerjas.map((kik) => ({
+                                            items={salesOrders.map((so) => ({
+                                                key: String(so.id),
+                                                value: String(so.id),
+                                                label: `${so.no_bon_pesanan} | ${so.customer_address?.nama_customer || 'N/A'}`,
+                                            }))}
+                                            value={data.id_sales_order}
+                                            onChange={handleSOChange}
+                                        />
+                                        {errors.id_sales_order && <p className="text-sm text-red-600">{errors.id_sales_order}</p>}
+                                    </div>
+
+                                    {/* PILIH SPK */}
+                                    <div className="space-y-2">
+                                        <Label>Pilih SPK (Opsional)</Label>
+                                        <SearchableSelect
+                                            items={allKartuInstruksiKerjas.map((kik) => ({
                                                 key: String(kik.id),
                                                 value: String(kik.id),
-                                                label: `${kik.no_kartu_instruksi_kerja} | ${kik.sales_order?.no_bon_pesanan ?? '-'} - ${kik.sales_order?.customer_address?.nama_customer ?? '-'}`,
+                                                label: `${kik.no_kartu_instruksi_kerja} ${String(kik.id_sales_order) === data.id_sales_order ? '(Milik SO ini)' : ''}`,
                                             }))}
-                                            value={data.id_kartu_instruksi_kerja || ''}
-                                            placeholder="Pilih SPK..."
+                                            value={data.id_kartu_instruksi_kerja}
                                             onChange={handleKIKChange}
+                                            placeholder="Pilih SPK..."
                                         />
                                         {errors.id_kartu_instruksi_kerja && <p className="text-sm text-red-600">{errors.id_kartu_instruksi_kerja}</p>}
                                     </div>
+                                </div>
 
-                                    {/* Detail SPK yang dipilih */}
-                                    {selectedKIK && (
-                                        <div className="rounded-md border bg-gray-50 p-4 dark:bg-gray-800">
-                                            <h3 className="mb-3 font-medium">Detail SPK Terpilih</h3>
-                                            <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-                                                <div>
-                                                    <p>
-                                                        <span className="font-medium">No. SPK:</span> {selectedKIK.no_kartu_instruksi_kerja}
-                                                    </p>
-                                                    <p>
-                                                        <span className="font-medium">No. Sales Order:</span>{' '}
-                                                        {selectedKIK.sales_order?.no_bon_pesanan || '-'}
-                                                    </p>
-                                                    <p>
-                                                        <span className="font-medium">Customer:</span>{' '}
-                                                        {selectedKIK.sales_order?.customer_address?.nama_customer || '-'}
-                                                    </p>
-                                                </div>
-                                                <div>
-                                                    <p>
-                                                        <span className="font-medium">No. PO Customer:</span>{' '}
-                                                        {selectedKIK.sales_order?.no_po_customer || '-'}
-                                                    </p>
-                                                </div>
-                                                <div>
-                                                    <p>
-                                                        <span className="font-medium">On Hand Stock:</span>{' '}
-                                                        <span className={`font-bold ${onHandStock > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                                                            {onHandStock.toLocaleString()} pcs
-                                                        </span>
-                                                    </p>
-                                                </div>
-                                            </div>
+                                {/* INFO STOK PANEL */}
+                                {selectedSO && (
+                                    <div className="grid grid-cols-2 gap-4 rounded-md border bg-gray-50 p-4">
+                                        <div>
+                                            <Label className="text-gray-500">Sumber Pengiriman</Label>
+                                            <p className="font-bold text-blue-600">
+                                                {selectedKIK ? `SPK: ${selectedKIK.no_kartu_instruksi_kerja}` : 'Langsung via SO (Stok Material)'}
+                                            </p>
                                         </div>
-                                    )}
-
-                                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                                        {/* Tanggal Surat Jalan */}
-                                        <div className="space-y-2">
-                                            <Label htmlFor="tgl_surat_jalan">
-                                                Tanggal Surat Jalan <span className="text-red-500">*</span>
-                                            </Label>
-                                            <Input
-                                                id="tgl_surat_jalan"
-                                                type="date"
-                                                value={data.tgl_surat_jalan}
-                                                onChange={(e) => setData('tgl_surat_jalan', e.target.value)}
-                                                className={errors.tgl_surat_jalan ? 'border-red-500' : ''}
-                                            />
-                                            {errors.tgl_surat_jalan && <p className="text-sm text-red-600">{errors.tgl_surat_jalan}</p>}
-                                        </div>
-
-                                        {/* Transportasi */}
-                                        <div className="space-y-2">
-                                            <Label htmlFor="transportasi">
-                                                Transportasi <span className="text-red-500">*</span>
-                                            </Label>
-                                            <Input
-                                                id="transportasi"
-                                                type="text"
-                                                value={data.transportasi}
-                                                onChange={(e) => setData('transportasi', e.target.value)}
-                                                placeholder="Contoh: Mobil Box, Motor, Truk"
-                                                className={errors.transportasi ? 'border-red-500' : ''}
-                                            />
-                                            {errors.transportasi && <p className="text-sm text-red-600">{errors.transportasi}</p>}
-                                        </div>
-
-                                        {/* No Polisi */}
-                                        <div className="space-y-2">
-                                            <Label htmlFor="no_polisi">
-                                                No. Polisi <span className="text-red-500">*</span>
-                                            </Label>
-                                            <Input
-                                                id="no_polisi"
-                                                type="text"
-                                                value={data.no_polisi}
-                                                onChange={(e) => setData('no_polisi', e.target.value)}
-                                                placeholder="Contoh: B 1234 ABC"
-                                                className={errors.no_polisi ? 'border-red-500' : ''}
-                                            />
-                                            {errors.no_polisi && <p className="text-sm text-red-600">{errors.no_polisi}</p>}
-                                        </div>
-
-                                        {/* Driver */}
-                                        <div className="space-y-2">
-                                            <Label htmlFor="driver">
-                                                Driver <span className="text-red-500">*</span>
-                                            </Label>
-                                            <Input
-                                                id="driver"
-                                                type="text"
-                                                value={data.driver}
-                                                onChange={(e) => setData('driver', e.target.value)}
-                                                placeholder="Nama driver"
-                                                className={errors.driver ? 'border-red-500' : ''}
-                                            />
-                                            {errors.driver && <p className="text-sm text-red-600">{errors.driver}</p>}
-                                        </div>
-
-                                        {/* Pengirim */}
-                                        <div className="space-y-2">
-                                            <Label htmlFor="pengirim">
-                                                Pengirim <span className="text-red-500">*</span>
-                                            </Label>
-                                            <Input
-                                                id="pengirim"
-                                                type="text"
-                                                value={data.pengirim}
-                                                onChange={(e) => setData('pengirim', e.target.value)}
-                                                placeholder="Nama pengirim"
-                                                className={errors.pengirim ? 'border-red-500' : ''}
-                                            />
-                                            {errors.pengirim && <p className="text-sm text-red-600">{errors.pengirim}</p>}
-                                        </div>
-
-                                        {/* Qty Pengiriman */}
-                                        <div className="space-y-2">
-                                            <Label htmlFor="qty_pengiriman">
-                                                Qty Pengiriman <span className="text-red-500">*</span>
-                                            </Label>
-                                            <Input
-                                                id="qty_pengiriman"
-                                                type="number"
-                                                min="1"
-                                                max={onHandStock}
-                                                value={data.qty_pengiriman}
-                                                onChange={(e) => {
-                                                    const value = parseInt(e.target.value) || 0;
-                                                    if (value <= onHandStock) {
-                                                        setData('qty_pengiriman', e.target.value);
-                                                    } else {
-                                                        toast.error(
-                                                            `Qty pengiriman tidak boleh melebihi stok yang tersedia (${onHandStock.toLocaleString()} pcs)`,
-                                                        );
-                                                    }
-                                                }}
-                                                placeholder="Masukkan jumlah pengiriman"
-                                                className={errors.qty_pengiriman ? 'border-red-500' : ''}
-                                                disabled={!selectedKIK || onHandStock <= 0}
-                                            />
-                                            {onHandStock <= 0 && selectedKIK && (
-                                                <p className="text-sm text-red-600">Stok tidak tersedia untuk pengiriman</p>
-                                            )}
-                                            {errors.qty_pengiriman && <p className="text-sm text-red-600">{errors.qty_pengiriman}</p>}
-                                        </div>
-
-                                        {/* Keterangan */}
-                                        <div className="space-y-2">
-                                            <Label htmlFor="keterangan">
-                                                Keterangan <span className="text-red-500">*</span>
-                                            </Label>
-                                            <Textarea
-                                                id="keterangan"
-                                                value={data.keterangan}
-                                                onChange={(e) => setData('keterangan', e.target.value)}
-                                                placeholder="Keterangan tambahan"
-                                                className="min-h-[80px]"
-                                                rows={3}
-                                            />
-                                            {errors.keterangan && <p className="text-sm text-red-600">{errors.keterangan}</p>}
+                                        <div>
+                                            <Label className="text-gray-500">Stok On Hand</Label>
+                                            <p className="text-xl font-bold text-green-600">
+                                                {onHandStock.toLocaleString()} {selectedSO?.master_item?.unit?.nama_satuan || '-'}
+                                            </p>
                                         </div>
                                     </div>
+                                )}
 
-                                    {/* Pilih Alamat Tujuan */}
-                                    {selectedKIK?.sales_order?.customer_address && (
-                                        <div className="space-y-2">
-                                            <Label htmlFor="alamat_dropdown">
-                                                Pilih Alamat Tujuan <span className="text-red-500">*</span>
-                                            </Label>
-                                            <SearchableSelect
-                                                items={alamatItems}
-                                                value={selectedAlamat || ''}
-                                                placeholder="Pilih alamat tujuan..."
-                                                onChange={handleAlamatChange}
-                                            />
-                                        </div>
-                                    )}
-
-                                    {/* Action Buttons */}
-                                    <div className="flex justify-end space-x-2">
-                                        <Link href={route('suratJalans.index')}>
-                                            <Button type="button" variant="outline">
-                                                Batal
-                                            </Button>
-                                        </Link>
-                                        <Button type="submit" disabled={processing}>
-                                            {processing ? 'Menyimpan...' : 'Simpan'}
-                                        </Button>
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    <div className="space-y-2">
+                                        <Label>
+                                            Qty Pengiriman <span className="text-red-500">*</span>
+                                        </Label>
+                                        <Input
+                                            type="number"
+                                            max={onHandStock}
+                                            value={data.qty_pengiriman}
+                                            onChange={(e) => setData('qty_pengiriman', e.target.value)}
+                                        />
+                                        {errors.qty_pengiriman && <p className="text-sm text-red-600">{errors.qty_pengiriman}</p>}
                                     </div>
-                                </form>
-                            </CardContent>
-                        </Card>
-                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Tanggal Surat Jalan<span className="text-red-500">*</span></Label>
+                                        <Input
+                                            type="date"
+                                            value={data.tgl_surat_jalan}
+                                            onChange={(e) => setData('tgl_surat_jalan', e.target.value)}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* DROP DOWN ALAMAT (Sesuai Logika Kamu) */}
+                                {(selectedSO?.customer_address && (
+                                    <div className="space-y-2">
+                                        <Label>
+                                            Pilih Alamat Tujuan <span className="text-red-500">*</span>
+                                        </Label>
+                                        <SearchableSelect
+                                            items={alamatItems}
+                                            value={selectedAlamatKey}
+                                            onChange={handleAlamatChange}
+                                            placeholder="-- Pilih Alamat --"
+                                        />
+                                        <Textarea
+                                            className="mt-2"
+                                            value={data.alamat_tujuan}
+                                            onChange={(e) => setData('alamat_tujuan', e.target.value)}
+                                            placeholder="Atau isi alamat manual di sini..."
+                                        />
+                                    </div>
+                                )) || (
+                                    <div className="space-y-2">
+                                        <Label>Alamat Tujuan<span className="text-red-500">*</span></Label>
+                                        <Textarea value={data.alamat_tujuan} onChange={(e) => setData('alamat_tujuan', e.target.value)} />
+                                    </div>
+                                )}
+
+                                {/* Driver, No Polisi, dll */}
+                                <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+                                    <div className="space-y-2">
+                                        <Label>Transportasi<span className="text-red-500">*</span></Label>
+                                        <Input value={data.transportasi} onChange={(e) => setData('transportasi', e.target.value)} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>No. Polisi<span className="text-red-500">*</span></Label>
+                                        <Input value={data.no_polisi} onChange={(e) => setData('no_polisi', e.target.value)} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Driver<span className="text-red-500">*</span></Label>
+                                        <Input value={data.driver} onChange={(e) => setData('driver', e.target.value)} />
+                                    </div>
+                                    <div className="space-y-2">
+                                        <Label>Pengirim<span className="text-red-500">*</span></Label>
+                                        <Input value={data.pengirim} onChange={(e) => setData('pengirim', e.target.value)} />
+                                    </div>
+                                    <div>
+                                        <Label>Keterangan<span className="text-red-500">*</span></Label>
+                                        <Textarea value={data.keterangan} onChange={(e) => setData('keterangan', e.target.value)} />
+                                    </div>
+                                </div>
+
+                                <div className="flex justify-end gap-2">
+                                    <Link href={route('suratJalans.index')}>
+                                        <Button variant="outline">Batal</Button>
+                                    </Link>
+                                    <Button type="submit" disabled={processing || onHandStock <= 0}>
+                                        Simpan Surat Jalan
+                                    </Button>
+                                </div>
+                            </form>
+                        </CardContent>
+                    </Card>
                 </div>
             </div>
         </AppLayout>

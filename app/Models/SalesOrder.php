@@ -90,7 +90,7 @@ class SalesOrder extends Model
 
     public function kartuInstruksiKerja()
     {
-        return $this->hasOne(KartuInstruksiKerja::class, 'id_sales_order');
+        return $this->hasMany(KartuInstruksiKerja::class, 'id_sales_order');
     }
 
     public function suratJalans()
