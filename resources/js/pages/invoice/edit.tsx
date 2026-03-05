@@ -63,7 +63,7 @@ export default function Edit({ invoice, suratJalans }: EditProps) {
     // Helper untuk kalkulasi
     const calculateSummary = () => {
         const qty = Number(selectedSuratJalan?.qty_pengiriman || 0);
-        const harga = Number((selectedSuratJalan as any)?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
+        const harga = Number((selectedSuratJalan as any)?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || (selectedSuratJalan as any)?.sales_order?.harga_pcs_bp || 0);
         const disc = Number(data.discount || 0);
         const ppnRate = Number(data.ppn || 0);
         const ongkir = Number(data.ongkos_kirim || 0);
@@ -113,13 +113,13 @@ export default function Edit({ invoice, suratJalans }: EditProps) {
                                         items={suratJalans.map((sj) => ({
                                             key: String(sj.id),
                                             value: String(sj.id),
-                                            label: `${sj.no_surat_jalan} | SPK: ${sj.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}`,
+                                            label: `${sj.no_surat_jalan} | SPK: ${sj.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'} | SO: ${sj.sales_order?.no_bon_pesanan || '-'}`,
                                         }))}
                                         value={data.id_surat_jalan}
                                         onChange={handleSJChange}
                                         placeholder={
                                             selectedSuratJalan
-                                                ? `${selectedSuratJalan.no_surat_jalan} | SPK: ${selectedSuratJalan.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}`
+                                                ? `${selectedSuratJalan.no_surat_jalan} | SPK: ${selectedSuratJalan.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'} | SO: ${selectedSuratJalan.sales_order?.no_bon_pesanan || '-'}`
                                                 : 'Pilih Surat Jalan...'
                                         }
                                     />
@@ -144,7 +144,7 @@ export default function Edit({ invoice, suratJalans }: EditProps) {
                                                 <span className="text-gray-500">Customer:</span>{' '}
                                                 <span className="font-semibold">
                                                     {(selectedSuratJalan as any).kartu_instruksi_kerja?.sales_order?.customer_address
-                                                        ?.nama_customer || '-'}
+                                                        ?.nama_customer || (selectedSuratJalan as any).sales_order?.customer_address?.nama_customer || '-'}
                                                 </span>
                                             </p>
                                             <p>
@@ -158,14 +158,14 @@ export default function Edit({ invoice, suratJalans }: EditProps) {
                                                 <span className="font-mono font-semibold text-blue-600">
                                                     Rp{' '}
                                                     {Number(
-                                                        (selectedSuratJalan as any).kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0,
+                                                        (selectedSuratJalan as any).kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || (selectedSuratJalan as any).sales_order?.harga_pcs_bp || 0,
                                                     ).toLocaleString('id-ID')}
                                                 </span>
                                             </p>
                                             <p>
                                                 <span className="text-gray-500">No. SO:</span>{' '}
                                                 <span className="font-semibold">
-                                                    {(selectedSuratJalan as any).kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}
+                                                    {(selectedSuratJalan as any).kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || (selectedSuratJalan as any).sales_order?.no_bon_pesanan || '-'}
                                                 </span>
                                             </p>
                                         </div>

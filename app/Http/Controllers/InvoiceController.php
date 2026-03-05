@@ -18,7 +18,7 @@ class InvoiceController extends Controller
      */
     public function index()
     {
-        $invoices = Invoice::with('suratJalan.kartuInstruksiKerja.salesOrder.customerAddress')
+        $invoices = Invoice::with(['suratJalan.kartuInstruksiKerja.salesOrder.customerAddress','suratJalan.salesOrder.customerAddress'])
             ->orderBy('tgl_invoice', 'desc')
             ->get();
 
@@ -35,7 +35,9 @@ class InvoiceController extends Controller
 
         $suratJalans = SuratJalan::with([
             'kartuInstruksiKerja.salesOrder.customerAddress',
-            'kartuInstruksiKerja.salesOrder.finishGoodItem'
+            'kartuInstruksiKerja.salesOrder.finishGoodItem',
+            'salesOrder.customerAddress',
+            'salesOrder.finishGoodItem'
         ])
             ->whereDoesntHave('invoice')
             ->get();
@@ -113,6 +115,10 @@ class InvoiceController extends Controller
         $invoice->load([
             'suratJalan.kartuInstruksiKerja.salesOrder.customerAddress',
             'suratJalan.kartuInstruksiKerja.salesOrder.finishGoodItem',
+            'suratJalan.salesOrder.customerAddress',
+            'suratJalan.salesOrder.finishGoodItem',
+            'suratJalan.salesOrder.masterItem',
+            'suratJalan.salesOrder.masterItem.unit',
             'details' // <--- WAJIB TAMBAH INI agar rincian legacy muncul
         ]);
 
@@ -129,13 +135,17 @@ class InvoiceController extends Controller
         // Load relasi agar detail Surat Jalan muncul di form edit
         $invoice->load([
             'suratJalan.kartuInstruksiKerja.salesOrder.customerAddress',
-            'suratJalan.kartuInstruksiKerja.salesOrder.finishGoodItem'
+            'suratJalan.kartuInstruksiKerja.salesOrder.finishGoodItem',
+            'suratJalan.salesOrder.customerAddress',
+            'suratJalan.salesOrder.finishGoodItem'
         ]);
 
         // Ambil Surat Jalan yang belum ada invoice-nya, ATAU yang sedang digunakan invoice ini
         $suratJalans = SuratJalan::with([
             'kartuInstruksiKerja.salesOrder.customerAddress',
-            'kartuInstruksiKerja.salesOrder.finishGoodItem'
+            'kartuInstruksiKerja.salesOrder.finishGoodItem',
+            'salesOrder.customerAddress',
+            'salesOrder.finishGoodItem'
         ])
             ->whereDoesntHave('invoice')
             ->orWhere('id', $invoice->id_surat_jalan)
@@ -193,6 +203,10 @@ class InvoiceController extends Controller
         $invoice->load([
             'suratJalan.kartuInstruksiKerja.salesOrder.customerAddress',
             'suratJalan.kartuInstruksiKerja.salesOrder.finishGoodItem',
+            'suratJalan.salesOrder.customerAddress',
+            'suratJalan.salesOrder.finishGoodItem',
+            'suratJalan.salesOrder.masterItem',
+            'suratJalan.salesOrder.masterItem.unit',
             'details' // <--- Tambah ini juga bro
         ]);
 

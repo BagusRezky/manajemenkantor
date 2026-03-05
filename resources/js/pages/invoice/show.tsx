@@ -38,7 +38,7 @@ export default function ShowInvoice({ invoice }: Props) {
     // --- LOGIKA DATA SISTEM BARU ---
     const discount = Number(invoice.discount || 0);
     const qtySistem = Number(invoice.surat_jalan?.qty_pengiriman || 0);
-    const hargaSistem = Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
+    const hargaSistem = Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || invoice.surat_jalan?.sales_order?.harga_pcs_bp || 0);
     const ppnRateSistem = Number(invoice.ppn || 0);
     const ongkirSistem = Number(invoice.ongkos_kirim || 0);
     const dpSistem = Number(invoice.uang_muka || 0);
@@ -97,7 +97,7 @@ export default function ShowInvoice({ invoice }: Props) {
                                         <p className="text-sm">
                                             {isLegacy
                                                 ? invoice.no_spk_lama || '-'
-                                                : invoice.surat_jalan?.kartu_instruksi_kerja?.no_kartu_instruksi_kerja}
+                                                : invoice.surat_jalan?.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}
                                         </p>
                                     </div>
                                     <div>
@@ -105,7 +105,7 @@ export default function ShowInvoice({ invoice }: Props) {
                                         <p className="text-sm">
                                             {isLegacy
                                                 ? invoice.no_so_lama || '-'
-                                                : invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan}
+                                                : invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || invoice.surat_jalan?.sales_order?.no_bon_pesanan || '-'}
                                         </p>
                                     </div>
                                 </div>
@@ -125,7 +125,7 @@ export default function ShowInvoice({ invoice }: Props) {
                                     <p className="text-sm font-semibold">
                                         {isLegacy
                                             ? 'DATA LEGACY'
-                                            : invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '-'}
+                                            : invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || invoice.surat_jalan?.sales_order?.customer_address?.nama_customer || '-'}
                                     </p>
                                 </div>
                                 <div>
@@ -181,13 +181,13 @@ export default function ShowInvoice({ invoice }: Props) {
                                             <tr>
                                                 <td className="px-6 py-4">
                                                     <p className="font-bold">
-                                                        {invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang}
+                                                        {invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang || invoice.surat_jalan?.sales_order?.master_item?.nama_master_item || '-'}
                                                     </p>
                                                     <p className="text-xs font-normal text-gray-400">
-                                                        {invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.finish_good_item?.deskripsi}
+                                                        {invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.finish_good_item?.deskripsi  || '-'}
                                                     </p>
                                                 </td>
-                                                <td className="px-4 py-4 text-center font-medium">{qtySistem.toLocaleString('id-ID')} PCS</td>
+                                                <td className="px-4 py-4 text-center font-medium">{qtySistem.toLocaleString('id-ID') } {invoice.surat_jalan?.sales_order?.master_item?.unit?.nama_satuan || 'PCS'}</td>
                                                 <td className="px-4 py-4 text-right">{formatCurrency(hargaSistem)}</td>
                                                 <td className="px-6 py-4 text-right font-bold">{formatCurrency(hargaSistem * qtySistem)}</td>
                                             </tr>

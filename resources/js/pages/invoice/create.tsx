@@ -76,19 +76,26 @@ export default function Create({ suratJalans }: CreateProps) {
                                         Surat Jalan <span className="text-red-500">*</span>
                                     </Label>
                                     <SearchableSelect
-                                        items={suratJalans.map((surat) => ({
-                                            key: String(surat.id),
-                                            value: String(surat.id),
-                                            label: `${surat.no_surat_jalan} || ${surat.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}`,
-                                        }))}
-                                        value={data.id_surat_jalan || ''} // fallback to empty string
+                                        items={suratJalans.map((surat) => {
+                                            // Cari nomor SO dari KIK atau langsung dari SJ
+                                            const noSO =
+                                                surat.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || surat.sales_order?.no_bon_pesanan || '-';
+                                            return {
+                                                key: String(surat.id),
+                                                value: String(surat.id),
+                                                label: `${surat.no_surat_jalan} || SO: ${noSO}`,
+                                            };
+                                        })}
+                                        value={data.id_surat_jalan || ''}
                                         placeholder="Pilih Surat Jalan"
                                         onChange={handleSJChange}
                                     />
                                     {errors.id_surat_jalan && <div className="text-sm text-red-600">{errors.id_surat_jalan}</div>}
                                 </div>
                                 <div className="space-y-2">
-                                    <Label htmlFor="kode">Kode <span className="text-red-500">*</span></Label>
+                                    <Label htmlFor="kode">
+                                        Kode <span className="text-red-500">*</span>
+                                    </Label>
                                     <Input
                                         id="kode"
                                         type="number"
@@ -107,28 +114,36 @@ export default function Create({ suratJalans }: CreateProps) {
                                         <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                                             <div>
                                                 <p>
-                                                    <span className="font-medium">No. Surat Jalan:</span> {selectedSuratJalan.no_surat_jalan}
+                                                    <span className="font-medium">No. SJ:</span> {selectedSuratJalan.no_surat_jalan}
                                                 </p>
                                                 <p>
-                                                    <span className="font-medium">Tanggal Surat Jalan:</span>{' '}
-                                                    {selectedSuratJalan.tgl_surat_jalan || '-'}
+                                                    <span className="font-medium">Qty:</span> {selectedSuratJalan.qty_pengiriman}
                                                 </p>
                                                 <p>
-                                                    <span className="font-medium">Qty Pengiriman:</span> {selectedSuratJalan.qty_pengiriman || '-'}
+                                                    <span className="font-medium">Tanggal SJ:</span>{' '}
+                                                    {selectedSuratJalan.tgl_surat_jalan ? new Date(selectedSuratJalan.tgl_surat_jalan).toLocaleDateString('id-ID') : '-'}
                                                 </p>
                                             </div>
                                             <div>
                                                 <p>
-                                                    <span className="font-medium">No. SPK:</span>{' '}
-                                                    {selectedSuratJalan.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}
-                                                </p>
-                                                <p>
                                                     <span className="font-medium">No. SO:</span>{' '}
-                                                    {selectedSuratJalan.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan || '-'}
+                                                    {selectedSuratJalan.kartu_instruksi_kerja?.sales_order?.no_bon_pesanan ||
+                                                        selectedSuratJalan.sales_order?.no_bon_pesanan ||
+                                                        '-'}
                                                 </p>
                                                 <p>
-                                                    <span className="font-medium">Harga:</span>{' '}
-                                                    {selectedSuratJalan.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || '-'}
+                                                    <span className="font-medium">No. SPK:</span>{' '}
+                                                    {selectedSuratJalan.kartu_instruksi_kerja?.no_kartu_instruksi_kerja ||
+
+                                                        '-'}
+                                                </p>
+                                                <p>
+                                                    <span className="font-medium">Harga:</span> Rp{' '}
+                                                    {Number(
+                                                        selectedSuratJalan.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp ||
+                                                            selectedSuratJalan.sales_order?.harga_pcs_bp ||
+                                                            0,
+                                                    ).toLocaleString('id-ID')}
                                                 </p>
                                             </div>
                                         </div>
@@ -244,7 +259,9 @@ export default function Create({ suratJalans }: CreateProps) {
                                                             const discount = Number(data.discount || 0);
                                                             const qtyPengiriman = Number(selectedSuratJalan?.qty_pengiriman || 0);
                                                             const hargaSO = Number(
-                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0,
+                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp ||
+                                                                    selectedSuratJalan?.sales_order?.harga_pcs_bp ||
+                                                                    0,
                                                             );
 
                                                             // Subtotal
@@ -264,7 +281,9 @@ export default function Create({ suratJalans }: CreateProps) {
                                                             const discount = Number(data.discount || 0);
                                                             const qtyPengiriman = Number(selectedSuratJalan?.qty_pengiriman || 0);
                                                             const hargaSO = Number(
-                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0,
+                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp ||
+                                                                    selectedSuratJalan?.sales_order?.harga_pcs_bp ||
+                                                                    0,
                                                             );
                                                             const ppnRate = Number(data.ppn || 0);
 
@@ -292,7 +311,9 @@ export default function Create({ suratJalans }: CreateProps) {
                                                             const discount = Number(data.discount || 0);
                                                             const qtyPengiriman = Number(selectedSuratJalan?.qty_pengiriman || 0);
                                                             const hargaSO = Number(
-                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0,
+                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp ||
+                                                                    selectedSuratJalan?.sales_order?.harga_pcs_bp ||
+                                                                    0,
                                                             );
                                                             const ppnRate = Number(data.ppn || 0);
                                                             const ongkosKirim = Number(data.ongkos_kirim || 0);
@@ -323,7 +344,9 @@ export default function Create({ suratJalans }: CreateProps) {
                                                             const discount = Number(data.discount || 0);
                                                             const qtyPengiriman = Number(selectedSuratJalan?.qty_pengiriman || 0);
                                                             const hargaSO = Number(
-                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0,
+                                                                selectedSuratJalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp ||
+                                                                    selectedSuratJalan?.sales_order?.harga_pcs_bp ||
+                                                                    0,
                                                             );
                                                             const ppnRate = Number(data.ppn || 0);
                                                             const ongkosKirim = Number(data.ongkos_kirim || 0);

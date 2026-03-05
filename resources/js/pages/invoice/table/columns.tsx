@@ -53,7 +53,7 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
     doc.text('Kepada:', 15, 42 + topOffset);
     doc.setFont('helvetica', 'normal');
 
-    const customerName = isLegacy ? 'DATA LEGACY' : invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '-';
+    const customerName = isLegacy ? 'DATA LEGACY' : invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || invoice.surat_jalan?.sales_order?.customer_address?.nama_customer || '-';
     doc.text(customerName, 15, 48 + topOffset);
 
     const customerAddress = invoice.surat_jalan?.alamat_tujuan || '-';
@@ -73,7 +73,7 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
         { label: 'No. Surat Jalan', val: isLegacy ? invoice.no_surat_jalan_lama : invoice.surat_jalan?.no_surat_jalan },
         {
             label: 'No. PO Cust / SO',
-            val: isLegacy ? invoice.no_so_lama || '-' : invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.no_po_customer || '-',
+            val: isLegacy ? invoice.no_so_lama || '-' : invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.no_po_customer || invoice.surat_jalan?.sales_order?.no_po_customer || '-',
         },
     ];
 
@@ -98,11 +98,11 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
         }));
     } else {
         const qtySistem = Number(invoice.surat_jalan?.qty_pengiriman || 0);
-        const hargaSistem = Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
+        const hargaSistem = Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || invoice.surat_jalan?.sales_order?.harga_pcs_bp || 0);
         tableBody = [
             {
-                desc: invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang || '-',
-                qty: `${qtySistem.toLocaleString('id-ID')} PCS`,
+                desc: invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang || invoice.surat_jalan?.sales_order?.master_item?.nama_master_item || '-',
+                qty: `${qtySistem.toLocaleString('id-ID')} ${invoice.surat_jalan?.sales_order?.master_item?.unit?.nama_satuan || 'PCS'}`,
                 harga: `Rp ${hargaSistem.toLocaleString('id-ID')}`,
                 jumlah: `Rp ${(qtySistem * hargaSistem).toLocaleString('id-ID')}`,
             },
@@ -147,7 +147,7 @@ const generateInvoicePdf = (invoice: Invoice, download = false): void => {
 
     const subtotal = isLegacy
         ? Number(invoice.total_sub)
-        : Number(invoice.surat_jalan?.qty_pengiriman || 0) * Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
+        : Number(invoice.surat_jalan?.qty_pengiriman || 0) * Number(invoice.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || invoice.surat_jalan?.sales_order?.harga_pcs_bp || 0);
     const disc = Number(invoice.discount || 0);
     const ppnNominal = isLegacy ? Number(invoice.ppn_nominal) : ((subtotal - disc) * Number(invoice.ppn)) / 100;
     const ongkir = Number(invoice.ongkos_kirim || 0);
@@ -256,7 +256,7 @@ export const columns = (): ColumnDef<Invoice>[] => [
         header: 'Customer',
         cell: ({ row }) => {
             const data = row.original;
-            return <span>{data.surat_jalan?.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || '-'}</span>;
+            return <span>{data.surat_jalan?.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || data.surat_jalan?.sales_order?.customer_address?.nama_customer || '-'}</span>;
         },
     },
     {
@@ -272,7 +272,7 @@ export const columns = (): ColumnDef<Invoice>[] => [
             // Kalkulasi otomatis untuk data sistem baru
             const discount = Number(data.discount || 0);
             const qty = Number(data.surat_jalan?.qty_pengiriman || 0);
-            const harga = Number(data.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
+            const harga = Number(data.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || data.surat_jalan?.sales_order?.harga_pcs_bp || 0);
             const ppnRate = Number(data.ppn || 0);
             const ongkir = Number(data.ongkos_kirim || 0);
 
