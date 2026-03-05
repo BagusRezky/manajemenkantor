@@ -38,6 +38,9 @@ class BonPayController extends Controller
             'suratJalan.kartuInstruksiKerja',
             'suratJalan.kartuInstruksiKerja.salesOrder',
             'suratJalan.kartuInstruksiKerja.salesOrder.customerAddress', // Nama customer ada di sini
+            'suratJalan.salesOrder',
+            'suratJalan.salesOrder.customerAddress', // Nama customer juga ada di sini untuk
+            'suratJalan.salesOrder.masterItem'
         ])
         ->orderBy('created_at', 'desc')
         ->get()
@@ -47,7 +50,7 @@ class BonPayController extends Controller
                 $grandTotal = (float) $invoice->total;
             } else {
                 $qty = (float) ($invoice->suratJalan->qty_pengiriman ?? 0);
-                $harga = (float) ($invoice->suratJalan->kartuInstruksiKerja->salesOrder->harga_pcs_bp ?? 0);
+                $harga = (float) ($invoice->suratJalan->kartuInstruksiKerja->salesOrder->harga_pcs_bp ?? $invoice->suratJalan->salesOrder->harga_pcs_bp ?? 0);
                 $subtotal = ($qty * $harga) - (float) $invoice->discount;
                 $ppn = ($subtotal * (float) $invoice->ppn) / 100;
                 $grandTotal = $subtotal + $ppn + (float) $invoice->ongkos_kirim;
@@ -101,14 +104,14 @@ class BonPayController extends Controller
 
     private function updateInvoiceBalance($invoiceId)
     {
-        $invoice = Invoice::with(['suratJalan.kartuInstruksiKerja.salesOrder'])->find($invoiceId);
+        $invoice = Invoice::with(['suratJalan.kartuInstruksiKerja.salesOrder', 'suratJalan.salesOrder'])->find($invoiceId);
 
         if ($invoice->is_legacy) {
             $grandTotal = $invoice->total;
         } else {
             // Pakai rumus sistem baru
             $qty = $invoice->surat_jalan->qty_pengiriman ?? 0;
-            $harga = $invoice->surat_jalan->kartu_instruksi_kerja->sales_order->harga_pcs_bp ?? 0;
+            $harga = $invoice->surat_jalan->kartu_instruksi_kerja->sales_order->harga_pcs_bp ?? $invoice->surat_jalan->salesOrder->harga_pcs_bp ?? 0;
             $subtotal = ($qty * $harga) - $invoice->discount;
             $ppn = ($subtotal * $invoice->ppn) / 100;
             $grandTotal = $subtotal + $ppn + $invoice->ongkos_kirim;

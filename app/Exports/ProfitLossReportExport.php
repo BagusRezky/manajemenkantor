@@ -4,8 +4,6 @@ namespace App\Exports;
 
 use App\Models\Invoice;
 use App\Models\OperasionalPay;
-use App\Models\TransKas;
-use App\Models\TransKasBank;
 use Maatwebsite\Excel\Concerns\FromCollection;
 use Maatwebsite\Excel\Concerns\WithEvents;
 use Maatwebsite\Excel\Concerns\ShouldAutoSize;
@@ -13,7 +11,6 @@ use Maatwebsite\Excel\Events\AfterSheet;
 use PhpOffice\PhpSpreadsheet\Style\Alignment;
 use PhpOffice\PhpSpreadsheet\Style\Fill;
 use PhpOffice\PhpSpreadsheet\Style\Border;
-use Carbon\Carbon;
 use Illuminate\Support\Collection;
 
 class ProfitLossReportExport implements FromCollection, ShouldAutoSize, WithEvents
@@ -63,10 +60,10 @@ class ProfitLossReportExport implements FromCollection, ShouldAutoSize, WithEven
                 $sheet->getStyle("A$currentRow:G$currentRow")->getAlignment()->setHorizontal(Alignment::HORIZONTAL_CENTER);
                 $currentRow++;
 
-                // Load Invoices dengan relasi Item & Category
+                // Eager Load relasi yang sudah kita update (direct salesOrder)
                 $invoices = Invoice::with([
                     'suratJalan.kartuInstruksiKerja.salesOrder.finishGoodItem.typeItem.categoryItem',
-                    'suratJalan.kartuInstruksiKerja.salesOrder.masterItem.categoryItem',
+                    'suratJalan.salesOrder.masterItem.categoryItem', // Tambahan Fallback
                     'bonPays'
                 ])->whereBetween('tgl_invoice', [$this->startDate, $this->endDate])->get();
 
@@ -81,31 +78,35 @@ class ProfitLossReportExport implements FromCollection, ShouldAutoSize, WithEven
                     $categoryName = 'LAIN-LAIN';
 
                     if (!$inv->is_legacy && $inv->suratJalan) {
-                        $so = $inv->suratJalan->kartuInstruksiKerja->salesOrder ?? null;
+                        $sj = $inv->suratJalan;
+                        // LOGIK BARU: Cek KIK dulu, kalau null ambil SO langsung dari SJ
+                        $so = $sj->id_kartu_instruksi_kerja ? $sj->kartuInstruksiKerja->salesOrder : $sj->salesOrder;
 
-                        // Cek apakah pakai MasterItem atau FinishGoodItem
-                        if ($so->masterItem) {
-                            $itemCode = $so->masterItem->kode_master_item;
-                            $itemName = $so->masterItem->nama_master_item;
-                            $categoryName = $so->masterItem->categoryItem->nama_category_item ?? 'UMUM';
-                        } elseif ($so->finishGoodItem) {
-                            $itemCode = $so->finishGoodItem->kode_material_produk; // Sesuai model FinishGoodItem
-                            $itemName = $so->finishGoodItem->nama_barang;
-                            $categoryName = $so->finishGoodItem->typeItem->categoryItem->nama_category_item ?? 'BARANG JADI';
+                        if ($so) {
+                            // Cek apakah SO untuk MasterItem atau FinishGoodItem
+                            if ($so->id_master_item && $so->masterItem) {
+                                $itemCode = $so->masterItem->kode_master_item;
+                                $itemName = $so->masterItem->nama_master_item;
+                                $categoryName = $so->masterItem->categoryItem->nama_category_item ?? 'UMUM';
+                            } elseif ($so->id_finish_good_item && $so->finishGoodItem) {
+                                $itemCode = $so->finishGoodItem->kode_material_produk;
+                                $itemName = $so->finishGoodItem->nama_barang;
+                                $categoryName = $so->finishGoodItem->typeItem->categoryItem->nama_category_item ?? 'BARANG JADI';
+                            }
+
+                            // Perhitungan Nominal (Harga * Qty SJ)
+                            $qty = (float)($sj->qty_pengiriman ?? 0);
+                            $harga = (float)($so->harga_pcs_bp ?? 0);
+                            $subtotal = ($qty * $harga) - (float)($inv->discount ?? 0);
+                            $ppnNominal = ($subtotal * (float)($inv->ppn ?? 0)) / 100;
+                            $nominal = $subtotal + $ppnNominal + (float)($inv->ongkos_kirim ?? 0);
                         }
-
-                        // Perhitungan Nominal
-                        $qty = (float)($inv->suratJalan->qty_pengiriman ?? 0);
-                        $harga = (float)($so->harga_pcs_bp ?? 0);
-                        $subtotal = ($qty * $harga) - (float)($inv->discount ?? 0);
-                        $ppn = ($subtotal * (float)($inv->ppn ?? 0)) / 100;
-                        $nominal = $subtotal + $ppn + (float)($inv->ongkos_kirim ?? 0);
                     } else {
                         $nominal = (float)$inv->total;
                     }
 
                     $totalPendapatanVal += $nominal;
-                    $sudahDibayar = ($inv->is_legacy ? 0 : (float)$inv->uang_muka) + $inv->bonPays->sum('nominal_pembayaran');
+                    $sudahDibayar = ($inv->is_legacy ? 0 : (float)($inv->uang_muka ?? 0)) + (float)$inv->bonPays->sum('nominal_pembayaran');
                     $totalPiutangVal += ($nominal - $sudahDibayar);
 
                     $key = $categoryName . $itemName;
@@ -126,7 +127,6 @@ class ProfitLossReportExport implements FromCollection, ShouldAutoSize, WithEven
                     $currentRow++;
                 }
 
-                // Total Pendapatan Row
                 $sheet->setCellValue("A$currentRow", "Total Pendapatan");
                 $sheet->setCellValue("E$currentRow", $totalPendapatanVal);
                 $sheet->getStyle("A$currentRow:E$currentRow")->getFont()->setBold(true);
@@ -138,10 +138,8 @@ class ProfitLossReportExport implements FromCollection, ShouldAutoSize, WithEven
                 $currentRow++;
                 $sheet->setCellValue("A$currentRow", "KREDIT");
                 $sheet->setCellValue("B$currentRow", "SISA KREDIT CUSTOMER");
-                $sheet->setCellValue("D$currentRow", "Rp");
-                $sheet->setCellValue("E$currentRow", "0.00");
-                $sheet->setCellValue("F$currentRow", "Rp");
-                $sheet->setCellValue("G$currentRow", $totalPiutangVal);
+                $sheet->setCellValue("D$currentRow", "Rp"); $sheet->setCellValue("E$currentRow", "0.00");
+                $sheet->setCellValue("F$currentRow", "Rp"); $sheet->setCellValue("G$currentRow", $totalPiutangVal);
                 $currentRow++;
                 $sheet->setCellValue("A$currentRow", "Total Kredit Customer Belum Terbayar");
                 $sheet->setCellValue("G$currentRow", $totalPiutangVal);
@@ -152,21 +150,17 @@ class ProfitLossReportExport implements FromCollection, ShouldAutoSize, WithEven
                 $sheet->setCellValue('A' . $currentRow, 'Beban Biaya');
                 $sheet->getStyle('A' . $currentRow)->getFont()->setBold(true)->setUnderline(true);
                 $currentRow++;
-                $sheet->setCellValue("A$currentRow", "KODE");
-                $sheet->setCellValue("B$currentRow", "NAMA AKUN");
-                $sheet->setCellValue("D$currentRow", "Rp");
-                $sheet->setCellValue("E$currentRow", "0.00");
-                $sheet->setCellValue("F$currentRow", "Rp");
-                $sheet->setCellValue("G$currentRow", "KREDIT");
-                $sheet->getStyle("A$currentRow:G$currentRow")->getFont()->setBold(true);
-                $currentRow++;
 
                 $totalBebanVal = 0;
-                // Ambil data dari OperasionalPay & TransKas Keluar
-                $ops = OperasionalPay::with('accountBeban')->whereBetween('tanggal_transaksi', [$this->startDate, $this->endDate])->get()->groupBy('id_account_beban');
+                $ops = OperasionalPay::with('accountBeban')
+                    ->whereBetween('tanggal_transaksi', [$this->startDate, $this->endDate])
+                    ->get()
+                    ->groupBy('id_account_beban');
+
                 foreach ($ops as $items) {
-                    $sheet->setCellValue("A$currentRow", $items->first()->accountBeban->kode_akuntansi ?? '-');
-                    $sheet->setCellValue("B$currentRow", $items->first()->accountBeban->nama_akun ?? '-');
+                    $first = $items->first();
+                    $sheet->setCellValue("A$currentRow", $first->accountBeban->kode_akuntansi ?? '-');
+                    $sheet->setCellValue("B$currentRow", $first->accountBeban->nama_akun ?? '-');
                     $sheet->setCellValue("D$currentRow", "Rp"); $sheet->setCellValue("E$currentRow", "0.00");
                     $sheet->setCellValue("F$currentRow", "Rp"); $sheet->setCellValue("G$currentRow", $items->sum('nominal'));
                     $totalBebanVal += $items->sum('nominal'); $currentRow++;
@@ -183,12 +177,10 @@ class ProfitLossReportExport implements FromCollection, ShouldAutoSize, WithEven
                 $sheet->setCellValue("G$currentRow", $totalPendapatanVal - $totalBebanVal);
                 $sheet->getStyle("A$currentRow:G$currentRow")->getFont()->setBold(true)->setSize(12);
 
-                // --- STYLING AKHIR ---
+                // --- STYLING ---
                 $sheet->getStyle("E5:G$currentRow")->getNumberFormat()->setFormatCode('#,##0.00');
                 $sheet->getStyle("A5:G$currentRow")->getBorders()->getAllBorders()->setBorderStyle(Border::BORDER_THIN);
             },
         ];
     }
-
-    public function headings(): array { return []; }
 }

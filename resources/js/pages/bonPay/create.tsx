@@ -59,7 +59,7 @@ export default function Create({ invoices, metodeBayars, karyawans, accounts }: 
                 } else {
                     // Jika Sistem Baru, hitung manual berdasarkan rumus yang kamu inginkan
                     const qty = Number(inv.surat_jalan?.qty_pengiriman || 0);
-                    const harga = Number(inv.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || 0);
+                    const harga = Number(inv.surat_jalan?.kartu_instruksi_kerja?.sales_order?.harga_pcs_bp || inv.surat_jalan?.sales_order?.harga_pcs_bp || 0);
                     const discount = Number(inv.discount || 0);
                     const ppnRate = Number(inv.ppn || 0);
                     const ongkir = Number(inv.ongkos_kirim || 0);
@@ -124,7 +124,7 @@ export default function Create({ invoices, metodeBayars, karyawans, accounts }: 
                                                 items={invoices.map((inv) => ({
                                                     key: String(inv.id),
                                                     value: String(inv.id),
-                                                    label: `${inv.no_invoice} - ${inv.surat_jalan?.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer }`,
+                                                    label: `${inv.no_invoice} - ${inv.surat_jalan?.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer || inv.surat_jalan?.sales_order?.customer_address?.nama_customer || '-'} `,
                                                 }))}
                                                 value={data.id_invoice}
                                                 onChange={(val) => setData('id_invoice', val)}
