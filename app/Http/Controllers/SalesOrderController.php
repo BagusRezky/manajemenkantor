@@ -33,22 +33,22 @@ class SalesOrderController extends Controller
 
         $customerAddresses = customerAddress::select('id', 'nama_customer')->get();
         // Gabungkan data dari kedua tabel dengan prefix untuk membedakan
-        $finishGoodItems = FinishGoodItem::select('id', 'nama_barang')->get()
+        $finishGoodItems = FinishGoodItem::select('id', 'nama_barang', 'kode_material_produk')->get()
             ->map(function ($item) {
                 return [
                     'id' => 'finish_good_' . $item->id, // Prefix untuk membedakan
                     'original_id' => $item->id,
-                    'label' => $item->nama_barang . ' (Finish Good)',
+                    'label' => $item->nama_barang . ' | ' . $item->kode_material_produk . ' (Finish Good)',
                     'type' => 'finish_good'
                 ];
             });
 
-        $masterItems = MasterItem::select('id', 'nama_master_item')->get()
+        $masterItems = MasterItem::select('id', 'nama_master_item', 'kode_master_item')->get()
             ->map(function ($item) {
                 return [
                     'id' => 'master_item_' . $item->id, // Prefix untuk membedakan
                     'original_id' => $item->id,
-                    'label' => $item->nama_master_item . ' (Master Item)',
+                    'label' => $item->nama_master_item . ' | ' . $item->kode_master_item . ' (Master Item)',
                     'type' => 'master_item'
                 ];
             });
@@ -201,7 +201,9 @@ class SalesOrderController extends Controller
             'finishGoodItem.billOfMaterials.departemen',
             'finishGoodItem.unit',
             'finishGoodItem.customerAddress',
-            'finishGoodItem.typeItem'
+            'finishGoodItem.typeItem',
+            'masterItem.unit',
+            'masterItem.typeItem',
         ])->findOrFail($id);
 
         return response()->json($salesOrder);

@@ -52,7 +52,7 @@ const generateSalesOrderPdf = (salesOrder: SalesOrder, download = false): void =
     doc.text('Barang', 15, 66 + topOffset);
     doc.text(':', 65, 66 + topOffset);
     doc.setFont('helvetica', 'normal');
-    doc.text(salesOrder.finish_good_item?.nama_barang || '', 70, 66 + topOffset);
+    doc.text(salesOrder.finish_good_item?.nama_barang || salesOrder.master_item?.nama_master_item || '', 70, 66 + topOffset);
 
     doc.setFont('helvetica', 'bold');
     doc.text('Mata Uang', 15, 73 + topOffset);
