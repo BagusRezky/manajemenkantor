@@ -26,7 +26,7 @@ class KartuInstruksiKerjaController extends Controller
             'suratJalans',
             'suratJalans',
             'salesOrder.masterItem'
-        ])->get();
+        ])->orderBy('created_at', 'desc')->get();
 
         return Inertia::render('kartuInstruksiKerja/kartuInstruksiKerja', [
             'kartuInstruksiKerja' => $kartuInstruksiKerja

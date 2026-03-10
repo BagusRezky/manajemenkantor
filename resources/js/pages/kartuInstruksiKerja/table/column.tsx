@@ -216,14 +216,21 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
         enableHiding: false,
     },
     {
-        accessorKey: 'no_kartu_instruksi_kerja',
-        header: 'No. SPK',
-    },
-    {
         accessorKey: 'sales_order.no_bon_pesanan',
         header: 'No. Sales Order',
         cell: ({ row }) => row.original.sales_order?.no_bon_pesanan || '-',
     },
+    {
+        accessorKey: 'no_kartu_instruksi_kerja',
+        header: 'No. SPK',
+    },
+
+    {
+        accessorKey: 'sales_order.finish_good_item.nama_barang',
+        header: 'Nama Produk',
+        cell: ({ row }) => row.original.sales_order?.finish_good_item?.nama_barang || row.original.sales_order?.master_item?.nama_master_item || '-',
+    },
+
     {
         accessorKey: 'sales_order.jumlah_pesanan',
         header: 'Jumlah Order',
@@ -241,7 +248,6 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
             if (!boms || boms.length === 0) return '-';
 
             return boms.map((bom) => formatWithThousandSeparator(bom.jumlah_produksi));
-
         },
     },
     {
@@ -271,18 +277,6 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
     },
 
     {
-        accessorKey: 'surat_jalans',
-        header: 'Total Pengiriman',
-        cell: ({ row }) => {
-            const suratJalans = row.original.surat_jalans || [];
-            const totalPengiriman = suratJalans.reduce((total, suratJalan) => {
-                return total + (suratJalan.qty_pengiriman || 0);
-            }, 0);
-            return formatWithThousandSeparator(totalPengiriman);
-        },
-    },
-
-    {
         accessorKey: 'tgl_estimasi_selesai',
         header: 'Tanggal ETA',
         cell: ({ row }) => {
@@ -294,15 +288,22 @@ export const columns = (): ColumnDef<KartuInstruksiKerja>[] => [
                 const formattedDate = new Date(date).toISOString().split('T')[0]; // YYYY-MM-DD format
                 return formattedDate;
             } catch {
-                return date; // Return original if formatting fails
+                return date; 
             }
         },
     },
-    {
-        accessorKey: 'sales_order.finish_good_item.nama_barang',
-        header: 'Nama Produk',
-        cell: ({ row }) => row.original.sales_order?.finish_good_item?.nama_barang || row.original.sales_order?.master_item?.nama_master_item || '-',
-    },
+    // {
+    //     accessorKey: 'surat_jalans',
+    //     header: 'Total Pengiriman',
+    //     cell: ({ row }) => {
+    //         const suratJalans = row.original.surat_jalans || [];
+    //         const totalPengiriman = suratJalans.reduce((total, suratJalan) => {
+    //             return total + (suratJalan.qty_pengiriman || 0);
+    //         }, 0);
+    //         return formatWithThousandSeparator(totalPengiriman);
+    //     },
+    // },
+
     {
         accessorKey: 'status_finish',
         header: 'Status Produksi',
