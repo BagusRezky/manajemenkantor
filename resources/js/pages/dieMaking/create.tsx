@@ -17,11 +17,11 @@ import { Head, useForm } from '@inertiajs/react';
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Die Making',
-        href: '/diemakings',
+        href: '/dieMakings',
     },
     {
         title: 'Tambah Data',
-        href: '/diemakings/create',
+        href: '/dieMakings/create',
     },
 ];
 
@@ -178,7 +178,7 @@ export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings,
 
                                 {/* Hasil Baik */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="hasil_baik_diemaking">Hasil Baik *</Label>
+                                    <Label htmlFor="hasil_baik_diemaking">Hasil Baik (Sheet) *</Label>
                                     <Input
                                         id="hasil_baik_diemaking"
                                         type="number"
@@ -195,7 +195,7 @@ export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings,
 
                                 {/* Hasil Rusak */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="hasil_rusak_diemaking">Hasil Rusak *</Label>
+                                    <Label htmlFor="hasil_rusak_diemaking">Hasil Rusak (Sheet) *</Label>
                                     <Input
                                         id="hasil_rusak_diemaking"
                                         type="number"
@@ -212,7 +212,7 @@ export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings,
 
                                 {/* Semi Waste */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="semi_waste_diemaking">Semi Waste *</Label>
+                                    <Label htmlFor="semi_waste_diemaking">Semi Waste (Sheet) *</Label>
                                     <Input
                                         id="semi_waste_diemaking"
                                         type="number"
@@ -242,7 +242,7 @@ export default function CreateDieMaking({ kartuInstruksiKerjas, mesinDiemakings,
                                     {errors.id_note_waste_diemaking && <div className="text-sm text-red-600">{errors.id_note_waste_diemaking}</div>}
                                 </div>
                             </div>
-                           
+
 
                             {/* Keterangan */}
                             <div className="space-y-2">

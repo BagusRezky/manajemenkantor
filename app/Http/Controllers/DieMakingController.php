@@ -17,7 +17,7 @@ class DieMakingController extends Controller
      */
     public function index()
     {
-        $dieMakings = DieMaking::with(['mesinDiemaking', 'operatorDiemaking', 'kartuInstruksiKerja'])->orderBy('tanggal_entri', 'desc')->get();
+        $dieMakings = DieMaking::with(['mesinDiemaking', 'operatorDiemaking', 'kartuInstruksiKerja', 'kartuInstruksiKerja.salesOrder', 'kartuInstruksiKerja.salesOrder.finishGoodItem', 'kartuInstruksiKerja.salesOrder.masterItem'])->orderBy('tanggal_entri', 'desc')->get();
         return inertia('dieMaking/dieMakings', [
             'dieMakings' => $dieMakings,
         ]);

@@ -176,6 +176,29 @@ export const columns = (): ColumnDef<DieMaking>[] => [
         enableSorting: false,
         enableHiding: false,
     },
+
+    {
+        accessorKey: 'kartu_instruksi_kerja.no_kartu_instruksi_kerja',
+        header: 'SPK',
+        cell: ({ row }) => {
+            const data = row.original;
+            return <span>{data.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}</span>;
+        },
+    },
+    {
+        accessorKey: 'kartu_instruksi_kerja.sales_order.finish_good_item.nama_barang',
+        header: 'Nama Produk',
+        cell: ({ row }) => {
+            const data = row.original;
+            return (
+                <span>
+                    {data.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang ||
+                        data.kartu_instruksi_kerja?.sales_order?.master_item?.nama_master_item ||
+                        '-'}
+                </span>
+            );
+        },
+    },
     {
         accessorKey: 'kode_diemaking',
         header: 'Kode Die Making',
@@ -188,14 +211,6 @@ export const columns = (): ColumnDef<DieMaking>[] => [
             return <span>{data.tanggal_entri ? format(new Date(data.tanggal_entri), 'dd-MM-yyyy') : '-'}</span>;
         },
     },
-    // {
-    //     accessorKey: 'kartu_instruksi_kerja.no_kartu_instruksi_kerja',
-    //     header: 'SPK',
-    //     cell: ({ row }) => {
-    //         const data = row.original;
-    //         return <span>{data.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}</span>;
-    //     },
-    // },
     {
         accessorKey: 'mesin_diemaking.nama_mesin_diemaking',
         header: 'Mesin',
