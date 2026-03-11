@@ -171,7 +171,7 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
 
                                 {/* Hasil Baik */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="hasil_baik_finishing">Hasil Baik*</Label>
+                                    <Label htmlFor="hasil_baik_finishing">Hasil Baik (Pcs)*</Label>
                                     <Input
                                         id="hasil_baik_finishing"
                                         type="number"
@@ -187,7 +187,7 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
 
                                 {/* Hasil Rusak */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="hasil_rusak_finishing">Hasil Rusak*</Label>
+                                    <Label htmlFor="hasil_rusak_finishing">Hasil Rusak (Pcs)*</Label>
                                     <Input
                                         id="hasil_rusak_finishing"
                                         type="number"
@@ -203,7 +203,7 @@ export default function CreateFinishing({ kartuInstruksiKerjas, mesinFinishings,
 
                                 {/* Semi Waste */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="semi_waste_finishing">Semi Waste*</Label>
+                                    <Label htmlFor="semi_waste_finishing">Semi Waste (Pcs)*</Label>
                                     <Input
                                         id="semi_waste_finishing"
                                         type="number"

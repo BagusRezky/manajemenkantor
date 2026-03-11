@@ -22,6 +22,8 @@ class FinishingController extends Controller
             'kartuInstruksiKerja',
             'mesinFinishing',
             'operatorFinishing',
+            'kartuInstruksiKerja.salesOrder.finishGoodItem',
+            'kartuInstruksiKerja.salesOrder.masterItem',
             'erorProduction'
         ])->orderBy('created_at', 'desc')->get();
 

@@ -194,6 +194,28 @@ export const columns = (): ColumnDef<Finishing>[] => [
         enableHiding: false,
     },
     {
+        accessorKey: 'kartu_instruksi_kerja.no_kartu_instruksi_kerja',
+        header: 'SPK',
+        cell: ({ row }) => {
+            const data = row.original;
+            return <span>{data.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}</span>;
+        },
+    },
+    {
+        accessorKey: 'kartu_instruksi_kerja.sales_order.finish_good_item.nama_barang',
+        header: 'Nama Produk',
+        cell: ({ row }) => {
+            const data = row.original;
+            return (
+                <span>
+                    {data.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang ||
+                        data.kartu_instruksi_kerja?.sales_order?.master_item?.nama_master_item ||
+                        '-'}
+                </span>
+            );
+        },
+    },
+    {
         accessorKey: 'kode_finishing',
         header: 'Kode Finishing',
     },
