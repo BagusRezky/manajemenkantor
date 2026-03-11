@@ -328,15 +328,37 @@ export const columns = (): ColumnDef<Packaging>[] => [
         enableHiding: false,
     },
     {
+        accessorKey: 'kartu_instruksi_kerja.nama_kartu',
+        header: 'SPK',
+        cell: ({ row }) => {
+            const data = row.original;
+            return <span>{data.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}</span>;
+        },
+    },
+    {
+        accessorKey: 'kartu_instruksi_kerja.sales_order.finish_good_item.nama_barang',
+        header: 'Nama Produk',
+        cell: ({ row }) => {
+            const data = row.original;
+            return (
+                <span>
+                    {data.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang ||
+                        data.kartu_instruksi_kerja?.sales_order?.master_item?.nama_master_item ||
+                        '-'}
+                </span>
+            );
+        },
+    },
+    {
         accessorKey: 'kode_packaging',
         header: 'Kode Packaging',
     },
     {
-        accessorKey: 'kartu_instruksi_kerja.nama_kartu',
-        header: 'Surat Perintah Kerja',
+        accessorKey: 'tgl_transfer',
+        header: 'Tanggal Transfer',
         cell: ({ row }) => {
             const data = row.original;
-            return <span>{data.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}</span>;
+            return <span>{data.tgl_transfer ? format(new Date(data.tgl_transfer), 'dd-MM-yyyy') : '-'}</span>;
         },
     },
     {
@@ -347,14 +369,7 @@ export const columns = (): ColumnDef<Packaging>[] => [
         accessorKey: 'jenis_transfer',
         header: 'Jenis Transfer',
     },
-    {
-        accessorKey: 'tgl_transfer',
-        header: 'Tanggal Transfer',
-        cell: ({ row }) => {
-            const data = row.original;
-            return <span>{data.tgl_transfer ? format(new Date(data.tgl_transfer), 'dd-MM-yyyy') : '-'}</span>;
-        },
-    },
+
     {
         accessorKey: 'jumlah_satuan_penuh',
         header: 'Jml Satuan Penuh',
