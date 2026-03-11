@@ -21,137 +21,98 @@ const generateLabelsPdf = async (packaging: Packaging, download = false): Promis
         }
 
         const { startNumber } = await response.json();
-
         const doc = new jsPDF('p', 'cm', 'a4');
 
+        // Layout Konfigurasi
         const labelWidth = 6.1;
         const labelHeight = 4.3;
-
         const labelsPerRow = 3;
         const labelsPerColumn = 6;
         const labelsPerPage = 18;
-
-        // Tambahan jarak antar label
         const gapX = 0.5;
         const gapY = 0.5;
-
         const pageWidth = 21;
         const pageHeight = 29.7;
 
-        // Hitung total grid size (termasuk gap)
         const totalGridWidth = labelsPerRow * labelWidth + (labelsPerRow - 1) * gapX;
-
         const totalGridHeight = labelsPerColumn * labelHeight + (labelsPerColumn - 1) * gapY;
-
-        // Centering
         const pageMarginX = (pageWidth - totalGridWidth) / 2;
         const pageMarginY = (pageHeight - totalGridHeight) / 2;
 
-        // ===============================
-        // TOTAL LABEL
-        // ===============================
         const totalPenuh = packaging.jumlah_satuan_penuh;
         const totalSisa = packaging.jumlah_satuan_sisa;
-        const grandTotal = totalPenuh + totalSisa;
+        
 
-        // HITUNG TOTAL PCS
-        const totalQty = packaging.jumlah_satuan_penuh * packaging.qty_persatuan_penuh + packaging.jumlah_satuan_sisa * packaging.qty_persatuan_sisa;
+        let currentLabelIndex = 0;
 
-        let currentLabel = 0;
-
-        for (let i = 0; i < grandTotal; i++) {
-            const labelOnPage = currentLabel % labelsPerPage;
+        // Helper function untuk render satu kotak label
+        const renderLabelBox = (index: number, qtyPerLabel: number) => {
+            const labelOnPage = index % labelsPerPage;
             const row = Math.floor(labelOnPage / labelsPerRow);
             const col = labelOnPage % labelsPerRow;
 
             const x = pageMarginX + col * (labelWidth + gapX);
-
             const y = pageMarginY + row * (labelHeight + gapY);
 
-            // ===============================
             // BORDER
-            // ===============================
             doc.setDrawColor(0);
-            doc.setLineWidth(0.03);
+            doc.setLineWidth(0.01);
             doc.rect(x, y, labelWidth, labelHeight);
 
-            // ===============================
             // DATA
-            // ===============================
-            const labelNumber = startNumber + i;
-
+            const labelNumber = startNumber + index;
             const kikNo = packaging.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '';
-
             const itemName =
                 packaging.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang ??
                 packaging.kartu_instruksi_kerja?.sales_order?.master_item?.nama_master_item ??
                 '-';
 
-            const kodePackaging = packaging.kode_packaging || '-';
+            // NOMOR LABEL (Kanan Atas)
+            doc.setFontSize(9).setFont('helvetica', 'bold');
+            doc.text(`#${labelNumber}`, x + labelWidth - 0.3, y + 0.6, { align: 'right' });
 
-            const packagingDate = packaging.tgl_transfer ? format(new Date(packaging.tgl_transfer), 'dd/MM/yyyy') : '';
-
-            // ===============================
-            // NOMOR LABEL
-            // ===============================
-            doc.setFontSize(9);
-            doc.setFont('helvetica', 'bold');
-            doc.text(`#${labelNumber}`, x + labelWidth - 0.3, y + 0.6, {
-                align: 'right',
-            });
-
-            // ===============================
-            // PERUSAHAAN
-            // ===============================
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
+            // PERUSAHAAN (Kiri Atas)
+            doc.setFontSize(7).setFont('helvetica', 'normal');
             doc.text('CV. Indigama Khatulistiwa', x + 0.3, y + 0.6);
 
-            // ===============================
-            // KIK
-            // ===============================
-            doc.setFontSize(10);
-            doc.setFont('helvetica', 'bold');
-            doc.text(kikNo, x + labelWidth / 2, y + 1.7, {
-                align: 'center',
-            });
+            // NOMOR KIK (Tengah)
+            doc.setFontSize(10).setFont('helvetica', 'bold');
+            doc.text(kikNo, x + labelWidth / 2, y + 1.7, { align: 'center' });
 
-            // ===============================
             // NAMA BARANG
-            // ===============================
-            doc.setFontSize(8);
-            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(8).setFont('helvetica', 'normal');
             const splitName = doc.splitTextToSize(itemName, labelWidth - 0.6);
-            doc.text(splitName, x + labelWidth / 2, y + 2.4, {
-                align: 'center',
-            });
+            doc.text(splitName, x + labelWidth / 2, y + 2.4, { align: 'center' });
 
-            // ===============================
             // INFO BAWAH
-            // ===============================
             doc.setFontSize(7);
+            doc.text(`Kode: ${packaging.kode_packaging || '-'}`, x + 0.3, y + 3.5);
 
-            // Kode kiri bawah
-            doc.text(`Kode: ${kodePackaging}`, x + 0.3, y + 3.5);
+            // Qty spesifik (Penuh atau Sisa)
+            doc.setFont('helvetica', 'bold');
+            doc.text(`Qty: ${qtyPerLabel} pcs`, x + labelWidth - 0.3, y + 3.5, { align: 'right' });
 
-            // Total PCS kanan sejajar kode
-            doc.text(`Total: ${totalQty} pcs`, x + labelWidth - 0.3, y + 3.5, { align: 'right' });
-
-            // Tanggal
+            // Tanggal & Jenis
+            doc.setFont('helvetica', 'normal');
+            const packagingDate = packaging.tgl_transfer ? format(new Date(packaging.tgl_transfer), 'dd/MM/yyyy') : '';
             doc.text(`Tgl: ${packagingDate}`, x + 0.3, y + 3.9);
 
-            // ===============================
-            // JENIS TRANSFER
-            // ===============================
-            doc.setFontSize(6);
-            doc.setFont('helvetica', 'italic');
+            doc.setFontSize(6).setFont('helvetica', 'italic');
             doc.text(packaging.jenis_transfer, x + labelWidth - 0.3, y + labelHeight - 0.3, { align: 'right' });
+        };
 
-            currentLabel++;
+        // 1. Render Label untuk Satuan Penuh
+        for (let i = 0; i < totalPenuh; i++) {
+            if (currentLabelIndex > 0 && currentLabelIndex % labelsPerPage === 0) doc.addPage();
+            renderLabelBox(currentLabelIndex, packaging.qty_persatuan_penuh);
+            currentLabelIndex++;
+        }
 
-            if (currentLabel % labelsPerPage === 0 && i < grandTotal - 1) {
-                doc.addPage();
-            }
+        // 2. Render Label untuk Satuan Sisa
+        for (let j = 0; j < totalSisa; j++) {
+            if (currentLabelIndex > 0 && currentLabelIndex % labelsPerPage === 0) doc.addPage();
+            renderLabelBox(currentLabelIndex, packaging.qty_persatuan_sisa);
+            currentLabelIndex++;
         }
 
         if (download) {
