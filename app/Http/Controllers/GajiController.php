@@ -10,6 +10,7 @@ use App\Models\Lembur;
 use App\Models\BonusKaryawan;
 use App\Models\Cuti;
 use App\Models\PotonganTunjangan;
+use App\Models\PengajuanPinjaman;
 use App\Models\Izin;
 
 use Carbon\Carbon;
@@ -38,6 +39,7 @@ class GajiController extends Controller
         $cutis = Cuti::with('karyawan')->whereBetween('tanggal_cuti', [$startDateTime, $endDateTime])->get();
         $izins = Izin::whereBetween('tanggal_izin', [$startDateTime, $endDateTime])->get();
         $potonganList = PotonganTunjangan::whereBetween('periode_payroll', [$startDateTime, $endDateTime])->get();
+        $allPinjamans = PengajuanPinjaman::with('pembayaranPinjaman')->get();
 
         $rekap = $karyawans->map(function ($karyawan) use (
             $absens,
@@ -45,7 +47,8 @@ class GajiController extends Controller
             $bonusList,
             $cutis,
             $izins,
-            $potonganList
+            $potonganList,
+            $allPinjamans
         ) {
             // --- 1. LOGIKA KEHADIRAN FISIK (Masuk & Keluar) ---
             $absenKaryawan = $absens->where('nama', $karyawan->nama);
@@ -81,7 +84,27 @@ class GajiController extends Controller
 
             $totalTunjanganNet = $netKompetensi + $netJabatan + $netIntensif;
 
-            // --- 6. PERHITUNGAN TOTAL GAJI (Rumus Baru) ---
+            // --- LOGIKA POTONGAN PINJAMAN ---
+            $pinjamanKaryawan = $allPinjamans->where('id_karyawan', $karyawan->id);
+
+            $totalHutang = $pinjamanKaryawan->sum('nilai_pinjaman');
+            $totalTelahDibayar = $pinjamanKaryawan->flatMap->pembayaranPinjaman->sum('nominal_pembayaran');
+
+            $sisaPinjaman = $totalHutang - $totalTelahDibayar;
+
+            $potonganPinjamanBulanIni = 0;
+        if ($sisaPinjaman > 0) {
+            // Ambil cicilan per bulan dari pengajuan yang masih ada sisanya
+            $potonganPinjamanBulanIni = $pinjamanKaryawan->where('status_lunas', false) // Asumsi ada field status atau cek sisa manual
+                ->sum('cicilan_per_bulan');
+
+            // Jangan sampai potongan melebihi sisa pinjaman yang ada
+            if ($potonganPinjamanBulanIni > $sisaPinjaman) {
+                $potonganPinjamanBulanIni = $sisaPinjaman;
+            }
+        }
+
+            // --- 7. PERHITUNGAN TOTAL GAJI (Rumus Baru) ---
             // (Gaji Pokok + Total Tunjangan Bersih) / 25 * Hadir + Bonus
             $gajiPokokMaster = $karyawan->gaji_pokok ?? 0;
             $komponenTetap = $gajiPokokMaster + $totalTunjanganNet;
@@ -89,7 +112,7 @@ class GajiController extends Controller
             $gajiHarian = $komponenTetap / 25;
             $bonus = $bonusList->where('id_karyawan', $karyawan->id)->sum('nilai_bonus');
 
-            $totalGajiAkhir = ($gajiHarian * $totalHariHadir) + $bonus;
+            $totalGajiAkhir = ($gajiHarian * $totalHariHadir) + $bonus - $potonganPinjamanBulanIni;
 
             // --- LEMBUR ---
             $lemburKaryawan = $lemburs->where('karyawan.id', $karyawan->id);
@@ -114,7 +137,10 @@ class GajiController extends Controller
                 'tunjangan_intensif' => $karyawan->tunjangan_intensif ?? 0,
                 'potongan_intensif' => $potIntensif,
                 'bonus' => $bonus,
+                'potongan_pinjaman' => $potonganPinjamanBulanIni,
+                'sisa_pinjaman_total' => $sisaPinjaman,
                 'total_gaji' => $totalGajiAkhir,
+
             ];
         });
 

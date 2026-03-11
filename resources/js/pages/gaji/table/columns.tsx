@@ -52,6 +52,7 @@ const generateSlipGajiPdf = (data: Gaji, filters: { start_date: string; end_date
         ['Potongan Kompetensi', `Rp ${data.potongan_kompetensi.toLocaleString('id-ID')}`],
         ['Potongan Jabatan', `Rp ${data.potongan_jabatan.toLocaleString('id-ID')}`],
         ['Potongan Intensif', `Rp ${data.potongan_intensif.toLocaleString('id-ID')}`],
+        ['Potongan Pinjaman (Bon)', `Rp ${data.potongan_pinjaman.toLocaleString('id-ID')}`],
         ['Potongan Alpha', `(Total Alpha: ${data.total_alpha})`],
     ];
 
@@ -71,11 +72,16 @@ const generateSlipGajiPdf = (data: Gaji, filters: { start_date: string; end_date
         headStyles: { fillColor: [239, 68, 68] },
     });
 
+
+
     // Total Gaji Terima
     const finalY = (doc as any).lastAutoTable.finalY + 10;
     doc.setDrawColor(0);
     doc.setFillColor(240, 240, 240);
     doc.rect(10, finalY, pageWidth - 20, 12, 'F');
+
+    // doc.setFontSize(9).setFont('helvetica', 'italic');
+    // doc.text(`Sisa Total Pinjaman: Rp ${data.sisa_pinjaman_total.toLocaleString('id-ID')}`, 15, finalY + 18);
 
     doc.setFontSize(12).setFont('helvetica', 'bold');
     doc.text('TOTAL GAJI BERSIH (TAKE HOME PAY)', 15, finalY + 8);
@@ -163,6 +169,16 @@ export const columns: ColumnDef<Gaji>[] = [
         accessorKey: 'bonus',
         header: 'Bonus',
         cell: ({ row }) => `Rp ${row.original.bonus.toLocaleString('id-ID')}`,
+    },
+    {
+        accessorKey: 'potongan_pinjaman',
+        header: 'Pot. Pinjaman',
+        cell: ({ row }) => `Rp ${row.original.potongan_pinjaman.toLocaleString('id-ID')}`,
+    },
+    {
+        accessorKey: 'sisa_pinjaman_total',
+        header: 'Sisa Pinjaman',
+        cell: ({ row }) => `Rp ${row.original.sisa_pinjaman_total.toLocaleString('id-ID')}`,
     },
     {
         accessorKey: 'total_gaji',

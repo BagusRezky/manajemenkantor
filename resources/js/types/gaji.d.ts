@@ -16,5 +16,7 @@ export interface Gaji {
     tunjangan_intensif: number;
     potongan_intensif: number;
     bonus: number;
+    potongan_pinjaman: number;
+    sisa_pinjaman_total: number;
     total_gaji: number;
 }
