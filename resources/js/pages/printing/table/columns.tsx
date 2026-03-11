@@ -176,6 +176,22 @@ export const columns = (): ColumnDef<Printing>[] => [
         enableHiding: false,
     },
     {
+        accessorKey: 'kartu_instruksi_kerja.no_kartu_instruksi_kerja',
+        header: 'SPK',
+        cell: ({ row }) => {
+            const data = row.original;
+            return <span>{data.kartu_instruksi_kerja?.no_kartu_instruksi_kerja || '-'}</span>;
+        },
+    },
+    {
+        accessorKey: 'kartu_instruksi_kerja.sales_order.finish_good_item.nama_barang',
+        header: 'Nama Produk',
+        cell: ({ row }) => {
+            const data = row.original;
+            return <span>{data.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang || data.kartu_instruksi_kerja?.sales_order?.master_item?.nama_master_item || '-'}</span>;
+        },
+    },
+    {
         accessorKey: 'kode_printing',
         header: 'Kode Printing',
     },
@@ -203,14 +219,14 @@ export const columns = (): ColumnDef<Printing>[] => [
             return <span>{data.operator?.nama_operator || '-'}</span>;
         },
     },
-    // {
-    //     accessorKey: 'proses_printing',
-    //     header: 'Proses',
-    // },
-    // {
-    //     accessorKey: 'tahap_printing',
-    //     header: 'Tahap',
-    // },
+    {
+        accessorKey: 'proses_printing',
+        header: 'Proses',
+    },
+    {
+        accessorKey: 'tahap_printing',
+        header: 'Tahap',
+    },
     {
         accessorKey: 'hasil_baik_printing',
         header: 'Hasil Baik',

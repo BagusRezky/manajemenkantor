@@ -18,7 +18,7 @@ class PrintingController extends Controller
      */
     public function index()
     {
-        $printings = Printing::with(['mesin', 'operator', 'kartuInstruksiKerja'])->orderBy('tanggal_entri', 'desc')->get();
+        $printings = Printing::with(['mesin', 'operator', 'kartuInstruksiKerja', 'kartuInstruksiKerja.salesOrder.finishGoodItem', 'kartuInstruksiKerja.salesOrder.masterItem'])->orderBy('tanggal_entri', 'desc')->get();
         return inertia('printing/printings', [
             'printings' => $printings,
         ]);
@@ -29,7 +29,7 @@ class PrintingController extends Controller
      */
     public function create()
     {
-        $kartuInstruksiKerjas = KartuInstruksiKerja::with(['salesOrder.finishGoodItem'])->get();
+        $kartuInstruksiKerjas = KartuInstruksiKerja::with(['salesOrder.finishGoodItem', 'salesOrder.masterItem'])->get();
         $mesins = Mesin::all();
         $operators = Operator::all();
         $erorProductions = ErorProduction::all();
@@ -47,7 +47,7 @@ class PrintingController extends Controller
     public function store(Request $request)
     {
         // Debug: Lihat data yang diterima
-        Log::info('Request data:', $request->all());
+        // Log::info('Request data:', $request->all());
 
         $validated = $request->validate([
             'id_kartu_instruksi_kerja' => 'required|exists:kartu_instruksi_kerjas,id',

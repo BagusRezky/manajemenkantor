@@ -175,7 +175,7 @@ export default function CreatePrinting({ kartuInstruksiKerjas, mesins, operators
 
                                 {/* Hasil Baik */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="hasil_baik_printing">Hasil Baik (Pcs) *</Label>
+                                    <Label htmlFor="hasil_baik_printing">Hasil Baik (Sheet) *</Label>
                                     <Input
                                         id="hasil_baik_printing"
                                         type="number"
@@ -192,7 +192,7 @@ export default function CreatePrinting({ kartuInstruksiKerjas, mesins, operators
 
                                 {/* Hasil Rusak */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="hasil_rusak_printing">Hasil Rusak (Pcs) *</Label>
+                                    <Label htmlFor="hasil_rusak_printing">Hasil Rusak (Sheet) *</Label>
                                     <Input
                                         id="hasil_rusak_printing"
                                         type="number"
@@ -219,7 +219,7 @@ export default function CreatePrinting({ kartuInstruksiKerjas, mesins, operators
 
                                 {/* Semi Waste */}
                                 <div className="space-y-2">
-                                    <Label htmlFor="semi_waste_printing">Semi Waste (Pcs) *</Label>
+                                    <Label htmlFor="semi_waste_printing">Semi Waste (Sheet) *</Label>
                                     <Input
                                         id="semi_waste_printing"
                                         type="number"
