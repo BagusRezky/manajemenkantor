@@ -26,6 +26,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [rowSelection, setRowSelection] = React.useState({});
+    const [globalFilter, setGlobalFilter] = React.useState('');
     const table = useReactTable({
         data,
         columns,
@@ -37,6 +38,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         state: {
             columnFilters,
             rowSelection,
+            globalFilter,
         },
     });
 
@@ -45,9 +47,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             <div className="flex space-x-50 py-4">
                 <Input
                     // Ganti filter
-                    placeholder="Cari No Bukti..."
-                    value={(table.getColumn('no_bukti_pembayaran')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) => table.getColumn('no_bukti_pembayaran')?.setFilterValue(event.target.value)}
+                    placeholder="Cari No Bukti dan Nama"
+                    value={globalFilter ?? ''}
+                    onChange={(e) => setGlobalFilter(e.target.value)}
                     className="max-w-sm"
                 />
                 <div className="ml-auto flex space-x-2">

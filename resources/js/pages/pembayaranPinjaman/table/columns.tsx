@@ -171,7 +171,7 @@ export const columns = (): ColumnDef<PembayaranPinjaman>[] => [
         enableHiding: false,
     },
     {
-        accessorKey: 'no_bukti',
+        accessorFn: (row) => row.pengajuan_pinjaman?.nomor_bukti_pengajuan,
         header: 'No Bukti',
         cell: ({ row }) => {
             const no_bukti = row.original.pengajuan_pinjaman?.nomor_bukti_pengajuan;
@@ -180,7 +180,7 @@ export const columns = (): ColumnDef<PembayaranPinjaman>[] => [
     },
     {
         // Tampilkan nama karyawan dari relasi
-        accessorKey: 'pengajuanPinjaman',
+        accessorFn: (row) => row.pengajuan_pinjaman?.karyawan?.nama,
         header: 'Karyawan',
         cell: ({ row }) => {
             const nama = row.original.pengajuan_pinjaman?.karyawan?.nama;
