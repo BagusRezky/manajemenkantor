@@ -14,7 +14,7 @@ class PengajuanPinjamanController extends Controller
      */
     public function index()
     {
-        $pengajuanPinjamans = PengajuanPinjaman::with('karyawan')->get();
+        $pengajuanPinjamans = PengajuanPinjaman::with('karyawan')->orderBy('tanggal_pengajuan', 'desc')->get();
         return Inertia::render('pengajuanPinjaman/pengajuanPinjamans', [
             'pengajuanPinjamans' => $pengajuanPinjamans,
         ]);

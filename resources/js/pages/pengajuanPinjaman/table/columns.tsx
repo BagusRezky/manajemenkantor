@@ -194,7 +194,7 @@ export const columns = (): ColumnDef<PengajuanPinjaman>[] => [
     {
         accessorKey: 'karyawan.nama',
         header: 'Karyawan',
-        cell: ({ row }) => row.original.karyawan?.nama || 'N/A',
+        cell: ({ row }) => row.original.karyawan?.nama || '-',
     },
     {
         accessorKey: 'tanggal_pengajuan',

@@ -25,6 +25,7 @@ interface DataTableProps<TData, TValue> {
 export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([]);
     const [rowSelection, setRowSelection] = React.useState({});
+    const [globalFilter, setGlobalFilter] = React.useState('');
     const table = useReactTable({
         data,
         columns,
@@ -36,6 +37,7 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         state: {
             columnFilters,
             rowSelection,
+            globalFilter,
         },
     });
 
@@ -43,9 +45,9 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <div>
             <div className="flex items-center justify-between py-4">
                 <Input
-                    placeholder="Cari nomor bukti..."
-                    value={(table.getColumn('nomor_bukti_pengajuan')?.getFilterValue() as string) ?? ''}
-                    onChange={(event) => table.getColumn('nomor_bukti_pengajuan')?.setFilterValue(event.target.value)}
+                    placeholder="Cari Nomor Bukti dan Nama"
+                    value={globalFilter ?? ''}
+                    onChange={(e) => setGlobalFilter(e.target.value)}
                     className="max-w-sm"
                 />
                 <Link href={route('pengajuanPinjamans.create')}>
