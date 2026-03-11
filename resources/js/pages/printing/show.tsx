@@ -58,9 +58,9 @@ export default function ShowPrinting({ printing }: Props) {
                                 <h3 className="mb-4 text-sm font-bold tracking-wider text-blue-600 uppercase">Hasil & Tahapan</h3>
                                 {detailItem('Proses', printing.proses_printing)}
                                 {detailItem('Tahap', printing.tahap_printing)}
-                                {detailItem('Hasil Baik', `${printing.hasil_baik_printing} Pcs`)}
-                                {detailItem('Hasil Rusak', `${printing.hasil_rusak_printing} Pcs`)}
-                                {detailItem('Semi Waste', `${printing.semi_waste_printing} Pcs`)}
+                                {detailItem('Hasil Baik', `${printing.hasil_baik_printing} Sheet`)}
+                                {detailItem('Hasil Rusak', `${printing.hasil_rusak_printing} Sheet`)}
+                                {detailItem('Semi Waste', `${printing.semi_waste_printing} Sheet`)}
                                 {detailItem('Note Waste', printing.eror_production?.nama_eror || '-')}
                                 <div className="mt-4 rounded-lg bg-blue-50 p-4">
                                     <div className="flex justify-between font-bold text-blue-800">
@@ -69,7 +69,7 @@ export default function ShowPrinting({ printing }: Props) {
                                             {(printing.hasil_baik_printing || 0) +
                                                 (printing.hasil_rusak_printing || 0) +
                                                 (printing.semi_waste_printing || 0)}{' '}
-                                            Pcs
+                                            Sheet
                                         </span>
                                     </div>
                                 </div>
