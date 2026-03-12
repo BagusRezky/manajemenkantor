@@ -590,6 +590,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
             Route::get('/sales/export', [ReportFinanceController::class, 'exportSales'])->name('salesReports.export');
             Route::get('/profit-loss/export', [ReportFinanceController::class, 'exportProfitLoss'])->name('profitlossReports.export');
             Route::get('/reports/faktur-export', [ReportFinanceController::class, 'exportFaktur'])->name('fakturReports.export');
+            Route::get('/reports/cash-flow-export', [ReportFinanceController::class, 'exportCashFlow'])->name('cashFlowReports.export');
         });
         Route::prefix('reportProductions')->group(function () {
             Route::get('/', [ReportProductionController::class, 'index'])->name('reportProductions.index');

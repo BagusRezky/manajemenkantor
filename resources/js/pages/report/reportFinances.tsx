@@ -288,6 +288,15 @@ export default function Reports({ accounts }: ReportsProps) {
                         routeName="fakturReports.export"
                         buttonColor="bg-red-600"
                     />
+
+                    <ReportCard
+                        title="Laporan Arus Kas"
+                        description="Laporan rekapitulasi kas & bank berdasarkan range tanggal."
+                        icon={Banknote}
+                        routeName="cashFlowReports.export"
+                        buttonColor="bg-cyan-600"
+                       
+                    />
                 </div>
             </div>
         </AppLayout>

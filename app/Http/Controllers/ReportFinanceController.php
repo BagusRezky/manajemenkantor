@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Exports\CashFlowReportExport;
 use App\Exports\FaktruReportExport;
 use App\Exports\FakturReportExport;
 use Illuminate\Http\Request;
@@ -10,6 +11,7 @@ use App\Exports\MutationReportExport;
 use App\Exports\SalesReportExport;
 use App\Exports\ProfitLossReportExport;
 use App\Models\MasterCoa;
+use Carbon\Carbon;
 use Maatwebsite\Excel\Facades\Excel;
 use Inertia\Inertia;
 
@@ -102,6 +104,20 @@ class ReportFinanceController extends Controller
 
         return Excel::download(
             new FakturReportExport($request->start_date, $request->end_date),
+            $fileName
+        );
+    }
+    public function exportCashFlow(Request $request)
+    {
+        $request->validate([
+            'start_date' => 'required|date',
+        ]);
+
+        $year = Carbon::parse($request->start_date)->year;
+        $fileName = "LAPORAN_ARUS_KAS_{$year}.xlsx";
+
+        return Excel::download(
+            new CashFlowReportExport($year),
             $fileName
         );
     }
