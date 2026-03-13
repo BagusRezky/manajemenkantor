@@ -291,7 +291,7 @@ export default function Reports({ accounts }: ReportsProps) {
 
                     <ReportCard
                         title="Laporan Arus Kas"
-                        description="Laporan rekapitulasi kas & bank berdasarkan range tanggal."
+                        description="Laporan rekapitulasi arus kas"
                         icon={Banknote}
                         routeName="cashFlowReports.export"
                         buttonColor="bg-cyan-600"
