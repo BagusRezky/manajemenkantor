@@ -41,7 +41,7 @@ const generateLabelsPdf = async (packaging: Packaging, download = false): Promis
 
         const totalPenuh = packaging.jumlah_satuan_penuh;
         const totalSisa = packaging.jumlah_satuan_sisa;
-        
+
 
         let currentLabelIndex = 0;
 
@@ -73,7 +73,7 @@ const generateLabelsPdf = async (packaging: Packaging, download = false): Promis
 
             // PERUSAHAAN (Kiri Atas)
             doc.setFontSize(7).setFont('helvetica', 'normal');
-            doc.text('CV. Indigama Khatulistiwa', x + 0.3, y + 0.6);
+            doc.text('UG.RMS', x + 0.3, y + 0.6);
 
             // NOMOR KIK (Tengah)
             doc.setFontSize(10).setFont('helvetica', 'bold');
