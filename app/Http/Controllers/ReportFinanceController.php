@@ -8,6 +8,7 @@ use App\Exports\FakturReportExport;
 use Illuminate\Http\Request;
 use App\Exports\PaymentReportExport;
 use App\Exports\MutationReportExport;
+use App\Exports\NeracaReportExport;
 use App\Exports\SalesReportExport;
 use App\Exports\ProfitLossReportExport;
 use App\Models\MasterCoa;
@@ -121,4 +122,18 @@ class ReportFinanceController extends Controller
             $fileName
         );
     }
+    public function exportNeraca(Request $request)
+{
+    $request->validate([
+        'tanggal' => 'required|date',
+    ]);
+
+    $tanggal = $request->tanggal;
+    $fileName = 'NERACA_PER_' . \Carbon\Carbon::parse($tanggal)->format('d-m-Y') . '.xlsx';
+
+    return Excel::download(
+        new NeracaReportExport($tanggal),
+        $fileName
+    );
+}
 }

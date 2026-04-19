@@ -2,7 +2,7 @@ import AppLayout from '@/layouts/app-layout';
 import { BreadcrumbItem } from '@/types';
 import { MasterCoa } from '@/types/masterCoa';
 import { Head, useForm } from '@inertiajs/react';
-import { Banknote, FileText,  ShoppingCart, TrendingUp, X } from 'lucide-react';
+import { Banknote, FileText, Scale, ShoppingCart, TrendingUp, X } from 'lucide-react';
 import React, { useMemo, useState } from 'react';
 
 const breadcrumbs: BreadcrumbItem[] = [{ title: 'Reports', href: '/reports' }];
@@ -16,6 +16,7 @@ interface ReportCardProps {
     accounts?: MasterCoa[];
     isMutation?: boolean;
     isSales?: boolean;
+    isNeraca?: boolean;
 }
 
 const ReportCard = ({
@@ -27,6 +28,7 @@ const ReportCard = ({
     accounts = [],
     isMutation = false,
     isSales = false,
+    isNeraca = false,
 }: ReportCardProps) => {
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
@@ -34,11 +36,11 @@ const ReportCard = ({
     const { data, setData, processing } = useForm({
         start_date: '',
         end_date: '',
-        selected_accounts: [] as string[], // Array untuk multiple IDs
+        tanggal: '',
+        selected_accounts: [] as string[],
         kode: '',
     });
 
-    // Filter akun berdasarkan pencarian
     const filteredAccounts = useMemo(() => {
         return accounts.filter(
             (acc) =>
@@ -71,6 +73,15 @@ const ReportCard = ({
     const handleExport = (e: React.FormEvent) => {
         e.preventDefault();
 
+        // Neraca: hanya butuh tanggal cut-off
+        if (isNeraca) {
+            if (!data.tanggal) return alert('Pilih tanggal neraca!');
+            const params = new URLSearchParams();
+            params.append('tanggal', data.tanggal);
+            window.location.href = `${route(routeName)}?${params.toString()}`;
+            return;
+        }
+
         if (!data.start_date || !data.end_date) return alert('Pilih tanggal!');
         if (isMutation && data.selected_accounts.length === 0) return alert('Pilih minimal satu akun!');
 
@@ -86,6 +97,7 @@ const ReportCard = ({
             data.selected_accounts.forEach((id) => params.append('id_accounts[]', id));
             setIsModalOpen(false);
         }
+
         window.location.href = `${route(routeName)}?${params.toString()}`;
     };
 
@@ -102,28 +114,56 @@ const ReportCard = ({
             </div>
 
             <form onSubmit={handleExport} className="mt-auto space-y-4">
-                <div className="grid grid-cols-2 gap-3">
+                {/* ---- NERACA: hanya butuh 1 tanggal ---- */}
+                {isNeraca ? (
                     <div>
-                        <label className="text-xs font-semibold text-gray-400 uppercase">Dari</label>
+                        <label className="text-xs font-semibold text-gray-400 uppercase">Per Tanggal</label>
                         <input
                             type="date"
                             className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            value={data.start_date}
-                            onChange={(e) => setData('start_date', e.target.value)}
+                            value={data.tanggal}
+                            onChange={(e) => setData('tanggal', e.target.value)}
                             required
                         />
                     </div>
+                ) : (
+                    /* ---- Semua laporan lain: range tanggal ---- */
+                    <div className="grid grid-cols-2 gap-3">
+                        <div>
+                            <label className="text-xs font-semibold text-gray-400 uppercase">Dari</label>
+                            <input
+                                type="date"
+                                className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                value={data.start_date}
+                                onChange={(e) => setData('start_date', e.target.value)}
+                                required
+                            />
+                        </div>
+                        <div>
+                            <label className="text-xs font-semibold text-gray-400 uppercase">Sampai</label>
+                            <input
+                                type="date"
+                                className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+                                value={data.end_date}
+                                onChange={(e) => setData('end_date', e.target.value)}
+                                required
+                            />
+                        </div>
+                    </div>
+                )}
+
+                {isSales && (
                     <div>
-                        <label className="text-xs font-semibold text-gray-400 uppercase">Sampai</label>
+                        <label className="text-xs font-semibold text-gray-400 uppercase">Filter Kode Invoice</label>
                         <input
-                            type="date"
-                            className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-                            value={data.end_date}
-                            onChange={(e) => setData('end_date', e.target.value)}
-                            required
+                            type="text"
+                            placeholder="Contoh: INV, FAK, dll (Opsional)"
+                            className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
+                            value={data.kode}
+                            onChange={(e) => setData('kode', e.target.value)}
                         />
                     </div>
-                </div>
+                )}
 
                 {isMutation ? (
                     <button
@@ -141,19 +181,6 @@ const ReportCard = ({
                     >
                         {processing ? 'Processing...' : 'Export Excel'}
                     </button>
-                )}
-
-                {isSales && (
-                    <div>
-                        <label className="text-xs font-semibold text-gray-400 uppercase">Filter Kode Invoice</label>
-                        <input
-                            type="text"
-                            placeholder="Contoh: INV, FAK, dll (Opsional)"
-                            className="mt-1 w-full rounded-md border-gray-300 shadow-sm focus:border-purple-500 focus:ring-purple-500 sm:text-sm"
-                            value={data.kode}
-                            onChange={(e) => setData('kode', e.target.value)}
-                        />
-                    </div>
                 )}
             </form>
 
@@ -284,7 +311,7 @@ export default function Reports({ accounts }: ReportsProps) {
                     <ReportCard
                         title="Laporan Faktur"
                         description="Export detail faktur lengkap dengan vendor dan detail item."
-                        icon={FileText} // Anda bisa ganti iconnya
+                        icon={FileText}
                         routeName="fakturReports.export"
                         buttonColor="bg-red-600"
                     />
@@ -295,7 +322,16 @@ export default function Reports({ accounts }: ReportsProps) {
                         icon={Banknote}
                         routeName="cashFlowReports.export"
                         buttonColor="bg-cyan-600"
-                       
+                    />
+
+                    {/* ===== NERACA — CARD BARU ===== */}
+                    <ReportCard
+                        title="Neraca (Balance Sheet)"
+                        description="Posisi aset, kewajiban, dan ekuitas per tanggal tertentu."
+                        icon={Scale}
+                        routeName="neracaReports.export"
+                        buttonColor="bg-indigo-700"
+                        isNeraca={true}
                     />
                 </div>
             </div>
