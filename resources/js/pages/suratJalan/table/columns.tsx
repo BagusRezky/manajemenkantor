@@ -14,139 +14,122 @@ import { toast } from 'sonner';
 
 // Function untuk generate PDF surat jalan ukuran NCR (9.5 x 11 inc)
 const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void => {
-    // Inisialisasi dokumen PDF dengan ukuran kustom 9.5 x 11 inci
-    // Lebar: 241.3mm, Tinggi: 279.4mm
+    // Ukuran 1/2 folio continuous form: 9.5" x 5.5" = 241.3mm x 139.7mm
     const doc = new jsPDF({
         orientation: 'landscape',
         unit: 'mm',
-        format: [241.3, 279.4],
+        format: [241.3, 139.7],
     });
 
     const pageWidth = doc.internal.pageSize.getWidth(); // 241.3 mm
-    const topMargin = 5;
+    const topMargin = 3;
 
-    // Logo
+    // Logo (dikecilkan)
     const logo = new Image();
     logo.src = '/images/logo-kantor.png';
-    doc.addImage(logo, 'PNG', 15, topMargin + 4, 18, 18);
+    doc.addImage(logo, 'PNG', 12, topMargin + 2, 13, 13);
 
-    // Header dengan border (menyesuaikan lebar pageWidth)
+    // Header border (dikompres tingginya dari 30 → 20)
     doc.setDrawColor(0);
     doc.setLineWidth(0.5);
-    doc.rect(10, topMargin, pageWidth - 20, 30);
+    doc.rect(10, topMargin, pageWidth - 20, 20);
 
-    // Company Info
-    doc.setFontSize(14).setFont('helvetica', 'bold');
-    doc.text('CV. Indigama Khatulistiwa', 38, topMargin + 8);
-    doc.setFontSize(10).setFont('helvetica', 'normal');
-    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol,', 38, topMargin + 13);
-    doc.text('Pasuruan, Jawa Timur 67155', 38, topMargin + 18);
-    doc.text('Email: indigama.khatulistiwa01@gmail.com', 38, topMargin + 23);
-    doc.text('Telp: 081703101012', 38, topMargin + 28);
+    // Company Info (font lebih kecil, jarak baris lebih rapat)
+    doc.setFontSize(11).setFont('helvetica', 'bold');
+    doc.text('CV. Indigama Khatulistiwa', 28, topMargin + 5);
+    doc.setFontSize(7.5).setFont('helvetica', 'normal');
+    doc.text('Dsn. Blimbing RT 02 RW 11, Ds. Bulusari, Kec. Gempol, Pasuruan, Jawa Timur 67155', 28, topMargin + 9);
+    doc.text('Email: indigama.khatulistiwa01@gmail.com  |  Telp: 081703101012', 28, topMargin + 13);
 
-    // Title (Kanan Atas)
-    doc.setFontSize(16).setFont('helvetica', 'bold');
-    doc.text('SURAT JALAN', pageWidth - 15, topMargin + 10, { align: 'right' });
+    // Title kanan atas
+    doc.setFontSize(13).setFont('helvetica', 'bold');
+    doc.text('SURAT JALAN', pageWidth - 15, topMargin + 8, { align: 'right' });
+    doc.setFontSize(7.5).setFont('helvetica', 'normal');
+    doc.text(suratJalan.no_surat_jalan || '', pageWidth - 15, topMargin + 14, { align: 'right' });
 
-    // Kotak Informasi Surat Jalan
+    // ===== Kotak Info Surat Jalan (tinggi dikompres dari 45 → 28) =====
+    const infoBoxY = topMargin + 23;
     doc.setLineWidth(0.5);
-    doc.rect(10, 45, pageWidth - 20, 45);
+    doc.rect(10, infoBoxY, pageWidth - 20, 28);
 
-    // ===== Informasi Surat Jalan (Pengaturan Kolom) =====
-    const leftLabelX = 15;
-    const leftColonX = 50;
-    const leftValueX = 53;
+    const leftLabelX = 13;
+    const leftColonX = 43;
+    const leftValueX = 45;
+    const rightLabelX = pageWidth / 2 + 5;
+    const rightColonX = pageWidth / 2 + 35;
+    const rightValueX = pageWidth / 2 + 37;
 
-    // Menggeser kolom kanan lebih ke kanan karena kertas lebih lebar dari A4
-    const rightLabelX = pageWidth - 100;
-    const rightColonX = pageWidth - 70;
-    const rightValueX = pageWidth - 67;
-
-    doc.setFontSize(10);
+    doc.setFontSize(8);
 
     // Row 1
+    const r1Y = infoBoxY + 5;
     doc.setFont('helvetica', 'bold');
-    doc.text('No. Surat Jalan', leftLabelX, 52);
-    doc.text(':', leftColonX, 52);
+    doc.text('No. Surat Jalan', leftLabelX, r1Y);
+    doc.text(':', leftColonX, r1Y);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.no_surat_jalan || '', leftValueX, 52);
-
+    doc.text(suratJalan.no_surat_jalan || '', leftValueX, r1Y);
     doc.setFont('helvetica', 'bold');
-    doc.text('Transportasi', rightLabelX, 52);
-    doc.text(':', rightColonX, 52);
+    doc.text('Transportasi', rightLabelX, r1Y);
+    doc.text(':', rightColonX, r1Y);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.transportasi || '', rightValueX, 52);
+    doc.text(suratJalan.transportasi || '', rightValueX, r1Y);
 
     // Row 2
-    doc.setFont('helvetica', 'bold');
-    doc.text('No. PO Customer', leftLabelX, 59);
-    doc.text(':', leftColonX, 59);
-    doc.setFont('helvetica', 'normal');
-
+    const r2Y = infoBoxY + 11;
     const poCustomer = suratJalan.kartu_instruksi_kerja?.sales_order?.no_po_customer || suratJalan.sales_order?.no_po_customer || '-';
-    doc.text(poCustomer, leftValueX, 59);
-
     doc.setFont('helvetica', 'bold');
-    doc.text('No. Polisi', rightLabelX, 59);
-    doc.text(':', rightColonX, 59);
+    doc.text('No. PO Customer', leftLabelX, r2Y);
+    doc.text(':', leftColonX, r2Y);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.no_polisi || '', rightValueX, 59);
+    doc.text(poCustomer, leftValueX, r2Y);
+    doc.setFont('helvetica', 'bold');
+    doc.text('No. Polisi', rightLabelX, r2Y);
+    doc.text(':', rightColonX, r2Y);
+    doc.setFont('helvetica', 'normal');
+    doc.text(suratJalan.no_polisi || '', rightValueX, r2Y);
 
     // Row 3
-    doc.setFont('helvetica', 'bold');
-    doc.text('Customer', leftLabelX, 66);
-    doc.text(':', leftColonX, 66);
-    doc.setFont('helvetica', 'normal');
+    const r3Y = infoBoxY + 17;
     const customerName =
         suratJalan.kartu_instruksi_kerja?.sales_order?.customer_address?.nama_customer ||
         suratJalan.sales_order?.customer_address?.nama_customer ||
         '-';
-    doc.text(customerName, leftValueX, 66);
-
     doc.setFont('helvetica', 'bold');
-    doc.text('Driver', rightLabelX, 66);
-    doc.text(':', rightColonX, 66);
+    doc.text('Customer', leftLabelX, r3Y);
+    doc.text(':', leftColonX, r3Y);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.driver || '', rightValueX, 66);
-
-    // Row 4
+    doc.text(customerName, leftValueX, r3Y);
     doc.setFont('helvetica', 'bold');
-    doc.text('Tanggal', leftLabelX, 73);
-    doc.text(':', leftColonX, 73);
+    doc.text('Driver', rightLabelX, r3Y);
+    doc.text(':', rightColonX, r3Y);
     doc.setFont('helvetica', 'normal');
+    doc.text(suratJalan.driver || '', rightValueX, r3Y);
+
+    // Row 4 — Tanggal + Keterangan
+    const r4Y = infoBoxY + 23;
     const formattedDate = suratJalan.tgl_surat_jalan ? format(new Date(suratJalan.tgl_surat_jalan), 'dd-MM-yyyy') : '';
-    doc.text(formattedDate, leftValueX, 73);
-
     doc.setFont('helvetica', 'bold');
-    doc.text('Keterangan', rightLabelX, 73);
-    doc.text(':', rightColonX, 73);
+    doc.text('Tanggal', leftLabelX, r4Y);
+    doc.text(':', leftColonX, r4Y);
     doc.setFont('helvetica', 'normal');
-    doc.text(suratJalan.keterangan || '-', rightValueX, 73);
-
-    // Row 5: Alamat Tujuan (Wrap Text)
+    doc.text(formattedDate, leftValueX, r4Y);
     doc.setFont('helvetica', 'bold');
-    doc.text('Alamat Tujuan', leftLabelX, 80);
-    doc.text(':', leftColonX, 80);
+    doc.text('Keterangan', rightLabelX, r4Y);
+    doc.text(':', rightColonX, r4Y);
     doc.setFont('helvetica', 'normal');
-    const alamat = suratJalan.alamat_tujuan || '';
-    // Lebar alamat disesuaikan dengan kertas yang lebih lebar
-    const splitAlamat = doc.splitTextToSize(alamat, pageWidth - 70);
-    doc.text(splitAlamat, leftValueX, 80);
+    doc.text(suratJalan.keterangan || '-', rightValueX, r4Y);
 
-    // Judul Tabel
-    const tableHeaderY = 100;
-    doc.setFontSize(11).setFont('helvetica', 'bold');
-    doc.rect(10, tableHeaderY, pageWidth - 20, 10);
-    doc.text('DATA BARANG', pageWidth / 2, tableHeaderY + 7, { align: 'center' });
+    // ===== Tabel Data Barang =====
+    const tableHeaderY = infoBoxY + 31;
+    doc.setFontSize(8.5).setFont('helvetica', 'bold');
+    doc.rect(10, tableHeaderY, pageWidth - 20, 7);
+    doc.text('DATA BARANG', pageWidth / 2, tableHeaderY + 5, { align: 'center' });
 
-    const isFromKik = !!suratJalan.id_kartu_instruksi_kerja; // Cek apakah lewat SPK atau tidak
-
-    // 1. Tentukan Nama Barang
+    const isFromKik = !!suratJalan.id_kartu_instruksi_kerja;
     const namaBarang = isFromKik
         ? suratJalan.kartu_instruksi_kerja?.sales_order?.finish_good_item?.nama_barang || '-'
         : suratJalan.sales_order?.master_item?.nama_master_item || '-';
 
-    // 2. Hitung Total Box (Hanya jika dari KIK)
     const packagings = suratJalan.kartu_instruksi_kerja?.packagings || [];
     const totalBox = packagings.reduce((acc, pkg) => {
         return acc + (Number(pkg.jumlah_satuan_penuh) || 0) + (Number(pkg.jumlah_satuan_sisa) || 0);
@@ -156,37 +139,30 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
         { header: 'No', dataKey: 'no' },
         { header: 'Nama Barang', dataKey: 'nama_barang' },
     ];
-    if (isFromKik) {
-        tableColumns.push({ header: 'Box', dataKey: 'box' });
-    }
-    tableColumns.push({
-        header: isFromKik ? 'Jumlah (Pcs)' : 'Jumlah',
-        dataKey: 'jumlah',
-    });
-
+    if (isFromKik) tableColumns.push({ header: 'Box', dataKey: 'box' });
+    tableColumns.push({ header: isFromKik ? 'Jumlah (Pcs)' : 'Jumlah', dataKey: 'jumlah' });
     tableColumns.push({ header: 'Keterangan', dataKey: 'keterangan' });
 
-    // 4. Render Table
     autoTable(doc, {
         columns: tableColumns,
         body: [
             {
                 no: '1',
                 nama_barang: namaBarang,
-                box: isFromKik ? (totalBox > 0 ? `${totalBox} BOX` : '-') : null, // null jika bukan KIK
+                box: isFromKik ? (totalBox > 0 ? `${totalBox} BOX` : '-') : null,
                 jumlah: isFromKik
                     ? suratJalan.qty_pengiriman
                         ? `${formatWithThousandSeparator(suratJalan.qty_pengiriman)} PCS`
                         : '-'
                     : suratJalan.qty_pengiriman
-                    ? `${formatWithThousandSeparator(suratJalan.qty_pengiriman)} ${suratJalan.sales_order?.master_item?.unit?.nama_satuan}`
-                    : '-',
+                      ? `${formatWithThousandSeparator(suratJalan.qty_pengiriman)} ${suratJalan.sales_order?.master_item?.unit?.nama_satuan}`
+                      : '-',
                 keterangan: '-',
             },
         ],
-        startY: tableHeaderY + 10,
+        startY: tableHeaderY + 7,
         margin: { left: 10, right: 10 },
-        styles: { fontSize: 9, cellPadding: 3 },
+        styles: { fontSize: 8, cellPadding: 2 },
         headStyles: {
             fillColor: [255, 255, 255],
             textColor: [0, 0, 0],
@@ -199,24 +175,25 @@ const generateSuratJalanPdf = (suratJalan: SuratJalan, download = false): void =
             lineWidth: 0.4,
         },
         columnStyles: {
-            no: { cellWidth: 12, halign: 'center' },
+            no: { cellWidth: 10, halign: 'center' },
             nama_barang: { cellWidth: 'auto' },
-            box: { cellWidth: 30, halign: 'center' },
-            jumlah: { cellWidth: 35, halign: 'right' },
-            keterangan: { cellWidth: 40 },
+            box: { cellWidth: 25, halign: 'center' },
+            jumlah: { cellWidth: 32, halign: 'right' },
+            keterangan: { cellWidth: 35 },
         },
     });
 
-    const footerY = (doc as any).lastAutoTable.finalY + 25;
+    // ===== Footer Tanda Tangan (lebih rapat, jarak dikompres) =====
+    const footerY = (doc as any).lastAutoTable.finalY + 5;
 
-    doc.setFontSize(10).setFont('helvetica', 'normal');
+    doc.setFontSize(8).setFont('helvetica', 'normal');
     doc.text('Pengirim,', 40, footerY, { align: 'center' });
     doc.text('Mengetahui,', pageWidth / 2, footerY, { align: 'center' });
     doc.text('Penerima,', pageWidth - 40, footerY, { align: 'center' });
 
-    doc.text('( ..................................... )', 40, footerY + 25, { align: 'center' });
-    doc.text('( ..................................... )', pageWidth / 2, footerY + 25, { align: 'center' });
-    doc.text('( ..................................... )', pageWidth - 40, footerY + 25, { align: 'center' });
+    doc.text('( .......................... )', 40, footerY + 16, { align: 'center' });
+    doc.text('( .......................... )', pageWidth / 2, footerY + 16, { align: 'center' });
+    doc.text('( .......................... )', pageWidth - 40, footerY + 16, { align: 'center' });
 
     // Output PDF
     if (download) {
